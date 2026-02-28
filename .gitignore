@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.env
+*.swp
+.idea/
+.claude/
+*.pcm
+*.wav
+*.safetensors
+*.bin
+*.whl
