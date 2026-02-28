@@ -50,43 +50,12 @@ RUN pip install /tmp/wheels/pyarrow-20.0.0-cp310-cp310-manylinux_2_17_x86_64.man
 # config.json 也放到运行层去 COPY
 
 
-# ================== 构建层：编译（含源码，但不进入最终镜像） ==================
-FROM deps AS builder
-WORKDIR /build
-
-# 编译工具 & Cython
-RUN yum install -y gcc gcc-c++ make && yum clean all
-RUN pip install --no-cache-dir cython setuptools wheel
-
-# 拷贝源码（仅 builder 层持有源码）
-COPY . .
-
-# Cython 编译 .so（core / utils；如需路由也加密，见注释）
-RUN python setup_cython.py build_ext --inplace
-
-# 删除明文 .py（保留 __init__.py）
-RUN find core -type f -name "*.py" ! -name "__init__.py" -delete && \
-    find utils -type f -name "*.py" ! -name "__init__.py" -delete
-
-RUN find api/routes -type f -name "*.py" ! -name "__init__.py" -delete
-
-RUN find entity -type f -name "*.py" ! -name "__init__.py" -delete
-
-# 去除符号，减小体积（可选）
-RUN find core -name "*.so" -exec strip --strip-unneeded {} + || true && \
-    find utils -name "*.so" -exec strip --strip-unneeded {} + || true
-
-# 将“已净化后的运行目录”整理到 /opt/app_encrypted
-RUN mkdir -p /opt/app_encrypted && \
-    cp -r api core utils entity main.py start.sh nginx.conf /opt/app_encrypted && \
-    true
-
-# ================== 运行层：无源码，仅加密产物 ==================
+# ================== 运行层：直接使用源码 ==================
 FROM deps AS runtime
 WORKDIR /app
 
-# 仅拷贝编译产物（无源码）
-COPY --from=builder /opt/app_encrypted /app
+# 拷贝源码
+COPY . /app
 
 # 配置文件与 Nginx
 COPY config.json /
