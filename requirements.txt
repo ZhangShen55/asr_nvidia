@@ -24,6 +24,7 @@ pydub
 pyannote.audio # 补充用于结合whisper进行人声分离
 websockets # 实时转写
 simplejson==3.20.1 # 标点推理使用
+toml # TOML 配置文件解析
 #容器环境
 # datasets                 2.21.0 
 # modelscope               1.25.0

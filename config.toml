@@ -1,0 +1,45 @@
+# SeaCraftASR 配置文件
+
+# 基础配置
+id_engine = "1"
+version = "seacraft-asr-app-v1.1.9"
+
+# 设备与并发配置
+device = "cuda:1"
+ngpu = 1
+ncpu = 4
+concurrency = 5
+instance_count = 4
+
+# 日志配置
+log_path = "./asr_service.log"
+
+# 热词配置
+hotword_path = "/var/model_zoo/model_asr/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/example/hotword.txt"
+
+# 模型路径配置
+[model_paths]
+vad_model_dir = "/var/model_zoo/model_asr/speech_fsmn_vad_zh-cn-16k-common-pytorch"
+punc_model_dir = "/var/model_zoo/model_asr/punc_ct-transformer_cn-en-common-vocab471067-large"
+asr_model_dir = "/var/model_zoo/model_asr/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
+spk_model_dir = "/var/model_zoo/model_asr/speech_campplus_sv_zh_en_16k-common_advanced"
+emotion_model_dir = "/var/model_zoo/model_asr/emotion2vec_plus_large"
+asr_online_model_dir = "/var/model_zoo/model_asr/speech_paraformer_asr_nat-zh-cn-16k-common-vocab8404-online"
+asr_online_punc_model_dir = "/var/model_zoo/model_asr/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727"
+whisper_model_dir = "/var/model_zoo/model_asr/faster-whisper-large-v3"
+pyannote_model_yml = "/var/model_zoo/model_asr/speaker-diarization-3.1/config.yaml"
+bert_model_tokenizer = "/var/model_zoo/model_asr/bert-base-chinese"
+bert_model_dir = "/var/model_zoo/model_asr/bert_output/checkpoint-88"
+
+# 计算配置
+[compute]
+compute_type = "int8"
+
+# 功能开关配置
+[features]
+open_spk = true
+open_emotion = true
+ban_hotword = true
+open_mul_lang = false
+open_mul_spk = false
+open_online = false

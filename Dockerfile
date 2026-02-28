@@ -47,7 +47,7 @@ RUN pip install /tmp/wheels/pyarrow-20.0.0-cp310-cp310-manylinux_2_17_x86_64.man
       -r /tmp/requirements.txt
 
 # nginx 配置放到运行层去 COPY
-# config.json 也放到运行层去 COPY
+# config.toml 也放到运行层去 COPY
 
 
 # ================== 运行层：直接使用源码 ==================
@@ -58,7 +58,7 @@ WORKDIR /app
 COPY . /app
 
 # 配置文件与 Nginx
-COPY config.json /
+COPY config.toml /
 COPY nginx.conf /etc/nginx/nginx.conf
 
 # 权限 & 暴露端口
