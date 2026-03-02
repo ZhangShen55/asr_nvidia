@@ -1,12 +1,12 @@
-import toml
+import tomli
 import os
 from dataclasses import dataclass
 from typing import Optional
 
 
 def _load_toml(path: str) -> dict:
-    with open(path, "r", encoding="utf-8") as f:
-        return toml.load(f)
+    with open(path, "rb") as f:
+        return tomli.load(f)
 
 
 @dataclass
