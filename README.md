@@ -50,7 +50,7 @@
 ```
 asr_refine/
 ├── main.py                    # FastAPI 入口
-├── config.json               # 配置文件
+├── config.toml               # 配置文件（TOML 格式）
 ├── requirements.txt          # 依赖包
 ├── Dockerfile               # 容器化部署
 ├── nginx.conf               # Nginx 多实例配置
@@ -93,18 +93,52 @@ pip install -r requirements.txt
 
 ### 配置
 
-编辑 `config.json`：
+配置文件为 `config.toml`（TOML 格式）。服务通过环境变量 `CONFIG_PATH` 指定配置路径，未设置时默认读取当前目录下的 `./config.toml`。
 
-```json
-{
-  "device": "cuda:0",
-  "ngpu": 1,
-  "concurrency": 5,
-  "open_spk": true,
-  "open_emotion": true,
-  "asr_model_dir": "/path/to/paraformer",
-  "whisper_model_dir": "/path/to/whisper"
-}
+```toml
+# 基础配置
+id_engine = "1"
+version = "seacraft-asr-app-v1.1.9"
+
+# 设备与并发配置
+device = "cuda:1"          # 推理设备
+ngpu = 1                   # GPU 数量
+ncpu = 4                   # CPU 线程数
+concurrency = 5            # 单实例 GPU 并发数
+instance_count = 4         # uvicorn 实例数（供 start.sh 与 Nginx 使用）
+
+# 日志配置
+log_path = "./asr_service.log"
+
+# 热词文件路径
+hotword_path = "/var/model_zoo/model_asr/.../hotword.txt"
+
+# 模型路径配置
+[model_paths]
+vad_model_dir = "/var/model_zoo/model_asr/speech_fsmn_vad_zh-cn-16k-common-pytorch"
+punc_model_dir = "/var/model_zoo/model_asr/punc_ct-transformer_cn-en-common-vocab471067-large"
+asr_model_dir = "/var/model_zoo/model_asr/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
+spk_model_dir = "/var/model_zoo/model_asr/speech_campplus_sv_zh_en_16k-common_advanced"
+emotion_model_dir = "/var/model_zoo/model_asr/emotion2vec_plus_large"
+asr_online_model_dir = "/var/model_zoo/model_asr/speech_paraformer_asr_nat-zh-cn-16k-common-vocab8404-online"
+asr_online_punc_model_dir = "/var/model_zoo/model_asr/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727"
+whisper_model_dir = "/var/model_zoo/model_asr/faster-whisper-large-v3"
+pyannote_model_yml = "/var/model_zoo/model_asr/speaker-diarization-3.1/config.yaml"
+bert_model_tokenizer = "/var/model_zoo/model_asr/bert-base-chinese"
+bert_model_dir = "/var/model_zoo/model_asr/bert_output/checkpoint-88"
+
+# 计算配置（faster-whisper）
+[compute]
+compute_type = "int8"      # int8 / float16 等
+
+# 功能开关配置
+[features]
+open_spk = true            # 说话人分离
+open_emotion = true        # 情感识别
+ban_hotword = true         # 禁用热词
+open_mul_lang = true       # 多语言(Whisper)
+open_mul_spk = true        # 多说话人分离(Pyannote)
+open_online = false        # 实时转写
 ```
 
 ### 启动服务
@@ -144,13 +178,15 @@ ws.onmessage = (event) => {
 
 ## ⚙️ 功能开关说明
 
-| 配置项 | 说明 | 默认值 |
+以下开关均位于 `config.toml` 的 `[features]` 段下（下表默认值为示例 `config.toml` 的取值；代码缺省值除 `ban_hotword` 外均为 `false`）：
+
+| 配置项 | 说明 | 示例值 |
 |-------|------|--------|
 | `open_spk` | 开启说话人分离 | `true` |
 | `open_emotion` | 开启情感识别 | `true` |
-| `open_mul_lang` | 开启多语言(Whisper) | `false` |
+| `open_mul_lang` | 开启多语言(Whisper) | `true` |
+| `open_mul_spk` | 开启多说话人分离(Pyannote) | `true` |
 | `open_online` | 开启实时转写 | `false` |
-| `open_mul_spk` | 开启多说话人分离(Pyannote) | `false` |
 | `ban_hotword` | 禁用热词功能 | `true` |
 
 ## 🐳 Docker 部署
@@ -164,7 +200,8 @@ docker run -d \
   --gpus all \
   -p 8083:8083 \
   -v /path/to/models:/var/model_zoo \
-  -v $(pwd)/config.json:/app/config.json \
+  -v $(pwd)/config.toml:/app/config.toml \
+  -e CONFIG_PATH=/app/config.toml \
   seacraft-asr
 ```
 
