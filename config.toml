@@ -35,11 +35,15 @@ bert_model_dir = "/var/model_zoo/model_asr/bert_output/checkpoint-88"
 [compute]
 compute_type = "int8"
 
+# 语速计算配置
+[speech_rate]
+rate_factor = 0.4  # 语速修正系数（数值偏高时下调），最终语速 = 原始字/分钟 * rate_factor
+
 # 功能开关配置
 [features]
 open_spk = true
 open_emotion = true
 ban_hotword = true
-open_mul_lang = false
-open_mul_spk = false
+open_mul_lang = true
+open_mul_spk = true
 open_online = false

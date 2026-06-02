@@ -131,6 +131,10 @@ bert_model_dir = "/var/model_zoo/model_asr/bert_output/checkpoint-88"
 [compute]
 compute_type = "int8"      # int8 / float16 等
 
+# 语速计算配置
+[speech_rate]
+rate_factor = 0.7          # 单句语速修正系数（数值偏高时下调）
+
 # 功能开关配置
 [features]
 open_spk = true            # 说话人分离
@@ -162,6 +166,97 @@ curl -X POST "http://localhost:8083/v1.1.8/seacraft_asr" \
   -F "showSpk=true" \
   -F "showEmotion=true"
 ```
+
+响应示例：
+
+```json
+{
+  "language": "auto",
+  "segments": [
+    {
+      "segment_text": "如果与中文相比，",
+      "bg": "0.17",
+      "ed": "1.13",
+      "speed": 230,
+      "segment_words": [],
+      "role": "teacher",
+      "emotion": "平淡"
+    }
+  ],
+  "text": "如果与中文相比，...",
+  "speed_info": [
+    { "unit": 1,  "segment_info": { "segment_count": 45, "speed": [237, 220] } },
+    { "unit": 5,  "segment_info": { "segment_count": 9,  "speed": [237, 220] } },
+    { "unit": 10, "segment_info": { "segment_count": 5,  "speed": [237, 220] } }
+  ],
+  "load_audio_time_ms": "163.24",
+  "gpu_time_ms": "1349.49"
+}
+```
+
+响应字段说明：
+
+| 字段 | 说明 |
+|------|------|
+| `segments[].speed` | **单句语速**（字/分钟）。分子为去除标点、空格后的实际内容数（中文按字、英文按单词、数字串各计 1）；分母为该句说话时长；再乘 `config.toml` 中 `[speech_rate].rate_factor`（默认 0.7）做经验修正 |
+| `speed_info` | **分时段语速统计**，按 1/5/10 分钟三种窗口单位分别统计 |
+| `speed_info[].unit` | 时间窗口单位（分钟） |
+| `speed_info[].segment_info.segment_count` | 该单位下切出的时间窗口个数（= `speed` 数组长度） |
+| `speed_info[].segment_info.speed` | 每个时间窗口的语速（字/分钟）列表 |
+
+#### `speed_info` 分时段语速计算方式
+
+对 1 / 5 / 10 分钟三种窗口单位，分别独立按下述步骤计算（`unit` 为窗口分钟数）：
+
+**① 划分时间窗口**
+
+以时间轴 `0` 秒为起点，按 `unit×60` 秒等分。设整段最后一句的结束时间为 `max_end`（秒），则窗口个数：
+
+```
+segment_count = ceil(max_end / (unit×60))
+```
+
+第 `k` 个窗口（`k` 从 0 开始）覆盖时间区间 `[k×unit×60, (k+1)×unit×60)`。
+
+**② 统计每句的"实际内容字数"**
+
+去除标点、空格等无关内容后计数：中文按字、英文按单词、数字串各计 1（与单句 `speed` 同口径）。
+
+```
+words(句子) = 中文字数 + 英文单词数 + 数字串个数
+```
+
+**③ 跨窗口的句子按时间重叠比例拆分**
+
+若一句 `[bg, ed]` 跨越多个窗口，则把它的字数按"与各窗口的重叠时长 / 该句总时长"的比例分摊到对应窗口：
+
+```
+overlap(句子, 窗口k) = min(ed, 窗口k末) − max(bg, 窗口k首)
+窗口k获得的字数 += words(句子) × overlap(句子, 窗口k) / (ed − bg)
+```
+
+**④ 计算每个窗口的语速**
+
+分母为窗口的**标称时长（固定为 unit 分钟）**，因此窗口内停顿（空闲）越多，语速越低：
+
+```
+窗口语速 = 窗口内累计字数 / (窗口标称时长 / 60)
+```
+
+补充规则：
+
+- **末窗口**：最后一个不足 `unit` 的窗口，标称时长改用**实际剩余时长** `max_end − k×unit×60`，避免被整窗时长稀释。
+- **空窗口**：窗口内完全没有说话内容时，语速记为 `0`。
+- 该统计**不**乘 `rate_factor`（与单句 `speed` 不同：空闲已通过固定分母体现）。
+
+**计算示例**（`unit=1`，即 60 秒窗口）：
+
+某句 `bg=58s, ed=63s`、字数 10，跨第 0、1 两个窗口：
+
+- 与窗口0（0–60s）重叠 2 秒 → 分到 `10 × 2/5 = 4` 字；
+- 与窗口1（60–120s）重叠 3 秒 → 分到 `10 × 3/5 = 6` 字。
+
+若窗口0内另有一句贡献 10 字，则窗口0共 14 字，其语速 = `14 / (60/60) = 14`（字/分钟）。
 
 ### WebSocket 实时转写
 

@@ -116,6 +116,12 @@ class Settings:
         compute = self._cfg.get("compute", {})
         return compute.get("compute_type", "float16")
 
+    # 语速计算配置 - 从嵌套的 [speech_rate] 部分读取
+    @property
+    def speech_rate_factor(self) -> float:
+        speech_rate = self._cfg.get("speech_rate", {})
+        return float(speech_rate.get("rate_factor", 1.0))
+
     # 功能开关 - 从嵌套的 [features] 部分读取
     @property
     def open_spk(self) -> bool:
@@ -146,6 +152,5 @@ class Settings:
     def ban_hotword(self) -> bool:
         features = self._cfg.get("features", {})
         return features.get("ban_hotword", False)
-
 
 settings = Settings()

@@ -22,7 +22,7 @@ from core.models import (
 from core.concurrency import acquire_gpu_slot, generate_with_gpu_lock, transcribe_with_gpu_lock
 from utils.audio_utils import preprocess_audio, write_audio_bytes_to_temp_file, crop_audio
 from utils.pynanote_speaker import diarize_text
-from utils.feature_utils import extract_features, identify_teacher, convert_role_ids, calculate_speech_rate
+from utils.feature_utils import extract_features, identify_teacher, convert_role_ids, calculate_speech_rate, build_speed_info
 from utils.asr_stats import update_stat, update_fail_task, add_queued_task, remove_queued_task
 from utils.character_utils import safe_concat
 from faster_whisper import WhisperModel
@@ -30,6 +30,26 @@ from faster_whisper import WhisperModel
 logger = logging.getLogger(__name__)
 
 router = APIRouter()
+
+# emotion2vec 原始标签 -> 业务情绪标签 映射
+EMOTION_LABEL_MAP = {
+    "中立/neutral": "平淡",
+    "其他/other": "平淡",
+    "<unk>": "平淡",
+    "开心/happy": "积极",
+    "吃惊/surprised": "兴奋",
+    "生气/angry": "强调",
+    "难过/sad": "思考",
+    "厌恶/disgusted": "思考",
+    "恐惧/fearful": "疑问",
+}
+
+
+def _map_emotion(label: str) -> str:
+    """将 emotion2vec 原始标签映射为业务情绪标签；未知或空值归为平淡。"""
+    if not label:
+        return "平淡"
+    return EMOTION_LABEL_MAP.get(label, "平淡")
 
 
 def _generate_task_id() -> str:
@@ -106,6 +126,9 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
         # 读取音频 tensor
         audio_tensor, sample_rate = await asyncio.to_thread(torchaudio.load, tmp_path, backend="ffmpeg")
 
+        # 音频总时长（秒），用于 speed_info 按整段音频切分时间窗口
+        audio_total_s = audio_tensor.shape[-1] / sample_rate if sample_rate else 0.0
+
         task_id = f"{_generate_task_id()}_{filename}"
 
         # ---------- 小语种：优先 whisper ----------
@@ -151,7 +174,7 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                     spk_id = int(spk.split("_")[-1]) if spk is not None else 0
                     role = "teacher" if spk_id == teacher_id else f"student{student_ids[spk_id]}"
                     text += sentence + " "
-                    speed = calculate_speech_rate(sentence, round(segment.start, 2), round(segment.end, 2))
+                    speed = calculate_speech_rate(sentence, round(segment.start, 2), round(segment.end, 2), settings.speech_rate_factor)
                     output_segments.append({
                         "segment_text": sentence,
                         "bg": f"{segment.start:.2f}",
@@ -190,27 +213,14 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                         res_emotion = model_emotion.generate(seg_path, granularity="utterance", extract_embedding=False)
                         max_score = max(res_emotion[0]['scores'])
                         emotion_label = res_emotion[0]['labels'][res_emotion[0]['scores'].index(max_score)]
-                        if request.noRealEmo:
-                            mapping = {
-                                "热忱": ["吃惊/surprised", "生气/angry", "恐惧/fearful", "开心/happy"],
-                                "平淡": ["<unk>", "其他/other", "中立/neutral"]
-                            }
-                            if emotion_label in mapping["热忱"]:
-                                emotion_label = "热忱"
-                            elif emotion_label in mapping["平淡"]:
-                                emotion_label = "平淡"
-                            emotion = emotion_label
-                        else:
-                            if emotion_label in ["<unk>", "中立/neutral"] or emotion_label is None:
-                                emotion_label = "平淡"
-                            emotion = emotion_label.split("/")[0]
-                        seg["emotion"] = emotion or "平淡"
+                        seg["emotion"] = _map_emotion(emotion_label)
 
                 update_stat("offline")
                 return {
                     "language": request.language,
                     "segments": output_segments,
                     "text": text.strip(),
+                    "speed_info": build_speed_info(output_segments, total_duration=audio_total_s),
                     "load_audio_time_ms": f"{load_audio_time_ms:.2f}",
                     "gpu_time_ms": f"{gpu_time_ms:.2f}"
                 }
@@ -238,6 +248,7 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                     "language": request.language,
                     "segments": output_segments,
                     "text": text.strip(),
+                    "speed_info": build_speed_info(output_segments, total_duration=audio_total_s),
                     "load_audio_time_ms": f"{load_audio_time_ms:.2f}",
                     "gpu_time_ms": f"{gpu_time_ms:.2f}"
                 }
@@ -294,43 +305,10 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                             update_fail_task()
                             return {"msg": f"open_emotion={settings.open_emotion} 未开启情感分析模型", "code": 4003}
 
-                        emotion_tmp = None
-                        # 关键词（文本）优先
-                        emotion_dict = {
-                            "激昂": [
-                                "必须", "一定要", "太重要了", "很重要", "绝对不能", "不错",
-                                "请大家认真听", "这特别关键", "很容易错", "太震撼了",
-                                "马上就要", "我们要", "这是一种信念", "我再说一遍", "我郑重告诉你们",
-                                "太精彩了", "你们一定要记住", "这太关键了", "绝不能忽视",
-                                "非常震撼", "简直太强了", "有没有感觉到", "我强调过很多次",
-                                "必须掌握", "我强烈建议", "这是重点", "注意这个地方", "这里注意",
-                                "这是考试必考", "一定会考的", "这是个大招", "非常核心",
-                                "千万别错过", "一不小心就会出错", "我们现在非常重要的一步",
-                                "我就问你厉不厉害"
-                            ],
-                            "热忱": [
-                                "我很喜欢", "特别有意思", "真棒", "非常精彩", "我们一起来看一下", "超级有趣",
-                                "真好", "太棒了", "超赞", "好有趣", "太可了", "蛮妙的", "很赞",
-                                "真的不错", "好理解", "挺喜欢", "我一看就兴奋"
-                            ],
-                            "沉稳": [
-                                "唉", "算了", "随便吧", "就这样吧", "真无语", "懒得说", "不想讲了", "失望",
-                                "有点烦", "没啥意思", "有点累", "你们自己看吧", "随你们", "讲不动了",
-                                "都讲过了", "不讲也罢", "怎么讲都一样", "讲了也没用", "不清楚？"
-                            ]
-                        }
-                        for emotion_label, keywords in emotion_dict.items():
-                            for kw in keywords:
-                                if kw in segment["text"]:
-                                    emotion_tmp = emotion_label
-                                    break
-                            if emotion_tmp:
-                                break
-
                         seg_len_ms = segment["end"] - segment["start"]
-                        if emotion_tmp is None and seg_len_ms > 10000:
+                        if seg_len_ms > 10000:
                             emotion = "平淡"
-                        elif emotion_tmp is None:
+                        else:
                             # 音频片段识别
                             cropped = crop_audio(audio_tensor, segment["start"] + 0.1, segment["end"] + 0.1, sample_rate)
                             with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as segf:
@@ -340,24 +318,9 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                             res_emotion = get_emotion_model().generate(seg_path, granularity="utterance", extract_embedding=False)
                             max_score = max(res_emotion[0]['scores'])
                             emotion_label = res_emotion[0]['labels'][res_emotion[0]['scores'].index(max_score)]
-                            if request.noRealEmo:
-                                mapping = {
-                                    "热忱": ["吃惊/surprised", "生气/angry", "恐惧/fearful", "开心/happy"],
-                                    "平淡": ["<unk>", "其他/other", "中立/neutral"]
-                                }
-                                if emotion_label in mapping["热忱"]:
-                                    emotion_label = "热忱"
-                                elif emotion_label in mapping["平淡"]:
-                                    emotion_label = "平淡"
-                                emotion = emotion_label
-                            else:
-                                if emotion_label in ["<unk>", "中立/neutral"] or emotion_label is None:
-                                    emotion_label = "平淡"
-                                emotion = emotion_label.split("/")[0]
-                        else:
-                            emotion = emotion_tmp
+                            emotion = _map_emotion(emotion_label)
 
-                    speed = calculate_speech_rate(segment["text"], segment["start"] / 1000, segment["end"] / 1000)
+                    speed = calculate_speech_rate(segment["text"], segment["start"] / 1000, segment["end"] / 1000, settings.speech_rate_factor)
                     item = {
                         "segment_text": segment["text"],
                         "bg": f"{segment['start'] / 1000:.2f}",
@@ -370,17 +333,25 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                         item["emotion"] = emotion if emotion is not None else "平淡"
                     segments.append(item)
 
-                # 身份识别（老师/学生）
-                spk_features = extract_features(segments)
-                teacher_role, scores, student_roles = identify_teacher(spk_features)
-                if teacher_role is None:
-                    teacher_role = max(spk_features, key=lambda x: spk_features[x]["keyword_count"])
-                segments = convert_role_ids(segments, teacher_role, student_roles)
+                # 身份识别（老师/学生）：由请求参数 showRoleIdentify 控制，默认 true
+                if request.showRoleIdentify:
+                    spk_features = extract_features(segments)
+                    teacher_role, scores, student_roles = identify_teacher(spk_features)
+                    if teacher_role is None:
+                        teacher_role = max(spk_features, key=lambda x: spk_features[x]["keyword_count"])
+                    segments = convert_role_ids(segments, teacher_role, student_roles)
+                else:
+                    # 关闭时保留 Paraformer 原始 spk ID，格式化为 spk_X 字符串
+                    for seg in segments:
+                        raw = seg.get("role")
+                        if raw is not None:
+                            seg["role"] = f"spk_{raw}"
 
                 ret = {
                     "language": request.language,
                     "segments": segments,
                     "text": text,
+                    "speed_info": build_speed_info(segments, total_duration=audio_total_s),
                     "load_audio_time_ms": f"{load_audio_time_ms:.2f}",
                     "gpu_time_ms": f"{gpu_time_ms:.2f}",
                 }
@@ -422,18 +393,43 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                                 "ed": f"{timestamps[i][1] / 1000:.2f}",
                                 "word_text": word_text
                             })
-                speed = calculate_speech_rate(segment["text"], segment["start"] / 1000, segment["end"] / 1000)
-                segments.append({
+                emotion = None
+                if request.showEmotion:
+                    if not settings.open_emotion or get_emotion_model() is None:
+                        logger.error(f"open_emotion={settings.open_emotion} 未开启情感分析模型 文件名:{filename} 转写失败")
+                        update_fail_task()
+                        return {"msg": f"open_emotion={settings.open_emotion} 未开启情感分析模型", "code": 4003}
+
+                    seg_len_ms = segment["end"] - segment["start"]
+                    if seg_len_ms > 10000 or seg_len_ms < 1000:
+                        emotion = "平淡"
+                    else:
+                        cropped = crop_audio(audio_tensor, segment["start"] + 0.1, segment["end"] + 0.1, sample_rate)
+                        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as segf:
+                            seg_path = segf.name
+                            tmp_paths.append(seg_path)
+                        torchaudio.save(seg_path, cropped, sample_rate)
+                        res_emotion = get_emotion_model().generate(seg_path, granularity="utterance", extract_embedding=False)
+                        max_score = max(res_emotion[0]['scores'])
+                        emotion_label = res_emotion[0]['labels'][res_emotion[0]['scores'].index(max_score)]
+                        emotion = _map_emotion(emotion_label)
+
+                speed = calculate_speech_rate(segment["text"], segment["start"] / 1000, segment["end"] / 1000, settings.speech_rate_factor)
+                item = {
                     "segment_text": segment["text"],
                     "bg": f"{segment['start'] / 1000:.2f}",
                     "ed": f"{segment['end'] / 1000:.2f}",
                     "speed": speed,
                     "segment_words": segment_words
-                })
+                }
+                if request.showEmotion:
+                    item["emotion"] = emotion if emotion is not None else "平淡"
+                segments.append(item)
             ret = {
                 "language": request.language,
                 "segments": segments,
                 "text": text,
+                "speed_info": build_speed_info(segments, total_duration=audio_total_s),
                 "load_audio_time_ms": f"{load_audio_time_ms:.2f}",
                 "gpu_time_ms": f"{gpu_time_ms:.2f}"
             }

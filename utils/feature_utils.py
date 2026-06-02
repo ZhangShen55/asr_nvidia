@@ -1,4 +1,5 @@
 import re
+import math
 
 from entity.data import *
 from typing import List, Dict, Any, Union
@@ -321,15 +322,31 @@ def convert_role_ids(segments: list, teacher_id: int, student_ids: list) -> list
     return segments
 
 
-def calculate_speech_rate(text, start_time, end_time):
+def count_content_words(text):
     """
-    计算语速（字/分钟），区分中文字符和英文单词
-    
+    统计实际内容数量（去除标点、空格等无关内容）：
+    中文按字计数，英文按单词计数，数字串各算一个。
+    findall 只提取实际内容 token，标点与空白被自动排除。
+    """
+    if not text:
+        return 0
+    chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', text))
+    non_chinese_text = re.sub(r'[\u4e00-\u9fff]', '', text)
+    english_words = len(re.findall(r"[a-zA-Z']+|\d+", non_chinese_text))
+    return chinese_chars + english_words
+
+
+def calculate_speech_rate(text, start_time, end_time, rate_factor=1.0):
+    """
+    计算语速（字/分钟）：分子为去除标点、空格等无关内容后的实际内容数量，
+    包括中文字符、英文单词、数字串；分母为时长（分钟）。
+
     参数:
     text (str): 说话内容
     start_time (float): 开始时间（秒）
     end_time (float): 结束时间（秒）
-    
+    rate_factor (float): 语速修正系数（来自 config.toml [speech_rate].rate_factor）
+
     返回:
     int: 语速（字/分钟，取整）
     """
@@ -338,31 +355,108 @@ def calculate_speech_rate(text, start_time, end_time):
         duration = end_time - start_time
         if duration <= 0:
             return 120
-        
-        # 只移除中英逗号、句号、感叹号、问号
-        punctuation_to_remove = ",.?!，。！？"
-        translator = str.maketrans('', '', punctuation_to_remove)
-        clean_text = text.translate(translator)
-        
-        # 计算中文字符数量
-        chinese_chars = len(re.findall(r'[\u4e00-\u9fff]', clean_text))
-        
-        # 计算英文单词数量
-        non_chinese_text = re.sub(r'[\u4e00-\u9fff]', '', clean_text)
-        english_words = len(non_chinese_text.split())
-        
-        # 总字数
-        total_words = chinese_chars + english_words
-        
-        # 计算语速（字/分钟），结果取整
+
+        # 总字数（实际内容）
+        total_words = count_content_words(text)
+
         if total_words == 0:
             return 0
-            
+
         duration_minutes = duration / 60
         speech_rate = total_words / duration_minutes
-        
-        return int(speech_rate * 0.7)  # chang
-    
+
+        return int(speech_rate * rate_factor)
+
     except Exception as e:
         # print(f"计算语速时出错: {e}")
         return 120
+
+
+def build_speed_info(segments, units=(1, 5, 10), total_duration=None):
+    """
+    按不同时间窗口单位（分钟）统计分段语速。
+
+    口径：
+    - 以时间轴 0 秒为起点，按 unit*60 秒切分窗口；时间轴长度优先取音频总时长
+      total_duration（保证窗口数完整覆盖整段音频，结尾静音也会补满窗口）；
+      未提供时回退为最后一句的结束时间；
+    - 每个说话段按其与窗口的时间重叠比例，把"实际内容字数"分摊到各窗口
+      （跨窗口的段按重叠时长占该段总时长的比例拆分）；
+    - 窗口语速 = 窗口内字数 / (窗口标称时长 / 60)，分母为固定窗口时长，
+      因此空闲多的窗口语速自然偏低（不再乘 rate_factor）；
+    - 最后一个不足 unit 的窗口，分母使用实际剩余时长；
+    - 没有任何说话的空窗口语速记为 0。
+
+    参数:
+    segments (list[dict]): 每段含 "bg"/"ed"（秒，可为字符串）与 "segment_text"
+    units (tuple[int]): 时间窗口单位（分钟）
+    total_duration (float|None): 音频总时长（秒）；用于确定窗口数，确保完整覆盖
+
+    返回:
+    list[dict]: [{"unit": u, "segment_info": {"segment_count": n, "speed": [...]}}]
+    """
+    # 解析所有有效段
+    parsed = []
+    max_end = 0.0
+    for seg in segments or []:
+        try:
+            bg = float(seg.get("bg"))
+            ed = float(seg.get("ed"))
+        except (TypeError, ValueError):
+            continue
+        if ed <= bg:
+            continue
+        words = count_content_words(seg.get("segment_text", ""))
+        parsed.append((bg, ed, words))
+        if ed > max_end:
+            max_end = ed
+
+    # 时间轴长度：优先音频总时长，保证窗口数覆盖整段音频
+    axis_end = max_end
+    if total_duration is not None:
+        try:
+            axis_end = max(float(total_duration), max_end)
+        except (TypeError, ValueError):
+            pass
+
+    result = []
+    for unit in units:
+        win = unit * 60.0
+        if axis_end <= 0 or win <= 0:
+            result.append({"unit": unit, "segment_info": {"segment_count": 0, "speed": []}})
+            continue
+
+        n = int(math.ceil(axis_end / win))
+        win_words = [0.0] * n  # 每个窗口分摊到的字数
+
+        for bg, ed, words in parsed:
+            dur = ed - bg
+            first = int(bg // win)
+            last = int((ed - 1e-9) // win)
+            for k in range(first, min(last, n - 1) + 1):
+                ws = k * win
+                we = ws + win
+                overlap = min(ed, we) - max(bg, ws)
+                if overlap <= 0:
+                    continue
+                win_words[k] += words * (overlap / dur)
+
+        speeds = []
+        for k in range(n):
+            start = k * win
+            nominal = min(win, axis_end - start)  # 末窗口用实际剩余时长
+            if nominal <= 0:
+                speeds.append(0)
+                continue
+            speed = win_words[k] / (nominal / 60.0)
+            speeds.append(int(round(speed)))
+
+        result.append({
+            "unit": unit,
+            "segment_info": {
+                "segment_count": n,
+                "speed": speeds
+            }
+        })
+
+    return result
