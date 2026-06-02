@@ -39,6 +39,13 @@ compute_type = "int8"
 [speech_rate]
 rate_factor = 0.4  # 语速修正系数（数值偏高时下调），最终语速 = 原始字/分钟 * rate_factor
 
+# 长音频分块配置（仅对 showSpk=true 生效）
+[audio_chunk]
+threshold_minutes = 90   # 超过此时长才触发分块
+chunk_minutes = 60       # 每块目标时长（分钟）
+min_last_chunk_minutes = 15  # 最后一块不足此值则并入前一块
+overlap_seconds = 15     # 块间重叠（秒），防止句子被硬截断
+
 # 功能开关配置
 [features]
 open_spk = true

@@ -20,7 +20,7 @@ from core.models import (
     get_asr_model, get_emotion_model, get_online_model, get_whisper_model, get_speaker_model
 )
 from core.concurrency import acquire_gpu_slot, generate_with_gpu_lock, transcribe_with_gpu_lock
-from utils.audio_utils import preprocess_audio, write_audio_bytes_to_temp_file, crop_audio
+from utils.audio_utils import preprocess_audio, write_audio_bytes_to_temp_file, crop_audio, extract_audio_clip, plan_audio_chunks
 from utils.pynanote_speaker import diarize_text
 from utils.feature_utils import extract_features, identify_teacher, convert_role_ids, calculate_speech_rate, build_speed_info
 from utils.asr_stats import update_stat, update_fail_task, add_queued_task, remove_queued_task
@@ -263,54 +263,113 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                 update_fail_task()
                 return {"msg": f"open_spk={settings.open_spk} 未开启音轨分离模型", "code": 4003}
 
-            try:
-                async with acquire_gpu_slot(task_id=task_id):
-                    rec_results = await generate_with_gpu_lock(
-                        model_asr, input=audio_bytes, is_final=True, **local_param_dict
+            # 检查是否需要分块（长音频 CAM++ 会漂移产生多余 spk ID）
+            need_chunk = (audio_total_s / 60) > settings.chunk_threshold_minutes
+            overlap_s = settings.chunk_overlap_seconds
+
+            if need_chunk:
+                chunk_plans = plan_audio_chunks(
+                    audio_total_s,
+                    chunk_minutes=settings.chunk_minutes,
+                    min_last_minutes=settings.min_last_chunk_minutes,
+                    overlap_s=overlap_s,
+                )
+                logger.info(f"长音频分块处理：时长={audio_total_s:.0f}s，共 {len(chunk_plans)} 块，文件：{filename}")
+            else:
+                chunk_plans = [(0, audio_total_s)]
+
+            all_segments = []
+            total_text = ""
+            gpu_time_ms = 0.0
+            global_student_count = 0   # showRoleIdentify=true 时跨块累计学生编号
+            global_spk_offset = 0      # showRoleIdentify=false 时跨块累计 spk 偏移
+
+            if request.showEmotion:
+                if not settings.open_emotion or get_emotion_model() is None:
+                    logger.error(f"open_emotion={settings.open_emotion} 未开启情感分析模型 文件名:{filename}")
+                    update_fail_task()
+                    return {"msg": f"open_emotion={settings.open_emotion} 未开启情感分析模型", "code": 4003}
+
+            for chunk_idx, (clean_start, clean_end) in enumerate(chunk_plans):
+                is_first = chunk_idx == 0
+                is_last = chunk_idx == len(chunk_plans) - 1
+
+                # 实际提取区间（含 overlap，防止句子被硬截断）
+                actual_start = clean_start if is_first else max(0.0, clean_start - overlap_s)
+                actual_end = clean_end if is_last else min(audio_total_s, clean_end + overlap_s)
+
+                if need_chunk:
+                    chunk_path = await asyncio.to_thread(
+                        extract_audio_clip, tmp_path, actual_start, actual_end - actual_start
                     )
-            except (asyncio.TimeoutError, IndexError, HTTPException):
-                update_fail_task()
-                return {"msg": "请求过多或超时，请稍后再试", "code": 4004}
+                    tmp_paths.append(chunk_path)
+                    with open(chunk_path, "rb") as f:
+                        chunk_bytes = f.read()
+                    chunk_label = f"{task_id}_chunk{chunk_idx}"
+                else:
+                    chunk_bytes = audio_bytes
+                    chunk_label = task_id
 
-            gpu_time_ms = (time.perf_counter() - start_time) * 1000
+                try:
+                    t_gpu = time.perf_counter()
+                    async with acquire_gpu_slot(task_id=chunk_label):
+                        rec_results = await generate_with_gpu_lock(
+                            model_asr, input=chunk_bytes, is_final=True, **local_param_dict
+                        )
+                    gpu_time_ms += (time.perf_counter() - t_gpu) * 1000
+                except (asyncio.TimeoutError, IndexError, HTTPException):
+                    update_fail_task()
+                    return {"msg": "请求过多或超时，请稍后再试", "code": 4004}
 
-            if len(rec_results) == 0:
-                update_fail_task()
-                return {"text": "", "sentences": [], "code": 0}
-            elif len(rec_results) == 1:
+                if not rec_results:
+                    continue
                 rec_result = rec_results[0]
-                text = rec_result["text"]
                 if "sentence_info" not in rec_result or not rec_result["sentence_info"]:
-                    logger.error(f"音频文件为空或未检测到任何人声，可能是静音，文件名:{filename} 转写失败")
-                    return {"msg": "音频文件为空或未检测到任何人声", "code": 4008}
+                    logger.warning(f"块 {chunk_idx} 未检测到人声，跳过")
+                    continue
 
-                segments = []
+                total_text += rec_result.get("text", "")
+
+                # 本块 unique spk IDs（用于 showRoleIdentify=false 偏移）
+                chunk_raw_spks = sorted(set(
+                    seg.get("spk") for seg in rec_result["sentence_info"]
+                    if seg.get("spk") is not None
+                ))
+
+                chunk_segments = []
                 for segment in rec_result["sentence_info"]:
+                    # 将 Paraformer 返回的毫秒时间戳转为绝对秒（加上实际开始偏移）
+                    abs_start_s = segment["start"] / 1000 + actual_start
+                    abs_end_s = segment["end"] / 1000 + actual_start
+
+                    # 过滤 overlap 区域的重复段：非第一块时丢弃落在前一块有效区间内的段
+                    if not is_first and abs_start_s < clean_start:
+                        continue
+                    # 非最后块时丢弃超出本块有效区间的段（由下一块负责）
+                    if not is_last and abs_start_s >= clean_end:
+                        continue
+
                     segment_words = []
-                    emotion = None
                     if request.wordTimestamps:
                         words = re.findall(r"[\u4e00-\u9fff]|[a-zA-Z']+|\b[a-zA-Z']+\b", segment["text"])
-                        timestamps = segment["timestamp"]
                         for i, word_text in enumerate(words):
-                            if i < len(timestamps):
+                            if i < len(segment.get("timestamp", [])):
+                                ts = segment["timestamp"][i]
                                 segment_words.append({
-                                    "bg": f"{timestamps[i][0] / 1000:.2f}",
-                                    "ed": f"{timestamps[i][1] / 1000:.2f}",
+                                    "bg": f"{ts[0] / 1000 + actual_start:.2f}",
+                                    "ed": f"{ts[1] / 1000 + actual_start:.2f}",
                                     "word_text": word_text
                                 })
 
+                    # 情绪识别
+                    emotion = None
                     if request.showEmotion:
-                        if not settings.open_emotion or get_emotion_model() is None:
-                            logger.error(f"open_emotion={settings.open_emotion} 未开启情感分析模型 文件名:{filename} 转写失败")
-                            update_fail_task()
-                            return {"msg": f"open_emotion={settings.open_emotion} 未开启情感分析模型", "code": 4003}
-
                         seg_len_ms = segment["end"] - segment["start"]
-                        if seg_len_ms > 10000:
+                        if seg_len_ms > 10000 or seg_len_ms < 1000:
                             emotion = "平淡"
                         else:
-                            # 音频片段识别
-                            cropped = crop_audio(audio_tensor, segment["start"] + 0.1, segment["end"] + 0.1, sample_rate)
+                            # crop_audio 参数单位为毫秒
+                            cropped = crop_audio(audio_tensor, abs_start_s * 1000 + 0.1, abs_end_s * 1000 + 0.1, sample_rate)
                             with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as segf:
                                 seg_path = segf.name
                                 tmp_paths.append(seg_path)
@@ -320,43 +379,65 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                             emotion_label = res_emotion[0]['labels'][res_emotion[0]['scores'].index(max_score)]
                             emotion = _map_emotion(emotion_label)
 
-                    speed = calculate_speech_rate(segment["text"], segment["start"] / 1000, segment["end"] / 1000, settings.speech_rate_factor)
+                    speed = calculate_speech_rate(segment["text"], abs_start_s, abs_end_s, settings.speech_rate_factor)
                     item = {
                         "segment_text": segment["text"],
-                        "bg": f"{segment['start'] / 1000:.2f}",
-                        "ed": f"{segment['end'] / 1000:.2f}",
+                        "bg": f"{abs_start_s:.2f}",
+                        "ed": f"{abs_end_s:.2f}",
                         "speed": speed,
                         "segment_words": segment_words,
-                        "role": segment.get("spk")
+                        "role": segment.get("spk"),   # 原始 spk 整数，后续统一处理
                     }
                     if request.showEmotion:
                         item["emotion"] = emotion if emotion is not None else "平淡"
-                    segments.append(item)
+                    chunk_segments.append(item)
 
-                # 身份识别（老师/学生）：由请求参数 showRoleIdentify 控制，默认 true
+                # ---------- 本块角色分配 ----------
                 if request.showRoleIdentify:
-                    spk_features = extract_features(segments)
-                    teacher_role, scores, student_roles = identify_teacher(spk_features)
+                    spk_features = extract_features(chunk_segments)
+                    teacher_role, _, student_roles = identify_teacher(spk_features)
                     if teacher_role is None:
                         teacher_role = max(spk_features, key=lambda x: spk_features[x]["keyword_count"])
-                    segments = convert_role_ids(segments, teacher_role, student_roles)
-                else:
-                    # 关闭时保留 Paraformer 原始 spk ID，格式化为 spk_X 字符串
-                    for seg in segments:
-                        raw = seg.get("role")
-                        if raw is not None:
+
+                    for seg in chunk_segments:
+                        raw = seg["role"]
+                        if raw == teacher_role:
+                            seg["role"] = "teacher"
+                        elif raw in student_roles:
+                            idx = student_roles.index(raw)
+                            seg["role"] = f"student{global_student_count + idx + 1}"
+                        else:
                             seg["role"] = f"spk_{raw}"
 
-                ret = {
-                    "language": request.language,
-                    "segments": segments,
-                    "text": text,
-                    "speed_info": build_speed_info(segments, total_duration=audio_total_s),
-                    "load_audio_time_ms": f"{load_audio_time_ms:.2f}",
-                    "gpu_time_ms": f"{gpu_time_ms:.2f}",
-                }
-                update_stat("offline")
-                return ret
+                    global_student_count += len(student_roles)
+                else:
+                    # 不识别角色：本块 spk ID 加全局偏移，保证跨块唯一
+                    spk_to_global = {
+                        spk: global_spk_offset + i
+                        for i, spk in enumerate(chunk_raw_spks)
+                    }
+                    for seg in chunk_segments:
+                        raw = seg["role"]
+                        seg["role"] = f"spk_{spk_to_global.get(raw, raw)}"
+                    global_spk_offset += len(chunk_raw_spks)
+
+                all_segments.extend(chunk_segments)
+                logger.info(f"块 {chunk_idx} 完成：{len(chunk_segments)} 段，clean=[{clean_start:.0f}s,{clean_end:.0f}s]")
+
+            if not all_segments:
+                update_fail_task()
+                return {"msg": "音频文件为空或未检测到任何人声", "code": 4008}
+
+            ret = {
+                "language": request.language,
+                "segments": all_segments,
+                "text": total_text,
+                "speed_info": build_speed_info(all_segments, total_duration=audio_total_s),
+                "load_audio_time_ms": f"{load_audio_time_ms:.2f}",
+                "gpu_time_ms": f"{gpu_time_ms:.2f}",
+            }
+            update_stat("offline")
+            return ret
 
         # ---------- 不开音轨分离 ----------
         try:

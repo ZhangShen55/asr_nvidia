@@ -173,6 +173,44 @@ def split_audio(wav_file: str, chunk_size: int):
     return chunks
 
 
+def plan_audio_chunks(
+    duration_s: float,
+    chunk_minutes: float = 60,
+    min_last_minutes: float = 15,
+    overlap_s: float = 15,
+) -> list:
+    """
+    规划长音频分块方案，返回 [(clean_start_s, clean_end_s), ...] 列表。
+
+    规则：
+    - 按 chunk_minutes 等分，最后一块不足 min_last_minutes 则并入倒数第二块；
+    - clean_start/clean_end 为该块对外"有效区间"，不含 overlap；
+    - 实际送进模型的音频区间由调用方根据 overlap_s 扩展：
+        actual_start = max(0, clean_start - overlap_s)   (非第一块)
+        actual_end   = min(duration_s, clean_end + overlap_s) (非最后块)
+    """
+    chunk_s = chunk_minutes * 60
+    min_last_s = min_last_minutes * 60
+
+    chunks = []
+    pos = 0.0
+    while pos < duration_s:
+        end = min(pos + chunk_s, duration_s)
+        chunks.append((pos, end))
+        if end >= duration_s:
+            break
+        pos = end
+
+    # 最后一块过短则合并到倒数第二块
+    if len(chunks) >= 2 and (chunks[-1][1] - chunks[-1][0]) < min_last_s:
+        prev_start, _ = chunks[-2]
+        _, last_end = chunks[-1]
+        chunks[-2] = (prev_start, last_end)
+        chunks.pop()
+
+    return chunks
+
+
 def detect_language(file_path: str, model: WhisperModel):
     # 语言检测
     seg,info = model.transcribe(file_path,language=None)

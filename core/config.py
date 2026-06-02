@@ -153,4 +153,22 @@ class Settings:
         features = self._cfg.get("features", {})
         return features.get("ban_hotword", False)
 
+    # 长音频分块配置
+    @property
+    def chunk_threshold_minutes(self) -> float:
+        return float(self._cfg.get("audio_chunk", {}).get("threshold_minutes", 90))
+
+    @property
+    def chunk_minutes(self) -> float:
+        return float(self._cfg.get("audio_chunk", {}).get("chunk_minutes", 60))
+
+    @property
+    def min_last_chunk_minutes(self) -> float:
+        return float(self._cfg.get("audio_chunk", {}).get("min_last_chunk_minutes", 15))
+
+    @property
+    def chunk_overlap_seconds(self) -> float:
+        return float(self._cfg.get("audio_chunk", {}).get("overlap_seconds", 15))
+
+
 settings = Settings()
