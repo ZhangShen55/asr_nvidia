@@ -290,36 +290,76 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
                     update_fail_task()
                     return {"msg": f"open_emotion={settings.open_emotion} 未开启情感分析模型", "code": 4003}
 
-            for chunk_idx, (clean_start, clean_end) in enumerate(chunk_plans):
+            # ---------- 并发预切割所有块（ffmpeg，CPU/IO 密集，不占 GPU）----------
+            # 计算每块实际切割区间
+            chunk_meta = []  # [(actual_start, actual_end, clean_start, clean_end), ...]
+            for idx, (cs, ce) in enumerate(chunk_plans):
+                is_first = idx == 0
+                is_last = idx == len(chunk_plans) - 1
+                a_start = cs if is_first else max(0.0, cs - overlap_s)
+                a_end = ce if is_last else min(audio_total_s, ce + overlap_s)
+                chunk_meta.append((a_start, a_end, cs, ce))
+
+            if need_chunk:
+                # 并发切割；用 return_exceptions=True 保证部分失败不中断 gather
+                async def _cut_one(idx, a_start, a_end):
+                    path = await asyncio.to_thread(
+                        extract_audio_clip, tmp_path, a_start, a_end - a_start
+                    )
+                    return idx, path
+
+                cut_coros = [_cut_one(i, m[0], m[1]) for i, m in enumerate(chunk_meta)]
+                cut_results = await asyncio.gather(*cut_coros, return_exceptions=True)
+
+                # 立即将所有成功切割的文件注册到 tmp_paths（确保 finally 能清理）
+                chunk_paths: dict[int, str] = {}
+                for result in cut_results:
+                    if isinstance(result, Exception):
+                        logger.error(f"音频分块切割失败：{result}")
+                        update_fail_task()
+                        return {"msg": "音频分块切割失败，请重试", "code": 4007}
+                    idx, path = result
+                    tmp_paths.append(path)   # ← 先注册，无论后续推理是否成功都会被清理
+                    chunk_paths[idx] = path
+            else:
+                chunk_paths = {}   # 非分块模式，直接用 audio_bytes
+
+            for chunk_idx, (actual_start, actual_end, clean_start, clean_end) in enumerate(chunk_meta):
                 is_first = chunk_idx == 0
                 is_last = chunk_idx == len(chunk_plans) - 1
 
-                # 实际提取区间（含 overlap，防止句子被硬截断）
-                actual_start = clean_start if is_first else max(0.0, clean_start - overlap_s)
-                actual_end = clean_end if is_last else min(audio_total_s, clean_end + overlap_s)
-
                 if need_chunk:
-                    chunk_path = await asyncio.to_thread(
-                        extract_audio_clip, tmp_path, actual_start, actual_end - actual_start
-                    )
-                    tmp_paths.append(chunk_path)
-                    with open(chunk_path, "rb") as f:
+                    with open(chunk_paths[chunk_idx], "rb") as f:
                         chunk_bytes = f.read()
                     chunk_label = f"{task_id}_chunk{chunk_idx}"
                 else:
                     chunk_bytes = audio_bytes
                     chunk_label = task_id
 
-                try:
-                    t_gpu = time.perf_counter()
-                    async with acquire_gpu_slot(task_id=chunk_label):
-                        rec_results = await generate_with_gpu_lock(
-                            model_asr, input=chunk_bytes, is_final=True, **local_param_dict
-                        )
-                    gpu_time_ms += (time.perf_counter() - t_gpu) * 1000
-                except (asyncio.TimeoutError, IndexError, HTTPException):
-                    update_fail_task()
-                    return {"msg": "请求过多或超时，请稍后再试", "code": 4004}
+                # ---------- GPU 推理（带失败重试）----------
+                max_retry = settings.chunk_retry_count
+                rec_results = None
+                for attempt in range(max_retry + 1):
+                    try:
+                        t_gpu = time.perf_counter()
+                        async with acquire_gpu_slot(task_id=f"{chunk_label}_r{attempt}"):
+                            rec_results = await generate_with_gpu_lock(
+                                model_asr, input=chunk_bytes, is_final=True, **local_param_dict
+                            )
+                        gpu_time_ms += (time.perf_counter() - t_gpu) * 1000
+                        break  # 成功，退出重试循环
+                    except (asyncio.TimeoutError, IndexError, HTTPException) as e:
+                        if attempt < max_retry:
+                            wait_s = 2 ** attempt  # 指数退避：1s, 2s
+                            logger.warning(
+                                f"块 {chunk_idx} 推理失败（第{attempt+1}次），"
+                                f"{wait_s}s 后重试，错误：{e}"
+                            )
+                            await asyncio.sleep(wait_s)
+                        else:
+                            logger.error(f"块 {chunk_idx} 推理失败，已达最大重试次数 {max_retry}")
+                            update_fail_task()
+                            return {"msg": "请求过多或超时，请稍后再试", "code": 4004}
 
                 if not rec_results:
                     continue

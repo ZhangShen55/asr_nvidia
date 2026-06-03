@@ -170,5 +170,9 @@ class Settings:
     def chunk_overlap_seconds(self) -> float:
         return float(self._cfg.get("audio_chunk", {}).get("overlap_seconds", 15))
 
+    @property
+    def chunk_retry_count(self) -> int:
+        return int(self._cfg.get("audio_chunk", {}).get("chunk_retry_count", 2))
+
 
 settings = Settings()
