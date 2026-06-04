@@ -17,7 +17,7 @@ from fastapi import UploadFile, Form
 from entity.data import AsrRequestParams, get_asr_params
 from core.config import settings
 from core.models import (
-    get_asr_model, get_emotion_model, get_online_model, get_whisper_model, get_speaker_model
+    get_asr_model, get_emotion_model, get_whisper_model, get_speaker_model
 )
 from core.concurrency import acquire_gpu_slot, generate_with_gpu_lock, transcribe_with_gpu_lock
 from utils.audio_utils import preprocess_audio, write_audio_bytes_to_temp_file, crop_audio, extract_audio_clip, plan_audio_chunks

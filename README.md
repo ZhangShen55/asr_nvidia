@@ -9,7 +9,6 @@
 | **ASR 转写** | 语音转文字 | Paraformer(中文) + Whisper(多语言) |
 | **说话人分离** | 区分不同说话人 | CAM++ + Pyannote |
 | **情感识别** | 分析语音情绪 | emotion2vec |
-| **实时转写** | WebSocket 流式识别 | Paraformer-online |
 | **五何分类** | 教师提问分类 | BERT 文本分类 |
 | **角色识别** | 自动识别教师/学生 | 特征工程 + 规则引擎 |
 
@@ -20,7 +19,6 @@
 │                        API 路由层                            │
 ├─────────────────────────────────────────────────────────────┤
 │  /v1.1.8/seacraft_asr    │  离线ASR转写（主接口）           │
-│  /v1.0.1/seacraft_asr_online  │  WebSocket实时转写          │
 │  /text/question          │  五何分类分析                   │
 │  /audio/db_snr           │  音频质量分析                   │
 │  /audio/detect_mandarin  │  普通话检测                     │
@@ -58,7 +56,6 @@ asr_refine/
 ├── api/
 │   └── routes/
 │       ├── asr.py           # 离线ASR转写
-│       ├── ws_online.py     # WebSocket实时转写
 │       ├── text.py          # 五何分类
 │       ├── audio.py         # 音频处理
 │       └── status.py        # 状态监控
@@ -120,8 +117,6 @@ punc_model_dir = "/var/model_zoo/model_asr/punc_ct-transformer_cn-en-common-voca
 asr_model_dir = "/var/model_zoo/model_asr/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
 spk_model_dir = "/var/model_zoo/model_asr/speech_campplus_sv_zh_en_16k-common_advanced"
 emotion_model_dir = "/var/model_zoo/model_asr/emotion2vec_plus_large"
-asr_online_model_dir = "/var/model_zoo/model_asr/speech_paraformer_asr_nat-zh-cn-16k-common-vocab8404-online"
-asr_online_punc_model_dir = "/var/model_zoo/model_asr/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727"
 whisper_model_dir = "/var/model_zoo/model_asr/faster-whisper-large-v3"
 pyannote_model_yml = "/var/model_zoo/model_asr/speaker-diarization-3.1/config.yaml"
 bert_model_tokenizer = "/var/model_zoo/model_asr/bert-base-chinese"
@@ -142,8 +137,9 @@ open_emotion = true        # 情感识别
 ban_hotword = true         # 禁用热词
 open_mul_lang = true       # 多语言(Whisper)
 open_mul_spk = true        # 多说话人分离(Pyannote)
-open_online = false        # 实时转写
 ```
+
+> 实时转写（WebSocket）已拆分为独立项目 `jy-algorithm-app-asr-online`，不在本仓库内提供。
 
 ### 启动服务
 
@@ -258,19 +254,6 @@ overlap(句子, 窗口k) = min(ed, 窗口k末) − max(bg, 窗口k首)
 
 若窗口0内另有一句贡献 10 字，则窗口0共 14 字，其语速 = `14 / (60/60) = 14`（字/分钟）。
 
-### WebSocket 实时转写
-
-```javascript
-const ws = new WebSocket('ws://localhost:8083/v1.0.1/seacraft_asr_online');
-ws.onopen = () => {
-  // 发送音频数据
-  ws.send(audioChunk);
-};
-ws.onmessage = (event) => {
-  console.log(JSON.parse(event.data));
-};
-```
-
 ## ⚙️ 功能开关说明
 
 以下开关均位于 `config.toml` 的 `[features]` 段下（下表默认值为示例 `config.toml` 的取值；代码缺省值除 `ban_hotword` 外均为 `false`）：
@@ -281,7 +264,6 @@ ws.onmessage = (event) => {
 | `open_emotion` | 开启情感识别 | `true` |
 | `open_mul_lang` | 开启多语言(Whisper) | `true` |
 | `open_mul_spk` | 开启多说话人分离(Pyannote) | `true` |
-| `open_online` | 开启实时转写 | `false` |
 | `ban_hotword` | 禁用热词功能 | `true` |
 
 ## 🐳 Docker 部署

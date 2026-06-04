@@ -10,7 +10,6 @@ from api.routes.asr import router as asr_router
 from api.routes.audio import router as audio_router
 from api.routes.status import router as status_router
 from api.routes.text import router as text_router
-from api.routes.ws_online import router as ws_router
 from utils.asr_stats import reset_stats
 
 
@@ -49,7 +48,6 @@ def create_app() -> FastAPI:
     app.include_router(asr_router)
     app.include_router(audio_router)
     app.include_router(text_router)
-    app.include_router(ws_router)
 
     return app
 

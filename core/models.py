@@ -3,8 +3,6 @@ import torch
 import torch.nn.functional as F
 from transformers import BertTokenizer, BertForSequenceClassification
 from faster_whisper import WhisperModel
-from modelscope.pipelines import pipeline
-from modelscope.utils.constant import Tasks
 from funasr import AutoModel
 from pyannote.audio import Pipeline as PyannotePipeline
 
@@ -14,10 +12,8 @@ from utils.feature_utils import id2label
 # 单例缓存
 _model_asr = None
 _model_emotion = None
-_model_online = None
 _model_whisper = None
 _model_speaker = None
-_punct_pipeline = None
 
 # 五何
 _model_bert = None
@@ -35,7 +31,7 @@ async def load_models_if_needed():
     """
     根据配置开关懒加载模型。
     """
-    global _model_asr, _model_emotion, _model_online, _model_whisper, _model_speaker, _punct_pipeline
+    global _model_asr, _model_emotion, _model_whisper, _model_speaker
 
     async with _model_lock:
         if settings.open_spk and _model_asr is None:
@@ -61,15 +57,6 @@ async def load_models_if_needed():
                 disable_pbar=True
             )
 
-        if settings.open_online and _model_online is None:
-            _model_online = AutoModel(
-                model=settings.asr_online_model_dir,
-                device=settings.device,
-                ngpu=settings.ngpu,
-                disable_update=True,
-                disable_pbar=True
-            )
-
         if settings.open_mul_lang and _model_whisper is None:
             _model_whisper = WhisperModel(
                 settings.whisper_model_dir,
@@ -82,15 +69,6 @@ async def load_models_if_needed():
             _model_speaker = PyannotePipeline.from_pretrained(settings.pyannote_model_yml)
             _model_speaker.to(device())
 
-        if settings.open_online and _punct_pipeline is None:
-            _punct_pipeline = pipeline(
-                task=Tasks.punctuation,
-                model=settings.asr_online_punc_model_dir,
-                disable_update=True,
-                device=settings.device
-            )
-
-
 def get_asr_model():
     return _model_asr
 
@@ -99,20 +77,12 @@ def get_emotion_model():
     return _model_emotion
 
 
-def get_online_model():
-    return _model_online
-
-
 def get_whisper_model():
     return _model_whisper
 
 
 def get_speaker_model():
     return _model_speaker
-
-
-def get_punct_pipeline():
-    return _punct_pipeline
 
 
 # ---------- 五何分类 ----------
