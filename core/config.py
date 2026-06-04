@@ -81,16 +81,6 @@ class Settings:
         return model_paths.get("emotion_model_dir", "/model/emotion2vec_plus_seed")
 
     @property
-    def asr_online_model_dir(self) -> str:
-        model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("asr_online_model_dir", "/model/speech_paraformer-large_asr_nat-zh-cantonese-en-16k-vocab8501-online")
-
-    @property
-    def asr_online_punc_model_dir(self) -> str:
-        model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("asr_online_punc_model_dir", "/model/punc_ct-transformer_zh-cn-common-vad_realtime-vocab272727")
-
-    @property
     def whisper_model_dir(self) -> str:
         model_paths = self._cfg.get("model_paths", {})
         return model_paths.get("whisper_model_dir", "/model/faster-whisper-large-v3")
@@ -137,11 +127,6 @@ class Settings:
     def open_mul_spk(self) -> bool:
         features = self._cfg.get("features", {})
         return features.get("open_mul_spk", False)
-
-    @property
-    def open_online(self) -> bool:
-        features = self._cfg.get("features", {})
-        return features.get("open_online", False)
 
     @property
     def open_emotion(self) -> bool:
