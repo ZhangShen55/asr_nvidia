@@ -26,3 +26,18 @@ docker run -d --name jy-asr-offline-v2 --gpus '"device=0"' -p 9000:9000 \
   -e CONFIG_PATH=/config.toml \
   jy-algorithm-app-asr-offline:v2.0
 ```
+
+## 问题 4：ASR 接口 500（torchaudio backend）
+
+- **现象**：`ValueError: Unsupported backend 'ffmpeg'`
+- **处理**：`utils/audio_utils.load_audio_tensor()` 优先 ffmpeg，失败回退默认 soundfile
+
+## 验证结果（2026-06-04）
+
+| 步骤 | 结果 |
+|------|------|
+| `docker build -t jy-algorithm-app-asr-offline:v2.0 .` | 成功（约 60min 首构建，依赖层可缓存） |
+| `GET /get_status` | 200，`status: living` |
+| `POST /v1.1.8/seacraft_asr`（chinEng-16k.wav） | 200，182 segments，含 `speed` |
+
+生产部署建议：`config.docker.toml` 中 `device=cuda:0` 对应 `--gpus device=N` 映射；多卡宿主机用 `cuda:1` 时挂载原 `config.toml` 并 `--gpus all`。
