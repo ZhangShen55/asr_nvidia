@@ -1,0 +1,44 @@
+# Docker 运行用配置（单实例、容器内 GPU 索引为 0）
+id_engine = "1"
+version = "seacraft-asr-app-v1.1.9"
+
+device = "cuda:0"
+ngpu = 1
+ncpu = 4
+concurrency = 5
+instance_count = 1
+
+log_path = "./asr_service.log"
+
+hotword_path = "/var/model_zoo/model_asr/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/example/hotword.txt"
+
+[model_paths]
+vad_model_dir = "/var/model_zoo/model_asr/speech_fsmn_vad_zh-cn-16k-common-pytorch"
+punc_model_dir = "/var/model_zoo/model_asr/punc_ct-transformer_cn-en-common-vocab471067-large"
+asr_model_dir = "/var/model_zoo/model_asr/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
+spk_model_dir = "/var/model_zoo/model_asr/speech_campplus_sv_zh_en_16k-common_advanced"
+emotion_model_dir = "/var/model_zoo/model_asr/emotion2vec_plus_large"
+whisper_model_dir = "/var/model_zoo/model_asr/faster-whisper-large-v3"
+pyannote_model_yml = "/var/model_zoo/model_asr/speaker-diarization-3.1/config.yaml"
+bert_model_tokenizer = "/var/model_zoo/model_asr/bert-base-chinese"
+bert_model_dir = "/var/model_zoo/model_asr/bert_output/checkpoint-88"
+
+[compute]
+compute_type = "int8"
+
+[speech_rate]
+rate_factor = 0.4
+
+[audio_chunk]
+threshold_minutes = 90
+chunk_minutes = 60
+min_last_chunk_minutes = 15
+overlap_seconds = 15
+chunk_retry_count = 2
+
+[features]
+open_spk = true
+open_emotion = true
+ban_hotword = true
+open_mul_lang = false
+open_mul_spk = false

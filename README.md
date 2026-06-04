@@ -268,19 +268,51 @@ overlap(句子, 窗口k) = min(ed, 窗口k末) − max(bg, 窗口k首)
 
 ## 🐳 Docker 部署
 
-```bash
-# 构建镜像
-docker build -t seacraft-asr .
+### 构建前准备
 
-# 运行容器
+1. 确保存在 `wheel/pyarrow-20.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl`（`*.whl` 在 `.gitignore` 中，clone 后需自行放入）。
+2. 构建上下文已通过 `.dockerignore` 排除 `test_wav/`、日志等大文件。
+3. 基础镜像为 **CentOS 7**（`glibc 2.17`），Dockerfile 已固定 `Miniconda3-py310_23.11.0-2`，勿改用 `Miniconda3-latest`（会报 `GLIBC >=2.28`）。
+
+### 构建镜像
+
+镜像为三阶段：`deps`（依赖）→ `builder`（Cython 编译）→ `runtime`（运行）。
+
+```bash
+cd /path/to/asr_refine
+docker build -t seacraft-asr .
+```
+
+`builder` 阶段会将 `core/`、`utils/`、`api/`、`entity/` 编译为 `.so` 并删除对应 `.py`（保留 `__init__.py` 与入口 `main.py`）。
+
+本地仅源码调试（不编译）：
+
+```bash
+pip install Cython   # 可选
+bash scripts/build_cython.sh .
+python main.py
+```
+
+### 运行容器
+
+对外端口为 **Nginx 9000**（非 8083）。`start.sh` 从 `CONFIG_PATH` 指向的 **TOML** 读取 `instance_count`。
+
+```bash
 docker run -d \
-  --gpus all \
-  -p 8083:8083 \
-  -v /path/to/models:/var/model_zoo \
-  -v $(pwd)/config.toml:/app/config.toml \
-  -e CONFIG_PATH=/app/config.toml \
+  --name seacraft-asr \
+  --gpus '"device=1"' \
+  -p 9000:9000 \
+  -v /var/model_zoo:/var/model_zoo \
+  -v $(pwd)/config.toml:/config.toml:ro \
+  -e CONFIG_PATH=/config.toml \
   seacraft-asr
 ```
+
+| 项 | 说明 |
+|----|------|
+| `-p 9000:9000` | Nginx 入口 |
+| `CONFIG_PATH` | 与 `core/config.py`、start.sh 共用，须为 TOML |
+| 模型目录 | 挂载到 `config.toml` 中 `[model_paths]` 配置的路径 |
 
 ## 📊 监控指标
 

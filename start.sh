@@ -1,5 +1,5 @@
 #!/bin/bash
-export CONFIG_PATH="/config.json"
+export CONFIG_PATH="${CONFIG_PATH:-/config.toml}"
 # ######排错检查
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
@@ -29,9 +29,20 @@ else
     exit 1
 fi
 
-instance_count=$(jq -r '.instance_count // 4' "$CONFIG_PATH")
+instance_count=$(CONFIG_PATH="$CONFIG_PATH" python - <<'EOF'
+import os
+try:
+    import tomli
+    path = os.environ.get("CONFIG_PATH", "/config.toml")
+    with open(path, "rb") as f:
+        cfg = tomli.load(f)
+    print(int(cfg.get("instance_count", 4)))
+except Exception:
+    print(4)
+EOF
+)
 if [[ -z "$instance_count" || "$instance_count" == "null" ]]; then
-    echo "[ERROR] 无法读取 instance_count，使用默认值 4"
+    echo "[WARN] 无法读取 instance_count，使用默认值 4"
     instance_count=4
 fi
 
@@ -48,9 +59,10 @@ for ((i=0; i<instance_count; i++)); do
 done
 echo "}" >> "$NGINX_UPSTREAM_CONF"
 
-nginx -t && nginx
 if nginx -t; then
-    nginx -s reload || nginx
+    nginx || true
+    nginx -s reload 2>/dev/null || nginx
+    echo "[INFO] Nginx 已启动"
 else
     echo "[ERROR] Nginx 配置有误，启动失败"
     exit 1

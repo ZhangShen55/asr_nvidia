@@ -12,10 +12,21 @@ from faster_whisper import WhisperModel
 
 import tempfile
 import subprocess
+import torchaudio
 
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger("audio")
+
+def load_audio_tensor(path: str):
+    """
+    加载音频为 tensor。优先 ffmpeg 后端；容器内 torchaudio 若未编译 ffmpeg 则回退 soundfile。
+    """
+    try:
+        return torchaudio.load(path, backend="ffmpeg")
+    except ValueError:
+        return torchaudio.load(path)
+
 
 def check_audio_format(audio_bytes: bytes) -> dict:
     try:

@@ -1,0 +1,39 @@
+# Git
+.git
+.gitignore
+
+# Python 缓存
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+
+# 测试与样本（体积大，运行时不需要）
+test_wav/
+*.wav
+*.pcm
+*.mp3
+
+# 日志与运行时产物
+*.log
+asr_stats.json
+asr_service.log
+
+# IDE / 本地配置
+.idea/
+.vscode/
+.claude/
+.env
+*.swp
+
+# 模型权重（容器外挂载）
+*.safetensors
+*.bin
+
+# 构建产物（由 builder 阶段生成）
+*.so
+*.c
+
+# 文档与杂项（非运行必需，可按需保留 README）
+# README.md

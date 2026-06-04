@@ -1,0 +1,22 @@
+# Docker 构建用：无 av（由 conda-forge 预装，避免源码编译 ffmpeg 依赖）
+modelscope
+funasr==1.2.6
+faster-whisper
+transformers==4.35.2
+addict
+datasets==2.21.0
+ctranslate2==4.4.0
+fastapi>=0.95.1
+aiofiles
+uvicorn
+requests
+torch>=1.13
+torchaudio
+numpy==1.26.4
+ffmpeg-python
+python-multipart
+soundfile
+librosa
+pydub
+pyannote.audio
+tomli

@@ -20,7 +20,7 @@ from core.models import (
     get_asr_model, get_emotion_model, get_whisper_model, get_speaker_model
 )
 from core.concurrency import acquire_gpu_slot, generate_with_gpu_lock, transcribe_with_gpu_lock
-from utils.audio_utils import preprocess_audio, write_audio_bytes_to_temp_file, crop_audio, extract_audio_clip, plan_audio_chunks
+from utils.audio_utils import preprocess_audio, write_audio_bytes_to_temp_file, crop_audio, extract_audio_clip, plan_audio_chunks, load_audio_tensor
 from utils.pynanote_speaker import diarize_text
 from utils.feature_utils import extract_features, identify_teacher, convert_role_ids, calculate_speech_rate, build_speed_info
 from utils.asr_stats import update_stat, update_fail_task, add_queued_task, remove_queued_task
@@ -124,7 +124,7 @@ async def api_asr_mul(request: AsrRequestParams = Depends(get_asr_params)):
         tmp_paths.append(tmp_path)
 
         # 读取音频 tensor
-        audio_tensor, sample_rate = await asyncio.to_thread(torchaudio.load, tmp_path, backend="ffmpeg")
+        audio_tensor, sample_rate = await asyncio.to_thread(load_audio_tensor, tmp_path)
 
         # 音频总时长（秒），用于 speed_info 按整段音频切分时间窗口
         audio_total_s = audio_tensor.shape[-1] / sample_rate if sample_rate else 0.0
