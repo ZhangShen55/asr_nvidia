@@ -6,7 +6,8 @@ from datetime import datetime
 from core.config import settings
 from core.logging import setup_logging
 from core.models import load_models_if_needed
-from api.routes.asr import router as asr_router
+from api.routes.asr_v17 import router as asr_v17_router
+from api.routes.asr_v18 import router as asr_v18_router
 from api.routes.audio import router as audio_router
 from api.routes.status import router as status_router
 from api.routes.text import router as text_router
@@ -45,7 +46,8 @@ def create_app() -> FastAPI:
 
     # 路由装配（路径与契约保持不变）
     app.include_router(status_router)
-    app.include_router(asr_router)
+    app.include_router(asr_v17_router)
+    app.include_router(asr_v18_router)
     app.include_router(audio_router)
     app.include_router(text_router)
 

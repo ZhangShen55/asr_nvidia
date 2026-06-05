@@ -18,7 +18,8 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                        API 路由层                            │
 ├─────────────────────────────────────────────────────────────┤
-│  /v1.1.8/seacraft_asr    │  离线ASR转写（主接口）           │
+│  /v1.1.7/seacraft_asr    │  离线ASR（含小语种 Whisper）     │
+│  /v1.1.8/seacraft_asr    │  离线ASR（仅 Paraformer）        │
 │  /text/question          │  五何分类分析                   │
 │  /audio/db_snr           │  音频质量分析                   │
 │  /audio/detect_mandarin  │  普通话检测                     │
@@ -156,7 +157,7 @@ bash start.sh
 ### 离线ASR转写
 
 ```bash
-curl -X POST "http://localhost:8083/v1.1.8/seacraft_asr" \
+curl -X POST "http://localhost:8083/v1.1.7/seacraft_asr" \
   -F "audioFile=@test.wav" \
   -F "language=auto" \
   -F "showSpk=true" \
