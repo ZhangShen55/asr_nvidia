@@ -9,3 +9,5 @@ __pycache__/
 *.safetensors
 *.bin
 *.whl
+/model/*
+!/model/README.md

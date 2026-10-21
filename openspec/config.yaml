@@ -1,0 +1,38 @@
+schema: spec-driven
+
+# Project context (optional)
+# Add only constraints that should guide OpenSpec artifacts and workflows.
+# Include constraints an agent cannot infer by reading the code.
+# Keep general project documentation and discoverable codebase facts out.
+# Example:
+#   context: |
+#     Designs and tasks must cover Windows, macOS, and Linux
+#     Write all artifacts in Spanish
+
+# Per-artifact rules (optional)
+# Add custom rules for specific artifacts.
+# Example:
+#   rules:
+#     proposal:
+#       - Keep proposals under 500 words
+#       - Always state what is out of scope
+#     tasks:
+#       - Break tasks into chunks of max 2 hours
+
+# Per-operation guidance (optional)
+# Add advisory guidance for how apply and archive work should be conducted.
+# This is separate from artifact rules above.
+# Example:
+#   operations:
+#     apply:
+#       guidance:
+#         - Keep test summaries concise
+#     archive:
+#       guidance:
+#         - Summarize the archive outcome before finishing
+
+context: |
+  OpenSpec 规划产物的正文使用中文；Purpose、ADDED Requirements、Requirement、Scenario
+  等 OpenSpec 结构关键字保持规范英文，以确保 CLI 可以正确解析。
+  Change 名称统一采用 YYYY-MM-DD-任务需求 的 kebab-case 形式，例如
+  2026-10-21-remove-infrequently-used-interfaces。日期使用创建或开始任务的本地日期。

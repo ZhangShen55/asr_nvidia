@@ -2,11 +2,8 @@
 modelscope
 av==14.4.0
 funasr==1.2.6
-faster-whisper # 为了使用whisper 后加的
-transformers==4.35.2
 addict # 使用modelscope 后加的
 datasets==2.21.0 # 使用modelscope 后加的
-ctranslate2==4.4.0 # 使用modelscope 后加的
 fastapi>=0.95.1
 aiofiles
 uvicorn
@@ -20,7 +17,6 @@ python-multipart
 soundfile 
 librosa
 pydub
-pyannote.audio # 补充用于结合whisper进行人声分离
 tomli # TOML 配置文件解析
 #容器环境
 # datasets                 2.21.0 

@@ -1,6 +1,5 @@
 import os
 import asyncio
-import math
 import time
 import logging
 import torch
@@ -8,7 +7,6 @@ from io import BytesIO
 import soundfile as sf
 from pydub import AudioSegment
 from fastapi import File, Form
-from faster_whisper import WhisperModel
 
 import tempfile
 import subprocess
@@ -155,35 +153,6 @@ def write_audio_bytes_to_temp_file(audio_bytes: bytes, file_name: str, suffix=".
 
 
 
-def preprocess_audio2wav(input_file: str) -> str:
-    # 转换为16k、单通道、wav格式
-    audio = AudioSegment.from_file(input_file)
-    audio = audio.set_frame_rate(16000).set_channels(1)
-    temp_wav = tempfile.mktemp(suffix=".wav")
-    audio.export(temp_wav, format="wav")
-    return temp_wav
-
-
-def split_audio(wav_file: str, chunk_size: int):
-    audio = AudioSegment.from_file(wav_file)
-    duration_ms = len(audio)
-    duration_sec = math.ceil(duration_ms / 1000)
-    chunks = []
-
-    for i in range(0, duration_ms, chunk_size * 1000):
-        chunk = audio[i:i + chunk_size * 1000]
-        start_sec = i // 1000
-        # 这里判断是否最后一段，end直接用duration_sec，否则正常加
-        if i + chunk_size * 1000 >= duration_ms:
-            end_sec = duration_sec
-        else:
-            end_sec = (i + len(chunk)) // 1000
-        chunk_path = tempfile.mktemp(suffix=".wav")
-        chunk.export(chunk_path, format="wav")
-        chunks.append((chunk_path, start_sec, end_sec))
-    return chunks
-
-
 def plan_audio_chunks(
     duration_s: float,
     chunk_minutes: float = 60,
@@ -220,13 +189,3 @@ def plan_audio_chunks(
         chunks.pop()
 
     return chunks
-
-
-def detect_language(file_path: str, model: WhisperModel):
-    # 语言检测
-    seg,info = model.transcribe(file_path,language=None)
-    # logging.info(f"detect info: {info}")
-    lang = info.language
-    prob = info.language_probability
-    # text = seg.text.strip()
-    return lang, prob

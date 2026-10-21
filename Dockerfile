@@ -42,11 +42,9 @@ RUN PIP_EXTRA_INDEX_URL=https://mirrors.aliyun.com/pypi/simple \
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
 WORKDIR /tmp/build
-COPY wheel/pyarrow-20.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl /tmp/wheels/pyarrow-20.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl
 COPY requirements-pip.txt /tmp/requirements-pip.txt
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
-RUN pip install /tmp/wheels/pyarrow-20.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl && \
-    pip install --no-cache-dir --retries 10 --timeout 600 \
+RUN pip install --retries 10 --timeout 600 \
       --prefer-binary \
       -r /tmp/requirements-pip.txt
 
@@ -59,6 +57,22 @@ FROM deps AS runtime
 WORKDIR /app
 ENV CONFIG_PATH=/config.toml
 
+# 模型独立成层，模型变化不触发依赖重装
+RUN --mount=type=bind,source=model,target=/tmp/model,readonly \
+    set -e; \
+    for d in \
+      speech_fsmn_vad_zh-cn-16k-common-pytorch \
+      punc_ct-transformer_cn-en-common-vocab471067-large \
+      speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch \
+      speech_campplus_sv_zh_en_16k-common_advanced \
+      emotion2vec_plus_large; do \
+        test -d "/tmp/model/$d" || { echo "[ERROR] 缺少模型目录: $d"; exit 1; }; \
+        test -n "$(find "/tmp/model/$d" -type f -print -quit)" || { echo "[ERROR] 模型目录为空: $d"; exit 1; }; \
+    done; \
+    echo "[INFO] 五个模型目录检查通过"
+
+COPY model/ /app/model/
+
 COPY main.py start.sh ./
 COPY core/ core/
 COPY utils/ utils/
@@ -66,7 +80,7 @@ COPY api/ api/
 COPY entity/ entity/
 
 # 配置与 Nginx
-COPY config.toml /config.toml
+COPY config.docker.toml /config.toml
 COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN chmod +x ./start.sh

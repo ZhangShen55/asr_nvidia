@@ -80,32 +80,6 @@ class Settings:
         # 注意：原 JSON 中 key 为 emotion_modek_dir（拼写错误），这里修正为 emotion_model_dir
         return model_paths.get("emotion_model_dir", "/model/emotion2vec_plus_seed")
 
-    @property
-    def whisper_model_dir(self) -> str:
-        model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("whisper_model_dir", "/model/faster-whisper-large-v3")
-
-    @property
-    def pyannote_model_yml(self) -> str:
-        model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("pyannote_model_yml", "/model/speaker-diarization-3.1/config.yaml")
-
-    @property
-    def bert_model_tokenizer(self) -> str:
-        model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("bert_model_tokenizer", "/model/bert-base-chinese")
-
-    @property
-    def bert_model_dir(self) -> str:
-        model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("bert_model_dir", "/model/bert_output/checkpoint-88")
-
-    # 计算配置 - 从嵌套的 [compute] 部分读取
-    @property
-    def compute_type(self) -> str:
-        compute = self._cfg.get("compute", {})
-        return compute.get("compute_type", "float16")
-
     # 语速计算配置 - 从嵌套的 [speech_rate] 部分读取
     @property
     def speech_rate_factor(self) -> float:
@@ -117,16 +91,6 @@ class Settings:
     def open_spk(self) -> bool:
         features = self._cfg.get("features", {})
         return features.get("open_spk", False)
-
-    @property
-    def open_mul_lang(self) -> bool:
-        features = self._cfg.get("features", {})
-        return features.get("open_mul_lang", False)
-
-    @property
-    def open_mul_spk(self) -> bool:
-        features = self._cfg.get("features", {})
-        return features.get("open_mul_spk", False)
 
     @property
     def open_emotion(self) -> bool:

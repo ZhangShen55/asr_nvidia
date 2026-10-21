@@ -27,13 +27,12 @@ asr_service.log
 .env
 *.swp
 
-# 模型权重（容器外挂载）
-*.safetensors
-*.bin
-
 # 构建产物（由 builder 阶段生成）
 *.so
 *.c
+
+# 模型随镜像交付，必须进入构建上下文
+!model/**
 
 # 文档与杂项（非运行必需，可按需保留 README）
 # README.md

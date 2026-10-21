@@ -1,341 +1,166 @@
-# SeaCraftASR - 智能语音转写与分析服务
+# SeaCraftASR
 
-基于 FastAPI 搭建的企业级语音处理后端服务，专注于教育场景（课堂录音分析），提供多维度语音AI能力。
+基于 FastAPI 的离线语音转写服务，面向教育课堂录音，提供 Paraformer 中文转写、VAD、标点恢复、说话人分离、教师/学生角色识别、情绪识别和语速统计。
 
-## 🎯 核心功能
+## 接口
 
-| 功能模块 | 描述 | 技术方案 |
-|---------|------|---------|
-| **ASR 转写** | 语音转文字 | Paraformer(中文) + Whisper(多语言) |
-| **说话人分离** | 区分不同说话人 | CAM++ + Pyannote |
-| **情感识别** | 分析语音情绪 | emotion2vec |
-| **五何分类** | 教师提问分类 | BERT 文本分类 |
-| **角色识别** | 自动识别教师/学生 | 特征工程 + 规则引擎 |
+| 方法 | 路径 | 说明 |
+|------|------|------|
+| `POST` | `/v1.1.8/seacraft_asr` | 离线 ASR 转写 |
+| `GET` | `/get_status` | 服务状态与任务统计 |
+| `DELETE` | `/clear_tasks_list` | 清空当前实例的处理中任务列表 |
 
-## 🏗️ 架构设计
+FastAPI 自动文档位于 `/docs`、`/redoc` 和 `/openapi.json`。
 
-```
-┌─────────────────────────────────────────────────────────────┐
-│                        API 路由层                            │
-├─────────────────────────────────────────────────────────────┤
-│  /v1.1.7/seacraft_asr    │  离线ASR（含小语种 Whisper）     │
-│  /v1.1.8/seacraft_asr    │  离线ASR（仅 Paraformer）        │
-│  /text/question          │  五何分类分析                   │
-│  /audio/db_snr           │  音频质量分析                   │
-│  /audio/detect_mandarin  │  普通话检测                     │
-│  /get_status             │  服务状态监控                   │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                        核心层 (Core)                         │
-├─────────────────────────────────────────────────────────────┤
-│  config.py    │  配置管理（支持热更新）                      │
-│  models.py    │  AI模型懒加载与管理                          │
-│  concurrency.py  │  GPU并发控制（信号量机制）                  │
-│  logging.py   │  日志配置与管理                              │
-└─────────────────────────────────────────────────────────────┘
-                              │
-                              ▼
-┌─────────────────────────────────────────────────────────────┐
-│                       模型层 (Models)                        │
-├─────────────────────────────────────────────────────────────┤
-│  Paraformer  │  Whisper  │  emotion2vec  │  BERT  │  CAM++  │
-└─────────────────────────────────────────────────────────────┘
-```
+## 项目结构
 
-## 📁 项目结构
-
-```
-asr_refine/
-├── main.py                    # FastAPI 入口
-├── config.toml               # 配置文件（TOML 格式）
-├── requirements.txt          # 依赖包
-├── Dockerfile               # 容器化部署
-├── nginx.conf               # Nginx 多实例配置
-├── start.sh                 # 启动脚本
-├── api/
-│   └── routes/
-│       ├── asr.py           # 离线ASR转写
-│       ├── text.py          # 五何分类
-│       ├── audio.py         # 音频处理
-│       └── status.py        # 状态监控
+```text
+.
+├── main.py
+├── config.toml                 # 本地运行配置
+├── config.docker.toml          # 容器默认配置
+├── Dockerfile
+├── start.sh                    # Nginx + 多 uvicorn 实例
+├── api/routes/
+│   ├── asr_v18.py              # /v1.1.8/seacraft_asr
+│   └── status.py
 ├── core/
-│   ├── config.py            # 配置管理
-│   ├── models.py            # 模型加载
-│   ├── concurrency.py       # GPU并发控制
-│   └── logging.py           # 日志配置
-├── entity/
-│   └── data.py              # 数据模型
+│   ├── config.py
+│   ├── concurrency.py
+│   ├── logging.py
+│   └── models.py
+├── entity/data.py
+├── model/                      # 模型权重，不进入 Git
 └── utils/
-    ├── audio_utils.py       # 音频处理工具
-    ├── feature_utils.py     # 特征提取
-    ├── asr_stats.py         # 统计信息
-    └── pynanote_speaker.py  # 说话人分离
+    ├── audio_utils.py
+    ├── asr_stats.py
+    └── feature_utils.py
 ```
 
-## 🚀 快速开始
+## 模型目录
 
-### 环境要求
+模型需要完整放入 `model/` 下的五个目录：
 
-- Python 3.8+
-- CUDA 11.8+ (GPU模式)
-- 16GB+ 内存
-- 50GB+ 磁盘空间（模型文件）
-
-### 安装依赖
-
-```bash
-pip install -r requirements.txt
+```text
+model/
+├── README.md
+├── speech_fsmn_vad_zh-cn-16k-common-pytorch/
+├── punc_ct-transformer_cn-en-common-vocab471067-large/
+├── speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/
+├── speech_campplus_sv_zh_en_16k-common_advanced/
+└── emotion2vec_plus_large/
 ```
 
-### 配置
-
-配置文件为 `config.toml`（TOML 格式）。服务通过环境变量 `CONFIG_PATH` 指定配置路径，未设置时默认读取当前目录下的 `./config.toml`。
-
-```toml
-# 基础配置
-id_engine = "1"
-version = "seacraft-asr-app-v1.1.9"
-
-# 设备与并发配置
-device = "cuda:1"          # 推理设备
-ngpu = 1                   # GPU 数量
-ncpu = 4                   # CPU 线程数
-concurrency = 5            # 单实例 GPU 并发数
-instance_count = 4         # uvicorn 实例数（供 start.sh 与 Nginx 使用）
-
-# 日志配置
-log_path = "./asr_service.log"
-
-# 热词文件路径
-hotword_path = "/var/model_zoo/model_asr/.../hotword.txt"
-
-# 模型路径配置
-[model_paths]
-vad_model_dir = "/var/model_zoo/model_asr/speech_fsmn_vad_zh-cn-16k-common-pytorch"
-punc_model_dir = "/var/model_zoo/model_asr/punc_ct-transformer_cn-en-common-vocab471067-large"
-asr_model_dir = "/var/model_zoo/model_asr/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
-spk_model_dir = "/var/model_zoo/model_asr/speech_campplus_sv_zh_en_16k-common_advanced"
-emotion_model_dir = "/var/model_zoo/model_asr/emotion2vec_plus_large"
-whisper_model_dir = "/var/model_zoo/model_asr/faster-whisper-large-v3"
-pyannote_model_yml = "/var/model_zoo/model_asr/speaker-diarization-3.1/config.yaml"
-bert_model_tokenizer = "/var/model_zoo/model_asr/bert-base-chinese"
-bert_model_dir = "/var/model_zoo/model_asr/bert_output/checkpoint-88"
-
-# 计算配置（faster-whisper）
-[compute]
-compute_type = "int8"      # int8 / float16 等
-
-# 语速计算配置
-[speech_rate]
-rate_factor = 0.7          # 单句语速修正系数（数值偏高时下调）
-
-# 功能开关配置
-[features]
-open_spk = true            # 说话人分离
-open_emotion = true        # 情感识别
-ban_hotword = true         # 禁用热词
-open_mul_lang = true       # 多语言(Whisper)
-open_mul_spk = true        # 多说话人分离(Pyannote)
-```
-
-> 实时转写（WebSocket）已拆分为独立项目 `jy-algorithm-app-asr-online`，不在本仓库内提供。
-
-### 启动服务
-
-```bash
-# 开发模式
-python main.py
-
-# 生产模式（多进程）
-bash start.sh
-```
-
-## 📡 API 使用示例
-
-### 离线ASR转写
-
-```bash
-curl -X POST "http://localhost:8083/v1.1.7/seacraft_asr" \
-  -F "audioFile=@test.wav" \
-  -F "language=auto" \
-  -F "showSpk=true" \
-  -F "showEmotion=true"
-```
-
-响应示例：
-
-```json
-{
-  "language": "auto",
-  "segments": [
-    {
-      "segment_text": "如果与中文相比，",
-      "bg": "0.17",
-      "ed": "1.13",
-      "speed": 230,
-      "segment_words": [],
-      "role": "teacher",
-      "emotion": "平淡"
-    }
-  ],
-  "text": "如果与中文相比，...",
-  "speed_info": [
-    { "unit": 1,  "segment_info": { "segment_count": 45, "speed": [237, 220] } },
-    { "unit": 5,  "segment_info": { "segment_count": 9,  "speed": [237, 220] } },
-    { "unit": 10, "segment_info": { "segment_count": 5,  "speed": [237, 220] } }
-  ],
-  "load_audio_time_ms": "163.24",
-  "gpu_time_ms": "1349.49"
-}
-```
-
-响应字段说明：
-
-| 字段 | 说明 |
+| 模型 | 用途 |
 |------|------|
-| `segments[].speed` | **单句语速**（字/分钟）。分子为去除标点、空格后的实际内容数（中文按字、英文按单词、数字串各计 1）；分母为该句说话时长；再乘 `config.toml` 中 `[speech_rate].rate_factor`（默认 0.7）做经验修正 |
-| `speed_info` | **分时段语速统计**，按 1/5/10 分钟三种窗口单位分别统计 |
-| `speed_info[].unit` | 时间窗口单位（分钟） |
-| `speed_info[].segment_info.segment_count` | 该单位下切出的时间窗口个数（= `speed` 数组长度） |
-| `speed_info[].segment_info.speed` | 每个时间窗口的语速（字/分钟）列表 |
+| Paraformer | 中文语音识别 |
+| VAD | 语音端点检测 |
+| PUNC | 中英文标点恢复 |
+| CAM++ | 说话人特征与说话人分离 |
+| emotion2vec | 情绪识别 |
 
-#### `speed_info` 分时段语速计算方式
+模型权重被 `.gitignore` 忽略，但会进入 Docker 构建上下文并复制到镜像 `/app/model/`。
 
-对 1 / 5 / 10 分钟三种窗口单位，分别独立按下述步骤计算（`unit` 为窗口分钟数）：
+## 本地运行
 
-**① 划分时间窗口**
-
-以时间轴 `0` 秒为起点，按 `unit×60` 秒等分。设整段最后一句的结束时间为 `max_end`（秒），则窗口个数：
-
-```
-segment_count = ceil(max_end / (unit×60))
-```
-
-第 `k` 个窗口（`k` 从 0 开始）覆盖时间区间 `[k×unit×60, (k+1)×unit×60)`。
-
-**② 统计每句的"实际内容字数"**
-
-去除标点、空格等无关内容后计数：中文按字、英文按单词、数字串各计 1（与单句 `speed` 同口径）。
-
-```
-words(句子) = 中文字数 + 英文单词数 + 数字串个数
-```
-
-**③ 跨窗口的句子按时间重叠比例拆分**
-
-若一句 `[bg, ed]` 跨越多个窗口，则把它的字数按"与各窗口的重叠时长 / 该句总时长"的比例分摊到对应窗口：
-
-```
-overlap(句子, 窗口k) = min(ed, 窗口k末) − max(bg, 窗口k首)
-窗口k获得的字数 += words(句子) × overlap(句子, 窗口k) / (ed − bg)
-```
-
-**④ 计算每个窗口的语速**
-
-分母为窗口的**标称时长（固定为 unit 分钟）**，因此窗口内停顿（空闲）越多，语速越低：
-
-```
-窗口语速 = 窗口内累计字数 / (窗口标称时长 / 60)
-```
-
-补充规则：
-
-- **末窗口**：最后一个不足 `unit` 的窗口，标称时长改用**实际剩余时长** `max_end − k×unit×60`，避免被整窗时长稀释。
-- **空窗口**：窗口内完全没有说话内容时，语速记为 `0`。
-- 该统计**不**乘 `rate_factor`（与单句 `speed` 不同：空闲已通过固定分母体现）。
-
-**计算示例**（`unit=1`，即 60 秒窗口）：
-
-某句 `bg=58s, ed=63s`、字数 10，跨第 0、1 两个窗口：
-
-- 与窗口0（0–60s）重叠 2 秒 → 分到 `10 × 2/5 = 4` 字；
-- 与窗口1（60–120s）重叠 3 秒 → 分到 `10 × 3/5 = 6` 字。
-
-若窗口0内另有一句贡献 10 字，则窗口0共 14 字，其语速 = `14 / (60/60) = 14`（字/分钟）。
-
-## ⚙️ 功能开关说明
-
-以下开关均位于 `config.toml` 的 `[features]` 段下（下表默认值为示例 `config.toml` 的取值；代码缺省值除 `ban_hotword` 外均为 `false`）：
-
-| 配置项 | 说明 | 示例值 |
-|-------|------|--------|
-| `open_spk` | 开启说话人分离 | `true` |
-| `open_emotion` | 开启情感识别 | `true` |
-| `open_mul_lang` | 开启多语言(Whisper) | `true` |
-| `open_mul_spk` | 开启多说话人分离(Pyannote) | `true` |
-| `ban_hotword` | 禁用热词功能 | `true` |
-
-## 🐳 Docker 部署
-
-### 构建前准备
-
-1. 确保存在 `wheel/pyarrow-20.0.0-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl`（`*.whl` 在 `.gitignore` 中，clone 后需自行放入）。
-2. 构建上下文已通过 `.dockerignore` 排除 `test_wav/`、日志等大文件。
-3. 基础镜像为 **CentOS 7**（`glibc 2.17`），Dockerfile 已固定 `Miniconda3-py310_23.11.0-2`，勿改用 `Miniconda3-latest`（会报 `GLIBC >=2.28`）。
-
-### 构建镜像
-
-镜像为三阶段：`deps`（依赖）→ `builder`（Cython 编译）→ `runtime`（运行）。
+本地推荐使用已安装依赖的 Conda 环境 `asr`：
 
 ```bash
-cd /path/to/asr_refine
-docker build -t seacraft-asr .
-```
-
-`builder` 阶段会将 `core/`、`utils/`、`api/`、`entity/` 编译为 `.so` 并删除对应 `.py`（保留 `__init__.py` 与入口 `main.py`）。
-
-本地仅源码调试（不编译）：
-
-```bash
-pip install Cython   # 可选
-bash scripts/build_cython.sh .
+conda activate asr
 python main.py
 ```
 
-### 运行容器
+服务监听 `0.0.0.0:8083`。默认读取当前目录的 `config.toml`，也可以显式指定配置：
 
-对外端口为 **Nginx 9000**（非 8083）。`start.sh` 从 `CONFIG_PATH` 指向的 **TOML** 读取 `instance_count`。
+```bash
+CONFIG_PATH=./config.toml python main.py
+```
+
+本地配置中的模型路径为 `./model/<目录名>`，因此需要从仓库根目录启动。
+
+## ASR 请求
+
+```bash
+curl -X POST "http://localhost:8083/v1.1.8/seacraft_asr" \
+  -F "audioFile=@sample.wav" \
+  -F "language=auto" \
+  -F "wordTimestamps=true" \
+  -F "showSpk=true" \
+  -F "showEmotion=true" \
+  -F "showRoleIdentify=true"
+```
+
+主要表单参数：
+
+| 参数 | 默认值 | 说明 |
+|------|--------|------|
+| `audioFile` | 必填 | 上传音频 |
+| `language` | `auto` | 请求中回传的语言标记 |
+| `wordTimestamps` | `false` | 是否返回词级时间戳 |
+| `hotWords` | 空 | 热词；`ban_hotword=true` 时不生效 |
+| `showSpk` | `false` | 是否启用说话人分离 |
+| `showEmotion` | `false` | 是否返回情绪标签 |
+| `showRoleIdentify` | `true` | 是否识别教师/学生角色 |
+
+响应包含 `language`、`segments`、`text`、`speed_info`、`load_audio_time_ms` 和 `gpu_time_ms`。分段中的 `role`、`emotion` 和 `segment_words` 根据请求参数返回。
+
+## 配置
+
+主要配置项：
+
+| 配置 | 说明 |
+|------|------|
+| `device` | 推理设备 |
+| `concurrency` | 单实例 GPU 并发限制 |
+| `instance_count` | `start.sh` 启动的 uvicorn 实例数 |
+| `[model_paths]` | 五个模型目录 |
+| `[speech_rate]` | 单句语速修正系数 |
+| `[audio_chunk]` | 长音频分块与重试参数 |
+| `[features]` | `open_spk`、`open_emotion`、`ban_hotword` |
+
+`speed_info` 按 1、5、10 分钟窗口统计，跨窗口句子按时间重叠比例分摊内容数量。单句语速使用 `[speech_rate].rate_factor` 修正，分时段语速不乘该系数。
+
+## Docker
+
+模型已经随镜像交付，默认运行不需要挂载模型目录。
+
+```bash
+docker build -t seacraft-asr:offline .
+```
+
+Dockerfile 会检查五个模型目录是否存在且非空。依赖安装保留 Docker 构建缓存，不使用 `--no-cache`。
+
+默认启动：
 
 ```bash
 docker run -d \
   --name seacraft-asr \
   --gpus '"device=1"' \
   -p 9000:9000 \
-  -v /var/model_zoo:/var/model_zoo \
-  -v $(pwd)/config.toml:/config.toml:ro \
+  seacraft-asr:offline
+```
+
+对外入口为 Nginx `9000` 端口，容器内默认读取 `/config.toml`，设备为 `cuda:0`，单实例运行。
+
+挂载配置仅用于调整并发、设备、语速或分块参数时，模型路径应继续保留 `/app/model/`：
+
+```bash
+docker run -d \
+  --name seacraft-asr \
+  --gpus '"device=1"' \
+  -p 9000:9000 \
+  -v "$(pwd)/config.docker.toml:/config.toml:ro" \
   -e CONFIG_PATH=/config.toml \
-  seacraft-asr
+  seacraft-asr:offline
 ```
 
-| 项 | 说明 |
-|----|------|
-| `-p 9000:9000` | Nginx 入口 |
-| `CONFIG_PATH` | 与 `core/config.py`、start.sh 共用，须为 TOML |
-| 模型目录 | 挂载到 `config.toml` 中 `[model_paths]` 配置的路径 |
+## 验证
 
-## 📊 监控指标
-
-访问 `/get_status` 获取服务状态：
-
-```json
-{
-  "id_engine": "1",
-  "status": "living",
-  "appVersion": "seacraft-asr-app-v1.1.9",
-  "runTime": "1天 2小时 30分",
-  "totalHaveDoneProcessTasks": 1523,
-  "totalFailedTasks": 12,
-  "offlineDone": 1200,
-  "onlineDone": 323
-}
+```bash
+curl http://localhost:9000/get_status
+curl http://localhost:9000/openapi.json
 ```
 
-## 🤝 贡献
-
-欢迎提交 Issue 和 Pull Request。
-
-## 📄 License
+## License
 
 MIT License

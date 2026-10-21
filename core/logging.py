@@ -30,5 +30,4 @@ def setup_logging(log_path: str):
     # 日志降噪
     logging.getLogger("ai-voice-analysis-service").setLevel(logging.WARNING)
     logging.getLogger("python_multipart.multipart").setLevel(logging.WARNING)
-    logging.getLogger("faster_whisper").setLevel(logging.WARNING)
 

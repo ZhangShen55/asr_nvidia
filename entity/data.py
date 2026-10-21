@@ -2,8 +2,6 @@ from dataclasses import dataclass
 from fastapi import UploadFile, Depends, Form, File
 from typing import List, Optional
 from typing import Annotated
-# import websockets
-from pydantic import BaseModel, Field
 
 
 @dataclass
@@ -61,55 +59,3 @@ async def get_asr_params(
         showRoleIdentify=showRoleIdentify
         # ws=ws
     )
-
-
-class TextSegment(BaseModel):
-    segment_text: str
-    bg: float  # 开始时间
-    ed: float  # 结束时间
-    role: str  # 发言者ID
-
-
-class SpeakerTeacherSegment(BaseModel):
-    id: int
-    lecture_time_s: Optional[float] = None  # 老师讲授时长
-    speech_count: Optional[int] = None  # 说话次数
-    # segment: List[str] = None  # 说话时间片段
-
-
-class SpeakerStudentSegment(BaseModel):
-    role: str
-    speech_time_s: Optional[float] = None  # 学生发言时长
-    speech_count: Optional[int] = None  # 说话次数
-    # segment: List[str] = None  # 说话时间片段
-
-
-# 提问五何分类相关类
-class Segment(BaseModel):
-    segment_text: str
-    bg: str
-    ed: str
-    segment_words: list | None = None
-    role: str
-    emotion: str | None = None
-    
-
-class SegmentRequestBody(BaseModel):
-    segments: List[Segment]
-    task_id: Optional[str] = None
-    course_id: Optional[str] = None
-    confidence: float = 0.6  # nlp置信度阈值
-    min_len: int = 10  # 最小句子长度
-
-
-class CourseInfo(BaseModel):
-    '''
-    课程互动信息
-    '''
-    course_time_s: float  # 课程时长
-    lecture_time_s: float  # 讲授时长
-    speech_time_s: float  # 发言时长
-    freetime_time_s: float  # 自由时长
-    interaction_times: int  # 互动次数
-    average_speech_time_s: float  # 平均发言时长
-    time_distribution : dict  # 发言时间分布 lecture speech frertime
