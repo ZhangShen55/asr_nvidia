@@ -134,12 +134,16 @@
 - **当** 多个音频同时进入处理
 - **则** 全部音频合计发往 Qwen 服务的并发请求数不超过 `request_concurrency`
 
-### Requirement: 保留扩展字段占位
-`/v2/seacraft_asr` 的每个响应分段 MUST 保留 `segment_words`、`role`、`emotion` 三个字段，其中 `segment_words` 为空数组，`role` 与 `emotion` 为 `null`。
+### Requirement: 保留扩展字段
+`/v2/seacraft_asr` 的每个响应分段 MUST 保留 `segment_words`、`role`、`emotion` 三个字段，其中 `segment_words` 为空数组（Qwen 服务不返回词级时间戳）；`role` 与 `emotion` 在对应能力未开启或推断失败时为 `null`。
 
 #### Scenario: 返回扩展字段
 - **当** 响应包含分段
-- **则** 每个分段都包含 `segment_words`、`role`、`emotion` 三个键，取值分别为空数组、`null`、`null`
+- **则** 每个分段都包含 `segment_words`、`role`、`emotion` 三个键，其中 `segment_words` 为空数组
+
+#### Scenario: 未开启说话人与情绪能力
+- **当** 请求未携带 `showSpk` / `showEmotion`
+- **则** 每个分段的 `role` 与 `emotion` 均为 `null`
 
 ### Requirement: 通过配置外置运行参数
 Qwen 适配链路的参数 MUST 全部来自配置文件，服务地址、模型名、请求并发度、音频并发度、队列容量与超时、VAD 参数 MUST NOT 硬编码在业务代码中。
@@ -206,7 +210,11 @@ Qwen 适配链路的参数 MUST 全部来自配置文件，服务地址、模型
 
 #### Scenario: 并行开销可接受
 - **当** 比较「仅转写」与「说话人与情绪全开」两组在同一并发档位下的端到端时延
-- **则** 全开组的 P50 时延增幅不超过 30%，且转写文本与仅转写组逐段完全一致
+- **则** 单路并发下全开组的 P50 时延增幅不超过 30%；更高并发档位下如实记录增幅幅度并给出可选处置手段供决策
+
+#### Scenario: 开启增强能力不破坏分段结构
+- **当** 比较「仅转写」与「说话人与情绪全开」两组的分段结果
+- **则** 两组的分段数量与每段起止时间一致，段内文本差异幅度不高于「仅转写」组自身在两次独立请求之间的波动幅度
 
 #### Scenario: 显存与吞吐可记录
 - **当** 在 1 / 4 / 8 音频并发下运行 role/emotion 全开
