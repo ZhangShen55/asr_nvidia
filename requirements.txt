@@ -10,6 +10,7 @@ fastapi>=0.95.1
 aiofiles
 uvicorn
 requests
+httpx                 # Qwen3-ASR（/v2/seacraft_asr）OpenAI 兼容接口异步客户端
 torch>=1.13
 torchaudio
 #ffmpeg

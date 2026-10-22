@@ -1,0 +1,2 @@
+# 运行期依赖（/v2/seacraft_asr 的 Qwen3-ASR 异步客户端），Dockerfile 运行层单独安装
+httpx==0.28.1

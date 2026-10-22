@@ -52,3 +52,29 @@ enable_standalone_number = true
 enable_0_to_9 = false
 remove_interjections = true
 failure_mode = "passthrough"
+
+# Qwen3-ASR 适配链路（/v2/seacraft_asr）
+[qwen_asr]
+enabled = true
+base_url = "http://127.0.0.1:8806"      # Qwen3-ASR 服务地址（IP + 端口）
+model = ""                              # 留空表示从 /v1/models 自动发现
+segment_concurrency = 4                 # 单个音频内同时发往 Qwen 的 VAD 段请求数
+request_concurrency = 32                # 所有音频合计同时发往 Qwen 的请求数
+audio_concurrency = 8                   # 同时处理的音频文件数
+queue_max_size = 64                     # 等待队列容量
+queue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排队等待
+request_timeout_s = 120                 # 单次 Qwen 请求超时
+connect_timeout_s = 10                  # Qwen 服务连接超时
+retry_count = 1                         # Qwen 请求失败重试次数
+min_segment_duration_s = 0.3            # 过滤过短 VAD 段
+vad_concurrency = 4                     # VAD 模型实例池大小（实例不可并发复用）
+speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）
+local_gpu_concurrency = 4                # 本机 GPU（CAM++/emotion2vec）推理并发路数
+vad_max_single_segment_time_ms = 30000
+vad_max_end_silence_time_ms = 800
+
+# v2 链路三个本地模型的落卡，三者绑定同一张卡
+[model_device]
+vad = 0                 # FunASR FSMN-VAD
+emotion2vec = 0         # emotion2vec_plus_large
+speech_campplus = 0     # speech_campplus_sv_zh_en_16k-common_advanced

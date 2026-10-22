@@ -6,7 +6,9 @@ from datetime import datetime
 from core.config import settings
 from core.logging import setup_logging
 from core.models import load_models_if_needed
+from core.qwen_asr_client import close_qwen_client
 from api.routes.asr_v18 import router as asr_v18_router
+from api.routes.asr_v2 import router as asr_v2_router
 from api.routes.status import router as status_router
 from utils.asr_stats import reset_stats
 
@@ -26,7 +28,8 @@ async def lifespan(app: FastAPI):
     await load_models_if_needed()
 
     yield
-    # 这里可按需释放资源（本项目暂不需要）
+    # 释放 Qwen 客户端连接池
+    await close_qwen_client()
 
 
 def create_app() -> FastAPI:
@@ -44,6 +47,7 @@ def create_app() -> FastAPI:
     # 路由装配（路径与契约保持不变）
     app.include_router(status_router)
     app.include_router(asr_v18_router)
+    app.include_router(asr_v2_router)
 
     return app
 

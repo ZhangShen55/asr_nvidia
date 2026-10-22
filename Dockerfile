@@ -42,6 +42,8 @@ RUN PIP_EXTRA_INDEX_URL=https://mirrors.aliyun.com/pypi/simple \
 RUN pip config set global.index-url https://mirrors.aliyun.com/pypi/simple/
 
 WORKDIR /tmp/build
+# 基础依赖层：requirements-pip.txt 内容与历史构建保持一致，
+# 命中已有构建缓存，避免 torch / torchaudio 等大包被重新下载。
 COPY requirements-pip.txt /tmp/requirements-pip.txt
 ENV PIP_DISABLE_PIP_VERSION_CHECK=1
 RUN pip install --retries 10 --timeout 600 \
@@ -67,6 +69,13 @@ FROM deps AS runtime
 
 WORKDIR /app
 ENV CONFIG_PATH=/config.toml
+
+# 运行期新增依赖（httpx：/v2/seacraft_asr 的 Qwen3-ASR 异步客户端）。
+# 放在运行层单独安装，避免改动基础依赖清单而触发 torch 等大包重新下载。
+COPY requirements-pip-runtime.txt /tmp/requirements-pip-runtime.txt
+RUN pip install --retries 10 --timeout 600 \
+      --prefer-binary \
+    -r /tmp/requirements-pip-runtime.txt
 
 # 先落地默认容器配置，模型校验需要据此判断是否启用小语种能力
 COPY config.docker.toml /config.toml

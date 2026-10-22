@@ -95,8 +95,11 @@ def cleanup_temp_files(tmp_paths: List[str]):
             logger.warning(f"删除临时文件失败: {p}, 错误: {e}")
 
 
-async def prepare_asr_context(request: AsrRequestParams) -> Tuple[Optional[dict], Optional[AsrContext]]:
-    """读取并预处理音频，构建 ASR 上下文。失败时返回 (error_response, None)。"""
+async def prepare_asr_context(request: AsrRequestParams, unique_tmp: bool = False) -> Tuple[Optional[dict], Optional[AsrContext]]:
+    """读取并预处理音频，构建 ASR 上下文。失败时返回 (error_response, None)。
+
+    unique_tmp=True 时使用唯一临时文件名，供 v2 链路的并发请求使用。
+    """
     if request.audioFile is None:
         logger.error("音频为空")
         return {"msg": "音频文件不能为空", "code": 4001}, None
@@ -137,7 +140,9 @@ async def prepare_asr_context(request: AsrRequestParams) -> Tuple[Optional[dict]
         return {"msg": "读取音频文件发生错误", "code": 4002}, None
 
     tmp_paths: List[str] = []
-    tmp_path = write_audio_bytes_to_temp_file(content, file_name=filename, suffix=f"{suffix}")
+    tmp_path = write_audio_bytes_to_temp_file(
+        content, file_name=filename, suffix=f"{suffix}", unique=unique_tmp
+    )
     tmp_paths.append(tmp_path)
 
     audio_tensor, sample_rate = await asyncio.to_thread(load_audio_tensor, tmp_path)

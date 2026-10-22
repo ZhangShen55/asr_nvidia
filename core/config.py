@@ -169,5 +169,105 @@ class Settings:
             failure_mode=self.itn_failure_mode,
         )
 
+    # Qwen3-ASR 适配链路（/v2/seacraft_asr）配置 - 从嵌套的 [qwen_asr] 部分读取
+    @property
+    def qwen_asr_enabled(self) -> bool:
+        return bool(self._cfg.get("qwen_asr", {}).get("enabled", True))
+
+    @property
+    def qwen_base_url(self) -> str:
+        return str(self._cfg.get("qwen_asr", {}).get("base_url", "http://127.0.0.1:8806")).rstrip("/")
+
+    @property
+    def qwen_model(self) -> str:
+        # 留空表示从 /v1/models 自动发现
+        return str(self._cfg.get("qwen_asr", {}).get("model", "")).strip()
+
+    @property
+    def qwen_segment_concurrency(self) -> int:
+        """单个音频内同时发往 Qwen 的 VAD 段请求数。"""
+        return int(self._cfg.get("qwen_asr", {}).get("segment_concurrency", 4))
+
+    @property
+    def qwen_request_concurrency(self) -> int:
+        """所有音频合计发往 Qwen 的请求数上限（全局共享）。"""
+        return int(self._cfg.get("qwen_asr", {}).get("request_concurrency", 32))
+
+    @property
+    def qwen_audio_concurrency(self) -> int:
+        """同时处理的音频文件数上限。"""
+        return int(self._cfg.get("qwen_asr", {}).get("audio_concurrency", 8))
+
+    @property
+    def qwen_queue_max_size(self) -> int:
+        return int(self._cfg.get("qwen_asr", {}).get("queue_max_size", 64))
+
+    @property
+    def qwen_queue_wait_timeout_s(self) -> float:
+        """0 表示队列满时立即拒绝；大于 0 才排队等待。"""
+        return float(self._cfg.get("qwen_asr", {}).get("queue_wait_timeout_s", 0))
+
+    @property
+    def qwen_request_timeout_s(self) -> float:
+        return float(self._cfg.get("qwen_asr", {}).get("request_timeout_s", 120))
+
+    @property
+    def qwen_connect_timeout_s(self) -> float:
+        return float(self._cfg.get("qwen_asr", {}).get("connect_timeout_s", 10))
+
+    @property
+    def qwen_retry_count(self) -> int:
+        return int(self._cfg.get("qwen_asr", {}).get("retry_count", 1))
+
+    @property
+    def qwen_min_segment_duration_s(self) -> float:
+        return float(self._cfg.get("qwen_asr", {}).get("min_segment_duration_s", 0.3))
+
+    @property
+    def qwen_vad_max_single_segment_time_ms(self) -> int:
+        return int(self._cfg.get("qwen_asr", {}).get("vad_max_single_segment_time_ms", 30000))
+
+    @property
+    def qwen_vad_max_end_silence_time_ms(self) -> int:
+        return int(self._cfg.get("qwen_asr", {}).get("vad_max_end_silence_time_ms", 800))
+
+    @property
+    def qwen_vad_concurrency(self) -> int:
+        """VAD 模型实例池大小：FSMN-VAD 实例不可并发复用，故用池子隔离。"""
+        return int(self._cfg.get("qwen_asr", {}).get("vad_concurrency", 4))
+
+    @property
+    def qwen_speaker_similarity_threshold(self) -> float:
+        """CAM++ 说话人聚类的余弦相似度阈值。
+
+        取值 0.30 来自实测 sweep（见 docs/qwen-asr-v2-test-report.md）：
+        单说话人音频在该阈值下聚为 1 簇（BCubed F1 = 1.0），
+        三说话人课堂录音聚为 3 簇（F1 = 0.816）；阈值升高到 0.6 以上会
+        把同一说话人拆成 6~63 簇。
+        """
+        return float(self._cfg.get("qwen_asr", {}).get("speaker_similarity_threshold", 0.3))
+
+    @property
+    def qwen_local_gpu_concurrency(self) -> int:
+        """本机 GPU（CAM++ / emotion2vec）推理的并发路数上限。
+
+        限制并发而不是完全串行：完全串行时 8 路并发下 role/emotion
+        会成为端到端时延的主瓶颈。
+        """
+        return int(self._cfg.get("qwen_asr", {}).get("local_gpu_concurrency", 4))
+
+    # v2 链路模型落卡 - 从嵌套的 [model_device] 部分读取，三者绑定同一张卡
+    @property
+    def model_device_vad(self) -> int:
+        return int(self._cfg.get("model_device", {}).get("vad", 0))
+
+    @property
+    def model_device_emotion2vec(self) -> int:
+        return int(self._cfg.get("model_device", {}).get("emotion2vec", 0))
+
+    @property
+    def model_device_speech_campplus(self) -> int:
+        return int(self._cfg.get("model_device", {}).get("speech_campplus", 0))
+
 
 settings = Settings()
