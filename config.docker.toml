@@ -18,6 +18,7 @@ punc_model_dir = "/app/model/punc_ct-transformer_cn-en-common-vocab471067-large"
 asr_model_dir = "/app/model/speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch"
 spk_model_dir = "/app/model/speech_campplus_sv_zh_en_16k-common_advanced"
 emotion_model_dir = "/app/model/emotion2vec_plus_large"
+whisper_model_dir = "/app/model/faster-whisper-large-v3"
 
 [speech_rate]
 rate_factor = 0.4
@@ -33,3 +34,12 @@ chunk_retry_count = 2
 open_spk = true
 open_emotion = true
 ban_hotword = true
+open_mul_lang = false
+
+# WeTextProcessing 1.2.0 ITN 配置。规则只规范化文本，不改变时间轴或 ASR 语义。
+[itn]
+enabled = true
+enable_standalone_number = true
+enable_0_to_9 = false
+remove_interjections = true
+failure_mode = "passthrough"

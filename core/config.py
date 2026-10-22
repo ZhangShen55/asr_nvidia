@@ -80,6 +80,11 @@ class Settings:
         # 注意：原 JSON 中 key 为 emotion_modek_dir（拼写错误），这里修正为 emotion_model_dir
         return model_paths.get("emotion_model_dir", "/model/emotion2vec_plus_seed")
 
+    @property
+    def whisper_model_dir(self) -> str:
+        model_paths = self._cfg.get("model_paths", {})
+        return model_paths.get("whisper_model_dir", "/model/faster-whisper-large-v3")
+
     # 语速计算配置 - 从嵌套的 [speech_rate] 部分读取
     @property
     def speech_rate_factor(self) -> float:
@@ -91,6 +96,11 @@ class Settings:
     def open_spk(self) -> bool:
         features = self._cfg.get("features", {})
         return features.get("open_spk", False)
+
+    @property
+    def open_mul_lang(self) -> bool:
+        features = self._cfg.get("features", {})
+        return features.get("open_mul_lang", False)
 
     @property
     def open_emotion(self) -> bool:
@@ -122,6 +132,42 @@ class Settings:
     @property
     def chunk_retry_count(self) -> int:
         return int(self._cfg.get("audio_chunk", {}).get("chunk_retry_count", 2))
+
+    # 文本规范化（ITN）配置
+    @property
+    def itn_enabled(self) -> bool:
+        return bool(self._cfg.get("itn", {}).get("enabled", True))
+
+    @property
+    def itn_enable_standalone_number(self) -> bool:
+        return bool(self._cfg.get("itn", {}).get("enable_standalone_number", True))
+
+    @property
+    def itn_enable_0_to_9(self) -> bool:
+        return bool(self._cfg.get("itn", {}).get("enable_0_to_9", False))
+
+    @property
+    def itn_remove_interjections(self) -> bool:
+        return bool(self._cfg.get("itn", {}).get("remove_interjections", True))
+
+    @property
+    def itn_failure_mode(self) -> str:
+        mode = str(self._cfg.get("itn", {}).get("failure_mode", "passthrough")).strip().lower()
+        if mode not in {"passthrough", "raise"}:
+            raise ValueError("[itn].failure_mode must be one of: passthrough, raise")
+        return mode
+
+    @property
+    def itn_config(self):
+        from utils.itn import ItnConfig
+
+        return ItnConfig(
+            enabled=self.itn_enabled,
+            enable_standalone_number=self.itn_enable_standalone_number,
+            enable_0_to_9=self.itn_enable_0_to_9,
+            remove_interjections=self.itn_remove_interjections,
+            failure_mode=self.itn_failure_mode,
+        )
 
 
 settings = Settings()

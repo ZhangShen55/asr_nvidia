@@ -14,6 +14,16 @@
 | `speech_campplus_sv_zh_en_16k-common_advanced/` | CAM++ 说话人特征与说话人分离 | 同上 |
 | `emotion2vec_plus_large/` | emotion2vec 情绪识别 | 同上 |
 
+## 可选目录
+
+启用法语转写（`[features].open_mul_lang = true`）时需要额外提供：
+
+| 目录 | 用途 | 配置文件 |
+|------|------|----------|
+| `faster-whisper-large-v3/` | Whisper 小语种转写（CTranslate2 int8 格式） | `config.toml`、`config.docker.toml` |
+
+未提供该目录时，若配置中 `open_mul_lang = false`，构建与运行均不受影响；一旦开启该开关，Docker 构建会因缺少该目录而失败并给出明确提示。
+
 ## 放置要求
 
 1. 将每个模型的全部文件复制到对应目录，包括配置、词表、`.pt` 权重及模型运行所需的附属文件。
@@ -31,5 +41,6 @@ model/
 ├── punc_ct-transformer_cn-en-common-vocab471067-large/
 ├── speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/
 ├── speech_campplus_sv_zh_en_16k-common_advanced/
-└── emotion2vec_plus_large/
+├── emotion2vec_plus_large/
+└── faster-whisper-large-v3/   # 可选
 ```

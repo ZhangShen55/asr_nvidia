@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from fastapi import UploadFile, Depends, Form, File
+from fastapi import UploadFile, Depends, Form, File, Request
 from typing import List, Optional
 from typing import Annotated
 
@@ -18,7 +18,7 @@ class AsrRequestParams:
     openPanel: bool = False
     showEmotion: bool = False
     showSpeed: bool = False
-    showRoleIdentify: bool = True
+    showRoleIdentify: bool = False
     # ws: Optional[websockets.WebSocketClientProtocol] = None  # 如果使用，需要取消注释
 
     # def hotwords_as_string(self) -> str:
@@ -26,6 +26,7 @@ class AsrRequestParams:
 
 
 async def get_asr_params(
+    request: Request,
     audioFile: Annotated[UploadFile, File(...)],
     language: Annotated[str, Form()] = "auto",
     wordTimestamps: Annotated[bool, Form()] = False,
@@ -35,8 +36,15 @@ async def get_asr_params(
     openPanel: Annotated[bool, Form()] = False,
     showEmotion: Annotated[bool, Form()] = False,
     showSpeed: Annotated[bool, Form()] = False,
-    showRoleIdentify: Annotated[bool, Form()] = True,
+    showRoleIdentify: Annotated[bool, Form()] = False,
 ) -> AsrRequestParams:
+    # 显式提交空 language 与未提交 language 语义不同：
+    # 前者按不支持语言处理，后者使用默认 auto。
+    form = await request.form()
+    if "language" in form:
+        raw_language = form.get("language")
+        if isinstance(raw_language, str):
+            language = raw_language
     if hotWords is None:
         hotWords = []
     if output is None:

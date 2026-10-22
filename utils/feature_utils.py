@@ -1,5 +1,6 @@
 import math
 import re
+import unicodedata
 from collections import defaultdict
 
 
@@ -88,13 +89,50 @@ def identify_teacher(spk_features):
 
 
 def count_content_words(text):
-    """统计实际内容数量：中文按字，英文按单词，数字串各算一个。"""
+    """
+    统计实际内容数量（去除标点、空格等无关内容）：
+    中文按字计数，其他语言按 Unicode 字母/标记/数字单词计数。
+    英文直引号、弯引号和连字符仅在单词内部保留。
+    """
     if not text:
         return 0
-    chinese_chars = len(re.findall(r"[\u4e00-\u9fff]", text))
-    non_chinese_text = re.sub(r"[\u4e00-\u9fff]", "", text)
-    english_words = len(re.findall(r"[a-zA-Z']+|\d+", non_chinese_text))
-    return chinese_chars + english_words
+
+    normalized = unicodedata.normalize("NFC", str(text))
+
+    def _is_chinese(char):
+        return "\u4e00" <= char <= "\u9fff"
+
+    def _is_word_char(char):
+        return unicodedata.category(char)[0] in {"L", "M", "N"}
+
+    count = 0
+    in_word = False
+    connectors = {"'", "’", "-"}
+
+    for index, char in enumerate(normalized):
+        if _is_chinese(char):
+            count += 1
+            in_word = False
+            continue
+
+        if _is_word_char(char):
+            if not in_word:
+                count += 1
+            in_word = True
+            continue
+
+        if char in connectors and in_word:
+            has_word_after = (
+                index + 1 < len(normalized)
+                and not _is_chinese(normalized[index + 1])
+                and _is_word_char(normalized[index + 1])
+            )
+            if has_word_after:
+                continue
+
+        in_word = False
+
+    return count
 
 
 def calculate_speech_rate(text, start_time, end_time, rate_factor=1.0):

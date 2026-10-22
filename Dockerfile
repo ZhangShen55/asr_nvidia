@@ -48,6 +48,17 @@ RUN pip install --retries 10 --timeout 600 \
       --prefer-binary \
       -r /tmp/requirements-pip.txt
 
+# 小语种与文本规范化运行时单独成层：基础依赖清单变化时不必重下 torch 等大包
+# pynini 由 conda-forge 提供（PyPI 的 cp310 manylinux wheel 与 glibc 2.17 不兼容）
+COPY requirements-pip-extra.txt /tmp/requirements-pip-extra.txt
+RUN conda install -y -n seacraftasr -c conda-forge pynini && \
+    conda clean -afy
+RUN pip install --retries 10 --timeout 600 \
+      --prefer-binary \
+    -r /tmp/requirements-pip-extra.txt && \
+    pip install --retries 10 --timeout 600 --no-deps \
+      WeTextProcessing==1.2.0
+
 
 # ================== 运行层（源码；Cython 在 CentOS7+FunASR 下易 segfault，暂不启用）==================
 # 若需 Cython：取消注释 builder 阶段，并将下方 COPY 改为 --from=builder
@@ -56,6 +67,9 @@ FROM deps AS runtime
 
 WORKDIR /app
 ENV CONFIG_PATH=/config.toml
+
+# 先落地默认容器配置，模型校验需要据此判断是否启用小语种能力
+COPY config.docker.toml /config.toml
 
 # 模型独立成层，模型变化不触发依赖重装
 RUN --mount=type=bind,source=model,target=/tmp/model,readonly \
@@ -69,7 +83,14 @@ RUN --mount=type=bind,source=model,target=/tmp/model,readonly \
         test -d "/tmp/model/$d" || { echo "[ERROR] 缺少模型目录: $d"; exit 1; }; \
         test -n "$(find "/tmp/model/$d" -type f -print -quit)" || { echo "[ERROR] 模型目录为空: $d"; exit 1; }; \
     done; \
-    echo "[INFO] 五个模型目录检查通过"
+    if grep -Eq '^[[:space:]]*open_mul_lang[[:space:]]*=[[:space:]]*true' /config.toml; then \
+        test -d "/tmp/model/faster-whisper-large-v3" || { echo "[ERROR] 缺少模型目录: faster-whisper-large-v3"; exit 1; }; \
+        test -n "$(find "/tmp/model/faster-whisper-large-v3" -type f -print -quit)" || { echo "[ERROR] 模型目录为空: faster-whisper-large-v3"; exit 1; }; \
+        echo "[INFO] 小语种模型目录检查通过"; \
+    else \
+        echo "[INFO] 未开启小语种能力，跳过 faster-whisper-large-v3 校验"; \
+    fi; \
+    echo "[INFO] 必需模型目录检查通过"
 
 COPY model/ /app/model/
 
@@ -80,7 +101,6 @@ COPY api/ api/
 COPY entity/ entity/
 
 # 配置与 Nginx
-COPY config.docker.toml /config.toml
 COPY nginx.conf /etc/nginx/nginx.conf
 
 RUN chmod +x ./start.sh
