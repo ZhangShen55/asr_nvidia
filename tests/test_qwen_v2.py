@@ -376,6 +376,135 @@ class V2RouteTests(unittest.TestCase):
         self.assertIn("speed_info", payload)
 
 
+class RepetitionGuardPipelineTests(unittest.TestCase):
+    """复读修复在 v2 链路上的端到端行为（打桩 Qwen，行为确定）。"""
+
+    def _run(self, qwen_text, segments, **request_overrides):
+        from api.routes.asr_qwen_common import run_qwen_asr
+        from core.vad import VadSegment
+
+        ctx = FakeCtx(request=make_request(**request_overrides))
+
+        async def _fake_detect(_path):
+            return list(segments)
+
+        def _fake_clip(_src, _start, _duration):
+            return "/tmp/fake_clip.wav"
+
+        class _FakeClient:
+            async def transcribe(self, path, language=None):
+                return f"language Chinese<asr_text>{qwen_text}"
+
+        async def _fake_get_client():
+            return _FakeClient()
+
+        with ExitStack() as stack:
+            stack.enter_context(
+                patch("api.routes.asr_qwen_common.detect_segments", _fake_detect)
+            )
+            stack.enter_context(
+                patch("api.routes.asr_qwen_common.extract_audio_clip", _fake_clip)
+            )
+            stack.enter_context(
+                patch(
+                    "api.routes.asr_qwen_common.read_audio_array",
+                    fake_read_audio_array,
+                )
+            )
+            stack.enter_context(
+                patch("api.routes.asr_qwen_common.get_qwen_client", _fake_get_client)
+            )
+            return asyncio.run(run_qwen_asr(ctx))
+
+    def test_hallucination_segment_is_collapsed_in_response(self):
+        from core.vad import VadSegment
+
+        hallucination = "最小S零，" + "这个，" * 900
+        result = self._run(hallucination, [VadSegment(0.0, 6.0)])
+        text = result["segments"][0]["segment_text"]
+        self.assertLess(len(text), 120)
+        self.assertTrue(text.startswith("最小S零"))
+
+    def test_normal_segment_is_unchanged_in_response(self):
+        from core.vad import VadSegment
+
+        text = "今天我们讲一下功率变换器的基本原理。"
+        result = self._run(text, [VadSegment(0.0, 5.0)])
+        self.assertEqual(result["segments"][0]["segment_text"], text)
+
+    def test_overlong_without_repeat_structure_is_preserved_in_response(self):
+        from core.vad import VadSegment
+
+        text = "".join(chr(0x4E00 + i) for i in range(300))
+        result = self._run(text, [VadSegment(0.0, 5.0)])
+        self.assertEqual(result["segments"][0]["segment_text"], text)
+
+    def test_role_and_emotion_unaffected_by_repair(self):
+        from core.vad import VadSegment
+
+        hallucination = "最小S零，" + "这个，" * 900
+
+        async def _speaker(_array, _sr):
+            return torch.zeros(192)
+
+        async def _emotion(_array, _sr, _duration):
+            return "开心"
+
+        from api.routes.asr_qwen_common import run_qwen_asr
+
+        ctx = FakeCtx(
+            request=make_request(showSpk=True, showEmotion=True)
+        )
+
+        async def _fake_detect(_path):
+            return [VadSegment(0.0, 6.0)]
+
+        def _fake_clip(_src, _start, _duration):
+            return "/tmp/fake_clip.wav"
+
+        class _FakeClient:
+            async def transcribe(self, path, language=None):
+                return f"language Chinese<asr_text>{hallucination}"
+
+        async def _fake_get_client():
+            return _FakeClient()
+
+        async def _noop_load(*_args, **_kwargs):
+            return None
+
+        with ExitStack() as stack:
+            stack.enter_context(
+                patch("api.routes.asr_qwen_common.detect_segments", _fake_detect)
+            )
+            stack.enter_context(
+                patch("api.routes.asr_qwen_common.extract_audio_clip", _fake_clip)
+            )
+            stack.enter_context(
+                patch(
+                    "api.routes.asr_qwen_common.read_audio_array",
+                    fake_read_audio_array,
+                )
+            )
+            stack.enter_context(
+                patch("api.routes.asr_qwen_common.get_qwen_client", _fake_get_client)
+            )
+            stack.enter_context(
+                patch("api.routes.asr_qwen_common.load_v2_models_if_needed", _noop_load)
+            )
+            stack.enter_context(
+                patch("api.routes.asr_qwen_common._speaker_embedding", _speaker)
+            )
+            stack.enter_context(
+                patch("api.routes.asr_qwen_common._segment_emotion", _emotion)
+            )
+            result = asyncio.run(run_qwen_asr(ctx))
+
+        segment = result["segments"][0]
+        self.assertLess(len(segment["segment_text"]), 120)
+        self.assertIsNotNone(segment["role"])
+        self.assertEqual(segment["emotion"], "开心")
+
+
 class ResponseStructureTests(unittest.TestCase):
     def test_v2_response_structure(self):
         from api.routes.asr_qwen_common import run_qwen_asr

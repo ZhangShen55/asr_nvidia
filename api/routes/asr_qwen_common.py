@@ -37,6 +37,11 @@ from utils.feature_utils import (
 )
 from utils.itn import ItnConfig, normalize_segments, sanitize_segments
 from utils.qwen_response import build_language_ratio, parse_qwen_text
+from utils.repetition import (
+    RepetitionThresholds,
+    max_reasonable_chars,
+    repair_repetition,
+)
 from utils.asr_stats import update_fail_task, update_stat
 
 logger = logging.getLogger(__name__)
@@ -90,6 +95,46 @@ def _itn_language(language: Optional[str]) -> str:
     if normalized in {"english", "en"}:
         return "en"
     return normalized or "auto"
+
+
+def _repetition_thresholds() -> RepetitionThresholds:
+    """从配置读取复读检测阈值。"""
+    return RepetitionThresholds(
+        max_chars_per_second=settings.qwen_repetition_max_chars_per_second,
+        min_chars=settings.qwen_repetition_min_chars,
+        min_unit=settings.qwen_repetition_min_unit,
+        min_times=settings.qwen_repetition_min_times,
+    )
+
+
+async def _apply_repetition_guard(text: str, duration_s: float) -> str:
+    """检测并修复复读（生成幻觉循环）。
+
+    Qwen3-ASR 偶尔会在某个 VAD 段上进入「同一短语无限重复」的循环，
+    直到撞上 max_model_len 被截断（实测产出 1863 字符的复读串）。
+
+    这里 MUST 在 ITN 规范化之前执行：复读是模型原始输出就带的，ITN 会
+    改写数字从而改变字符数，让「字符数 ÷ 时长」的判据偏移。
+
+    只对「长度异常且检出复读结构」的文本动手；长度异常但没有复读结构的
+    文本保留原文（由 utils.repetition 记录告警），避免凭空截断有效内容。
+    """
+    if not settings.qwen_repetition_guard_enabled:
+        return text
+    thresholds = _repetition_thresholds()
+    stripped = (text or "").strip()
+    if not stripped:
+        return text
+    # 长度判据很便宜，绝大多数分段在这里就返回了（实测 < 0.01ms）。
+    if len(stripped) <= max_reasonable_chars(duration_s, thresholds):
+        return text
+    # 复读结构的扫描是正则与字符串比较，异常长文本实测可达 280ms，
+    # 放到线程里执行，避免拖住事件循环。
+    fixed, changed = await asyncio.to_thread(
+        repair_repetition, text, duration_s, thresholds
+    )
+    # 未触发修复时逐字节保持原文，避免 strip 之类的副作用。
+    return fixed if changed else text
 
 
 async def _transcribe_segment(clip_path, language, concurrency, segment_semaphore):
@@ -430,6 +475,8 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         if isinstance(text_result, BaseException):
             raise text_result
         outcome.text, outcome.language = text_result
+        # 复读修复 MUST 在 ITN 规范化与标点卫生之前：见 _apply_repetition_guard
+        outcome.text = await _apply_repetition_guard(outcome.text, segment.duration_s)
 
         cursor = 1
         if need_role and segment.duration_s >= SHORT_SPEAKER_SEGMENT_S:

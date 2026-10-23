@@ -14,6 +14,7 @@ Qwen3-ASR 在个别音频片段上会进入「同一个短语无限重复」的�
 from __future__ import annotations
 import logging
 import re
+from dataclasses import dataclass
 from typing import Optional, Tuple
 
 logger = logging.getLogger(__name__)
@@ -34,11 +35,28 @@ _MAX_LOOP_UNIT = 60
 _SEPARATORS = "，。！？；：、,.!?;: \n"
 
 
-def max_reasonable_chars(duration_s: float) -> int:
+@dataclass(frozen=True)
+class RepetitionThresholds:
+    """复读检测与修复的阈值集合。"""
+
+    max_chars_per_second: int = _MAX_CHARS_PER_SECOND
+    min_chars: int = _MIN_ABSOLUTE_CHARS
+    min_unit: int = _MIN_LOOP_UNIT
+    min_times: int = _MIN_REPEAT_TIMES
+
+
+DEFAULT_THRESHOLDS = RepetitionThresholds()
+
+
+def max_reasonable_chars(
+    duration_s: float,
+    thresholds: Optional[RepetitionThresholds] = None,
+) -> int:
     """给定时长下合理文本长度的上限。"""
+    limits = thresholds or DEFAULT_THRESHOLDS
     if duration_s <= 0:
-        return _MIN_ABSOLUTE_CHARS
-    return max(_MIN_ABSOLUTE_CHARS, int(duration_s * _MAX_CHARS_PER_SECOND))
+        return limits.min_chars
+    return max(limits.min_chars, int(duration_s * limits.max_chars_per_second))
 
 
 def find_repeat_loop(
@@ -131,7 +149,11 @@ def collapse_repetition(
     return result
 
 
-def repair_repetition(text: str, duration_s: float = 0.0) -> Tuple[str, bool]:
+def repair_repetition(
+    text: str,
+    duration_s: float = 0.0,
+    thresholds: Optional[RepetitionThresholds] = None,
+) -> Tuple[str, bool]:
     """检测并修复复读。
 
     只对**异常长度**的文本动手：长度正常时原样返回，避免把正常的叠词、
@@ -139,15 +161,20 @@ def repair_repetition(text: str, duration_s: float = 0.0) -> Tuple[str, bool]:
 
     返回 (修复后的文本, 是否发生了修复)。
     """
+    limits = thresholds or DEFAULT_THRESHOLDS
     stripped = (text or "").strip()
     if not stripped:
         return stripped, False
 
-    limit = max_reasonable_chars(duration_s)
+    limit = max_reasonable_chars(duration_s, limits)
     if len(stripped) <= limit:
         return stripped, False
 
-    collapsed = collapse_repetition(stripped)
+    collapsed = collapse_repetition(
+        stripped,
+        min_unit=limits.min_unit,
+        min_times=limits.min_times,
+    )
     changed = collapsed != stripped
 
     if not changed:
@@ -174,6 +201,8 @@ def repair_repetition(text: str, duration_s: float = 0.0) -> Tuple[str, bool]:
 
 
 __all__ = [
+    "DEFAULT_THRESHOLDS",
+    "RepetitionThresholds",
     "collapse_repetition",
     "find_repeat_loop",
     "max_reasonable_chars",

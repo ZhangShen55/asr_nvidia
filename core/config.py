@@ -202,6 +202,37 @@ class Settings:
         """
         return int(self._cfg.get("qwen_asr", {}).get("local_gpu_concurrency", 4))
 
+    # 复读（生成幻觉循环）后处理
+    @property
+    def qwen_repetition_guard_enabled(self) -> bool:
+        """是否对复读分段做检测与折叠修复。"""
+        return bool(self._cfg.get("qwen_asr", {}).get("repetition_guard_enabled", True))
+
+    @property
+    def qwen_repetition_max_chars_per_second(self) -> int:
+        """按语音时长估算合理字符数的上限系数（字符/秒）。
+
+        标定依据（68,018 段真实样本）：正常段 p99.9 = 20.3 字符/秒、
+        观测到的最高值 26.2；复读段为 282~313。取 40 留约 1.5 倍余量，
+        同时远低于复读的量级。
+        """
+        return int(self._cfg.get("qwen_asr", {}).get("repetition_max_chars_per_second", 40))
+
+    @property
+    def qwen_repetition_min_chars(self) -> int:
+        """判定长度异常的绝对下限字符数。"""
+        return int(self._cfg.get("qwen_asr", {}).get("repetition_min_chars", 120))
+
+    @property
+    def qwen_repetition_min_unit(self) -> int:
+        """参与循环判定的重复子串最小长度（字符）。"""
+        return int(self._cfg.get("qwen_asr", {}).get("repetition_min_unit", 4))
+
+    @property
+    def qwen_repetition_min_times(self) -> int:
+        """判定为循环所需的最小连续重复次数。"""
+        return int(self._cfg.get("qwen_asr", {}).get("repetition_min_times", 3))
+
     # v2 链路模型落卡 - 从嵌套的 [model_device] 部分读取，三者绑定同一张卡
     @property
     def model_device_vad(self) -> int:

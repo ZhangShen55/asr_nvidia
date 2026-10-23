@@ -55,6 +55,17 @@ local_gpu_concurrency = 4                # 本机 GPU（CAM++/emotion2vec）推�
 vad_max_single_segment_time_ms = 30000
 vad_max_end_silence_time_ms = 800
 
+# 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
+# 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
+# 1863 字符的复读串）。这里按语速上限判定异常长度，再折叠重复部分。
+# 标定依据（68,018 段真实样本）：正常段 p99.9 = 20.3 字符/秒、峰值 26.2；
+# 复读段 282~313。取 40 留约 1.5 倍余量且远低于复读量级。
+repetition_guard_enabled = true          # 是否启用复读检测与修复
+repetition_max_chars_per_second = 40     # 按段时长估算合理字符数的上限系数
+repetition_min_chars = 120               # 判定长度异常的绝对下限字符数
+repetition_min_unit = 4                  # 判定为循环的重复子串最小长度
+repetition_min_times = 3                 # 判定为循环的最小连续重复次数
+
 # v2 链路三个本地模型的落卡，三者绑定同一张卡
 [model_device]
 vad = 0                 # FunASR FSMN-VAD
