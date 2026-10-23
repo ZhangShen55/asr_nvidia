@@ -89,8 +89,8 @@ class PrefixParsingTests(unittest.TestCase):
         ratio = build_language_ratio(
             [("Chinese", "中文字符"), ("English", "ab")]
         )
-        self.assertAlmostEqual(ratio["Chinese"], 66.7, places=1)
-        self.assertAlmostEqual(ratio["English"], 33.3, places=1)
+        self.assertAlmostEqual(ratio["zh"], 66.7, places=1)
+        self.assertAlmostEqual(ratio["en"], 33.3, places=1)
         self.assertAlmostEqual(sum(ratio.values()), 100.0, places=1)
 
     def test_language_ratio_empty(self):
@@ -314,7 +314,7 @@ class V2RouteTests(unittest.TestCase):
     def test_route_is_registered(self):
         client = self._client()
         paths = client.get("/openapi.json").json()["paths"]
-        self.assertIn("/v1.1.8/seacraft_asr", paths)
+        self.assertNotIn("/v1.1.8/seacraft_asr", paths)
         self.assertIn("/v2/seacraft_asr", paths)
 
     @patch("api.routes.asr_v2.get_slot_manager")
@@ -360,7 +360,7 @@ class V2RouteTests(unittest.TestCase):
                 "speed_info": [],
                 "load_audio_time_ms": "1.00",
                 "gpu_time_ms": "2.00",
-                "language_ratio": {"Chinese": 100.0},
+                "language_ratio": {"zh": 100.0},
             }
 
         mock_run.side_effect = _run
@@ -421,7 +421,7 @@ class ResponseStructureTests(unittest.TestCase):
             result = asyncio.run(run_qwen_asr(ctx))
 
         self.assertEqual(result["language"], "Chinese")
-        self.assertEqual(result["language_ratio"], {"Chinese": 100.0})
+        self.assertEqual(result["language_ratio"], {"zh": 100.0})
         self.assertEqual(len(result["segments"]), 2)
         self.assertEqual(
             set(result["segments"][0].keys()),

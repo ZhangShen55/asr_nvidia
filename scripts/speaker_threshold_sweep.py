@@ -44,7 +44,7 @@ def collect_embeddings(audio_path):
         await load_v2_models_if_needed(need_role=True, need_emotion=False)
         model = get_spk_model()
         if model is None:
-            raise RuntimeError("CAM++ 模型未加载（检查 open_spk / open_emotion 开关）")
+            raise RuntimeError("CAM++ 模型未加载（检查 open_v2_role 开关）")
 
         audio_tensor, sample_rate = load_audio_tensor(audio_path)
         embeddings = []

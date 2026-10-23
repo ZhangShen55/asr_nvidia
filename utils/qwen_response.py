@@ -9,6 +9,37 @@ from typing import Dict, Iterable, List, Optional, Tuple
 # 模型原生返回形如：language Chinese<asr_text>识别文本
 _PREFIX_PATTERN = re.compile(r"language\s+(?P<language>[^<\s]*)\s*<asr_text>", re.IGNORECASE)
 
+# 模型语种名 -> 简写标识。命中则替换键，未命中则原样透传。
+LANGUAGE_ABBREVIATIONS: Dict[str, str] = {
+    "Chinese": "zh",
+    "English": "en",
+    "Cantonese": "yue",
+    "German": "de",
+    "Italian": "it",
+    "Portuguese": "pt",
+    "Spanish": "es",
+    "French": "fr",
+    "Thai": "th",
+    "Malay": "ms",
+    "Japanese": "ja",
+    "Korean": "ko",
+    "Russian": "ru",
+    "Hindi": "hi",
+    "Arabic": "ar",
+    "Vietnamese": "vi",
+    "Indonesian": "id",
+    "Dutch": "nl",
+    "Turkish": "tr",
+    "Polish": "pl",
+    "Greek": "el",
+    "Hebrew": "he",
+}
+
+
+def abbreviate_language(language: str) -> str:
+    """把模型返回的语种名换成简写；不在映射表中的原样返回。"""
+    return LANGUAGE_ABBREVIATIONS.get(language, language)
+
 
 @dataclass
 class QwenSegmentResult:
@@ -62,6 +93,7 @@ def count_text_chars(text: Optional[str]) -> int:
 def build_language_ratio(items: Iterable[Tuple[Optional[str], Optional[str]]]) -> Dict[str, float]:
     """按 (语种, 文本) 统计各语种文本字符占比（百分比，保留一位小数）。
 
+    键为语种简写（如 zh / en）；不在映射表中的语种原样透传。
     各语种占比之和为 100.0；没有有效文本时返回空字典。
     """
     counter: Dict[str, int] = {}
@@ -80,12 +112,14 @@ def build_language_ratio(items: Iterable[Tuple[Optional[str], Optional[str]]]) -
 
     ratio: Dict[str, float] = {}
     for language, chars in counter.items():
-        ratio[language] = round(chars * 100.0 / total, 1)
+        ratio[abbreviate_language(language)] = round(chars * 100.0 / total, 1)
     return ratio
 
 
 __all__ = [
+    "LANGUAGE_ABBREVIATIONS",
     "QwenSegmentResult",
+    "abbreviate_language",
     "build_language_ratio",
     "count_text_chars",
     "parse_qwen_text",

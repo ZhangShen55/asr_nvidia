@@ -18,56 +18,36 @@ class Settings:
     def __post_init__(self):
         self._cfg = _load_toml(self.config_path)
 
-    # 基础配置
+    # 日志配置
     @property
     def log_path(self) -> str:
         return self._cfg.get("log_path", "./asr_service.log")
 
     @property
-    def id_engine(self) -> str:
-        import uuid
-        return self._cfg.get("id_engine", f"seacraft-asr-{uuid.uuid4()}")
+    def log_max_days(self) -> int:
+        """日志保留天数。"""
+        return int(self._cfg.get("log", {}).get("max_days", 7))
 
     @property
-    def version(self) -> str:
-        return self._cfg.get("version", "seacraft-voice-analysis-app-pro")
+    def log_max_size_mb(self) -> int:
+        """单个日志文件的大小上限（MB）。"""
+        return int(self._cfg.get("log", {}).get("max_size_mb", 100))
 
-    # 设备与并发
-    @property
-    def ngpu(self) -> int:
-        return self._cfg.get("ngpu", 1)
-
-    @property
-    def device(self) -> str:
-        return self._cfg.get("device", "cuda:0")
-
-    @property
-    def ncpu(self) -> int:
-        return self._cfg.get("ncpu", 4)
-
-    @property
-    def concurrency(self) -> int:
-        return self._cfg.get("concurrency", 5)
-
+    # 服务实例数量
     @property
     def instance_count(self) -> int:
-        return self._cfg.get("instance_count", 4)
+        """容器内并行运行的 uvicorn 实例数量。
+
+        每个实例各自持有一份本地模型权重，因此实例数即显存倍数；
+        默认单实例，避免显存被无意放大。
+        """
+        return int(self._cfg.get("instance_count", 1))
 
     # 模型路径 - 从嵌套的 [model_paths] 部分读取
     @property
     def vad_model_dir(self) -> str:
         model_paths = self._cfg.get("model_paths", {})
         return model_paths.get("vad_model_dir", "/model/speech_fsmn_vad_zh-cn-16k-common-pytorch")
-
-    @property
-    def punc_model_dir(self) -> str:
-        model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("punc_model_dir", "/model/punc_ct-transformer_cn-en-common-vocab471067-large")
-
-    @property
-    def asr_model_dir(self) -> str:
-        model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("asr_model_dir", "/model/speech_paraformer-large-vad-punc_asr_nat-zh-cn-16k-common-vocab8404-pytorch")
 
     @property
     def spk_model_dir(self) -> Optional[str]:
@@ -80,11 +60,6 @@ class Settings:
         # 注意：原 JSON 中 key 为 emotion_modek_dir（拼写错误），这里修正为 emotion_model_dir
         return model_paths.get("emotion_model_dir", "/model/emotion2vec_plus_seed")
 
-    @property
-    def whisper_model_dir(self) -> str:
-        model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("whisper_model_dir", "/model/faster-whisper-large-v3")
-
     # 语速计算配置 - 从嵌套的 [speech_rate] 部分读取
     @property
     def speech_rate_factor(self) -> float:
@@ -93,45 +68,16 @@ class Settings:
 
     # 功能开关 - 从嵌套的 [features] 部分读取
     @property
-    def open_spk(self) -> bool:
+    def open_v2_role(self) -> bool:
+        """v2 链路的 CAM++ 说话人嵌入开关。"""
         features = self._cfg.get("features", {})
-        return features.get("open_spk", False)
+        return bool(features.get("open_v2_role", True))
 
     @property
-    def open_mul_lang(self) -> bool:
+    def open_v2_emotion(self) -> bool:
+        """v2 链路的 emotion2vec 情绪开关。"""
         features = self._cfg.get("features", {})
-        return features.get("open_mul_lang", False)
-
-    @property
-    def open_emotion(self) -> bool:
-        features = self._cfg.get("features", {})
-        return features.get("open_emotion", False)
-
-    @property
-    def ban_hotword(self) -> bool:
-        features = self._cfg.get("features", {})
-        return features.get("ban_hotword", False)
-
-    # 长音频分块配置
-    @property
-    def chunk_threshold_minutes(self) -> float:
-        return float(self._cfg.get("audio_chunk", {}).get("threshold_minutes", 90))
-
-    @property
-    def chunk_minutes(self) -> float:
-        return float(self._cfg.get("audio_chunk", {}).get("chunk_minutes", 60))
-
-    @property
-    def min_last_chunk_minutes(self) -> float:
-        return float(self._cfg.get("audio_chunk", {}).get("min_last_chunk_minutes", 15))
-
-    @property
-    def chunk_overlap_seconds(self) -> float:
-        return float(self._cfg.get("audio_chunk", {}).get("overlap_seconds", 15))
-
-    @property
-    def chunk_retry_count(self) -> int:
-        return int(self._cfg.get("audio_chunk", {}).get("chunk_retry_count", 2))
+        return bool(features.get("open_v2_emotion", True))
 
     # 文本规范化（ITN）配置
     @property

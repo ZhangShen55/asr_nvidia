@@ -12,6 +12,59 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+# 标点集合：中英文常用标点。用于判定「纯标点段」与「段首标点」。
+PUNCTUATION_CHARS = frozenset(
+    "，。！？；：、,.?!;:~…—–"
+    "“”‘’\"'()（）《》〈〉【】〔〕「」『』"
+)
+
+
+def is_punctuation_only(text: str) -> bool:
+    """判断文本去除空白后是否只剩标点符号。"""
+    stripped = (text or "").strip()
+    if not stripped:
+        return False
+    return all(char in PUNCTUATION_CHARS for char in stripped)
+
+
+def strip_leading_punctuation(text: str) -> str:
+    """移除文本开头的连续标点，直到落到有效字符为止。"""
+    stripped = (text or "").strip()
+    index = 0
+    while index < len(stripped) and stripped[index] in PUNCTUATION_CHARS:
+        index += 1
+    return stripped[index:].lstrip()
+
+
+def sanitize_segments(segments: Iterable[dict]) -> tuple[list[dict], str]:
+    """分段文本的标点卫生处理。
+
+    - 整段只有标点符号时丢弃该分段（也不参与整段文本拼接）；
+    - 分段文本以标点开头时移除开头连续的所有标点。
+
+    该处理与文本规范化（ITN）开关无关：规范化关闭时同样执行，
+    因此放在 ITN 之后单独调用。
+    """
+    output: list[dict] = []
+    for segment in segments:
+        item = dict(segment)
+        raw_text = str(item.get("segment_text", "") or "")
+        stripped = raw_text.strip()
+        if not stripped:
+            output.append(item)
+            continue
+        if is_punctuation_only(stripped):
+            continue
+        item["segment_text"] = strip_leading_punctuation(stripped)
+        output.append(item)
+
+    text = " ".join(
+        str(segment.get("segment_text", "") or "").strip()
+        for segment in output
+        if str(segment.get("segment_text", "") or "").strip()
+    )
+    return output, text
+
 
 @dataclass(frozen=True)
 class ItnConfig:

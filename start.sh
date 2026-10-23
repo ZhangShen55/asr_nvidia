@@ -36,14 +36,14 @@ try:
     path = os.environ.get("CONFIG_PATH", "/config.toml")
     with open(path, "rb") as f:
         cfg = tomli.load(f)
-    print(int(cfg.get("instance_count", 4)))
+    print(int(cfg.get("instance_count", 1)))
 except Exception:
-    print(4)
+    print(1)
 EOF
 )
 if [[ -z "$instance_count" || "$instance_count" == "null" ]]; then
-    echo "[WARN] 无法读取 instance_count，使用默认值 4"
-    instance_count=4
+    echo "[WARN] 无法读取 instance_count，使用默认值 1"
+    instance_count=1
 fi
 
 echo "[INFO] 启动 $instance_count 个 uvicorn 实例..."

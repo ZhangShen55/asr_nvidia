@@ -4,8 +4,6 @@ av==14.4.0
 funasr==1.2.6
 addict # 使用modelscope 后加的
 datasets==2.21.0 # 使用modelscope 后加的
-faster-whisper==1.1.1 # 法语等小语种转写
-ctranslate2==4.4.0 # faster-whisper 推理后端
 fastapi>=0.95.1
 aiofiles
 uvicorn
@@ -22,6 +20,7 @@ librosa
 pydub
 tomli # TOML 配置文件解析
 WeTextProcessing==1.2.0 # 文本规范化（ITN）规则包，pynini 由 conda-forge 安装
+setproctitle==1.3.8 # 服务进程名覆写（nvidia-smi 中显示 asr-offline-model）
 #容器环境
 # datasets                 2.21.0 
 # modelscope               1.25.0

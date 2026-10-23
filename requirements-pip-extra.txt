@@ -1,4 +1,4 @@
-# Docker 可选能力依赖（小语种转写与文本规范化），单独成层以复用基础依赖缓存
-faster-whisper==1.1.1
-ctranslate2==4.4.0
-importlib_resources
+# 文本规范化（ITN）规则包运行时。
+# WeTextProcessing 依赖 pynini，pynini 由 conda-forge 提供（PyPI 的 cp310 manylinux wheel
+# 与镜像内的 glibc 2.17 不兼容），因此这里必须 --no-deps 安装。
+WeTextProcessing==1.2.0

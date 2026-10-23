@@ -1,13 +1,21 @@
+"""状态查询的响应组装。
+
+引擎标识与版本不再来自配置（配置项已随接口下线一并删除），
+这里返回固定占位值，保证运维平台的字段结构保持不变。
+"""
+
 from datetime import timedelta, datetime
-from fastapi import APIRouter, Request
 
-from core.config import settings
-from utils.asr_stats import read_stats, clear_processing_tasks
+from core.models import get_local_model_status
 
-router = APIRouter()
+# 引擎标识：配置项已删除，返回固定占位值以保持响应字段结构不变
+ID_ENGINE_PLACEHOLDER = "1"
+
+# 应用版本：固定值
+APP_VERSION = "latest"
 
 
-def _format_timedelta(td: timedelta) -> str:
+def format_timedelta(td: timedelta) -> str:
     total_seconds = int(td.total_seconds())
     days = total_seconds // (3600 * 24)
     hours = (total_seconds // 3600) % 24
@@ -16,28 +24,30 @@ def _format_timedelta(td: timedelta) -> str:
     return f"{days}天 {hours}小时 {minutes}分 {seconds}秒"
 
 
-@router.get("/get_status")
-async def get_status(request: Request):
-    stats = read_stats()
-    run_start_time: datetime = request.app.state.run_start_time
+def build_status_payload(stats: dict, run_start_time: datetime) -> dict:
+    """组装 `/get_status` 的响应体。"""
     run_time = datetime.utcnow() - run_start_time
-
     return {
-        "id_engine": settings.id_engine,
+        "id_engine": ID_ENGINE_PLACEHOLDER,
         "status": "living",
-        "appVersion": settings.version,
+        "appVersion": APP_VERSION,
         "nowTime": (datetime.utcnow() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S"),
-        "runTime": _format_timedelta(run_time),
+        "runTime": format_timedelta(run_time),
         "totalHaveDoneProcessTasks": stats["offline"] + stats["online"],
         "totalFailedTasks": stats["total_failed_tasks"],
         "offlineDone": stats["offline"],
         "onlineDone": stats["online"],
         "queuedTaskList": stats["queued_task_ids"],
         "processingTaskList": stats["processing_task_ids"],
+        # 本地模型（VAD / CAM++ / emotion2vec）的加载状态与显存明细：
+        # 三个模型同进程承载，nvidia-smi 只能看到聚合显存，这里提供逐模型视角。
+        "localModels": get_local_model_status(),
     }
 
 
-@router.delete("/clear_tasks_list")
-async def clear_tasks_list():
-    clear_processing_tasks()
-    return {"msg": "正在处理的任务列表已清空", "code": 0}
+__all__ = [
+    "APP_VERSION",
+    "ID_ENGINE_PLACEHOLDER",
+    "build_status_payload",
+    "format_timedelta",
+]

@@ -5,27 +5,40 @@ from datetime import datetime
 
 from core.config import settings
 from core.logging import setup_logging
-from core.models import load_models_if_needed
 from core.qwen_asr_client import close_qwen_client
-from api.routes.asr_v18 import router as asr_v18_router
 from api.routes.asr_v2 import router as asr_v2_router
 from api.routes.status import router as status_router
 from utils.asr_stats import reset_stats
 
+# 服务进程的统一进程名：nvidia-smi 的进程列表读 /proc/<pid>/cmdline 的 argv[0]，
+# 覆写后运维能直接定位「哪一行是本服务占的显存」。
+# 本地模型（VAD / CAM++ / emotion2vec）同进程承载，因此不再按模型拆分进程名。
+PROCESS_NAME = "asr-offline-model"
+
+
+def _set_process_name() -> None:
+    """把进程名覆写为 PROCESS_NAME（失败不影响服务启动）。"""
+    try:
+        import setproctitle
+
+        setproctitle.setproctitle(PROCESS_NAME)
+    except Exception as exc:  # noqa: BLE001 - 进程名只是运维标识，不该阻塞启动
+        print(f"[WARN] 设置进程名失败: {exc}")
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # 1) 日志初始化
+    # 1) 进程命名（运维在 nvidia-smi 中据此定位本服务的显存占用）
+    _set_process_name()
+
+    # 2) 日志初始化
     setup_logging(settings.log_path)
 
-    # 2) 重置统计
+    # 3) 重置统计
     reset_stats()
 
-    # 3) 记录启动时刻
+    # 4) 记录启动时刻
     app.state.run_start_time = datetime.utcnow()
-
-    # 4) 懒加载需要的模型（遵循配置开关）
-    await load_models_if_needed()
 
     yield
     # 释放 Qwen 客户端连接池
@@ -46,7 +59,6 @@ def create_app() -> FastAPI:
 
     # 路由装配（路径与契约保持不变）
     app.include_router(status_router)
-    app.include_router(asr_v18_router)
     app.include_router(asr_v2_router)
 
     return app
@@ -57,4 +69,6 @@ app = create_app()
 # 方便本地调试：容器里用 start.sh，多进程由 Nginx + 多 uvicorn 实例负责
 if __name__ == "__main__":
     import uvicorn
+
+    _set_process_name()
     uvicorn.run("main:app", host="0.0.0.0", port=8083, reload=False)

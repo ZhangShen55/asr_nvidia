@@ -35,7 +35,7 @@ from utils.feature_utils import (
     extract_features,
     identify_teacher,
 )
-from utils.itn import ItnConfig, normalize_segments
+from utils.itn import ItnConfig, normalize_segments, sanitize_segments
 from utils.qwen_response import build_language_ratio, parse_qwen_text
 from utils.asr_stats import update_fail_task, update_stat
 
@@ -520,6 +520,9 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     output_segments, normalized_text, _ = normalize_segments(
         output_segments, itn_language, config
     )
+    # 标点卫生：丢弃纯标点段、移除段首连续标点。
+    # 该规则与 ITN 开关无关，规范化关闭时同样执行。
+    output_segments, normalized_text = sanitize_segments(output_segments)
     phase["itn_ms"] = (time.perf_counter() - itn_started) * 1000
 
     gpu_time_ms = (time.perf_counter() - started) * 1000

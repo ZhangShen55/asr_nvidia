@@ -11,3 +11,4 @@ __pycache__/
 *.whl
 /model/*
 !/model/README.md
+/test/audio_file/

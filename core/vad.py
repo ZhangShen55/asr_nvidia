@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import List
 
 from core.config import settings
-from core.models import _resolve_device
+from core.models import _resolve_device, device_allocated_mb, record_model_memory
 
 logger = logging.getLogger(__name__)
 
@@ -90,9 +90,11 @@ def _create_vad_model():
     """新建一个 FSMN-VAD 模型实例。"""
     from funasr import AutoModel
 
-    return AutoModel(
+    device = _resolve_device(settings.model_device_vad)
+    before = device_allocated_mb(device)
+    model = AutoModel(
         model=settings.vad_model_dir,
-        device=_resolve_device(settings.model_device_vad),
+        device=device,
         vad_kwargs={
             "max_single_segment_time": settings.qwen_vad_max_single_segment_time_ms,
             "max_end_silence_time": settings.qwen_vad_max_end_silence_time_ms,
@@ -100,6 +102,10 @@ def _create_vad_model():
         disable_update=True,
         disable_pbar=True,
     )
+    allocated = device_allocated_mb(device) - before
+    record_model_memory("vad", device, allocated, instance_added=True)
+    logger.info(f"[模型] FSMN-VAD 实例已加载到 {device}，显存占用约 {allocated:.1f} MB")
+    return model
 
 
 async def detect_segments(audio_path: str) -> List[VadSegment]:
