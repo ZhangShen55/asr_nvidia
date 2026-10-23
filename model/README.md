@@ -1,44 +1,24 @@
 # 模型目录说明
 
-本目录用于放置离线 ASR 运行所需的模型。模型权重不会提交到 Git，但会参与 Docker 构建并复制到镜像内的 `/app/model/`。
+本目录用于放置离线 ASR 运行所需的本地模型。模型权重不会提交到 Git，但会参与 Docker 构建并复制到镜像内的 `/app/model/`。
+
+`/v1.1.8/seacraft_asr` 已下线，本目录不再包含其专用的 SeACo-Paraformer、PUNC 与 `faster-whisper-large-v3`。
 
 ## 必需目录
 
-以下五个目录必须完整存在，目录名不可修改：
+以下三个目录必须完整存在，目录名不可修改：
 
-| 目录 | 用途 | 配置文件 |
-|------|------|----------|
-| `speech_fsmn_vad_zh-cn-16k-common-pytorch/` | 语音端点检测（VAD） | `config.toml`、`config.docker.toml` |
-| `punc_ct-transformer_cn-en-common-vocab471067-large/` | 中英文标点恢复 | 同上 |
-| `speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/` | Paraformer 中文语音识别 | 同上 |
-| `speech_campplus_sv_zh_en_16k-common_advanced/` | CAM++ 说话人特征与说话人分离 | 同上 |
-| `emotion2vec_plus_large/` | emotion2vec 情绪识别 | 同上 |
+| 目录 | 用途 | 配置文件项 | 生效开关 |
+|------|------|------------|----------|
+| `speech_fsmn_vad_zh-cn-16k-common-pytorch/` | 语音端点检测（VAD） | `[model_paths].vad_model_dir` | 常驻 |
+| `speech_campplus_sv_zh_en_16k-common_advanced/` | CAM++ 说话人特征与说话人分离 | `[model_paths].spk_model_dir` | `[features].open_v2_role = true` |
+| `emotion2vec_plus_large/` | emotion2vec 情绪识别 | `[model_paths].emotion_model_dir` | `[features].open_v2_emotion = true` |
 
-## 可选目录
+`open_v2_role` 与 `open_v2_emotion` 互相独立：任一为 `false` 时对应模型不会加载，也不占用显存。
 
-启用法语转写（`[features].open_mul_lang = true`）时需要额外提供：
+## Qwen3-ASR 模型不在本目录
 
-| 目录 | 用途 | 配置文件 |
-|------|------|----------|
-| `faster-whisper-large-v3/` | Whisper 小语种转写（CTranslate2 int8 格式） | `config.toml`、`config.docker.toml` |
-
-未提供该目录时，若配置中 `open_mul_lang = false`，构建与运行均不受影响；一旦开启该开关，Docker 构建会因缺少该目录而失败并给出明确提示。
-
-## v2（Qwen3-ASR）链路的模型需求
-
-`/v2/seacraft_asr` **不引入任何新模型文件**，但对已有模型的使用方式有变化：
-
-| 模型 | 在 v2 链路中的用途 | 说明 |
-|------|--------------------|------|
-| `speech_fsmn_vad_zh-cn-16k-common-pytorch` | 本地 VAD 切分 | 必需。v2 链路用独立的模型实例池（实例不可并发复用），与 v1.1.8 链路各自一份 |
-| `speech_campplus_sv_zh_en_16k-common_advanced` | CAM++ 说话人嵌入 → 聚类出 `spk_N` | 仅在 `[features]` 的 `open_spk` **与** `open_emotion` 同时为 `true` 时才加载 |
-| `emotion2vec_plus_large` | 情绪判定 | 同上；同时以**半精度（fp16）**加载，权重占用约 1 GB |
-
-说明：
-
-1. v2 链路是 v1.1.8 链路的**并行分支**，两者的模型实例互不共享。若 v1.1.8 与 v2 同时活跃，emotion2vec 会驻留两份（约 3.8 GB 合计），同一时刻建议只跑一条链路。
-2. v2 链路的三个本地模型按 `[model_device]` 配置落卡（三者绑定同一张卡，默认 GPU 0）；`/v1.1.8` 仍按原有的 `device` / `ngpu` 配置运行。
-3. **Qwen3-ASR 模型由独立容器提供，不进本镜像**。本服务通过「IP + 8806」访问该容器，不需要 API Key；模型名留空时从 `/v1/models` 自动发现。
+Qwen3-ASR 由**独立容器**提供，不进本镜像、不需要 API Key。本服务通过「IP + 8806」访问该容器；`[qwen_asr].model` 留空时从 `/v1/models` 自动发现模型名。
 
 ## 放置要求
 
@@ -46,7 +26,7 @@
 2. 不要只复制 `model.pt`，也不要额外增加一层同名子目录。
 3. `config.toml` 使用 `./model/<目录名>`，容器配置使用 `/app/model/<目录名>`。
 4. 模型文件被 `.gitignore` 忽略；只有本说明文件会纳入版本控制。
-5. Docker 构建会检查五个目录是否存在且非空。缺少任一目录时构建失败。
+5. Docker 构建会检查上述三个目录是否存在且非空。缺少任一目录时构建失败并指出缺失目录名。
 
 ## 模型清单
 
@@ -54,9 +34,6 @@
 model/
 ├── README.md
 ├── speech_fsmn_vad_zh-cn-16k-common-pytorch/
-├── punc_ct-transformer_cn-en-common-vocab471067-large/
-├── speech_seaco_paraformer_large_asr_nat-zh-cn-16k-common-vocab8404-pytorch/
 ├── speech_campplus_sv_zh_en_16k-common_advanced/
-├── emotion2vec_plus_large/
-└── faster-whisper-large-v3/   # 可选
+└── emotion2vec_plus_large/
 ```
