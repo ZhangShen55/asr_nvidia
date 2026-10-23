@@ -9,6 +9,7 @@ from unittest.mock import AsyncMock, patch
 
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
+import numpy as np
 import torch
 
 from core.qwen_asr_client import (
@@ -157,6 +158,108 @@ class SlotManagerTests(unittest.TestCase):
             self.assertEqual(manager.waiting, 0)
 
         asyncio.run(_run())
+
+
+class SpeakerClusteringTests(unittest.TestCase):
+    """聚类实现的正确性与性能回归。"""
+
+    @staticmethod
+    def _reference_clusters(similarity, limit):
+        """旧版朴素实现，作为等价性参照。"""
+        clusters = [[index] for index in range(len(similarity))]
+        while len(clusters) > 1:
+            best_score = -1.0
+            best_pair = (-1, -1)
+            for i in range(len(clusters)):
+                for j in range(i + 1, len(clusters)):
+                    score = float(similarity[np.ix_(clusters[i], clusters[j])].mean())
+                    if score > best_score:
+                        best_score = score
+                        best_pair = (i, j)
+            if best_pair[0] < 0 or best_score < limit:
+                break
+            i, j = best_pair
+            clusters[i] = clusters[i] + clusters[j]
+            clusters.pop(j)
+        return clusters
+
+    def test_matches_reference_implementation(self):
+        from api.routes.asr_qwen_common import _average_linkage_clusters
+
+        rng = np.random.default_rng(20261023)
+        for _ in range(20):
+            n = int(rng.integers(4, 40))
+            centers = rng.normal(size=(3, 8))
+            labels = rng.integers(0, 3, size=n)
+            vectors = centers[labels] + rng.normal(scale=0.15, size=(n, 8))
+            norms = np.linalg.norm(vectors, axis=1, keepdims=True)
+            vectors = vectors / norms
+            similarity = vectors @ vectors.T
+
+            reference = self._reference_clusters(similarity, 0.3)
+            actual = _average_linkage_clusters(similarity, 0.3)
+
+            def partition(clusters):
+                return sorted(sorted(c) for c in clusters)
+
+            self.assertEqual(partition(reference), partition(actual))
+
+    def test_single_and_empty_inputs(self):
+        from api.routes.asr_qwen_common import _average_linkage_clusters
+
+        self.assertEqual(_average_linkage_clusters(np.zeros((0, 0)), 0.3), [])
+        self.assertEqual(_average_linkage_clusters(np.ones((1, 1)), 0.3), [[0]])
+
+    def test_large_input_is_fast(self):
+        """395 段的聚类必须在秒级完成（旧实现需要约 100 秒）。"""
+        import time
+
+        from api.routes.asr_qwen_common import _average_linkage_clusters
+
+        rng = np.random.default_rng(7)
+        centers = rng.normal(size=(4, 192))
+        labels = rng.integers(0, 4, size=395)
+        vectors = centers[labels] + rng.normal(scale=0.2, size=(395, 192))
+        vectors /= np.linalg.norm(vectors, axis=1, keepdims=True)
+        similarity = vectors @ vectors.T
+
+        started = time.perf_counter()
+        clusters = _average_linkage_clusters(similarity, 0.3)
+        elapsed = time.perf_counter() - started
+
+        self.assertEqual(len(clusters), 4)
+        self.assertLess(elapsed, 5.0, f"聚类耗时 {elapsed:.2f}s，超过预期")
+
+
+class ShortSegmentSpeakerTests(unittest.TestCase):
+    """短片段（<1 秒）不跑 CAM++，但说话人标签仍按时间就近继承。"""
+
+    @staticmethod
+    def _make_outcome(index, start_s, duration_s, embedding=None):
+        from api.routes.asr_qwen_common import SegmentOutcome
+        from core.vad import VadSegment
+
+        return SegmentOutcome(
+            index=index,
+            segment=VadSegment(start_s=start_s, end_s=start_s + duration_s),
+            embedding=embedding,
+        )
+
+    def test_short_segment_inherits_nearest_speaker(self):
+        from api.routes.asr_qwen_common import cluster_speakers
+
+        embedding = torch.ones(192)
+        outcomes = [
+            self._make_outcome(0, 0.0, 3.0, embedding),
+            self._make_outcome(1, 3.2, 0.6, None),   # 短片段：没有嵌入
+            self._make_outcome(2, 6.0, 3.0, embedding),
+        ]
+
+        labels = cluster_speakers(outcomes, threshold=0.3)
+
+        self.assertEqual(labels[0], "spk_0")
+        self.assertEqual(labels[2], "spk_0")
+        self.assertEqual(labels[1], "spk_0", "短片段应继承时间上最近的说话人")
 
 
 class RequestConcurrencyTests(unittest.TestCase):
@@ -456,7 +559,7 @@ class FaultInjectionTests(unittest.TestCase):
         async def _boom_speaker(audio_array, sample_rate):
             return torch.zeros(8)
 
-        async def _boom_emotion(path, duration_s):
+        async def _boom_emotion(audio_array, sample_rate, duration_s):
             raise RuntimeError("emotion2vec 推理失败")
 
         result = self._run_chain(
@@ -478,7 +581,7 @@ class FaultInjectionTests(unittest.TestCase):
         async def _boom_speaker(audio_array, sample_rate):
             raise RuntimeError("CAM++ 推理失败")
 
-        async def _ok_emotion(path, duration_s):
+        async def _ok_emotion(audio_array, sample_rate, duration_s):
             return "平淡"
 
         result = self._run_chain(
@@ -509,7 +612,7 @@ class FaultInjectionTests(unittest.TestCase):
                 raise RuntimeError("音频损坏")
             return torch.zeros(8)
 
-        async def _emotion(path, duration_s):
+        async def _emotion(audio_array, sample_rate, duration_s):
             return "平淡"
 
         result = self._run_chain(
