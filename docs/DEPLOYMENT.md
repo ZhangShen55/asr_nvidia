@@ -73,7 +73,7 @@ Maximum concurrency for XX sequences per request: ...
 
 ### 2.1 用 nvidia-smi 定位本服务的显存
 
-三个本地模型（VAD、CAM++、emotion2vec）由同一个服务进程承载，进程名统一为 `asr-offline-model`：
+主服务进程承载 CAM++ 与 emotion2vec，进程名为 `asr-offline-model`；VAD 由独立的 `asr-offline-vad` worker 进程承载：
 
 ```bash
 nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
@@ -82,13 +82,12 @@ nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
 ```text
 pid, process_name, used_gpu_memory [MiB]
 1352204, VLLM::EngineCore, 9998 MiB
-1791632, asr-offline-model, 420 MiB
+1791632, asr-offline-model, 340 MiB
+# vad_device = "cpu" 时不出现 asr-offline-vad GPU 行
 ```
 
-为什么不再按模型拆分进程名（`vad` / `cam` / `emo`）：每个独立进程要各自创建 CUDA context，
-实测仅 context 就占 386 MiB，从单进程拆三进程净增约 0.8 GB 显存；而且模型调用会从函数调用
-退化为跨进程 RPC，异常与超时路径全部复杂化。业务侧明确不接受这份额外开销，因此改为统一进程名，
-逐模型区分下放到状态接口。
+VAD worker 默认在 CPU 上运行，不建立 CUDA context；只有把 `vad_device` 配置为 `cuda:N` 时，
+才会在 GPU 进程列表中出现 `asr-offline-vad`，且显存随 worker 数量增长。
 
 ### 2.2 逐模型的显存明细
 
@@ -100,7 +99,7 @@ curl http://localhost:9000/get_status | jq .localModels
 
 ```json
 {
-  "vad": { "loaded": true, "device": "cuda:0", "allocated_mb": 1.6, "instances": 4 },
+  "vad": { "loaded": true, "device": "cpu", "allocated_mb": 0.0, "instances": 8, "pool_size": 8, "pool_max": 16 },
   "speech_campplus": { "loaded": true, "device": "cuda:0", "allocated_mb": 26.7, "instances": 1 },
   "emotion2vec": { "loaded": true, "device": "cuda:0", "allocated_mb": 313.3, "instances": 1 }
 }
@@ -108,19 +107,55 @@ curl http://localhost:9000/get_status | jq .localModels
 
 `loaded` 为 `false` 表示该模型尚未被任何请求触发加载（懒加载），此时不占显存。
 
+VAD 进程池运行信息也通过 `.vadPool` 暴露：
+
+```json
+{
+  "device": "cpu",
+  "workers": 8,
+  "busy": 0,
+  "waiting": 0,
+  "pool_size": 8,
+  "pool_max": 16
+}
+```
+
 ### 2.3 实例数与显存的关系
 
-`instance_count` 默认 `1`。每个实例进程各自持有一份 VAD / CAM++ / emotion2vec 权重，
-因此**实例数即显存倍数**：
+`instance_count` 默认 `1`。每个实例进程各自持有一份 CAM++ / emotion2vec 权重；每个服务实例
+另外维护由 `vad_pool_size` 决定的独立 VAD worker 池。VAD 默认在 CPU 上，因此默认不放大显存：
 
 | `instance_count` | uvicorn 实例数 | `nvidia-smi` 中的进程行数 | 本地模型显存 |
 |-----------------|---------------|------------------------|------------|
-| 1（默认） | 1 | 1 | 1 份 |
-| 2 | 2 | 2 | 2 份 |
+| 1（默认） | 1 | 1 个 `asr-offline-model` + 8 个 CPU VAD worker | CAM++/emotion2vec 1 份，VAD 显存 0 |
+| 2 | 2 | 2 个 `asr-offline-model` + 每实例 8 个 CPU VAD worker | CAM++/emotion2vec 2 份，VAD 显存 0 |
 
 多实例用于提升 HTTP 层吞吐，代价是本地模型显存等比放大，运维按需权衡。
 
-### 2.4 日志
+### 2.4 VAD 进程池与 CPU 配额
+
+VAD 配置位于 `[qwen_asr]`：
+
+| 配置项 | 默认值 | 说明 |
+|---|---:|---|
+| `vad_device` | `"cpu"` | `cpu` 或 `cuda:N` |
+| `vad_pool_size` | `8` | 常驻 worker 数 |
+| `vad_pool_max` | `16` | 突发扩容上限 |
+| `vad_queue_watermark` | `4` | 等待队列超过该值时扩容 |
+| `vad_collapse_timeout_s` | `120` | 扩容 worker 空闲回收时间 |
+| `vad_queue_timeout_s` | `120` | VAD 排队超时，返回 4014 |
+
+实测每个 CPU worker 约占 2.2~2.5 核，建议按以下配额配置容器：
+
+| `vad_pool_size` | 建议容器 CPU 配额 |
+|---:|---:|
+| 4 | 16 核 |
+| 8 | 24~32 核 |
+| 16 | 48 核；16 worker 后收益趋于饱和 |
+
+VAD worker 只读取主进程已落盘的音频路径。段 clip 在转写返回后立即删除，异常路径由请求级 `finally` 兜底清理。
+
+### 2.5 日志
 
 日志按天 + 按大小双轮转，并按保留天数自动清理：
 
@@ -138,7 +173,7 @@ asr_service.log.1            # 按大小切出的历史（序号递增，最旧�
 asr_service.log.2026-10-23   # 按天切出的历史
 ```
 
-### 2.5 复读后处理
+### 2.6 复读后处理
 
 Qwen3-ASR 偶尔会在某个 VAD 段上进入「同一短语无限重复」的生成循环，直到撞上 `max_model_len` 被截断（实测产出 1863 字符的复读串）。服务在转写结果落地时（**ITN 规范化之前**）做一次检测与折叠。
 
