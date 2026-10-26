@@ -12,3 +12,7 @@ __pycache__/
 /model/*
 !/model/README.md
 /test/audio_file/
+
+# 运行日志及日志轮转文件
+*.log
+*.log.*
