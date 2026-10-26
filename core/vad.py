@@ -12,6 +12,7 @@ from typing import List
 
 from core.config import settings
 from core.vad_pool import get_vad_pool
+from core.vad_volume import filter_low_volume_segments
 
 logger = logging.getLogger(__name__)
 
@@ -61,7 +62,12 @@ def filter_short_segments(
     return [seg for seg in segments if seg.duration_s >= threshold]
 
 
-async def detect_segments(audio_path: str) -> List[VadSegment]:
+async def detect_segments(
+    audio_path: str,
+    *,
+    audio_tensor=None,
+    sample_rate: int = 0,
+) -> List[VadSegment]:
     """对音频做 VAD 切分，返回按时间排序的语音段列表（已过滤过短段）。
 
     音频路径由主进程统一落盘后交给 worker 直接读取，进程间只传路径。
@@ -69,8 +75,29 @@ async def detect_segments(audio_path: str) -> List[VadSegment]:
     result = await get_vad_pool().detect(audio_path)
     segments = _parse_vad_result(result)
     filtered = filter_short_segments(segments)
+    dropped = []
+    if settings.qwen_vad_low_volume_filter_enabled and audio_tensor is not None and sample_rate:
+        filtered, dropped = filter_low_volume_segments(
+            filtered,
+            audio_tensor,
+            sample_rate,
+            enabled=True,
+            rms_dbfs_thres=settings.qwen_vad_low_volume_rms_dbfs_thres,
+            snr_thres=settings.qwen_vad_snr_thres,
+        )
+        for segment, stats, reason in dropped:
+            logger.info(
+                "[VAD] 丢弃低音量段 reason=%s bg=%.3f ed=%.3f rms=%.2f peak=%.2f snr=%.2f",
+                reason,
+                segment.start_s,
+                segment.end_s,
+                stats.rms_dbfs,
+                stats.peak_dbfs,
+                stats.snr_db,
+            )
     logger.info(
         f"[VAD] 切出 {len(segments)} 段，过滤后 {len(filtered)} 段，"
+        f"低音量丢弃 {len(dropped)} 段，"
         f"文件：{audio_path}"
     )
     return filtered

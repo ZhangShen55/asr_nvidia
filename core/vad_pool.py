@@ -272,6 +272,8 @@ class VadPool:
             "max_single_segment_time": settings.qwen_vad_max_single_segment_time_ms,
             "max_end_silence_time": settings.qwen_vad_max_end_silence_time_ms,
             "speech_noise_thres": settings.qwen_vad_speech_noise_thres,
+            "decibel_thres": settings.qwen_vad_decibel_thres,
+            "snr_thres": settings.qwen_vad_snr_thres,
         }
         if vad_kwargs:
             default_vad_kwargs.update(vad_kwargs)

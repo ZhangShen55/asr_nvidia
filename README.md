@@ -186,6 +186,10 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `vad_max_single_segment_time_ms` | `30000` | VAD 单段最长时长 |
 | `vad_max_end_silence_time_ms` | `800` | VAD 静音切分阈值 |
 | `vad_speech_noise_thres` | `0.6` | VAD 语音/噪声判定阈值：`0.3` 偏灵敏，`0.6` 正常，`0.8` 偏不灵敏；修改后重启生效 |
+| `vad_decibel_thres` | `-100.0` | FunASR 帧级 log 能量门限，单位不是 dBFS；`-100` 保持原行为 |
+| `vad_snr_thres` | `-100.0` | FunASR 帧级 SNR 门限；`-100` 保持原行为 |
+| `vad_low_volume_rms_dbfs_thres` | `-100.0` | 段级 RMS dBFS 门限；低于该值可判定为低音量，范围 `-100~0` |
+| `vad_low_volume_filter_enabled` | `false` | 是否在创建 clip/Qwen 请求前启用低音量过滤；修改后重启生效 |
 
 三层并发参数的区别：
 
@@ -217,6 +221,8 @@ python scripts/vad_reference.py --output /tmp/vad-reference.json
 ```
 
 报告包含 46 个“细小声音”标注段的抑制率、未标注段保留率、VAD 段数、Qwen 请求数、耗时以及 RMS/峰值诊断。区间命中定义为 VAD 输出与标注区间重叠达到标注区间的 50%；响度只用于诊断，不作为唯一判据。该长测不会进入默认快速测试，也不修改原始音频和标注文件。
+
+`vad_decibel_thres` 使用 FunASR 内部 log 能量单位，不能直接填入 RMS dBFS；`vad_low_volume_rms_dbfs_thres` 才是面向采集音量的段级门限。新过滤默认关闭，推荐值必须来自参考音频扫描并同时满足细小声音抑制率、标注区间无有效识别内容和正常语音保留率。扫描可用 `--target-suppression-rate`、`--target-retention-rate`、`--coarse-step`、`--fine-step` 和 `--output` 覆盖目标与输出路径。回滚时将开关改回 `false` 并重启，原有 `vad_speech_noise_thres` 语义不变。现有 `min_segment_duration_s` 仍是通用兼容过滤，但不参与本次低音量第一阶段标定。
 
 ### role / emotion 的加载条件
 

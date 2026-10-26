@@ -1,0 +1,32 @@
+{
+  "audio": "test/audio_file/理论计算机科学导论_时间am9.55_191803.wav",
+  "endpoint": "/v2/seacraft_asr",
+  "temporary_config": "/tmp/config-vad-low-volume-calibration.toml",
+  "rms_threshold_dbfs": -32.38,
+  "response_file": "/tmp/asr-v2-low-volume-rms-3238.json",
+  "http_status": 200,
+  "response_segment_count": 575,
+  "vad_segment_count": 664,
+  "low_volume_dropped_segment_count": 71,
+  "qwen_request_count": 593,
+  "baseline_response_segment_count": 618,
+  "unmarked_interval_retention": {
+    "baseline": "592/612=96.73%",
+    "filtered": "575/612=93.95%"
+  },
+  "single_rms_segment_scan": {
+    "threshold_dbfs": -28.5,
+    "marked_vad_interval_hits": "0/46",
+    "unmarked_vad_interval_hits": "578/612=94.44%",
+    "status": "无可行单一 RMS 阈值"
+  },
+  "marked_interval_count": 46,
+  "marked_interval_content": {
+    "no_content": 46,
+    "interjection_only": 0,
+    "valid_words": 0
+  },
+  "duration_filter_used": false,
+  "backend_log": "asr_service.log (entries around 2026-10-26 15:34:37-15:34:57)",
+  "notes": "本次临时配置只用于目标环境验收，测试结束已关闭 8083 后端；外部 Qwen 8806 未停止。"
+}

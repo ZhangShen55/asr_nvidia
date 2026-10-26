@@ -202,6 +202,58 @@ class Settings:
             raise ValueError("[qwen_asr].vad_speech_noise_thres 必须在 0.0~1.0 范围内")
         return value
 
+    @staticmethod
+    def _validated_vad_float(section: dict, key: str, default: float, lower: float, upper: float) -> float:
+        raw = section.get(key, default)
+        try:
+            value = float(raw)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"[qwen_asr].{key} 必须是有限数值，范围 {lower}~{upper}") from exc
+        if not math.isfinite(value) or value < lower or value > upper:
+            raise ValueError(f"[qwen_asr].{key} 必须在 {lower}~{upper} 范围内")
+        return value
+
+    @property
+    def qwen_vad_decibel_thres(self) -> float:
+        """FunASR 帧级 log 能量阈值，单位不是 dBFS；-100 表示不额外限制。"""
+        return self._validated_vad_float(self._cfg.get("qwen_asr", {}), "vad_decibel_thres", -100.0, -100.0, 0.0)
+
+    @property
+    def qwen_vad_snr_thres(self) -> float:
+        """FunASR 帧级 SNR 阈值；-100 表示不额外限制。"""
+        return self._validated_vad_float(self._cfg.get("qwen_asr", {}), "vad_snr_thres", -100.0, -100.0, 100.0)
+
+    @property
+    def qwen_vad_low_volume_rms_dbfs_thres(self) -> float:
+        """段级 RMS dBFS 低音量门限，低于该值才会被过滤。"""
+        return self._validated_vad_float(
+            self._cfg.get("qwen_asr", {}), "vad_low_volume_rms_dbfs_thres", -100.0, -100.0, 0.0
+        )
+
+    @property
+    def qwen_vad_low_volume_filter_enabled(self) -> bool:
+        raw = self._cfg.get("qwen_asr", {}).get("vad_low_volume_filter_enabled", False)
+        if not isinstance(raw, bool):
+            raise ValueError("[qwen_asr].vad_low_volume_filter_enabled 必须是 true 或 false")
+        return raw
+
+    # 直名别名便于标定脚本和运维代码读取，同时保持 qwen_asr 配置命名兼容。
+    @property
+    def vad_decibel_thres(self) -> float:
+        return self.qwen_vad_decibel_thres
+
+    @property
+    def vad_snr_thres(self) -> float:
+        return self.qwen_vad_snr_thres
+
+    @property
+    def vad_low_volume_rms_dbfs_thres(self) -> float:
+        return self.qwen_vad_low_volume_rms_dbfs_thres
+
+    @property
+    def vad_low_volume_filter_enabled(self) -> bool:
+        return self.qwen_vad_low_volume_filter_enabled
+
     @property
     def vad_device(self) -> str:
         """VAD 模型的运行设备。

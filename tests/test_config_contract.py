@@ -39,6 +39,30 @@ class ConfigContractTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             _ = settings.qwen_vad_speech_noise_thres
 
+    def test_low_volume_defaults_and_boundaries(self):
+        settings = self._settings('[qwen_asr]\n')
+        self.assertEqual(settings.qwen_vad_decibel_thres, -100.0)
+        self.assertEqual(settings.qwen_vad_snr_thres, -100.0)
+        self.assertEqual(settings.qwen_vad_low_volume_rms_dbfs_thres, -100.0)
+        self.assertFalse(settings.qwen_vad_low_volume_filter_enabled)
+        settings = self._settings(
+            '[qwen_asr]\n'
+            'vad_decibel_thres = -80\n'
+            'vad_snr_thres = 5\n'
+            'vad_low_volume_rms_dbfs_thres = -42.5\n'
+            'vad_low_volume_filter_enabled = true\n'
+        )
+        self.assertEqual(settings.vad_decibel_thres, -80.0)
+        self.assertEqual(settings.vad_snr_thres, 5.0)
+        self.assertEqual(settings.vad_low_volume_rms_dbfs_thres, -42.5)
+        self.assertTrue(settings.vad_low_volume_filter_enabled)
+
+    def test_low_volume_invalid_values_are_rejected(self):
+        for key, value in (("vad_decibel_thres", 1), ("vad_snr_thres", 101), ("vad_low_volume_rms_dbfs_thres", -101)):
+            settings = self._settings(f'[qwen_asr]\n{key} = {value}\n')
+            with self.assertRaises(ValueError):
+                getattr(settings, f"qwen_{key}")
+
 
 if __name__ == "__main__":
     unittest.main()

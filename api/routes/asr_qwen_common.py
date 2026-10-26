@@ -425,7 +425,16 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     )
 
     vad_started = time.perf_counter()
-    segments = await detect_segments(ctx.tmp_path)
+    # 音频已在 prepare_asr_context 中加载；低音量过滤在裁剪和 Qwen 请求前完成。
+    # 保持无张量的单测/兼容调用仍使用原有单参数接口。
+    if ctx.audio_tensor is not None and ctx.sample_rate:
+        segments = await detect_segments(
+            ctx.tmp_path,
+            audio_tensor=ctx.audio_tensor,
+            sample_rate=ctx.sample_rate,
+        )
+    else:
+        segments = await detect_segments(ctx.tmp_path)
     phase["vad_ms"] = (time.perf_counter() - vad_started) * 1000
     if not segments:
         update_fail_task()

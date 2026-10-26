@@ -76,6 +76,19 @@ class VadPoolTests(unittest.TestCase):
 
         asyncio.run(scenario())
 
+    def test_energy_and_snr_kwargs_reach_fake_worker(self):
+        pool = make_pool(
+            vad_kwargs={
+                "max_single_segment_time": 30000,
+                "max_end_silence_time": 800,
+                "speech_noise_thres": 0.95,
+                "decibel_thres": -42.0,
+                "snr_thres": 8.0,
+            }
+        )
+        self.assertEqual(pool._vad_kwargs["decibel_thres"], -42.0)
+        self.assertEqual(pool._vad_kwargs["snr_thres"], 8.0)
+
     def test_worker_process_name_is_distinct(self):
         async def scenario():
             pool = make_pool()
