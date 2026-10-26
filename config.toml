@@ -4,11 +4,9 @@
 # 每个实例各自持有一份本地模型权重，实例数即显存倍数，默认单实例。
 instance_count = 1
 
-# 日志配置
-log_path = "./asr_service.log"
-
 # 日志保留策略：按天切分 + 单文件大小上限，超期的历史日志自动删除
 [log]
+log_path = "./asr_service.log"
 max_days = 7
 max_size_mb = 100
 
@@ -49,11 +47,20 @@ request_timeout_s = 120                 # 单次 Qwen 请求超时
 connect_timeout_s = 10                  # Qwen 服务连接超时
 retry_count = 1                         # Qwen 请求失败重试次数
 min_segment_duration_s = 0.3            # 过滤过短 VAD 段
-vad_concurrency = 4                     # VAD 模型实例池大小（实例不可并发复用）
 speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）
 local_gpu_concurrency = 4                # 本机 GPU（CAM++/emotion2vec）推理并发路数
 vad_max_single_segment_time_ms = 30000
 vad_max_end_silence_time_ms = 800
+vad_speech_noise_thres = 0.6       # VAD 语音/噪声阈值：0.3 偏灵敏，0.6 正常，0.8 偏不灵敏；重启生效
+
+# VAD 切分由一组独立 worker 进程承载（每个进程持有一份 FSMN-VAD 实例，
+# 拥有独立解释器，因此能真正并行而不是被 GIL 串行化）。
+vad_device = "cpu"              # VAD 运行设备：cpu（默认，与 GPU 分段边界逐段一致）或 cuda:N
+vad_pool_size = 8               # 常驻 worker 进程数；每进程约 2.2~2.5 核
+vad_pool_max = 16               # 突发扩容上限
+vad_queue_watermark = 4         # 等待队列深度超过该值时临时拉起 worker
+vad_collapse_timeout_s = 120    # 额外 worker 的空闲回收时间
+vad_queue_timeout_s = 120       # 请求等待 VAD worker 的超时（超时返回错误码 4014）
 
 # 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
 # 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
@@ -68,6 +75,5 @@ repetition_min_times = 3                 # 判定为循环的最小连续重复�
 
 # v2 链路三个本地模型的落卡，三者绑定同一张卡
 [model_device]
-vad = 0                 # FunASR FSMN-VAD
-emotion2vec = 0         # emotion2vec_plus_large
-speech_campplus = 0     # speech_campplus_sv_zh_en_16k-common_advanced
+emotion2vec = "cuda:0"         # emotion2vec_plus_large
+speech_campplus = "cuda:0"     # speech_campplus_sv_zh_en_16k-common_advanced

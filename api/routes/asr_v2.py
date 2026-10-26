@@ -8,7 +8,9 @@ from api.routes.asr_common import cleanup_temp_files, prepare_asr_context
 from api.routes.asr_qwen_common import run_qwen_asr
 from core.config import settings
 from core.qwen_asr_queue import QueueFullError, QueueTimeoutError, get_slot_manager
+from core.vad_pool import VadPoolError
 from entity.data import AsrRequestParams, get_asr_params
+from utils.asr_stats import update_fail_task
 
 logger = logging.getLogger(__name__)
 
@@ -38,6 +40,11 @@ async def api_asr_v2(request: AsrRequestParams = Depends(get_asr_params)):
             return err
         try:
             return await run_qwen_asr(ctx)
+        except VadPoolError as e:
+            # VAD 排队超时 / worker 异常：错误码 4014，便于上游与 Qwen 侧错误区分
+            logger.error(f"[V2] VAD 阶段异常: {e.message}")
+            update_fail_task()
+            return {"msg": e.message, "code": e.code}
         except Exception as e:  # noqa: BLE001 - 兜底，避免整条链路 500
             logger.exception(f"[V2] 转写异常: {e}")
             return {"msg": "未知错误", "code": 4005}

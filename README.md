@@ -111,13 +111,14 @@ curl -X POST "http://localhost:8083/v2/seacraft_asr" \
 > `showSpk`、`showEmotion`、`showRoleIdentify` 的默认值均为 `false`（12 服务器口径）。
 
 响应包含 `language`、`segments`、`text`、`speed_info`、`load_audio_time_ms`、`gpu_time_ms` 与 `language_ratio`。
-分段中的 `role`、`emotion` 和 `segment_words` 根据请求参数返回。`text` 为分段文本按空格拼接并经文本规范化（ITN）处理后的结果。
+分段中的 `role`、`emotion` 和 `segment_words` 根据请求参数返回。`text` 为最终保留分段按空格拼接并经文本规范化（ITN）处理后的结果。纯「啊 / 哦 / 嗯 / 呃」分段会被移除；英文为有效文本占比最高时，边界明确的中文口气词会转换为 `ah / oh / um / uh`。
 
 ### v2 处理流程
 
 1. 服务本地用 FunASR FSMN-VAD 把音频切成若干语音段；
 2. 每个语音段并发发往 Qwen3-ASR 服务（单段一个请求，**不做相邻段合并**）；
-3. 响应分段的 `bg` / `ed` 直接取该 VAD 段的起止时间。
+3. 响应分段的 `bg` / `ed` 直接取该 VAD 段的起止时间；
+4. 复读修复、单字语气词移除、语言占比判定、英文口气词替换、ITN 和标点清理依次执行，最终统计只使用最终保留分段。
 
 ### 语种占比 `language_ratio`
 
@@ -152,14 +153,14 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | 配置 | 说明 |
 |------|------|
 | `instance_count` | `start.sh` 启动的 uvicorn 实例数，默认 `1` |
-| `log_path` | 日志文件路径 |
+| `[log].log_path` | 日志文件路径，默认 `./asr_service.log`；修改后重启生效 |
 | `[log]` | 日志保留策略：`max_days`（默认 7）、`max_size_mb`（默认 100） |
 | `[model_paths]` | 三个模型目录 |
 | `[speech_rate]` | 单句语速修正系数 |
 | `[features]` | `open_v2_role`、`open_v2_emotion` |
 | `[itn]` | 文本规范化开关与失败策略 |
 | `[qwen_asr]` | v2 链路的 Qwen 服务地址、并发度、队列与 VAD 参数 |
-| `[model_device]` | v2 链路三个本地模型的落卡索引（绑定同一张卡） |
+| `[model_device]` | CAM++ 与 emotion2vec 的设备串，使用 `cuda:N`（默认 `cuda:0`）；VAD 设备独立配置 |
 
 `speed_info` 按 1、5、10 分钟窗口统计，跨窗口句子按时间重叠比例分摊内容数量。单句语速使用 `[speech_rate].rate_factor` 修正，分时段语速不乘该系数。
 
@@ -184,6 +185,7 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `local_gpu_concurrency` | `4` | 本机 GPU（CAM++ / emotion2vec）推理并发路数 |
 | `vad_max_single_segment_time_ms` | `30000` | VAD 单段最长时长 |
 | `vad_max_end_silence_time_ms` | `800` | VAD 静音切分阈值 |
+| `vad_speech_noise_thres` | `0.6` | VAD 语音/噪声判定阈值：`0.3` 偏灵敏，`0.6` 正常，`0.8` 偏不灵敏；修改后重启生效 |
 
 三层并发参数的区别：
 
@@ -195,15 +197,26 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 
 ### `[model_device]` 配置项
 
-控制 v2 链路三个本地模型的落卡，**三者绑定同一张卡**：
+控制 v2 链路本地 GPU 模型的落卡，设备值使用 `cuda:N`：
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `vad` | `0` | FunASR FSMN-VAD |
-| `emotion2vec` | `0` | emotion2vec_plus_large |
-| `speech_campplus` | `0` | speech_campplus_sv_zh_en_16k-common_advanced |
+| `emotion2vec` | `cuda:0` | emotion2vec_plus_large |
+| `speech_campplus` | `cuda:0` | speech_campplus_sv_zh_en_16k-common_advanced |
 
 Qwen 服务本身在另一个容器内，不占用这三张卡。
+
+FSMN-VAD 的设备由 `[qwen_asr].vad_device` 独立控制，默认 `cpu`，也可设置为 `cuda:N`。旧部署中的整数模型设备索引仍会短期兼容读取并记录迁移告警。
+
+### 细小声音阈值回归
+
+参考音频的人工标注文件不是严格 JSON，使用以下可选入口解析并比较 `0.3`、`0.6`、`0.8` 三档：
+
+```bash
+python scripts/vad_reference.py --output /tmp/vad-reference.json
+```
+
+报告包含 46 个“细小声音”标注段的抑制率、未标注段保留率、VAD 段数、Qwen 请求数、耗时以及 RMS/峰值诊断。区间命中定义为 VAD 输出与标注区间重叠达到标注区间的 50%；响度只用于诊断，不作为唯一判据。该长测不会进入默认快速测试，也不修改原始音频和标注文件。
 
 ### role / emotion 的加载条件
 

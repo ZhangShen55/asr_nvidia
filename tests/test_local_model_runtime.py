@@ -2,6 +2,7 @@
 
 import os
 import unittest
+from unittest.mock import AsyncMock, patch
 
 from fastapi.testclient import TestClient
 
@@ -15,9 +16,12 @@ class StatusContractTests(unittest.TestCase):
     def _status(self):
         from main import create_app
 
-        # 用上下文管理器进入，确保 lifespan（记录启动时刻）被执行
-        with TestClient(create_app()) as client:
-            return client.get("/get_status").json()
+        # 用上下文管理器进入，确保 lifespan（记录启动时刻）被执行；
+        # 单测不真的拉起 VAD worker 进程（真实模型加载要数秒）
+        with patch("main.start_vad_pool", new=AsyncMock()), \
+                patch("main.stop_vad_pool", new=AsyncMock()):
+            with TestClient(create_app()) as client:
+                return client.get("/get_status").json()
 
     def test_status_contains_fixed_engine_id_and_version(self):
         payload = self._status()
@@ -33,6 +37,18 @@ class StatusContractTests(unittest.TestCase):
             self.assertIn("loaded", entry)
             self.assertIn("allocated_mb", entry)
             self.assertIn("instances", entry)
+            self.assertIn("pool_size", entry)
+            self.assertIn("pool_max", entry)
+
+    def test_status_exposes_vad_pool_runtime(self):
+        payload = self._status()
+        pool = payload["vadPool"]
+        self.assertEqual(pool["device"], "cpu")
+        self.assertEqual(pool["pool_size"], 8)
+        self.assertEqual(pool["pool_max"], 16)
+        self.assertIn("workers", pool)
+        self.assertIn("busy", pool)
+        self.assertIn("waiting", pool)
 
     def test_v118_route_is_removed(self):
         from main import create_app
@@ -100,7 +116,14 @@ class ConfigFileStructureTests(unittest.TestCase):
     def test_model_device_pins_gpu0(self):
         for name in ("config.toml", "config.docker.toml"):
             devices = self._load(name)["model_device"]
-            self.assertEqual(set(devices.values()), {0})
+            self.assertEqual(set(devices.values()), {"cuda:0"})
+
+    def test_log_path_and_vad_threshold_are_nested(self):
+        for name in ("config.toml", "config.docker.toml"):
+            cfg = self._load(name)
+            self.assertEqual(cfg["log"]["log_path"], "./asr_service.log")
+            self.assertNotIn("log_path", {key for key in cfg if key != "log"})
+            self.assertEqual(cfg["qwen_asr"]["vad_speech_noise_thres"], 0.6)
 
 
 if __name__ == "__main__":

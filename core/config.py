@@ -1,7 +1,11 @@
 import tomli
 import os
+import logging
+import math
 from dataclasses import dataclass
 from typing import Optional
+
+logger = logging.getLogger(__name__)
 
 
 def _load_toml(path: str) -> dict:
@@ -21,7 +25,16 @@ class Settings:
     # 日志配置
     @property
     def log_path(self) -> str:
-        return self._cfg.get("log_path", "./asr_service.log")
+        log = self._cfg.get("log", {})
+        if "log_path" in log:
+            return str(log["log_path"])
+        # Keep a short migration window for deployments that have not moved the key.
+        if "log_path" in self._cfg:
+            logger.warning(
+                "顶层 log_path 已废弃，请迁移到 [log].log_path；当前仍兼容读取该配置"
+            )
+            return str(self._cfg["log_path"])
+        return "./asr_service.log"
 
     @property
     def log_max_days(self) -> int:
@@ -178,9 +191,52 @@ class Settings:
         return int(self._cfg.get("qwen_asr", {}).get("vad_max_end_silence_time_ms", 800))
 
     @property
-    def qwen_vad_concurrency(self) -> int:
-        """VAD 模型实例池大小：FSMN-VAD 实例不可并发复用，故用池子隔离。"""
-        return int(self._cfg.get("qwen_asr", {}).get("vad_concurrency", 4))
+    def qwen_vad_speech_noise_thres(self) -> float:
+        """FSMN-VAD 的语音/噪声判定阈值（越小越灵敏）。"""
+        raw = self._cfg.get("qwen_asr", {}).get("vad_speech_noise_thres", 0.6)
+        try:
+            value = float(raw)
+        except (TypeError, ValueError) as exc:
+            raise ValueError("[qwen_asr].vad_speech_noise_thres 必须是 0.0~1.0 数值") from exc
+        if not math.isfinite(value) or not 0.0 <= value <= 1.0:
+            raise ValueError("[qwen_asr].vad_speech_noise_thres 必须在 0.0~1.0 范围内")
+        return value
+
+    @property
+    def vad_device(self) -> str:
+        """VAD 模型的运行设备。
+
+        默认 "cpu"：实测 CPU 与 GPU 的 FSMN-VAD 分段边界逐段完全一致，
+        而 CPU 单实例速度与 GPU 相当（1.24s vs 1.29s / 300s 片段），
+        且多进程 worker 放在 CPU 上不会各自建立 CUDA 上下文。
+        取 "cuda:N" 形式时可切回 GPU。
+        """
+        return str(self._cfg.get("qwen_asr", {}).get("vad_device", "cpu")).strip()
+
+    @property
+    def qwen_vad_pool_size(self) -> int:
+        """常驻 VAD worker 进程数（每个进程持有一份 FSMN-VAD 实例）。"""
+        return int(self._cfg.get("qwen_asr", {}).get("vad_pool_size", 8))
+
+    @property
+    def qwen_vad_pool_max(self) -> int:
+        """VAD worker 进程的扩容上限。"""
+        return int(self._cfg.get("qwen_asr", {}).get("vad_pool_max", 16))
+
+    @property
+    def qwen_vad_queue_watermark(self) -> int:
+        """等待队列深度超过该值时临时拉起额外 worker。"""
+        return int(self._cfg.get("qwen_asr", {}).get("vad_queue_watermark", 4))
+
+    @property
+    def qwen_vad_collapse_timeout_s(self) -> float:
+        """额外 worker 的空闲回收时间（秒）。"""
+        return float(self._cfg.get("qwen_asr", {}).get("vad_collapse_timeout_s", 120))
+
+    @property
+    def qwen_vad_queue_timeout_s(self) -> float:
+        """请求等待 VAD worker 的超时时间（秒）。"""
+        return float(self._cfg.get("qwen_asr", {}).get("vad_queue_timeout_s", 120))
 
     @property
     def qwen_speaker_similarity_threshold(self) -> float:
@@ -233,18 +289,36 @@ class Settings:
         """判定为循环所需的最小连续重复次数。"""
         return int(self._cfg.get("qwen_asr", {}).get("repetition_min_times", 3))
 
-    # v2 链路模型落卡 - 从嵌套的 [model_device] 部分读取，三者绑定同一张卡
+    # v2 链路模型落卡 - 从嵌套的 [model_device] 部分读取
     @property
-    def model_device_vad(self) -> int:
-        return int(self._cfg.get("model_device", {}).get("vad", 0))
+    def model_device_emotion2vec(self) -> str:
+        return self._normalize_model_device("emotion2vec")
 
     @property
-    def model_device_emotion2vec(self) -> int:
-        return int(self._cfg.get("model_device", {}).get("emotion2vec", 0))
+    def model_device_speech_campplus(self) -> str:
+        return self._normalize_model_device("speech_campplus")
 
-    @property
-    def model_device_speech_campplus(self) -> int:
-        return int(self._cfg.get("model_device", {}).get("speech_campplus", 0))
+    def _normalize_model_device(self, name: str) -> str:
+        value = self._cfg.get("model_device", {}).get(name, "cuda:0")
+        if isinstance(value, bool):
+            raise ValueError(f"[model_device].{name} 必须是 cuda:N 设备串")
+        if isinstance(value, int):
+            if value < 0:
+                raise ValueError(f"[model_device].{name} 的 GPU 编号不能为负数")
+            logger.warning(
+                "[model_device].%s 使用旧整数索引 %s，请迁移为 cuda:%s",
+                name,
+                value,
+                value,
+            )
+            return f"cuda:{value}"
+        text = str(value).strip().lower()
+        if not text.startswith("cuda:"):
+            raise ValueError(f"[model_device].{name} 必须使用 cuda:N 格式")
+        suffix = text.split(":", 1)[1]
+        if not suffix.isdigit():
+            raise ValueError(f"[model_device].{name} 必须使用 cuda:N 格式")
+        return f"cuda:{int(suffix)}"
 
 
 settings = Settings()

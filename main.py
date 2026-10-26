@@ -6,6 +6,7 @@ from datetime import datetime
 from core.config import settings
 from core.logging import setup_logging
 from core.qwen_asr_client import close_qwen_client
+from core.vad_pool import start_vad_pool, stop_vad_pool
 from api.routes.asr_v2 import router as asr_v2_router
 from api.routes.status import router as status_router
 from utils.asr_stats import reset_stats
@@ -40,9 +41,16 @@ async def lifespan(app: FastAPI):
     # 4) 记录启动时刻
     app.state.run_start_time = datetime.utcnow()
 
-    yield
-    # 释放 Qwen 客户端连接池
-    await close_qwen_client()
+    # 5) 预热 VAD worker 进程池：全部核心 worker 就绪后服务才对外就绪，
+    #    避免第一个请求承担 FSMN-VAD 的模型加载延迟
+    await start_vad_pool()
+
+    try:
+        yield
+    finally:
+        # 释放 VAD worker 进程池与 Qwen 客户端连接池
+        await stop_vad_pool()
+        await close_qwen_client()
 
 
 def create_app() -> FastAPI:

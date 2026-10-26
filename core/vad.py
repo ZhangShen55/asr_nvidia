@@ -1,23 +1,19 @@
-"""v2 链路的本地 VAD 切分。"""
+"""v2 链路的本地 VAD 切分：进程池客户端 + 分段解析。
+
+FSMN-VAD 实例与 worker 进程的生命周期在 :mod:`core.vad_pool`，本模块只保留
+分段结果的解析、过滤与日志，是纯数据处理层。
+"""
 
 from __future__ import annotations
 
-import asyncio
 import logging
 from dataclasses import dataclass
 from typing import List
 
 from core.config import settings
-from core.models import _resolve_device, device_allocated_mb, record_model_memory
+from core.vad_pool import get_vad_pool
 
 logger = logging.getLogger(__name__)
-
-# FSMN-VAD 模型实例内部带状态缓存，并发调用同一实例会导致数据错乱，
-# 因此用实例池隔离：每个实例同一时刻只服务一个请求。
-_vad_instances: List = []
-_vad_busy: List[bool] = []
-_vad_pool_lock = asyncio.Lock()
-_vad_semaphore = asyncio.Semaphore(max(1, settings.qwen_vad_concurrency))
 
 
 @dataclass(frozen=True)
@@ -65,68 +61,13 @@ def filter_short_segments(
     return [seg for seg in segments if seg.duration_s >= threshold]
 
 
-async def _acquire_vad_model():
-    """从实例池取一个空闲的 VAD 模型实例。"""
-    await _vad_semaphore.acquire()
-    async with _vad_pool_lock:
-        for index, busy in enumerate(_vad_busy):
-            if not busy:
-                _vad_busy[index] = True
-                return index, _vad_instances[index]
-        model = _create_vad_model()
-        _vad_instances.append(model)
-        _vad_busy.append(True)
-        return len(_vad_instances) - 1, model
-
-
-async def _release_vad_model(index: int) -> None:
-    async with _vad_pool_lock:
-        if 0 <= index < len(_vad_busy):
-            _vad_busy[index] = False
-    _vad_semaphore.release()
-
-
-def _create_vad_model():
-    """新建一个 FSMN-VAD 模型实例。"""
-    from funasr import AutoModel
-
-    device = _resolve_device(settings.model_device_vad)
-    before = device_allocated_mb(device)
-    model = AutoModel(
-        model=settings.vad_model_dir,
-        device=device,
-        vad_kwargs={
-            "max_single_segment_time": settings.qwen_vad_max_single_segment_time_ms,
-            "max_end_silence_time": settings.qwen_vad_max_end_silence_time_ms,
-        },
-        disable_update=True,
-        disable_pbar=True,
-    )
-    allocated = device_allocated_mb(device) - before
-    record_model_memory("vad", device, allocated, instance_added=True)
-    logger.info(f"[模型] FSMN-VAD 实例已加载到 {device}，显存占用约 {allocated:.1f} MB")
-    return model
-
-
 async def detect_segments(audio_path: str) -> List[VadSegment]:
-    """对音频做 VAD 切分，返回按时间排序的语音段列表（已过滤过短段）。"""
-    index, model = await _acquire_vad_model()
-    try:
-        result = await asyncio.to_thread(
-            model.generate,
-            input=audio_path,
-            # funasr 的 FsmnVADStreaming.inference 使用可变默认参数 cache={}，
-            # 并发调用会共享同一份内部状态，必须显式传入独立的 cache。
-            cache={},
-            vad_kwargs={
-                "max_single_segment_time": settings.qwen_vad_max_single_segment_time_ms,
-                "max_end_silence_time": settings.qwen_vad_max_end_silence_time_ms,
-            },
-        )
-    finally:
-        await _release_vad_model(index)
+    """对音频做 VAD 切分，返回按时间排序的语音段列表（已过滤过短段）。
+
+    音频路径由主进程统一落盘后交给 worker 直接读取，进程间只传路径。
+    """
+    result = await get_vad_pool().detect(audio_path)
     segments = _parse_vad_result(result)
-    segments.sort(key=lambda seg: seg.start_s)
     filtered = filter_short_segments(segments)
     logger.info(
         f"[VAD] 切出 {len(segments)} 段，过滤后 {len(filtered)} 段，"

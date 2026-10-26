@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+import os
 import time
 from contextvars import ContextVar
 from dataclasses import dataclass
@@ -36,7 +37,16 @@ from utils.feature_utils import (
     identify_teacher,
 )
 from utils.itn import ItnConfig, normalize_segments, sanitize_segments
-from utils.qwen_response import build_language_ratio, parse_qwen_text
+from utils.qwen_response import (
+    abbreviate_language,
+    build_language_ratio,
+    count_text_chars,
+    parse_qwen_text,
+)
+from utils.text_postprocess import (
+    is_single_interjection,
+    replace_english_interjections,
+)
 from utils.repetition import (
     RepetitionThresholds,
     max_reasonable_chars,
@@ -64,6 +74,10 @@ SHORT_SPEAKER_SEGMENT_S = 1.0
 _PHASE_STATS: ContextVar[Optional[Dict[str, float]]] = ContextVar(
     "qwen_phase_stats", default=None
 )
+
+
+class SegmentCutError(RuntimeError):
+    """单个 VAD 段的音频裁剪失败。"""
 
 
 def _phase_stats() -> Dict[str, float]:
@@ -95,6 +109,25 @@ def _itn_language(language: Optional[str]) -> str:
     if normalized in {"english", "en"}:
         return "en"
     return normalized or "auto"
+
+
+def _dominant_language(outcomes: list[SegmentOutcome]) -> Optional[str]:
+    """Choose the highest-character-count Qwen language, with stable first-seen ties."""
+    counts: Dict[str, int] = {}
+    order: list[str] = []
+    for outcome in outcomes:
+        language = (outcome.language or "").strip()
+        chars = count_text_chars(outcome.text)
+        if not language or chars <= 0:
+            continue
+        key = abbreviate_language(language)
+        if key not in counts:
+            order.append(language)
+            counts[key] = 0
+        counts[key] += chars
+    if not counts:
+        return None
+    return max(order, key=lambda language: counts[abbreviate_language(language)])
 
 
 def _repetition_thresholds() -> RepetitionThresholds:
@@ -137,14 +170,14 @@ async def _apply_repetition_guard(text: str, duration_s: float) -> str:
     return fixed if changed else text
 
 
-async def _transcribe_segment(clip_path, language, concurrency, segment_semaphore):
+async def _transcribe_segment(clip_path, language, concurrency):
     """请求 Qwen 转写一个片段，并剥离原生前缀。"""
     client = await get_qwen_client()
-    await concurrency.acquire(segment_semaphore)
+    await concurrency.acquire_global()
     try:
         raw_text = await client.transcribe(clip_path, language=language)
     finally:
-        await concurrency.release(segment_semaphore)
+        await concurrency.release_global()
 
     parsed = parse_qwen_text(raw_text)
     return parsed.text, parsed.language
@@ -398,7 +431,15 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         update_fail_task()
         return {"msg": "音频文件为空或未检测到任何人声", "code": 4008}
 
-    async def _cut(index: int, segment: VadSegment):
+    concurrency = get_request_concurrency()
+    segment_semaphore = concurrency.new_segment_semaphore()
+
+    async def _cut(segment: VadSegment):
+        """惰性裁剪：只在该段真正要处理时才落盘一个 clip 文件。
+
+        旧实现是在 VAD 之后一次性把全部分段落盘，60 分钟音频 943 段约 219 MB，
+        峰值占用与分段总数成正比；改成按需创建后，同时存在的文件数等于在途段数。
+        """
         # 优先用已加载的音频张量切片（比逐段 ffmpeg 快 30 倍），无张量时回退 ffmpeg
         if ctx.audio_tensor is not None and ctx.sample_rate:
             path = await asyncio.to_thread(
@@ -424,76 +465,89 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             )
             array, sample_rate = await asyncio.to_thread(read_audio_array, path)
         ctx.tmp_paths.append(path)
-        return index, path, array, sample_rate
+        return path, array, sample_rate
 
-    cut_started = time.perf_counter()
-    cut_results = await asyncio.gather(
-        *[_cut(i, seg) for i, seg in enumerate(segments)],
-        return_exceptions=True,
-    )
-    phase["cut_ms"] = (time.perf_counter() - cut_started) * 1000
-    clip_paths: dict = {}
-    clip_arrays: dict = {}
-    for result in cut_results:
-        if isinstance(result, BaseException):
-            logger.error(f"[V2] 音频裁剪失败: {result}")
-            update_fail_task()
-            return {"msg": "音频分块失败，请重试", "code": 4007}
-        index, path, array, sample_rate = result
-        clip_paths[index] = path
-        clip_arrays[index] = (array, sample_rate)
+    def _release_clip(path: Optional[str]) -> None:
+        """删除段 clip，并从兜底清理列表里摘除，避免请求结束时重复删除。"""
+        if not path:
+            return
+        try:
+            os.remove(path)
+        except FileNotFoundError:
+            pass
+        except Exception as exc:  # noqa: BLE001 - 删除失败不应影响转写结果
+            logger.warning(f"[V2] 删除段 clip 失败: {path}, 错误: {exc}")
+        finally:
+            if path in ctx.tmp_paths:
+                ctx.tmp_paths.remove(path)
 
-    concurrency = get_request_concurrency()
-    segment_semaphore = concurrency.new_segment_semaphore()
+    async def _transcribe_and_cleanup(clip_path, language):
+        """转写返回即删段文件。
+
+        role / emotion 走的是内存里的 numpy 数组，不依赖该文件，因此这里删除
+        不会影响同段的说话人与情绪计算，两者仍与转写并行。
+        """
+        try:
+            return await _transcribe_segment(clip_path, language, concurrency)
+        finally:
+            _release_clip(clip_path)
 
     async def _process(index: int, segment: VadSegment) -> SegmentOutcome:
         outcome = SegmentOutcome(index=index, segment=segment)
-        clip_path = clip_paths[index]
-        audio_array, sample_rate = clip_arrays[index]
+        # 段级名额先占住：在途段数（即同时存在的 clip 文件数）由它限流，
+        # 否则全部分段会在裁剪阶段同时落盘，临时文件峰值又回到与分段总数成正比。
+        await segment_semaphore.acquire()
+        clip_path: Optional[str] = None
+        cut_started = time.perf_counter()
+        try:
+            try:
+                clip_path, audio_array, sample_rate = await _cut(segment)
+            except Exception as exc:
+                logger.error(f"[V2] 音频裁剪失败: {exc}")
+                raise SegmentCutError(f"音频分块失败: {exc}") from exc
+            finally:
+                phase["cut_ms"] += (time.perf_counter() - cut_started) * 1000
 
-        tasks = [
-            _transcribe_segment(
-                clip_path,
-                request.language,
-                concurrency,
-                segment_semaphore,
-            ),
-        ]
-        # 短于 1 秒的片段不参与聚类（特征不可靠），其说话人标签由
-        # _assign_short_speakers 按时间就近继承，这里直接跳过 CAM++ 调用，
-        # 长音频里这类片段约占 9%，省下的都是 GPU 与 GIL 时间。
-        if need_role and segment.duration_s >= SHORT_SPEAKER_SEGMENT_S:
-            tasks.append(_speaker_embedding(audio_array, sample_rate))
-        if need_emotion:
-            tasks.append(
-                _segment_emotion(audio_array, sample_rate, segment.duration_s)
-            )
+            tasks = [_transcribe_and_cleanup(clip_path, request.language)]
+            # 短于 1 秒的片段不参与聚类（特征不可靠），其说话人标签由
+            # _assign_short_speakers 按时间就近继承，这里直接跳过 CAM++ 调用，
+            # 长音频里这类片段约占 9%，省下的都是 GPU 与 GIL 时间。
+            if need_role and segment.duration_s >= SHORT_SPEAKER_SEGMENT_S:
+                tasks.append(_speaker_embedding(audio_array, sample_rate))
+            if need_emotion:
+                tasks.append(
+                    _segment_emotion(audio_array, sample_rate, segment.duration_s)
+                )
 
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+            results = await asyncio.gather(*tasks, return_exceptions=True)
 
-        text_result = results[0]
-        if isinstance(text_result, BaseException):
-            raise text_result
-        outcome.text, outcome.language = text_result
-        # 复读修复 MUST 在 ITN 规范化与标点卫生之前：见 _apply_repetition_guard
-        outcome.text = await _apply_repetition_guard(outcome.text, segment.duration_s)
+            text_result = results[0]
+            if isinstance(text_result, BaseException):
+                raise text_result
+            outcome.text, outcome.language = text_result
+            # 复读修复 MUST 在 ITN 规范化与标点卫生之前：见 _apply_repetition_guard
+            outcome.text = await _apply_repetition_guard(outcome.text, segment.duration_s)
 
-        cursor = 1
-        if need_role and segment.duration_s >= SHORT_SPEAKER_SEGMENT_S:
-            embedding = results[cursor]
-            if isinstance(embedding, BaseException):
-                logger.warning(f"[说话人] 嵌入提取失败: {embedding}")
-                embedding = None
-            outcome.embedding = embedding
-            cursor += 1
-        if need_emotion:
-            emotion = results[cursor]
-            if isinstance(emotion, BaseException):
-                logger.warning(f"[情绪] 推理失败: {emotion}")
-                emotion = None
-            outcome.emotion = emotion
+            cursor = 1
+            if need_role and segment.duration_s >= SHORT_SPEAKER_SEGMENT_S:
+                embedding = results[cursor]
+                if isinstance(embedding, BaseException):
+                    logger.warning(f"[说话人] 嵌入提取失败: {embedding}")
+                    embedding = None
+                outcome.embedding = embedding
+                cursor += 1
+            if need_emotion:
+                emotion = results[cursor]
+                if isinstance(emotion, BaseException):
+                    logger.warning(f"[情绪] 推理失败: {emotion}")
+                    emotion = None
+                outcome.emotion = emotion
 
-        return outcome
+            return outcome
+        finally:
+            # 兜底：转写协程尚未接管该文件时（如取消）由这里删除
+            _release_clip(clip_path)
+            segment_semaphore.release()
 
     segment_started = time.perf_counter()
     outcomes = await asyncio.gather(
@@ -504,6 +558,9 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
 
     for result in outcomes:
         if isinstance(result, BaseException):
+            if isinstance(result, SegmentCutError):
+                update_fail_task()
+                return {"msg": "音频分块失败，请重试", "code": 4007}
             if isinstance(
                 result,
                 (QwenAsrUnsupportedLanguageError, QwenAsrUnavailableError, QwenAsrCallError),
@@ -515,6 +572,8 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             return {"msg": "Qwen 服务调用失败，请稍后再试", "code": 4012}
 
     valid = [o for o in outcomes if isinstance(o, SegmentOutcome) and o.text.strip()]
+    # Remove standalone interjections before language statistics and speaker clustering.
+    valid = [o for o in valid if not is_single_interjection(o.text)]
     if not valid:
         update_fail_task()
         return {"msg": "音频文件为空或未检测到任何人声", "code": 4008}
@@ -529,37 +588,29 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             _apply_role_identify(valid)
         phase["cluster_ms"] = (time.perf_counter() - cluster_started) * 1000
 
-    detected_language = None
-    for outcome in valid:
-        if outcome.language:
-            detected_language = outcome.language
-            break
+    detected_language = _dominant_language(valid)
+    english_dominant = _itn_language(detected_language) == "en"
 
     output_segments = []
     for outcome in valid:
         start_s = outcome.segment.start_s
         end_s = outcome.segment.end_s
+        raw_text = outcome.text
+        if english_dominant:
+            outcome.text = replace_english_interjections(outcome.text)
         output_segments.append(
             {
                 "segment_text": outcome.text,
                 "bg": f"{start_s:.2f}",
                 "ed": f"{end_s:.2f}",
-                "speed": calculate_speech_rate(
-                    outcome.text,
-                    start_s,
-                    end_s,
-                    settings.speech_rate_factor,
-                ),
+                "speed": 0,
                 "segment_words": [],
                 "role": outcome.role,
                 "emotion": outcome.emotion,
+                "_language": outcome.language,
+                "_raw_text": raw_text,
             }
         )
-
-    language_ratio = build_language_ratio(
-        (outcome.language, outcome.text) for outcome in valid
-    )
-    speed_info = build_speed_info(output_segments, total_duration=ctx.audio_total_s)
 
     itn_language = _itn_language(detected_language)
     config = getattr(settings, "itn_config", ItnConfig())
@@ -570,6 +621,23 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     # 标点卫生：丢弃纯标点段、移除段首连续标点。
     # 该规则与 ITN 开关无关，规范化关闭时同样执行。
     output_segments, normalized_text = sanitize_segments(output_segments)
+    for segment in output_segments:
+        start_s = float(segment["bg"])
+        end_s = float(segment["ed"])
+        segment["speed"] = calculate_speech_rate(
+            segment.get("segment_text", ""),
+            start_s,
+            end_s,
+            settings.speech_rate_factor,
+        )
+    speed_info = build_speed_info(output_segments, total_duration=ctx.audio_total_s)
+    language_ratio = build_language_ratio(
+        (segment.get("_language"), segment.get("_raw_text"))
+        for segment in output_segments
+    )
+    for segment in output_segments:
+        segment.pop("_language", None)
+        segment.pop("_raw_text", None)
     phase["itn_ms"] = (time.perf_counter() - itn_started) * 1000
 
     gpu_time_ms = (time.perf_counter() - started) * 1000

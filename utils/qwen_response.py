@@ -104,7 +104,8 @@ def build_language_ratio(items: Iterable[Tuple[Optional[str], Optional[str]]]) -
         chars = count_text_chars(text)
         if chars <= 0:
             continue
-        counter[language] = counter.get(language, 0) + chars
+        key = abbreviate_language(language)
+        counter[key] = counter.get(key, 0) + chars
         total += chars
 
     if total <= 0:
@@ -112,7 +113,7 @@ def build_language_ratio(items: Iterable[Tuple[Optional[str], Optional[str]]]) -
 
     ratio: Dict[str, float] = {}
     for language, chars in counter.items():
-        ratio[abbreviate_language(language)] = round(chars * 100.0 / total, 1)
+        ratio[language] = round(chars * 100.0 / total, 1)
     return ratio
 
 

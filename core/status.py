@@ -7,6 +7,7 @@
 from datetime import timedelta, datetime
 
 from core.models import get_local_model_status
+from core.vad_pool import get_vad_pool
 
 # 引擎标识：配置项已删除，返回固定占位值以保持响应字段结构不变
 ID_ENGINE_PLACEHOLDER = "1"
@@ -42,6 +43,8 @@ def build_status_payload(stats: dict, run_start_time: datetime) -> dict:
         # 本地模型（VAD / CAM++ / emotion2vec）的加载状态与显存明细：
         # 三个模型同进程承载，nvidia-smi 只能看到聚合显存，这里提供逐模型视角。
         "localModels": get_local_model_status(),
+        # VAD 进程池的实时运行状况：设备、当前 worker 数、在途与排队请求
+        "vadPool": get_vad_pool().stats(),
     }
 
 

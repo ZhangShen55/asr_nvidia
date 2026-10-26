@@ -131,6 +131,17 @@ class RequestConcurrency:
         self._global.release()
         segment_semaphore.release()
 
+    async def acquire_global(self) -> None:
+        """只占全局请求名额。
+
+        段级名额由调用方提前持有时使用：惰性裁剪需要与「在途段数」同窗口限流，
+        否则所有分段会在裁剪阶段同时落盘，临时文件峰值又回到与分段总数成正比。
+        """
+        await self._global.acquire()
+
+    async def release_global(self) -> None:
+        self._global.release()
+
 
 _slot_manager: Optional[AudioSlotManager] = None
 _request_concurrency: Optional[RequestConcurrency] = None

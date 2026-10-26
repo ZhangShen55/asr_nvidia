@@ -51,7 +51,6 @@ def sanitize_segments(segments: Iterable[dict]) -> tuple[list[dict], str]:
         raw_text = str(item.get("segment_text", "") or "")
         stripped = raw_text.strip()
         if not stripped:
-            output.append(item)
             continue
         if is_punctuation_only(stripped):
             continue
