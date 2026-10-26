@@ -3,6 +3,7 @@ __pycache__/
 .env
 *.swp
 .idea/
+.vscode/
 .claude/
 *.pcm
 *.wav
