@@ -160,7 +160,7 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `[features]` | `open_v2_role`、`open_v2_emotion` |
 | `[itn]` | 文本规范化开关与失败策略 |
 | `[qwen_asr]` | v2 链路的 Qwen 服务地址、并发度、队列与 VAD 参数 |
-| `[model_device]` | CAM++ 与 emotion2vec 的设备串，使用 `cuda:N`（默认 `cuda:0`）；VAD 设备独立配置 |
+| `[model_device.local_model_pool]` | CAM++ 与 emotion2vec 的设备数组；每个元素对应一个独立模型实例和一个并发槽位 |
 
 `speed_info` 按 1、5、10 分钟窗口统计，跨窗口句子按时间重叠比例分摊内容数量。单句语速使用 `[speech_rate].rate_factor` 修正，分时段语速不乘该系数。
 
@@ -182,7 +182,6 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `min_segment_duration_s` | `0.3` | 过滤过短 VAD 段 |
 | `vad_concurrency` | `4` | VAD 模型实例池大小（FSMN-VAD 实例不可并发复用） |
 | `speaker_similarity_threshold` | `0.30` | CAM++ 说话人聚类的余弦相似度阈值（按实测 sweep 取值，阈值过高会严重过分割） |
-| `local_gpu_concurrency` | `4` | 本机 GPU（CAM++ / emotion2vec）推理并发路数 |
 | `vad_max_single_segment_time_ms` | `30000` | VAD 单段最长时长 |
 | `vad_max_end_silence_time_ms` | `800` | VAD 静音切分阈值 |
 | `vad_speech_noise_thres` | `0.6` | VAD 语音/噪声判定阈值：`0.3` 偏灵敏，`0.6` 正常，`0.8` 偏不灵敏；修改后重启生效 |
@@ -199,16 +198,26 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `segment_concurrency` | **单个音频内**同时发往 Qwen 的 VAD 段请求数 | 4 |
 | `request_concurrency` | **所有音频合计**发往 Qwen 的请求数上限 | 32 |
 
-### `[model_device]` 配置项
+### `[model_device.local_model_pool]` 配置项
 
-控制 v2 链路本地 GPU 模型的落卡，设备值使用 `cuda:N`：
+控制 v2 链路本地模型副本和并发容量。数组长度是唯一槽位来源，不需要 `local_gpu_concurrency`、`cam_slots` 或 `emo_slots`：
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `emotion2vec` | `cuda:0` | emotion2vec_plus_large |
-| `speech_campplus` | `cuda:0` | speech_campplus_sv_zh_en_16k-common_advanced |
+| `speech_campplus_devices` | [`"cuda:0"`] | 每个元素加载一个 CAM++ 实例；长度决定 CAM++ 最大并发 |
+| `emotion2vec_devices` | [`"cuda:0"`] | 每个元素加载一个 emotion2vec 实例；长度决定 emotion2vec 最大并发 |
 
-Qwen 服务本身在另一个容器内，不占用这三张卡。
+例如 CAM++ 3 个实例、emotion2vec 1 个实例：
+
+```toml
+[model_device.local_model_pool]
+speech_campplus_devices = ["cuda:0", "cuda:0", "cuda:0"]
+emotion2vec_devices = ["cuda:0"]
+```
+
+两个模型池独立排队、互不借用容量；空数组表示禁用对应能力，请求会得到 CAM++ `4015` 或 emotion2vec `4016`。部分副本加载失败时，只有成功加载的实例计入容量，失败原因可从 `/get_status` 的 `localModels` 查询。该接口同时提供每个池的 `configured_instances`、`instances`、`available_instances`、`busy`、`waiting`、`failed_instances` 和等待摘要。
+
+同一张 GPU 上增加数组元素会同时增加模型显存和推理争用，可能降低单次推理速度或触发 OOM；应结合状态接口和 `nvidia-smi` 的峰值显存、利用率及压测 P95 选择实例组合。VAD 设备仍由 `[qwen_asr].vad_device` 独立控制，Qwen 服务本身在另一个容器内。
 
 FSMN-VAD 的设备由 `[qwen_asr].vad_device` 独立控制，默认 `cpu`，也可设置为 `cuda:N`。旧部署中的整数模型设备索引仍会短期兼容读取并记录迁移告警。
 

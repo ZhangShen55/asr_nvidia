@@ -56,12 +56,6 @@ from utils.asr_stats import update_fail_task, update_stat
 
 logger = logging.getLogger(__name__)
 
-# 本机 GPU 推理并发闸门：同一张卡上并发推理过多会更慢且更易 OOM，
-# 因此限制并发路数而不是完全串行——完全串行会让 8 路并发时
-# role/emotion 成为端到端时延的主瓶颈（实测 P50 增幅超过 100%）。
-# 因为 Qwen 走另一个容器，整体仍与转写并行。
-_local_gpu_semaphore = asyncio.Semaphore(max(1, settings.qwen_local_gpu_concurrency))
-
 # 情绪判定的有效时长区间（秒）
 EMOTION_MIN_DURATION_S = 1.0
 EMOTION_MAX_DURATION_S = 10.0
@@ -84,7 +78,11 @@ def _phase_stats() -> Dict[str, float]:
     """取当前请求的耗时统计字典；不在请求上下文中时返回一个丢弃用的临时字典。"""
     stats = _PHASE_STATS.get()
     if stats is None:
-        stats = {"spk_ms": 0.0, "spk_calls": 0, "emo_ms": 0.0, "emo_calls": 0}
+        stats = {
+            "spk_wait_ms": 0.0, "spk_ms": 0.0, "spk_calls": 0,
+            "emo_wait_ms": 0.0, "emo_ms": 0.0, "emo_calls": 0,
+            "qwen_wait_ms": 0.0, "qwen_ms": 0.0, "qwen_calls": 0,
+        }
     return stats
 
 
@@ -173,11 +171,17 @@ async def _apply_repetition_guard(text: str, duration_s: float) -> str:
 async def _transcribe_segment(clip_path, language, concurrency):
     """请求 Qwen 转写一个片段，并剥离原生前缀。"""
     client = await get_qwen_client()
+    stats = _phase_stats()
+    wait_started = time.perf_counter()
     await concurrency.acquire_global()
+    stats["qwen_wait_ms"] += (time.perf_counter() - wait_started) * 1000
+    call_started = time.perf_counter()
     try:
         raw_text = await client.transcribe(clip_path, language=language)
     finally:
         await concurrency.release_global()
+        stats["qwen_ms"] += (time.perf_counter() - call_started) * 1000
+        stats["qwen_calls"] += 1
 
     parsed = parse_qwen_text(raw_text)
     return parsed.text, parsed.language
@@ -204,16 +208,23 @@ async def _speaker_embedding(audio_array, sample_rate):
             return embedding.detach().float().reshape(-1).cpu()
         return torch.tensor(embedding, dtype=torch.float32).reshape(-1)
 
-    async with _local_gpu_semaphore:
-        started = time.perf_counter()
+    pool = get_model_pool("speech_campplus")
+    lease_started = time.perf_counter()
+    async with pool.lease() as leased:
+        wait_ms = (time.perf_counter() - lease_started) * 1000
+        infer_started = time.perf_counter()
         try:
-            async with get_model_pool("speech_campplus").lease() as leased:
-                model, device = leased if isinstance(leased, tuple) else (
-                    leased, settings.model_device_speech_campplus)
-                return await asyncio.to_thread(_run, model, device)
+            model, device = leased if isinstance(leased, tuple) else (
+                leased, settings.model_device_speech_campplus)
+            return await asyncio.to_thread(_run, model, device)
         finally:
+            infer_ms = (time.perf_counter() - infer_started) * 1000
+            record_inference = getattr(pool, "record_inference", None)
+            if record_inference is not None:
+                record_inference(wait_ms, infer_ms)
             stats = _phase_stats()
-            stats["spk_ms"] += (time.perf_counter() - started) * 1000
+            stats["spk_wait_ms"] += wait_ms
+            stats["spk_ms"] += infer_ms
             stats["spk_calls"] += 1
 
 
@@ -244,21 +255,28 @@ async def _segment_emotion(audio_array, sample_rate, duration_s):
         best = max(range(len(scores)), key=lambda i: scores[i])
         return map_emotion(labels[best])
 
-    async with _local_gpu_semaphore:
-        try:
-            started = time.perf_counter()
+    try:
+        pool = get_model_pool("emotion2vec")
+        lease_started = time.perf_counter()
+        async with pool.lease() as leased:
+            wait_ms = (time.perf_counter() - lease_started) * 1000
+            infer_started = time.perf_counter()
             try:
-                async with get_model_pool("emotion2vec").lease() as leased:
-                    model, device = leased if isinstance(leased, tuple) else (
-                        leased, settings.model_device_emotion2vec)
-                    return await asyncio.to_thread(_run, model, device)
+                model, device = leased if isinstance(leased, tuple) else (
+                    leased, settings.model_device_emotion2vec)
+                return await asyncio.to_thread(_run, model, device)
             finally:
+                infer_ms = (time.perf_counter() - infer_started) * 1000
+                record_inference = getattr(pool, "record_inference", None)
+                if record_inference is not None:
+                    record_inference(wait_ms, infer_ms)
                 stats = _phase_stats()
-                stats["emo_ms"] += (time.perf_counter() - started) * 1000
+                stats["emo_wait_ms"] += wait_ms
+                stats["emo_ms"] += infer_ms
                 stats["emo_calls"] += 1
-        except Exception as e:  # noqa: BLE001 - 情绪失败不影响转写
-            logger.warning(f"[情绪] 推理失败，回退为 null: {e}")
-            return None
+    except Exception as e:  # noqa: BLE001 - 情绪失败不影响转写
+        logger.warning(f"[情绪] 推理失败，回退为 null: {e}")
+        return None
 
 
 def _normalize_embedding(embedding):
@@ -410,7 +428,11 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     """v2 转写主链路。"""
     request = ctx.request
     started = time.perf_counter()
-    stats = {"spk_ms": 0.0, "spk_calls": 0, "emo_ms": 0.0, "emo_calls": 0}
+    stats = {
+        "spk_wait_ms": 0.0, "spk_ms": 0.0, "spk_calls": 0,
+        "emo_wait_ms": 0.0, "emo_ms": 0.0, "emo_calls": 0,
+        "qwen_wait_ms": 0.0, "qwen_ms": 0.0, "qwen_calls": 0,
+    }
     _PHASE_STATS.set(stats)
     phase = {"vad_ms": 0.0, "cut_ms": 0.0, "segment_ms": 0.0, "cluster_ms": 0.0, "itn_ms": 0.0}
 
@@ -650,14 +672,20 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     gpu_time_ms = (time.perf_counter() - started) * 1000
     logger.info(
         "[V2 耗时] 段数=%d 总计=%.0fms | VAD=%.0f 裁剪=%.0f 分段处理=%.0f "
-        "(说话人 %.0fms/%d次, 情绪 %.0fms/%d次) 聚类=%.0f ITN=%.0f",
+        "(Qwen 等待 %.0fms/调用 %.0fms/%d次, 说话人等待 %.0fms/推理 %.0fms/%d次, "
+        "情绪等待 %.0fms/推理 %.0fms/%d次) 聚类=%.0f ITN=%.0f",
         len(segments),
         gpu_time_ms,
         phase["vad_ms"],
         phase["cut_ms"],
         phase["segment_ms"],
+        stats["qwen_wait_ms"],
+        stats["qwen_ms"],
+        int(stats["qwen_calls"]),
+        stats["spk_wait_ms"],
         stats["spk_ms"],
         int(stats["spk_calls"]),
+        stats["emo_wait_ms"],
         stats["emo_ms"],
         int(stats["emo_calls"]),
         phase["cluster_ms"],

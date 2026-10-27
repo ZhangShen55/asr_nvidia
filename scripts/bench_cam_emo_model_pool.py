@@ -14,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import statistics
 import subprocess
 import threading
@@ -27,6 +28,11 @@ import requests
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_AUDIO = REPO_ROOT / "test/audio_file/教师1.aac"
+V2_PHASE_RE = re.compile(
+    r"Qwen 等待 ([\d.]+)ms/调用 ([\d.]+)ms/(\d+)次, "
+    r"说话人等待 ([\d.]+)ms/推理 ([\d.]+)ms/(\d+)次, "
+    r"情绪等待 ([\d.]+)ms/推理 ([\d.]+)ms/(\d+)次"
+)
 
 
 def gpu_sample() -> dict:
@@ -67,22 +73,57 @@ def one_request(base_url: str, audio: Path, timeout: float) -> dict:
                 timeout=timeout,
             )
         payload = response.json()
+        segments = payload.get("segments") or []
+        role_count = sum(1 for item in segments if item.get("role") is not None)
+        emotion_count = sum(1 for item in segments if item.get("emotion") is not None)
         return {"ok": response.ok and payload.get("code", 0) == 0,
                 "http_status": response.status_code,
                 "elapsed_s": round(time.perf_counter() - started, 3),
-                "segments": len(payload.get("segments") or []),
+                "segments": len(segments),
+                "role_count": role_count,
+                "emotion_count": emotion_count,
                 "text_chars": len(str(payload.get("text") or "")),
                 "error": payload.get("msg") if not response.ok else None}
     except Exception as exc:  # noqa: BLE001
         return {"ok": False, "elapsed_s": round(time.perf_counter() - started, 3), "error": str(exc)}
 
 
-def run_level(base_url: str, audio: Path, concurrency: int, timeout: float) -> dict:
+def run_level(
+    base_url: str,
+    audio: Path,
+    concurrency: int,
+    timeout: float,
+    log_path: Path = REPO_ROOT / "asr_service.log",
+) -> dict:
     before = {"status": status(base_url), "gpu": gpu_sample()}
+    try:
+        log_offset = log_path.stat().st_size
+    except OSError:
+        log_offset = 0
+    status_samples = []
+    stop_sampling = threading.Event()
+
+    def sample_status():
+        while not stop_sampling.is_set():
+            snapshot = status(base_url)
+            if snapshot.get("localModels"):
+                status_samples.append({
+                    "time": time.time(),
+                    "localModels": snapshot["localModels"],
+                    "gpu": gpu_sample(),
+                })
+            stop_sampling.wait(1.0)
+
+    sampler = threading.Thread(target=sample_status, daemon=True)
+    sampler.start()
     started = time.perf_counter()
-    with ThreadPoolExecutor(max_workers=concurrency) as pool:
-        futures = [pool.submit(one_request, base_url, audio, timeout) for _ in range(concurrency)]
-        results = [future.result() for future in futures]
+    try:
+        with ThreadPoolExecutor(max_workers=concurrency) as pool:
+            futures = [pool.submit(one_request, base_url, audio, timeout) for _ in range(concurrency)]
+            results = [future.result() for future in futures]
+    finally:
+        stop_sampling.set()
+        sampler.join(timeout=5)
     elapsed = time.perf_counter() - started
     after = {"status": status(base_url), "gpu": gpu_sample()}
     times = [item["elapsed_s"] for item in results]
@@ -94,6 +135,43 @@ def run_level(base_url: str, audio: Path, concurrency: int, timeout: float) -> d
                                capture_output=True, text=True, check=False, timeout=10)
         audio_duration_s = float(probe.stdout.strip())
     except Exception:
+        pass
+    pool_metrics = {}
+    for name in ("speech_campplus", "emotion2vec"):
+        entries = [item["localModels"].get(name, {}) for item in status_samples]
+        if entries:
+            pool_metrics[name] = {
+                "max_busy": max(int(item.get("busy", 0)) for item in entries),
+                "max_waiting": max(int(item.get("waiting", 0)) for item in entries),
+                "wait_total_ms_before": entries[0].get("wait_total_ms", 0.0),
+                "wait_total_ms_after": entries[-1].get("wait_total_ms", 0.0),
+                "calls_before": entries[0].get("calls", 0),
+                "calls_after": entries[-1].get("calls", 0),
+                "configured_instances": entries[-1].get("configured_instances", 0),
+                "loaded_instances": entries[-1].get("instances", 0),
+            }
+        else:
+            pool_metrics[name] = {}
+    phase_logs = []
+    try:
+        with log_path.open("r", encoding="utf-8", errors="replace") as handle:
+            handle.seek(log_offset)
+            for line in handle:
+                match = V2_PHASE_RE.search(line)
+                if match:
+                    values = [float(match.group(i)) for i in (1, 2, 4, 5, 7, 8)]
+                    phase_logs.append({
+                        "qwen_wait_ms": values[0],
+                        "qwen_ms": values[1],
+                        "spk_wait_ms": values[2],
+                        "spk_ms": values[3],
+                        "emo_wait_ms": values[4],
+                        "emo_ms": values[5],
+                        "qwen_calls": int(match.group(3)),
+                        "spk_calls": int(match.group(6)),
+                        "emo_calls": int(match.group(9)),
+                    })
+    except OSError:
         pass
     return {
         "concurrency": concurrency,
@@ -109,6 +187,9 @@ def run_level(base_url: str, audio: Path, concurrency: int, timeout: float) -> d
         "segments_per_s": round(sum(item.get("segments", 0) for item in successes) / elapsed, 3) if elapsed else 0,
         "before": before,
         "after": after,
+        "status_samples": status_samples,
+        "model_pool_metrics": pool_metrics,
+        "qwen_phase_logs": phase_logs,
         "requests": results,
     }
 
@@ -120,6 +201,7 @@ def main() -> None:
     parser.add_argument("--concurrency", default="2,4,8,16,32")
     parser.add_argument("--timeout", type=float, default=7200)
     parser.add_argument("--out-dir", type=Path, default=Path("/tmp/cam_emo_pool"))
+    parser.add_argument("--log-path", type=Path, default=REPO_ROOT / "asr_service.log")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     levels = [int(value) for value in args.concurrency.split(",")]
@@ -132,7 +214,7 @@ def main() -> None:
     args.out_dir.mkdir(parents=True, exist_ok=True)
     results = []
     for level in levels:
-        result = run_level(args.base_url, args.audio, level, args.timeout)
+        result = run_level(args.base_url, args.audio, level, args.timeout, args.log_path)
         results.append(result)
         output = args.out_dir / f"concurrency_{level}.json"
         output.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")

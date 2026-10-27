@@ -2,6 +2,8 @@
 
 import asyncio
 import logging
+import time
+from collections import deque
 from contextlib import asynccontextmanager
 from typing import Any, Dict
 
@@ -39,6 +41,9 @@ local_model_status: Dict[str, Dict[str, Any]] = {
         "devices": [],
         "available_instances": 0, "failed_instances": 0, "busy": 0,
         "waiting": 0, "failure": None,
+        "wait_total_ms": 0.0, "inference_total_ms": 0.0,
+        "calls": 0, "last_wait_ms": 0.0,
+        "waiting_summary": {},
     }
     for name in _LOCAL_MODELS
 }
@@ -135,8 +140,14 @@ class ModelPool:
         self.failures: list[str | None] = []
         self._load_lock = asyncio.Lock()
         self._condition = asyncio.Condition()
+        self._waiters = deque()
+        self._next_instance = 0
         self.waiting = 0
         self.total_allocated_mb = 0.0
+        self.wait_total_ms = 0.0
+        self.inference_total_ms = 0.0
+        self.calls = 0
+        self.last_wait_ms = 0.0
 
     @property
     def configured_instances(self) -> int:
@@ -201,30 +212,73 @@ class ModelPool:
             "busy": busy,
             "waiting": self.waiting,
             "failure": failed[-1] if failed else None,
+            "wait_total_ms": round(self.wait_total_ms, 2),
+            "inference_total_ms": round(self.inference_total_ms, 2),
+            "calls": self.calls,
+            "last_wait_ms": round(self.last_wait_ms, 2),
+            "waiting_summary": {
+                "current": self.waiting,
+                "total_ms": round(self.wait_total_ms, 2),
+                "average_ms": round(self.wait_total_ms / max(1, self.calls), 2),
+            },
         })
+
+    def _available_index(self) -> int | None:
+        """按轮转游标选择一个健康且未占用的副本。"""
+        count = len(self.models)
+        if not count:
+            return None
+        for offset in range(count):
+            index = (self._next_instance + offset) % count
+            if self.models[index] is not None and not self.locks[index].locked():
+                self._next_instance = (index + 1) % count
+                return index
+        return None
+
+    async def _dispatch_waiters(self) -> None:
+        """在条件锁内按 FIFO 发放租约；取消的等待者会被跳过。"""
+        while self._waiters:
+            future, enqueued_at = self._waiters[0]
+            if future.cancelled():
+                self._waiters.popleft()
+                self.waiting = max(0, self.waiting - 1)
+                continue
+            index = self._available_index()
+            if index is None:
+                return
+            await self.locks[index].acquire()
+            self._waiters.popleft()
+            self.waiting = max(0, self.waiting - 1)
+            wait_ms = (time.perf_counter() - enqueued_at) * 1000
+            future.set_result((index, self.models[index], wait_ms))
 
     @asynccontextmanager
     async def lease(self):
         await self.ensure_loaded()
         if not any(model is not None for model in self.models):
             raise ModelUnavailableError(self.name)
-        self.waiting += 1
         selected = None
+        future = None
         try:
-            while True:
-                async with self._condition:
-                    for index, model in enumerate(self.models):
-                        if model is not None and not self.locks[index].locked():
-                            await self.locks[index].acquire()
-                            self.waiting -= 1
-                            self.refresh_status()
-                            selected = (index, model)
-                            break
-                    if selected is not None:
-                        break
+            async with self._condition:
+                # 有排队者时，新请求必须排在队尾，保证 FIFO。
+                if not self._waiters:
+                    index = self._available_index()
+                    if index is not None:
+                        await self.locks[index].acquire()
+                        selected = (index, self.models[index], 0.0)
+                if selected is None:
+                    future = asyncio.get_running_loop().create_future()
+                    self._waiters.append((future, time.perf_counter()))
+                    self.waiting += 1
+                    await self._dispatch_waiters()
                     self.refresh_status()
-                    await self._condition.wait()
-            index, model = selected
+            if selected is None:
+                selected = await future
+            index, model, wait_ms = selected
+            self.wait_total_ms += wait_ms
+            self.last_wait_ms = wait_ms
+            self.refresh_status()
             try:
                 if self._return_device:
                     yield model, self.devices[index]
@@ -233,13 +287,35 @@ class ModelPool:
             finally:
                 self.locks[index].release()
                 async with self._condition:
+                    await self._dispatch_waiters()
                     self.refresh_status()
                     self._condition.notify_all()
+        except asyncio.CancelledError:
+            async with self._condition:
+                if future is not None and not future.done():
+                    try:
+                        self._waiters.remove(next(item for item in self._waiters if item[0] is future))
+                    except (StopIteration, ValueError):
+                        pass
+                    else:
+                        self.waiting = max(0, self.waiting - 1)
+                elif future is not None and future.done() and not future.cancelled() and selected is None:
+                    index, _model, _wait_ms = future.result()
+                    self.locks[index].release()
+                await self._dispatch_waiters()
+                self.refresh_status()
+                self._condition.notify_all()
+            raise
         except Exception:
-            if selected is None:
-                self.waiting = max(0, self.waiting - 1)
             self.refresh_status()
             raise
+
+    def record_inference(self, wait_ms: float, inference_ms: float) -> None:
+        """记录一次模型池租约等待和实际推理耗时。"""
+        self.calls += 1
+        self.inference_total_ms += max(0.0, float(inference_ms))
+        self.last_wait_ms = max(0.0, float(wait_ms))
+        self.refresh_status()
 
     async def close(self) -> None:
         async with self._load_lock:
@@ -249,6 +325,14 @@ class ModelPool:
             self.failures.clear()
             self.total_allocated_mb = 0.0
             self.waiting = 0
+            self.wait_total_ms = 0.0
+            self.inference_total_ms = 0.0
+            self.calls = 0
+            self.last_wait_ms = 0.0
+            for future, _ in self._waiters:
+                if not future.done():
+                    future.cancel()
+            self._waiters.clear()
             self.refresh_status()
 
 

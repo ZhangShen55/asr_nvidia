@@ -306,15 +306,6 @@ class Settings:
         """
         return float(self._cfg.get("qwen_asr", {}).get("speaker_similarity_threshold", 0.3))
 
-    @property
-    def qwen_local_gpu_concurrency(self) -> int:
-        """本机 GPU（CAM++ / emotion2vec）推理的并发路数上限。
-
-        限制并发而不是完全串行：完全串行时 8 路并发下 role/emotion
-        会成为端到端时延的主瓶颈。
-        """
-        return int(self._cfg.get("qwen_asr", {}).get("local_gpu_concurrency", 4))
-
     # 复读（生成幻觉循环）后处理
     @property
     def qwen_repetition_guard_enabled(self) -> bool:
