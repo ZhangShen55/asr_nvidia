@@ -100,12 +100,33 @@ curl http://localhost:9000/get_status | jq .localModels
 ```json
 {
   "vad": { "loaded": true, "device": "cpu", "allocated_mb": 0.0, "instances": 8, "pool_size": 8, "pool_max": 16 },
-  "speech_campplus": { "loaded": true, "device": "cuda:0", "allocated_mb": 26.7, "instances": 1 },
-  "emotion2vec": { "loaded": true, "device": "cuda:0", "allocated_mb": 313.3, "instances": 1 }
+      "speech_campplus": { "loaded": true, "device": "cuda:0", "devices": ["cuda:0"], "allocated_mb": 26.7, "instances": 1, "configured_instances": 1, "available_instances": 1, "failed_instances": 0, "busy": 0, "waiting": 0 },
+      "emotion2vec": { "loaded": true, "device": "cuda:0", "devices": ["cuda:0"], "allocated_mb": 313.3, "instances": 1, "configured_instances": 1, "available_instances": 1, "failed_instances": 0, "busy": 0, "waiting": 0 }
 }
 ```
 
 `loaded` 为 `false` 表示该模型尚未被任何请求触发加载（懒加载），此时不占显存。
+
+CAM++ 与 emotion2vec 的实例通过设备数组统一管理。数组长度就是实例数，每个元素决定对应实例的 CUDA 设备；数组可以为空，表示禁用对应能力：
+
+```toml
+[model_device]
+speech_campplus = "cuda:0"
+emotion2vec = "cuda:0"
+
+[model_device.local_model_pool]
+speech_campplus_devices = ["cuda:1", "cuda:2"]
+emotion2vec_devices = ["cuda:1"]
+```
+
+当 `speech_campplus_devices = []` 时，`showSpk=true` 的 v2 请求返回 `4015`；当
+`emotion2vec_devices = []` 时，`showEmotion=true` 的请求返回 `4016`。未请求对应能力时，
+转写仍可正常执行。两种空数组都配置时，服务仍可启动，不会加载这两个模型。
+
+同一模型可以在数组中显式指定不同 GPU，实例按数组位置加载，不会自动迁移。使用
+`["cuda:0"]` 即可回到单副本；旧版 `speech_campplus = 2` / `emotion2vec = 2` 仍兼容读取，
+但新配置应使用设备数组。`configured_instances`、`available_instances`、`failed_instances`、
+`busy` 和 `waiting` 用于判断模型池的实际压力。
 
 VAD 进程池运行信息也通过 `.vadPool` 暴露：
 
@@ -122,13 +143,15 @@ VAD 进程池运行信息也通过 `.vadPool` 暴露：
 
 ### 2.3 实例数与显存的关系
 
-`instance_count` 默认 `1`。每个实例进程各自持有一份 CAM++ / emotion2vec 权重；每个服务实例
-另外维护由 `vad_pool_size` 决定的独立 VAD worker 池。VAD 默认在 CPU 上，因此默认不放大显存：
+`instance_count` 默认 `1`，只决定完整 uvicorn 服务进程数量。每个实例进程按
+`[model_device.local_model_pool]` 各自加载模型副本；每个服务实例另外维护由 `vad_pool_size` 决定的独立
+VAD worker 池。VAD 默认在 CPU 上，因此默认不放大显存：
 
 | `instance_count` | uvicorn 实例数 | `nvidia-smi` 中的进程行数 | 本地模型显存 |
 |-----------------|---------------|------------------------|------------|
-| 1（默认） | 1 | 1 个 `asr-offline-model` + 8 个 CPU VAD worker | CAM++/emotion2vec 1 份，VAD 显存 0 |
-| 2 | 2 | 2 个 `asr-offline-model` + 每实例 8 个 CPU VAD worker | CAM++/emotion2vec 2 份，VAD 显存 0 |
+| 1（默认） | 1 | 1 个 `asr-offline-model` + 8 个 CPU VAD worker | 按模型池配置加载，默认各 1 份，VAD 显存 0 |
+| 1 + 模型池各 2 副本 | 1 | 1 个 `asr-offline-model` + 8 个 CPU VAD worker | CAM++/emotion2vec 各 2 份，均在同一 GPU |
+| 2 + 模型池各 N 副本 | 2 | 2 个 `asr-offline-model` + 每实例 8 个 CPU VAD worker | 每进程各 N 份，显存按进程和副本数乘积增长 |
 
 多实例用于提升 HTTP 层吞吐，代价是本地模型显存等比放大，运维按需权衡。
 

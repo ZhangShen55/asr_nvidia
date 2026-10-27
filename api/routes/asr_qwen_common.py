@@ -15,7 +15,7 @@ import torch
 
 from api.routes.asr_common import AsrContext, map_emotion, prepare_asr_context
 from core.config import settings
-from core.models import get_emotion_v2_model, get_spk_model, load_v2_models_if_needed
+from core.models import get_model_pool, load_v2_models_if_needed
 from core.qwen_asr_client import (
     QwenAsrCallError,
     QwenAsrUnavailableError,
@@ -189,12 +189,8 @@ async def _speaker_embedding(audio_array, sample_rate):
     直接喂 numpy 数组而不是文件路径：funasr 的文件分支里有一次额外的
     音频读取与重采样，实测单次调用 98.8ms → 49.3ms，且嵌入结果逐位相同。
     """
-    model = get_spk_model()
-    if model is None:
-        return None
-
-    def _run():
-        with torch.cuda.device(settings.model_device_speech_campplus):
+    def _run(model, device):
+        with torch.cuda.device(device):
             result = model.generate(input=audio_array, fs=sample_rate)
         if not result:
             return None
@@ -211,7 +207,10 @@ async def _speaker_embedding(audio_array, sample_rate):
     async with _local_gpu_semaphore:
         started = time.perf_counter()
         try:
-            return await asyncio.to_thread(_run)
+            async with get_model_pool("speech_campplus").lease() as leased:
+                model, device = leased if isinstance(leased, tuple) else (
+                    leased, settings.model_device_speech_campplus)
+                return await asyncio.to_thread(_run, model, device)
         finally:
             stats = _phase_stats()
             stats["spk_ms"] += (time.perf_counter() - started) * 1000
@@ -223,12 +222,8 @@ async def _segment_emotion(audio_array, sample_rate, duration_s):
     if duration_s < EMOTION_MIN_DURATION_S or duration_s > EMOTION_MAX_DURATION_S:
         return "平淡"
 
-    model = get_emotion_v2_model()
-    if model is None:
-        return None
-
-    def _run():
-        with torch.cuda.device(settings.model_device_emotion2vec):
+    def _run(model, device):
+        with torch.cuda.device(device):
             with torch.cuda.amp.autocast(enabled=True, dtype=torch.float16):
                 result = model.generate(
                     # 直接喂 numpy 数组：funasr 的文件分支会额外做一次
@@ -253,7 +248,10 @@ async def _segment_emotion(audio_array, sample_rate, duration_s):
         try:
             started = time.perf_counter()
             try:
-                return await asyncio.to_thread(_run)
+                async with get_model_pool("emotion2vec").lease() as leased:
+                    model, device = leased if isinstance(leased, tuple) else (
+                        leased, settings.model_device_emotion2vec)
+                    return await asyncio.to_thread(_run, model, device)
             finally:
                 stats = _phase_stats()
                 stats["emo_ms"] += (time.perf_counter() - started) * 1000

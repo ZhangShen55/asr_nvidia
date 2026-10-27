@@ -238,6 +238,7 @@ class VadPool:
         watermark: Optional[int] = None,
         collapse_timeout_s: Optional[float] = None,
         queue_timeout_s: Optional[float] = None,
+        call_timeout_s: Optional[float] = None,
         device: Optional[str] = None,
         model_dir: Optional[str] = None,
         vad_kwargs: Optional[dict] = None,
@@ -259,7 +260,9 @@ class VadPool:
         self._queue_timeout_s = float(
             queue_timeout_s if queue_timeout_s is not None else settings.qwen_vad_queue_timeout_s
         )
-        self._call_timeout_s = self._queue_timeout_s
+        self._call_timeout_s = float(
+            call_timeout_s if call_timeout_s is not None else settings.qwen_vad_call_timeout_s
+        )
         if device is None:
             # Validate and normalize the configured VAD device before workers start.
             from core.models import resolve_vad_device

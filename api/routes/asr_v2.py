@@ -7,6 +7,7 @@ from fastapi import APIRouter, Depends
 from api.routes.asr_common import cleanup_temp_files, prepare_asr_context
 from api.routes.asr_qwen_common import run_qwen_asr
 from core.config import settings
+from core.models import ModelUnavailableError
 from core.qwen_asr_queue import QueueFullError, QueueTimeoutError, get_slot_manager
 from core.vad_pool import VadPoolError
 from entity.data import AsrRequestParams, get_asr_params
@@ -43,6 +44,10 @@ async def api_asr_v2(request: AsrRequestParams = Depends(get_asr_params)):
         except VadPoolError as e:
             # VAD 排队超时 / worker 异常：错误码 4014，便于上游与 Qwen 侧错误区分
             logger.error(f"[V2] VAD 阶段异常: {e.message}")
+            update_fail_task()
+            return {"msg": e.message, "code": e.code}
+        except ModelUnavailableError as e:
+            logger.warning(f"[V2] 本地模型不可用: {e.message}")
             update_fail_task()
             return {"msg": e.message, "code": e.code}
         except Exception as e:  # noqa: BLE001 - 兜底，避免整条链路 500

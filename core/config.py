@@ -291,6 +291,11 @@ class Settings:
         return float(self._cfg.get("qwen_asr", {}).get("vad_queue_timeout_s", 120))
 
     @property
+    def qwen_vad_call_timeout_s(self) -> float:
+        """单个 VAD worker 执行一份音频的超时时间（秒）。"""
+        return float(self._cfg.get("qwen_asr", {}).get("vad_call_timeout_s", 120))
+
+    @property
     def qwen_speaker_similarity_threshold(self) -> float:
         """CAM++ 说话人聚类的余弦相似度阈值。
 
@@ -344,16 +349,95 @@ class Settings:
     # v2 链路模型落卡 - 从嵌套的 [model_device] 部分读取
     @property
     def model_device_emotion2vec(self) -> str:
-        return self._normalize_model_device("emotion2vec")
+        return self.model_device_emotion2vec_devices[0]
 
     @property
     def model_device_speech_campplus(self) -> str:
-        return self._normalize_model_device("speech_campplus")
+        return self.model_device_speech_campplus_devices[0]
+
+    @property
+    def model_device_emotion2vec_devices(self) -> list[str]:
+        """emotion2vec 模型池实例设备；数组长度即实例数。"""
+        return self._model_pool_devices("emotion2vec")
+
+    @property
+    def model_device_speech_campplus_devices(self) -> list[str]:
+        """CAM++ 模型池实例设备；数组长度即实例数。"""
+        return self._model_pool_devices("speech_campplus")
+
+    @property
+    def local_model_pool_emotion2vec_devices(self) -> list[str]:
+        return self.model_device_emotion2vec_devices
+
+    @property
+    def local_model_pool_speech_campplus_devices(self) -> list[str]:
+        return self.model_device_speech_campplus_devices
+
+    @property
+    def local_model_pool_speech_campplus_instances(self) -> int:
+        """CAM++ 模型池副本数；缺省保持单副本。"""
+        return len(self.model_device_speech_campplus_devices)
+
+    @property
+    def local_model_pool_emotion2vec_instances(self) -> int:
+        """emotion2vec 模型池副本数；缺省保持单副本。"""
+        return len(self.model_device_emotion2vec_devices)
+
+    # 兼容调用方更短的模型池属性命名。
+    @property
+    def model_pool_speech_campplus_instances(self) -> int:
+        return self.local_model_pool_speech_campplus_instances
+
+    @property
+    def model_pool_emotion2vec_instances(self) -> int:
+        return self.local_model_pool_emotion2vec_instances
+
+    def _model_pool_instances(self, name: str) -> int:
+        """读取旧版数量字段，供旧配置和外部调用兼容。"""
+        pool = self._cfg.get("model_device", {}).get("local_model_pool", {})
+        if not isinstance(pool, dict):
+            raise ValueError("[model_device].local_model_pool 必须是表")
+        value = pool.get(name, 1)
+        if isinstance(value, bool) or not isinstance(value, int) or value < 1:
+            raise ValueError(
+                f"[model_device.local_model_pool].{name} 必须是大于等于 1 的整数"
+            )
+        return value
+
+    def _model_pool_devices(self, name: str) -> list[str]:
+        model_device = self._cfg.get("model_device", {})
+        pool = model_device.get("local_model_pool", {})
+        if not isinstance(pool, dict):
+            raise ValueError("[model_device].local_model_pool 必须是表")
+
+        array_key = f"{name}_devices"
+        if array_key in pool:
+            value = pool[array_key]
+            if not isinstance(value, list):
+                raise ValueError(
+                    f"[model_device.local_model_pool].{array_key} 必须是 cuda:N 数组"
+                )
+            devices = []
+            for index, item in enumerate(value):
+                field_name = f"{array_key}[{index}]"
+                if not isinstance(item, str):
+                    raise ValueError(
+                        f"[model_device.local_model_pool].{field_name} 必须使用 cuda:N 格式"
+                    )
+                devices.append(self._validate_cuda_device(item, field_name))
+            return devices
+
+        # 兼容旧版“单设备 + 副本数”配置；新配置应使用 *_devices 数组。
+        device = self._normalize_model_device(name)
+        count = self._model_pool_instances(name)
+        return [device] * count
 
     def _normalize_model_device(self, name: str) -> str:
         value = self._cfg.get("model_device", {}).get(name, "cuda:0")
         if isinstance(value, bool):
             raise ValueError(f"[model_device].{name} 必须是 cuda:N 设备串")
+        if isinstance(value, (list, tuple, dict)):
+            raise ValueError(f"[model_device].{name} 必须是单一 cuda:N 设备串，不支持多卡列表")
         if isinstance(value, int):
             if value < 0:
                 raise ValueError(f"[model_device].{name} 的 GPU 编号不能为负数")
@@ -364,12 +448,22 @@ class Settings:
                 value,
             )
             return f"cuda:{value}"
+        return self._validate_cuda_device(value, name)
+
+    @staticmethod
+    def _validate_cuda_device(value, field_name: str) -> str:
+        if isinstance(value, bool):
+            raise ValueError(f"[model_device.local_model_pool].{field_name} 必须使用 cuda:N 格式")
+        if isinstance(value, int):
+            if value < 0:
+                raise ValueError(f"[model_device.local_model_pool].{field_name} 的 GPU 编号不能为负数")
+            return f"cuda:{value}"
         text = str(value).strip().lower()
         if not text.startswith("cuda:"):
-            raise ValueError(f"[model_device].{name} 必须使用 cuda:N 格式")
+            raise ValueError(f"[model_device.local_model_pool].{field_name} 必须使用 cuda:N 格式")
         suffix = text.split(":", 1)[1]
         if not suffix.isdigit():
-            raise ValueError(f"[model_device].{name} 必须使用 cuda:N 格式")
+            raise ValueError(f"[model_device.local_model_pool].{field_name} 必须使用 cuda:N 格式")
         return f"cuda:{int(suffix)}"
 
 

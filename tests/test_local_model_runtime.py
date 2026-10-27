@@ -39,6 +39,15 @@ class StatusContractTests(unittest.TestCase):
             self.assertIn("instances", entry)
             self.assertIn("pool_size", entry)
             self.assertIn("pool_max", entry)
+            self.assertIn("configured_instances", entry)
+            self.assertIn("available_instances", entry)
+            self.assertIn("failed_instances", entry)
+            self.assertIn("busy", entry)
+            self.assertIn("waiting", entry)
+        self.assertEqual(models["speech_campplus"]["configured_instances"], 1)
+        self.assertEqual(models["emotion2vec"]["configured_instances"], 1)
+        self.assertEqual(models["speech_campplus"]["instances"], 0)
+        self.assertEqual(models["emotion2vec"]["instances"], 0)
 
     def test_status_exposes_vad_pool_runtime(self):
         payload = self._status()
@@ -113,10 +122,24 @@ class ConfigFileStructureTests(unittest.TestCase):
         for name in ("config.toml", "config.docker.toml"):
             self.assertIs(self._load(name)["itn"]["remove_interjections"], True)
 
-    def test_model_device_pins_gpu0(self):
+    def test_model_device_arrays_pin_gpu0(self):
         for name in ("config.toml", "config.docker.toml"):
             devices = self._load(name)["model_device"]
-            self.assertEqual(set(devices.values()), {"cuda:0"})
+            self.assertEqual(
+                {key for key in devices if key != "local_model_pool"},
+                {"emotion2vec", "speech_campplus"},
+            )
+            self.assertEqual(
+                {devices[key] for key in ("emotion2vec", "speech_campplus")},
+                {"cuda:0"},
+            )
+            self.assertEqual(
+                devices["local_model_pool"],
+                {
+                    "emotion2vec_devices": ["cuda:0"],
+                    "speech_campplus_devices": ["cuda:0"],
+                },
+            )
 
     def test_log_path_and_vad_threshold_are_nested(self):
         for name in ("config.toml", "config.docker.toml"):

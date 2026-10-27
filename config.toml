@@ -64,7 +64,8 @@ vad_pool_size = 8               # 常驻 worker 进程数；每进程约 2.2~2.5
 vad_pool_max = 16               # 突发扩容上限
 vad_queue_watermark = 4         # 等待队列深度超过该值时临时拉起 worker
 vad_collapse_timeout_s = 120    # 额外 worker 的空闲回收时间
-vad_queue_timeout_s = 120       # 请求等待 VAD worker 的超时（超时返回错误码 4014）
+vad_queue_timeout_s = 120       # 请求等待 VAD worker 的排队超时（超时返回错误码 4014）
+vad_call_timeout_s = 120        # 单个 worker 执行 VAD 的超时（超时返回错误码 4014）
 
 # 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
 # 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
@@ -77,7 +78,11 @@ repetition_min_chars = 120               # 判定长度异常的绝对下限字�
 repetition_min_unit = 4                  # 判定为循环的重复子串最小长度
 repetition_min_times = 3                 # 判定为循环的最小连续重复次数
 
-# v2 链路三个本地模型的落卡，三者绑定同一张卡
+# v2 链路本地模型的默认落卡。
 [model_device]
 emotion2vec = "cuda:0"         # emotion2vec_plus_large
 speech_campplus = "cuda:0"     # speech_campplus_sv_zh_en_16k-common_advanced
+
+[model_device.local_model_pool]
+speech_campplus_devices = ["cuda:0"]  # 每个数组元素对应一个 CAM++ 实例
+emotion2vec_devices = ["cuda:0"]      # 每个数组元素对应一个 emotion2vec 实例

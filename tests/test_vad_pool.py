@@ -140,10 +140,17 @@ class VadPoolTests(unittest.TestCase):
     def test_queue_timeout_returns_4014_and_others_survive(self):
         async def scenario():
             # pool_max=1：不允许扩容，才能构造出真正的排队
-            pool = make_pool(pool_size=1, pool_max=1, watermark=0, queue_timeout_s=0.3)
+            pool = make_pool(
+                pool_size=1, pool_max=1, watermark=0,
+                queue_timeout_s=0.3, call_timeout_s=0.3,
+            )
             try:
+                await pool.start()
                 first = asyncio.create_task(pool.detect("sleep:1.0"))
-                await asyncio.sleep(0.1)  # 确保 first 已占住唯一的 worker
+                deadline = time.monotonic() + 3.0
+                while pool.stats()["busy"] < 1 and time.monotonic() < deadline:
+                    await asyncio.sleep(0.05)
+                self.assertEqual(pool.stats()["busy"], 1)
                 with self.assertRaises(VadQueueTimeoutError) as ctx:
                     await pool.detect("ok")
                 self.assertEqual(ctx.exception.code, 4014)
@@ -161,6 +168,11 @@ class VadPoolTests(unittest.TestCase):
                 await pool.stop()
 
         asyncio.run(scenario())
+
+    def test_queue_and_call_timeouts_are_independent(self):
+        pool = make_pool(queue_timeout_s=1.0, call_timeout_s=7.0)
+        self.assertEqual(pool._queue_timeout_s, 1.0)
+        self.assertEqual(pool._call_timeout_s, 7.0)
 
     def test_task_error_fails_request_and_worker_survives(self):
         async def scenario():

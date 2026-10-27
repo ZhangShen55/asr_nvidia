@@ -38,6 +38,7 @@ def _cpu_seconds(pid: int) -> float:
 
 
 async def measure(audio: Path, workers: int) -> Dict[str, object]:
+    audio = audio.resolve()
     pool = VadPool(
         pool_size=workers,
         pool_max=workers,
@@ -84,7 +85,7 @@ def main() -> None:
     )
     parser.add_argument("--workers", default="4,8,16")
     args = parser.parse_args()
-    asyncio.run(run(args.audio, [int(value) for value in args.workers.split(",")]))
+    asyncio.run(run(args.audio.resolve(), [int(value) for value in args.workers.split(",")]))
 
 
 if __name__ == "__main__":

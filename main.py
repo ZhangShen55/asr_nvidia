@@ -6,6 +6,7 @@ from datetime import datetime
 from core.config import settings
 from core.logging import setup_logging
 from core.qwen_asr_client import close_qwen_client
+from core.models import close_v2_model_pools
 from core.vad_pool import start_vad_pool, stop_vad_pool
 from api.routes.asr_v2 import router as asr_v2_router
 from api.routes.status import router as status_router
@@ -48,8 +49,9 @@ async def lifespan(app: FastAPI):
     try:
         yield
     finally:
-        # 释放 VAD worker 进程池与 Qwen 客户端连接池
+        # 释放 VAD worker 进程池、本地模型池与 Qwen 客户端连接池
         await stop_vad_pool()
+        await close_v2_model_pools()
         await close_qwen_client()
 
 
