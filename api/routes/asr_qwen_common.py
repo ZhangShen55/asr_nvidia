@@ -195,7 +195,10 @@ async def _speaker_embedding(audio_array, sample_rate):
     """
     def _run(model, device):
         with torch.cuda.device(device):
-            result = model.generate(input=audio_array, fs=sample_rate)
+            # CAM++ 模型以 FP16 加载；FunASR 的特征提取仍会产出 FP32，
+            # 用 CUDA autocast 负责前向计算的类型转换，避免输入与权重类型冲突。
+            with torch.amp.autocast("cuda", enabled=True, dtype=torch.float16):
+                result = model.generate(input=audio_array, fs=sample_rate)
         if not result:
             return None
         payload = result[0]

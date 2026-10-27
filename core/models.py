@@ -340,6 +340,7 @@ _MODEL_POOLS = {
     "speech_campplus": ModelPool(
         "speech_campplus", settings.spk_model_dir,
         devices_getter=lambda: settings.model_device_speech_campplus_devices,
+        fp16=True,
     ),
     "emotion2vec": ModelPool(
         "emotion2vec", settings.emotion_model_dir,
