@@ -16,7 +16,28 @@ class QueueFullError(Exception):
     """处理队列已满。"""
 
     code = 4013
-    message = "处理队列已满，请稍后再试"
+
+    def __init__(
+        self,
+        *,
+        active: int | None = None,
+        capacity: int | None = None,
+        waiting: int | None = None,
+        queue_max_size: int | None = None,
+    ):
+        self.active = active
+        self.capacity = capacity
+        self.waiting = waiting
+        self.queue_max_size = queue_max_size
+        if None in (active, capacity, waiting, queue_max_size):
+            self.message = "处理队列已满，请稍后再试"
+        else:
+            self.message = (
+                "处理队列已满，请稍后再试"
+                f"（当前音频并发：{active}/{capacity}，"
+                f"等待中：{waiting}/{queue_max_size}）"
+            )
+        super().__init__(self.message)
 
 
 class QueueTimeoutError(Exception):
@@ -62,13 +83,23 @@ class AudioSlotManager:
 
             if self._waiting >= self.queue_max_size:
                 logger.warning(f"[并发] 等待队列已满（{self._waiting}/{self.queue_max_size}）")
-                raise QueueFullError()
+                raise QueueFullError(
+                    active=self._active,
+                    capacity=self.capacity,
+                    waiting=self._waiting,
+                    queue_max_size=self.queue_max_size,
+                )
 
             if self.wait_timeout_s <= 0:
                 logger.warning(
                     f"[并发] 处理队列已满（{self._active}/{self.capacity}），直接拒绝"
                 )
-                raise QueueFullError()
+                raise QueueFullError(
+                    active=self._active,
+                    capacity=self.capacity,
+                    waiting=self._waiting,
+                    queue_max_size=self.queue_max_size,
+                )
 
             self._waiting += 1
             deadline = time.monotonic() + self.wait_timeout_s

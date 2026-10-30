@@ -320,7 +320,11 @@ class V2RouteTests(unittest.TestCase):
     @patch("api.routes.asr_v2.get_slot_manager")
     def test_queue_full_returns_4013(self, mock_slots):
         manager = SimpleNamespace()
-        manager.acquire = AsyncMock(side_effect=QueueFullError())
+        manager.acquire = AsyncMock(
+            side_effect=QueueFullError(
+                active=8, capacity=8, waiting=0, queue_max_size=64
+            )
+        )
         manager.release = AsyncMock()
         mock_slots.return_value = manager
 
@@ -330,7 +334,10 @@ class V2RouteTests(unittest.TestCase):
             files={"audioFile": ("a.wav", b"0" * 2048, "audio/wav")},
         )
         self.assertEqual(response.json()["code"], 4013)
-        self.assertEqual(response.json()["msg"], "处理队列已满，请稍后再试")
+        self.assertEqual(
+            response.json()["msg"],
+            "处理队列已满，请稍后再试（当前音频并发：8/8，等待中：0/64）",
+        )
 
     @patch("api.routes.asr_v2.get_slot_manager")
     def test_queue_timeout_returns_4010(self, mock_slots):
