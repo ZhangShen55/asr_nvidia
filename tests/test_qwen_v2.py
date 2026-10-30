@@ -322,7 +322,7 @@ class V2RouteTests(unittest.TestCase):
         manager = SimpleNamespace()
         manager.acquire = AsyncMock(
             side_effect=QueueFullError(
-                active=8, capacity=8, waiting=0, queue_max_size=64
+                active=8, capacity=8
             )
         )
         manager.release = AsyncMock()
@@ -336,7 +336,7 @@ class V2RouteTests(unittest.TestCase):
         self.assertEqual(response.json()["code"], 4013)
         self.assertEqual(
             response.json()["msg"],
-            "处理队列已满，请稍后再试（当前音频并发：8/8，等待中：0/64）",
+            "处理队列已满，请稍后再试（当前音频并发：8/8）",
         )
 
     @patch("api.routes.asr_v2.get_slot_manager")

@@ -22,21 +22,13 @@ class QueueFullError(Exception):
         *,
         active: int | None = None,
         capacity: int | None = None,
-        waiting: int | None = None,
-        queue_max_size: int | None = None,
     ):
         self.active = active
         self.capacity = capacity
-        self.waiting = waiting
-        self.queue_max_size = queue_max_size
-        if None in (active, capacity, waiting, queue_max_size):
+        if None in (active, capacity):
             self.message = "处理队列已满，请稍后再试"
         else:
-            self.message = (
-                "处理队列已满，请稍后再试"
-                f"（当前音频并发：{active}/{capacity}，"
-                f"等待中：{waiting}/{queue_max_size}）"
-            )
+            self.message = f"处理队列已满，请稍后再试（当前音频并发：{active}/{capacity}）"
         super().__init__(self.message)
 
 
@@ -86,8 +78,6 @@ class AudioSlotManager:
                 raise QueueFullError(
                     active=self._active,
                     capacity=self.capacity,
-                    waiting=self._waiting,
-                    queue_max_size=self.queue_max_size,
                 )
 
             if self.wait_timeout_s <= 0:
@@ -97,8 +87,6 @@ class AudioSlotManager:
                 raise QueueFullError(
                     active=self._active,
                     capacity=self.capacity,
-                    waiting=self._waiting,
-                    queue_max_size=self.queue_max_size,
                 )
 
             self._waiting += 1

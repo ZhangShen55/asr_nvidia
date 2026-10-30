@@ -156,7 +156,7 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `4010` | 请求排队等待超时（`queue_wait_timeout_s > 0` 时可能触发） |
 | `4011` | Qwen 服务不可用或未发现可用模型 |
 | `4012` | Qwen 服务调用失败（超时、连接错误、重试耗尽） |
-| `4013` | 处理队列已满（同时处理的音频数达到 `audio_concurrency`）；消息会附带当前音频并发 `active/capacity` 和等待队列 `waiting/queue_max_size` |
+| `4013` | 处理队列已满（同时处理的音频数达到 `audio_concurrency`）；消息会附带当前音频并发 `active/capacity` |
 
 > 默认 `queue_wait_timeout_s = 0`，即第 9 个并发音频**立即**返回 `4013`，不做静默排队。
 
