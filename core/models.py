@@ -40,7 +40,7 @@ class ModelUnavailableError(RuntimeError):
 local_model_status: Dict[str, Dict[str, Any]] = {
     name: {
         "loaded": False, "device": None, "allocated_mb": 0.0, "instances": 0,
-        "pool_size": 0, "pool_max": 0, "configured_instances": 0,
+        "configured_instances": 0,
         "devices": [],
         "available_instances": 0, "failed_instances": 0, "busy": 0,
         "waiting": 0, "failure": None,
@@ -96,9 +96,7 @@ def record_vad_runtime(
     entry["devices"] = list(devices if devices is not None else (device if isinstance(device, list) else [device]))
     entry["instances"] = max(0, int(instances))
     entry["allocated_mb"] = round(max(0.0, allocated_mb), 2)
-    entry["pool_size"] = int(pool_size if pool_size is not None else (configured_instances or 0))
-    entry["pool_max"] = int(pool_max if pool_max is not None else (configured_instances or 0))
-    entry["configured_instances"] = int(configured_instances if configured_instances is not None else entry["pool_size"])
+    entry["configured_instances"] = int(configured_instances if configured_instances is not None else (instances or 0))
     entry["available_instances"] = max(0, int(successful_instances if successful_instances is not None else instances) - int(busy))
     entry["failed_instances"] = int(failed_instances)
     entry["busy"] = int(busy)
@@ -109,7 +107,11 @@ def record_vad_runtime(
 def get_local_model_status() -> Dict[str, Dict[str, Any]]:
     for pool in _MODEL_POOLS.values():
         pool.refresh_status()
-    return {name: dict(entry) for name, entry in local_model_status.items()}
+    # VAD 由 vadPool 单独暴露；localModels 只描述按需加载的增强模型池。
+    return {
+        name: dict(local_model_status[name])
+        for name in ("speech_campplus", "emotion2vec")
+    }
 
 
 def _resolve_device(index: int | str) -> str:

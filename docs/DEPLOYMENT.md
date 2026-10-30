@@ -99,9 +99,8 @@ curl http://localhost:9000/get_status | jq .localModels
 
 ```json
 {
-  "vad": { "loaded": true, "device": "cpu", "allocated_mb": 0.0, "instances": 8, "pool_size": 8, "pool_max": 16 },
-      "speech_campplus": { "loaded": true, "device": "cuda:0", "devices": ["cuda:0"], "allocated_mb": 26.7, "instances": 1, "configured_instances": 1, "available_instances": 1, "failed_instances": 0, "busy": 0, "waiting": 0 },
-      "emotion2vec": { "loaded": true, "device": "cuda:0", "devices": ["cuda:0"], "allocated_mb": 313.3, "instances": 1, "configured_instances": 1, "available_instances": 1, "failed_instances": 0, "busy": 0, "waiting": 0 }
+  "speech_campplus": { "loaded": true, "device": "cuda:0", "devices": ["cuda:0"], "allocated_mb": 26.7, "instances": 1, "configured_instances": 1, "available_instances": 1, "failed_instances": 0, "busy": 0, "waiting": 0 },
+  "emotion2vec": { "loaded": true, "device": "cuda:0", "devices": ["cuda:0"], "allocated_mb": 313.3, "instances": 1, "configured_instances": 1, "available_instances": 1, "failed_instances": 0, "busy": 0, "waiting": 0 }
 }
 ```
 
@@ -110,11 +109,7 @@ curl http://localhost:9000/get_status | jq .localModels
 CAM++ 与 emotion2vec 的实例通过设备数组统一管理。数组长度就是实例数，每个元素决定对应实例的 CUDA 设备；数组可以为空，表示禁用对应能力：
 
 ```toml
-[model_device]
-speech_campplus = "cuda:0"
-emotion2vec = "cuda:0"
-
-[model_device.local_model_pool]
+[model_device_pool]
 speech_campplus_devices = ["cuda:1", "cuda:2"]
 emotion2vec_devices = ["cuda:1"]
 ```
@@ -132,45 +127,45 @@ VAD 进程池运行信息也通过 `.vadPool` 暴露：
 
 ```json
 {
+  "loaded": true,
   "device": "cpu",
-  "workers": 8,
+  "devices": ["cpu", "cpu", "cuda:0", "cuda:0"],
+  "configured_instances": 4,
+  "loaded_instances": 4,
+  "available_instances": 4,
+  "allocated_mb": 19.53,
+  "failed_instances": 0,
+  "failures": [],
   "busy": 0,
-  "waiting": 0,
-  "pool_size": 8,
-  "pool_max": 16
+  "waiting": 0
 }
 ```
 
 ### 2.3 实例数与显存的关系
 
 `instance_count` 默认 `1`，只决定完整 uvicorn 服务进程数量。每个实例进程按
-`[model_device.local_model_pool]` 各自加载模型副本；每个服务实例另外维护由 `vad_pool_size` 决定的独立
+`[model_device_pool]` 各自加载模型副本；每个服务实例另外维护由 `vad_device` 数组决定的独立
 VAD worker 池。VAD 默认在 CPU 上，因此默认不放大显存：
 
 | `instance_count` | uvicorn 实例数 | `nvidia-smi` 中的进程行数 | 本地模型显存 |
 |-----------------|---------------|------------------------|------------|
-| 1（默认） | 1 | 1 个 `asr-offline-model` + 8 个 CPU VAD worker | 按模型池配置加载，默认各 1 份，VAD 显存 0 |
-| 1 + 模型池各 2 副本 | 1 | 1 个 `asr-offline-model` + 8 个 CPU VAD worker | CAM++/emotion2vec 各 2 份，均在同一 GPU |
-| 2 + 模型池各 N 副本 | 2 | 2 个 `asr-offline-model` + 每实例 8 个 CPU VAD worker | 每进程各 N 份，显存按进程和副本数乘积增长 |
+| 1（默认） | 1 | 1 个 `asr-offline-model` + `len(vad_device)` 个 VAD worker | 按模型池配置加载，VAD 显存随设备数组决定 |
+| 1 + 模型池各 2 副本 | 1 | 1 个 `asr-offline-model` + `len(vad_device)` 个 VAD worker | CAM++/emotion2vec 各 2 份，显存按设备数组增长 |
+| 2 + 模型池各 N 副本 | 2 | 2 个 `asr-offline-model` + 每实例 `len(vad_device)` 个 VAD worker | 每进程各 N 份，显存按进程和副本数乘积增长 |
 
 多实例用于提升 HTTP 层吞吐，代价是本地模型显存等比放大，运维按需权衡。
 
 ### 2.4 VAD 进程池与 CPU 配额
 
-VAD 配置位于 `[qwen_asr]`：
+VAD 配置位于 `[qwen_asr]` 的 `vad_device` 数组中，每个元素对应一个固定 worker：
 
 | 配置项 | 默认值 | 说明 |
 |---|---:|---|
-| `vad_device` | `"cpu"` | `cpu` 或 `cuda:N` |
-| `vad_pool_size` | `8` | 常驻 worker 数 |
-| `vad_pool_max` | `16` | 突发扩容上限 |
-| `vad_queue_watermark` | `4` | 等待队列超过该值时扩容 |
-| `vad_collapse_timeout_s` | `120` | 扩容 worker 空闲回收时间 |
-| `vad_queue_timeout_s` | `120` | VAD 排队超时，返回 4014 |
+| `vad_device` | `["cpu", ...]` | 数组长度决定固定 worker 数；元素为 `cpu` 或 `cuda:N` |
 
 实测每个 CPU worker 约占 2.2~2.5 核，建议按以下配额配置容器：
 
-| `vad_pool_size` | 建议容器 CPU 配额 |
+| `vad_device` 中的 CPU worker 数 | 建议容器 CPU 配额 |
 |---:|---:|
 | 4 | 16 核 |
 | 8 | 24~32 核 |

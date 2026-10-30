@@ -64,7 +64,7 @@ class VadPoolTests(unittest.TestCase):
             pool = make_pool(pool_size=2)
             try:
                 await pool.start()
-                self.assertEqual(pool.stats()["workers"], 2)
+                self.assertEqual(pool.stats()["loaded_instances"], 2)
                 raw = await pool.detect("ok")
                 segments = _parse_vad_result(raw)
                 self.assertEqual(len(segments), 2)
@@ -128,7 +128,7 @@ class VadPoolTests(unittest.TestCase):
             try:
                 await asyncio.gather(*[pool.detect("sleep:0.6") for _ in range(3)])
                 # 固定池不会按等待深度扩容或空闲回收。
-                self.assertEqual(pool.stats()["workers"], 1)
+                self.assertEqual(pool.stats()["configured_instances"], 1)
             finally:
                 await pool.stop()
 
@@ -168,7 +168,7 @@ class VadPoolTests(unittest.TestCase):
                 self.assertIn("模拟 VAD 任务失败", str(ctx.exception))
                 # 单次任务失败不杀 worker：后续请求照常成功
                 self.assertEqual(len(_parse_vad_result(await pool.detect("ok"))), 2)
-                self.assertEqual(pool.stats()["workers"], 1)
+                self.assertEqual(pool.stats()["configured_instances"], 1)
             finally:
                 await pool.stop()
 
@@ -183,26 +183,27 @@ class VadPoolTests(unittest.TestCase):
                 self.assertIn("异常退出", str(ctx.exception))
 
                 deadline = time.monotonic() + 10.0
-                while pool.stats()["workers"] < 1 and time.monotonic() < deadline:
+                while pool.stats()["loaded_instances"] < 1 and time.monotonic() < deadline:
                     await asyncio.sleep(0.1)
                 raw = await pool.detect("ok")
                 self.assertEqual(len(_parse_vad_result(raw)), 2)
-                self.assertEqual(pool.stats()["workers"], 1)
+                self.assertEqual(pool.stats()["configured_instances"], 1)
             finally:
                 await pool.stop()
 
         asyncio.run(scenario())
 
-    def test_stats_expose_pool_bounds(self):
+    def test_stats_expose_fixed_capacity(self):
         async def scenario():
             pool = make_pool(pool_size=2, pool_max=5)
             try:
                 await pool.start()
                 stats = pool.stats()
                 self.assertEqual(stats["device"], "cpu")
-                self.assertEqual(stats["pool_size"], 2)
-                self.assertEqual(stats["pool_max"], 2)
-                self.assertEqual(stats["workers"], 2)
+                self.assertEqual(stats["configured_instances"], 2)
+                self.assertEqual(stats["loaded_instances"], 2)
+                self.assertNotIn("pool_size", stats)
+                self.assertNotIn("pool_max", stats)
             finally:
                 await pool.stop()
 

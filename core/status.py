@@ -40,8 +40,7 @@ def build_status_payload(stats: dict, run_start_time: datetime) -> dict:
         "onlineDone": stats["online"],
         "queuedTaskList": stats["queued_task_ids"],
         "processingTaskList": stats["processing_task_ids"],
-        # 本地模型（VAD / CAM++ / emotion2vec）的加载状态与显存明细：
-        # 三个模型同进程承载，nvidia-smi 只能看到聚合显存，这里提供逐模型视角。
+        # CAM++ / emotion2vec 模型池的加载状态与显存明细；VAD 状态统一放在 vadPool。
         "localModels": get_local_model_status(),
         # VAD 进程池的实时运行状况：设备、当前 worker 数、在途与排队请求
         "vadPool": get_vad_pool().stats(),

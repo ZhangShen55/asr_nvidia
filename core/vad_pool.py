@@ -311,19 +311,19 @@ class VadPool:
         workers = list(self._workers.values())
         ready = sum(1 for worker in workers if worker.ready)
         failed = [worker.failure for worker in workers if worker.failure]
+        busy = sum(worker.busy_task_id is not None for worker in workers)
         return {
+            "loaded": ready > 0,
             "device": self._devices[0] if self._devices else None,
             "devices": list(self._devices),
-            "workers": len(workers),
             "configured_instances": len(self._devices),
-            "successful_instances": ready,
+            "loaded_instances": ready,
+            "available_instances": max(0, ready - busy),
+            "allocated_mb": round(sum(worker.allocated_mb for worker in workers), 2),
             "failed_instances": len(failed),
             "failures": failed,
-            "busy": sum(worker.busy_task_id is not None for worker in workers),
+            "busy": busy,
             "waiting": len(self._queue),
-            # 兼容旧状态字段：固定池中上下限相同，均为配置数组长度。
-            "pool_size": len(self._devices),
-            "pool_max": len(self._devices),
         }
 
     def _spawn_worker(self, device: str) -> _Worker:

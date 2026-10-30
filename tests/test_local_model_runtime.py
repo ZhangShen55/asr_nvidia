@@ -32,13 +32,11 @@ class StatusContractTests(unittest.TestCase):
     def test_status_contains_local_model_details(self):
         payload = self._status()
         models = payload["localModels"]
-        self.assertEqual(set(models.keys()), {"vad", "speech_campplus", "emotion2vec"})
+        self.assertEqual(set(models.keys()), {"speech_campplus", "emotion2vec"})
         for entry in models.values():
             self.assertIn("loaded", entry)
             self.assertIn("allocated_mb", entry)
             self.assertIn("instances", entry)
-            self.assertIn("pool_size", entry)
-            self.assertIn("pool_max", entry)
             self.assertIn("configured_instances", entry)
             self.assertIn("available_instances", entry)
             self.assertIn("failed_instances", entry)
@@ -52,12 +50,14 @@ class StatusContractTests(unittest.TestCase):
     def test_status_exposes_vad_pool_runtime(self):
         payload = self._status()
         pool = payload["vadPool"]
-        self.assertEqual(pool["devices"], ["cpu", "cpu", "cpu", "cpu", "cuda:0", "cuda:0", "cuda:0", "cuda:0"])
-        self.assertEqual(pool["pool_size"], 8)
-        self.assertEqual(pool["pool_max"], 8)
-        self.assertIn("workers", pool)
+        self.assertEqual(pool["devices"], settings.vad_device)
+        self.assertEqual(pool["configured_instances"], len(settings.vad_device))
+        self.assertIn("loaded", pool)
+        self.assertIn("loaded_instances", pool)
+        self.assertIn("allocated_mb", pool)
         self.assertIn("busy", pool)
         self.assertIn("waiting", pool)
+        self.assertNotIn("pool_max", pool)
 
     def test_v118_route_is_removed(self):
         from main import create_app

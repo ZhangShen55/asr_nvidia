@@ -25,10 +25,9 @@ class StaticVadPoolTests(unittest.TestCase):
             try:
                 await pool.start()
                 self.assertEqual(pool.stats()["configured_instances"], 2)
-                self.assertEqual(pool.stats()["successful_instances"], 2)
+                self.assertEqual(pool.stats()["loaded_instances"], 2)
                 tasks = [asyncio.create_task(pool.detect(f"sleep:0.2")) for _ in range(3)]
                 await asyncio.sleep(0.05)
-                self.assertEqual(pool.stats()["workers"], 2)
                 self.assertGreaterEqual(pool.stats()["waiting"], 1)
                 await asyncio.gather(*tasks)
                 self.assertEqual(pool.stats()["waiting"], 0)

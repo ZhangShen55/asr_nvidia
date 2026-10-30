@@ -23,6 +23,8 @@
 ### Requirement: 提供稳定的状态查询契约
 `GET /get_status` MUST 返回服务标识、状态、版本、运行时长与引擎标识等运维字段，其中版本 MUST 固定为 `latest`；引擎标识字段 MUST 保留在响应中并返回固定占位值，MUST NOT 依赖部署方单独配置。
 
+状态响应 MUST 将 VAD 状态集中放在 `vadPool`，`localModels` 只返回 CAM++ 与 emotion2vec；固定设备数组不应返回无意义的 `pool_size` 或 `pool_max` 字段。
+
 #### Scenario: 查询服务状态
 - **当** 客户端调用 `GET /get_status`
 - **则** 响应包含 `status`、`appVersion`（取值 `latest`）、运行时长字段与引擎标识字段（返回固定占位值）
