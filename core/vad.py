@@ -7,6 +7,8 @@ FSMN-VAD 实例与 worker 进程的生命周期在 :mod:`core.vad_pool`，本模
 from __future__ import annotations
 
 import logging
+import time
+from contextvars import ContextVar
 from dataclasses import dataclass
 from typing import List
 
@@ -15,6 +17,11 @@ from core.vad_pool import get_vad_pool
 from core.vad_volume import filter_low_volume_segments
 
 logger = logging.getLogger(__name__)
+
+
+# 每个请求保存最近一次 VAD 的段统计，供 V2 总耗时日志关联。
+# ContextVar 保证并发请求之间不会互相覆盖。
+_VAD_STATS: ContextVar[dict] = ContextVar("vad_stats", default={})
 
 
 @dataclass(frozen=True)
@@ -75,7 +82,9 @@ async def detect_segments(
     result = await get_vad_pool().detect(audio_path)
     segments = _parse_vad_result(result)
     filtered = filter_short_segments(segments)
+    short_filtered_count = len(segments) - len(filtered)
     dropped = []
+    volume_filter_started = time.perf_counter()
     if settings.qwen_vad_low_volume_filter_enabled and audio_tensor is not None and sample_rate:
         filtered, dropped = filter_low_volume_segments(
             filtered,
@@ -95,16 +104,37 @@ async def detect_segments(
                 stats.peak_dbfs,
                 stats.snr_db,
             )
+    volume_filter_ms = (time.perf_counter() - volume_filter_started) * 1000
     logger.info(
         f"[VAD] 切出 {len(segments)} 段，过滤后 {len(filtered)} 段，"
         f"低音量丢弃 {len(dropped)} 段，"
         f"文件：{audio_path}"
     )
+    _VAD_STATS.set({
+        "raw_segments": len(segments),
+        "short_filtered": short_filtered_count,
+        "low_volume_dropped": len(dropped),
+        "kept_segments": len(filtered),
+        "low_volume_filter_ms": volume_filter_ms,
+    })
+    if settings.qwen_vad_low_volume_filter_enabled:
+        logger.info(
+            "[VAD] 低音量过滤耗时=%.0fms，候选段=%d，丢弃=%d",
+            volume_filter_ms,
+            len(filter_short_segments(segments)),
+            len(dropped),
+        )
     return filtered
+
+
+def get_vad_stats() -> dict:
+    """返回当前请求最近一次 VAD 统计，供诊断日志使用。"""
+    return dict(_VAD_STATS.get())
 
 
 __all__ = [
     "VadSegment",
     "detect_segments",
     "filter_short_segments",
+    "get_vad_stats",
 ]

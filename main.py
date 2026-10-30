@@ -9,6 +9,7 @@ from core.qwen_asr_client import close_qwen_client
 from core.models import close_v2_model_pools
 from core.vad_pool import start_vad_pool, stop_vad_pool
 from api.routes.asr_v2 import router as asr_v2_router
+from api.routes.asr_common import cleanup_stale_service_cache
 from api.routes.status import router as status_router
 from utils.asr_stats import reset_stats
 
@@ -35,6 +36,9 @@ async def lifespan(app: FastAPI):
 
     # 2) 日志初始化
     setup_logging(settings.log_path)
+
+    # 只扫描并清理服务专属缓存目录，避免误删其它应用的临时文件。
+    cleanup_stale_service_cache()
 
     # 3) 重置统计
     reset_stats()

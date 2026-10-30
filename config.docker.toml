@@ -38,8 +38,8 @@ failure_mode = "passthrough"
 enabled = true
 base_url = "http://192.168.29.12:8806"  # Qwen3-ASR 服务地址（IP + 端口）
 model = ""                              # 留空表示从 /v1/models 自动发现
-segment_concurrency = 4                 # 单个音频内同时发往 Qwen 的 VAD 段请求数
-request_concurrency = 32                # 所有音频合计同时发往 Qwen 的请求数
+segment_concurrency = 16                # 单个音频内同时发往 Qwen 的 VAD 段请求数
+request_concurrency = 128               # 所有音频合计同时发往 Qwen 的请求数
 audio_concurrency = 8                   # 同时处理的音频文件数
 queue_max_size = 64                     # 等待队列容量
 queue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排队等待
@@ -53,18 +53,12 @@ vad_max_end_silence_time_ms = 800
 vad_speech_noise_thres = 0.6       # VAD 语音/噪声阈值：0.3 偏灵敏，0.6 正常，0.8 偏不灵敏；重启生效
 vad_decibel_thres = -100.0         # FunASR log 能量阈值（不是 dBFS）；-100 表示保持原行为
 vad_snr_thres = -100.0             # FunASR SNR 阈值；-100 表示保持原行为
-vad_low_volume_rms_dbfs_thres = -100.0 # 段级 RMS dBFS 门限；低于此值过滤，默认关闭
+vad_low_volume_rms_dbfs_thres = -41.0 # 段级 RMS dBFS 门限；低于此值过滤，默认关闭
 vad_low_volume_filter_enabled = false  # 低音量段级过滤开关；标定确认后改为 true，重启生效
 
 # VAD 切分由一组独立 worker 进程承载（每个进程持有一份 FSMN-VAD 实例，
 # 拥有独立解释器，因此能真正并行而不是被 GIL 串行化）。
-vad_device = "cpu"              # VAD 运行设备：cpu（默认，与 GPU 分段边界逐段一致）或 cuda:N
-vad_pool_size = 8               # 常驻 worker 进程数；每进程约 2.2~2.5 核
-vad_pool_max = 16               # 突发扩容上限
-vad_queue_watermark = 4         # 等待队列深度超过该值时临时拉起 worker
-vad_collapse_timeout_s = 120    # 额外 worker 的空闲回收时间
-vad_queue_timeout_s = 120       # 请求等待 VAD worker 的排队超时（超时返回错误码 4014）
-vad_call_timeout_s = 120        # 单个 worker 执行 VAD 的超时（超时返回错误码 4014）
+vad_device = ["cpu","cpu","cpu","cpu","cuda:0","cuda:0","cuda:0","cuda:0"]
 
 # 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
 # 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
@@ -77,11 +71,6 @@ repetition_min_chars = 120               # 判定长度异常的绝对下限字�
 repetition_min_unit = 4                  # 判定为循环的重复子串最小长度
 repetition_min_times = 3                 # 判定为循环的最小连续重复次数
 
-# v2 链路本地模型的默认落卡。
-[model_device]
-emotion2vec = "cuda:0"         # emotion2vec_plus_large
-speech_campplus = "cuda:0"     # speech_campplus_sv_zh_en_16k-common_advanced
-
-[model_device.local_model_pool]
-speech_campplus_devices = ["cuda:0"]  # 每个数组元素对应一个 CAM++ 实例
-emotion2vec_devices = ["cuda:0"]      # 每个数组元素对应一个 emotion2vec 实例
+[model_device_pool]
+speech_campplus_devices = ["cuda:0","cuda:0","cuda:0"]
+emotion2vec_devices = ["cuda:0"]

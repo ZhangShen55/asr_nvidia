@@ -6,12 +6,12 @@ import logging
 import torch
 from io import BytesIO
 import soundfile as sf
-from pydub import AudioSegment
 from fastapi import File, Form
 
 import tempfile
 import subprocess
-import torchaudio
+
+SERVICE_CACHE_DIR = os.path.join(tempfile.gettempdir(), "seacraft_asr")
 
 
 logging.basicConfig(level=logging.DEBUG)
@@ -21,6 +21,8 @@ def load_audio_tensor(path: str):
     """
     加载音频为 tensor。优先 ffmpeg 后端；容器内 torchaudio 若未编译 ffmpeg 则回退 soundfile。
     """
+    import torchaudio
+
     try:
         return torchaudio.load(path, backend="ffmpeg")
     except ValueError:
@@ -52,6 +54,8 @@ def standardize_audio(audio_bytes: bytes, suffix: str, force_resample: bool = Fa
         return audio_bytes
 
     logger.info(f"[音频检查] 转换前参数：{info}，开始重采样")
+    from pydub import AudioSegment
+
     audio = AudioSegment.from_file(BytesIO(audio_bytes), format=suffix)
     audio = audio.set_frame_rate(16000).set_channels(1).set_sample_width(2)
 
@@ -105,12 +109,29 @@ def extract_audio_clip_from_tensor(audio_tensor, sample_rate: int, start_time: f
     array, sample_rate = extract_audio_clip_array(
         audio_tensor, sample_rate, start_time, duration
     )
+    return save_audio_clip_array(array, sample_rate)
+
+
+def save_audio_clip_array(array, sample_rate: int) -> str:
+    """把已经裁剪并折叠为单声道的一维数组保存为 WAV。"""
     with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp:
         output_file = tmp.name
-    torchaudio.save(
-        output_file, torch.from_numpy(array).unsqueeze(0), sample_rate
-    )
+    try:
+        import torchaudio
+
+        torchaudio.save(output_file, torch.from_numpy(array).reshape(1, -1), sample_rate)
+    except ModuleNotFoundError:
+        sf.write(output_file, array, int(sample_rate), format="WAV", subtype="PCM_16")
     return output_file
+
+
+def encode_audio_clip_wav(array, sample_rate: int) -> bytes:
+    """把单声道 float32 样本编码为内存中的 PCM16 WAV。"""
+    if getattr(array, "ndim", 1) != 1:
+        array = array.reshape(-1)
+    buffer = BytesIO()
+    sf.write(buffer, array, int(sample_rate), format="WAV", subtype="PCM_16")
+    return buffer.getvalue()
 
 
 def extract_audio_clip_array(audio_tensor, sample_rate: int, start_time: float, duration: float):
@@ -124,8 +145,16 @@ def extract_audio_clip_array(audio_tensor, sample_rate: int, start_time: float, 
     if end_sample <= start_sample:
         raise ValueError("裁剪区间为空")
 
-    clipped = audio_tensor[:, start_sample:end_sample]
-    array = clipped.squeeze(0).detach().cpu().numpy().astype("float32")
+    tensor = audio_tensor
+    if getattr(tensor, "ndim", 0) == 1:
+        clipped = tensor[start_sample:end_sample]
+    elif getattr(tensor, "ndim", 0) == 2:
+        # torchaudio 使用 [channels, samples]；裁剪后统一折叠为单声道，
+        # 避免立体声张量在 torchaudio.save 中变成三维 [1, C, T]。
+        clipped = tensor[:, start_sample:end_sample].mean(dim=0)
+    else:
+        raise ValueError(f"音频张量必须是 1D 或 2D，实际维度为 {getattr(tensor, 'ndim', None)}")
+    array = clipped.detach().cpu().numpy().reshape(-1).astype("float32")
     return array, sample_rate
 
 
@@ -155,24 +184,21 @@ def write_audio_bytes_to_temp_file(audio_bytes: bytes, file_name: str, suffix=".
     if not suffix.startswith("."):
         suffix = "." + suffix
 
+    os.makedirs(SERVICE_CACHE_DIR, exist_ok=True)
+    # 服务缓存只写入专属目录和专属前缀，便于精确清理和重启扫描。
+    safe_name = os.path.basename(file_name or "upload")
+    prefix = f"seacraft-asr-{uuid.uuid4().hex}-"
     if unique:
-        # 并发场景下同名文件会互相覆盖，导致读取到写了一半的文件
-        file_name = f"v2_{uuid.uuid4().hex}_{os.path.basename(file_name)}"
-    
-    # 保存原始音频到临时文件
-    with tempfile.NamedTemporaryFile(delete=False, suffix=suffix, dir="/tmp") as tmp:
+        prefix = f"seacraft-asr-v2-{uuid.uuid4().hex}-"
+    with tempfile.NamedTemporaryFile(
+        delete=False, suffix=suffix, prefix=prefix, dir=SERVICE_CACHE_DIR
+    ) as tmp:
         tmp.write(audio_bytes)
         original_file = tmp.name
 
-    # 更改文件名（临时文件是随机名不方便处理） 这里文件名是一个文件路径 不单单是文件名
-    new_file_name = f"/tmp/{file_name}"
-    os.replace(original_file, new_file_name)
-    
-    original_file = new_file_name
-
     # 如果是 aac 格式，转换为 16kHz 单声道 WAV
     if suffix.lower() == ".aac":
-        converted_file = original_file.replace(".aac", ".wav")
+        converted_file = os.path.splitext(original_file)[0] + ".wav"
         
         try:
             # 使用 ffmpeg 进行转换

@@ -8,11 +8,14 @@ from contextlib import asynccontextmanager
 from typing import Any, Dict
 
 import torch
-from funasr import AutoModel
 
 from core.config import settings
 
 logger = logging.getLogger(__name__)
+
+# 延迟导入 FunASR，便于状态接口和配置单测在没有音频后端时启动；测试可以
+# patch 这个模块属性替换真实模型构造器。
+AutoModel = None
 
 _model_spk_v2 = None
 _model_emotion_v2 = None
@@ -71,15 +74,36 @@ def record_model_memory(name: str, device: str, allocated_mb: float) -> None:
     entry["allocated_mb"] = round(max(0.0, allocated_mb), 2)
 
 
-def record_vad_runtime(device: str, instances: int, loaded: bool, allocated_mb: float,
-                       pool_size: int, pool_max: int) -> None:
+def record_vad_runtime(
+    device: str | list[str],
+    instances: int,
+    loaded: bool,
+    allocated_mb: float,
+    pool_size: int | None = None,
+    pool_max: int | None = None,
+    *,
+    configured_instances: int | None = None,
+    successful_instances: int | None = None,
+    failed_instances: int = 0,
+    devices: list[str] | None = None,
+    busy: int = 0,
+    waiting: int = 0,
+    failures: list[str] | None = None,
+) -> None:
     entry = local_model_status["vad"]
     entry["loaded"] = bool(loaded)
-    entry["device"] = device
+    entry["device"] = device[0] if isinstance(device, list) and device else device
+    entry["devices"] = list(devices if devices is not None else (device if isinstance(device, list) else [device]))
     entry["instances"] = max(0, int(instances))
     entry["allocated_mb"] = round(max(0.0, allocated_mb), 2)
-    entry["pool_size"] = int(pool_size)
-    entry["pool_max"] = int(pool_max)
+    entry["pool_size"] = int(pool_size if pool_size is not None else (configured_instances or 0))
+    entry["pool_max"] = int(pool_max if pool_max is not None else (configured_instances or 0))
+    entry["configured_instances"] = int(configured_instances if configured_instances is not None else entry["pool_size"])
+    entry["available_instances"] = max(0, int(successful_instances if successful_instances is not None else instances) - int(busy))
+    entry["failed_instances"] = int(failed_instances)
+    entry["busy"] = int(busy)
+    entry["waiting"] = int(waiting)
+    entry["failure"] = (failures or [None])[-1]
 
 
 def get_local_model_status() -> Dict[str, Dict[str, Any]]:
@@ -89,6 +113,8 @@ def get_local_model_status() -> Dict[str, Dict[str, Any]]:
 
 
 def _resolve_device(index: int | str) -> str:
+    if isinstance(index, str) and index.strip().lower() == "cpu":
+        return "cpu"
     if not torch.cuda.is_available():
         raise RuntimeError("v2 链路要求使用 GPU，但 CUDA 不可用")
     if isinstance(index, str):
@@ -108,18 +134,10 @@ def _resolve_device(index: int | str) -> str:
 
 
 def resolve_vad_device() -> str:
-    spec = (settings.vad_device or "cpu").strip().lower()
-    if spec in ("", "cpu"):
-        return "cpu"
-    if spec == "cuda":
-        return _resolve_device(0)
-    if spec.startswith("cuda:"):
-        try:
-            index = int(spec.split(":", 1)[1])
-        except ValueError as exc:
-            raise RuntimeError(f"VAD 设备串 {settings.vad_device!r} 无法解析") from exc
-        return _resolve_device(index)
-    raise RuntimeError(f"VAD 设备串 {settings.vad_device!r} 不支持，可取值为 cpu / cuda / cuda:N")
+    devices = settings.vad_device
+    if not devices:
+        raise RuntimeError("qwen_asr.vad_device 不能为空，至少配置一个 VAD worker")
+    return _resolve_device(devices[0])
 
 
 class ModelPool:
@@ -175,6 +193,12 @@ class ModelPool:
                 failure = None
                 device = None
                 try:
+                    global AutoModel
+                    if AutoModel is None:
+                        from funasr import AutoModel as FunasrAutoModel
+
+                        AutoModel = FunasrAutoModel
+
                     device = _resolve_device(configured_device)
                     before = device_allocated_mb(device)
                     kwargs = {"model": self.model_dir, "device": device,

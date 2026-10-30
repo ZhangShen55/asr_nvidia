@@ -33,6 +33,15 @@ class LeadingPunctuationTests(unittest.TestCase):
     def test_text_without_leading_punctuation_is_unchanged(self):
         self.assertEqual(strip_leading_punctuation("你好，世界"), "你好，世界")
 
+    def test_opening_book_title_mark_is_preserved(self):
+        self.assertEqual(
+            strip_leading_punctuation("《金锁记》写的是二十世纪三十年代的故事。"),
+            "《金锁记》写的是二十世纪三十年代的故事。",
+        )
+
+    def test_separator_before_opening_mark_is_removed(self):
+        self.assertEqual(strip_leading_punctuation("，《金锁记》"), "《金锁记》")
+
 
 class SanitizeSegmentsTests(unittest.TestCase):
     def test_pure_punctuation_segment_is_dropped(self):

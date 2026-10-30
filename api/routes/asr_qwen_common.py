@@ -6,6 +6,7 @@ import asyncio
 import logging
 import os
 import time
+from contextlib import nullcontext
 from contextvars import ContextVar
 from dataclasses import dataclass
 from typing import Dict, List, Optional
@@ -23,13 +24,19 @@ from core.qwen_asr_client import (
     get_qwen_client,
 )
 from core.qwen_asr_queue import get_request_concurrency
-from core.vad import VadSegment, detect_segments
+from core.vad import VadSegment, detect_segments, get_vad_stats
 from utils.audio_utils import (
     extract_audio_clip,
     extract_audio_clip_array,
-    extract_audio_clip_from_tensor,
+    # 保留导入别名，兼容外部调用方和旧版测试的打桩入口；实际链路使用
+    # extract_audio_clip_array + save_audio_clip_array，避免重复切片。
+    encode_audio_clip_wav,
     read_audio_array,
+    save_audio_clip_array,
+    extract_audio_clip_from_tensor,
+    write_audio_bytes_to_temp_file,
 )
+from core.progress import create_audio_progress
 from utils.feature_utils import (
     build_speed_info,
     calculate_speech_rate,
@@ -168,8 +175,8 @@ async def _apply_repetition_guard(text: str, duration_s: float) -> str:
     return fixed if changed else text
 
 
-async def _transcribe_segment(clip_path, language, concurrency):
-    """请求 Qwen 转写一个片段，并剥离原生前缀。"""
+async def _transcribe_segment(clip_bytes, language, concurrency, filename="segment.wav"):
+    """请求 Qwen 转写一个内存 WAV 片段，并剥离原生前缀。"""
     client = await get_qwen_client()
     stats = _phase_stats()
     wait_started = time.perf_counter()
@@ -177,7 +184,31 @@ async def _transcribe_segment(clip_path, language, concurrency):
     stats["qwen_wait_ms"] += (time.perf_counter() - wait_started) * 1000
     call_started = time.perf_counter()
     try:
-        raw_text = await client.transcribe(clip_path, language=language)
+        transcribe_bytes = getattr(client, "transcribe_bytes", None)
+        if callable(transcribe_bytes):
+            raw_text = await transcribe_bytes(
+                clip_bytes, language=language, filename=filename
+            )
+        else:
+            # 兼容迁移期间的旧客户端/测试桩。正式 QwenAsrClient 提供
+            # transcribe_bytes；旧实现只能接收路径，因此仅在这个兼容
+            # 分支创建服务专属临时文件，并在调用返回/异常后立即删除。
+            compat_path = await asyncio.to_thread(
+                write_audio_bytes_to_temp_file,
+                clip_bytes,
+                file_name=filename,
+                suffix=".wav",
+                unique=True,
+            )
+            try:
+                raw_text = await client.transcribe(compat_path, language=language)
+            finally:
+                try:
+                    os.remove(compat_path)
+                except FileNotFoundError:
+                    pass
+                except OSError as exc:
+                    logger.warning("删除 Qwen 兼容段缓存失败: %s, 错误: %s", compat_path, exc)
     finally:
         await concurrency.release_global()
         stats["qwen_ms"] += (time.perf_counter() - call_started) * 1000
@@ -194,10 +225,13 @@ async def _speaker_embedding(audio_array, sample_rate):
     音频读取与重采样，实测单次调用 98.8ms → 49.3ms，且嵌入结果逐位相同。
     """
     def _run(model, device):
-        with torch.cuda.device(device):
+        device_ctx = torch.cuda.device(device) if str(device).startswith("cuda") else nullcontext()
+        with device_ctx:
             # CAM++ 模型以 FP16 加载；FunASR 的特征提取仍会产出 FP32，
             # 用 CUDA autocast 负责前向计算的类型转换，避免输入与权重类型冲突。
-            with torch.amp.autocast("cuda", enabled=True, dtype=torch.float16):
+            with torch.amp.autocast(
+                "cuda", enabled=str(device).startswith("cuda"), dtype=torch.float16
+            ):
                 result = model.generate(input=audio_array, fs=sample_rate)
         if not result:
             return None
@@ -237,8 +271,11 @@ async def _segment_emotion(audio_array, sample_rate, duration_s):
         return "平淡"
 
     def _run(model, device):
-        with torch.cuda.device(device):
-            with torch.cuda.amp.autocast(enabled=True, dtype=torch.float16):
+        device_ctx = torch.cuda.device(device) if str(device).startswith("cuda") else nullcontext()
+        with device_ctx:
+            with torch.amp.autocast(
+                "cuda", enabled=str(device).startswith("cuda"), dtype=torch.float16
+            ):
                 result = model.generate(
                     # 直接喂 numpy 数组：funasr 的文件分支会额外做一次
                     # 音频读取与重采样，实测单次 28.9ms → 18.7ms，
@@ -258,28 +295,24 @@ async def _segment_emotion(audio_array, sample_rate, duration_s):
         best = max(range(len(scores)), key=lambda i: scores[i])
         return map_emotion(labels[best])
 
-    try:
-        pool = get_model_pool("emotion2vec")
-        lease_started = time.perf_counter()
-        async with pool.lease() as leased:
-            wait_ms = (time.perf_counter() - lease_started) * 1000
-            infer_started = time.perf_counter()
-            try:
-                model, device = leased if isinstance(leased, tuple) else (
-                    leased, settings.model_device_emotion2vec)
-                return await asyncio.to_thread(_run, model, device)
-            finally:
-                infer_ms = (time.perf_counter() - infer_started) * 1000
-                record_inference = getattr(pool, "record_inference", None)
-                if record_inference is not None:
-                    record_inference(wait_ms, infer_ms)
-                stats = _phase_stats()
-                stats["emo_wait_ms"] += wait_ms
-                stats["emo_ms"] += infer_ms
-                stats["emo_calls"] += 1
-    except Exception as e:  # noqa: BLE001 - 情绪失败不影响转写
-        logger.warning(f"[情绪] 推理失败，回退为 null: {e}")
-        return None
+    pool = get_model_pool("emotion2vec")
+    lease_started = time.perf_counter()
+    async with pool.lease() as leased:
+        wait_ms = (time.perf_counter() - lease_started) * 1000
+        infer_started = time.perf_counter()
+        try:
+            model, device = leased if isinstance(leased, tuple) else (
+                leased, settings.model_device_emotion2vec)
+            return await asyncio.to_thread(_run, model, device)
+        finally:
+            infer_ms = (time.perf_counter() - infer_started) * 1000
+            record_inference = getattr(pool, "record_inference", None)
+            if record_inference is not None:
+                record_inference(wait_ms, infer_ms)
+            stats = _phase_stats()
+            stats["emo_wait_ms"] += wait_ms
+            stats["emo_ms"] += infer_ms
+            stats["emo_calls"] += 1
 
 
 def _normalize_embedding(embedding):
@@ -437,7 +470,17 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         "qwen_wait_ms": 0.0, "qwen_ms": 0.0, "qwen_calls": 0,
     }
     _PHASE_STATS.set(stats)
-    phase = {"vad_ms": 0.0, "cut_ms": 0.0, "segment_ms": 0.0, "cluster_ms": 0.0, "itn_ms": 0.0}
+    phase = {
+        "vad_ms": 0.0,
+        "cut_sum_ms": 0.0,
+        "cut_wall_ms": 0.0,
+        "cut_wall_started": None,
+        "cut_wall_ended": None,
+        "segment_ms": 0.0,
+        "cluster_ms": 0.0,
+        "itn_ms": 0.0,
+    }
+    vad_stats = {"low_volume_dropped": 0}
 
     need_role = bool(request.showSpk or request.showRoleIdentify)
     need_emotion = bool(request.showEmotion)
@@ -459,6 +502,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     else:
         segments = await detect_segments(ctx.tmp_path)
     phase["vad_ms"] = (time.perf_counter() - vad_started) * 1000
+    vad_stats = get_vad_stats()
     if not segments:
         update_fail_task()
         return {"msg": "音频文件为空或未检测到任何人声", "code": 4008}
@@ -466,21 +510,11 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     concurrency = get_request_concurrency()
     segment_semaphore = concurrency.new_segment_semaphore()
 
-    async def _cut(segment: VadSegment):
-        """惰性裁剪：只在该段真正要处理时才落盘一个 clip 文件。
+    progress = None
 
-        旧实现是在 VAD 之后一次性把全部分段落盘，60 分钟音频 943 段约 219 MB，
-        峰值占用与分段总数成正比；改成按需创建后，同时存在的文件数等于在途段数。
-        """
-        # 优先用已加载的音频张量切片（比逐段 ffmpeg 快 30 倍），无张量时回退 ffmpeg
+    async def _cut(segment: VadSegment):
+        """从已加载张量裁剪，返回 CAM/emo 数组和内存 WAV 字节。"""
         if ctx.audio_tensor is not None and ctx.sample_rate:
-            path = await asyncio.to_thread(
-                extract_audio_clip_from_tensor,
-                ctx.audio_tensor,
-                ctx.sample_rate,
-                segment.start_s,
-                segment.duration_s,
-            )
             array, sample_rate = await asyncio.to_thread(
                 extract_audio_clip_array,
                 ctx.audio_tensor,
@@ -488,59 +522,73 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
                 segment.start_s,
                 segment.duration_s,
             )
+            clip_bytes = await asyncio.to_thread(
+                encode_audio_clip_wav, array, sample_rate
+            )
         else:
-            path = await asyncio.to_thread(
+            # 兼容尚未预加载张量的旧调用方。正常 v2 请求总是走上面的
+            # 内存张量分支；这里只为旧客户端/测试保留一次兼容裁剪，并
+            # 在读取后立即登记并删除生成的路径。
+            clip_path = await asyncio.to_thread(
                 extract_audio_clip,
                 ctx.tmp_path,
                 segment.start_s,
                 segment.duration_s,
             )
-            array, sample_rate = await asyncio.to_thread(read_audio_array, path)
-        ctx.tmp_paths.append(path)
-        return path, array, sample_rate
-
-    def _release_clip(path: Optional[str]) -> None:
-        """删除段 clip，并从兜底清理列表里摘除，避免请求结束时重复删除。"""
-        if not path:
-            return
-        try:
-            os.remove(path)
-        except FileNotFoundError:
-            pass
-        except Exception as exc:  # noqa: BLE001 - 删除失败不应影响转写结果
-            logger.warning(f"[V2] 删除段 clip 失败: {path}, 错误: {exc}")
-        finally:
-            if path in ctx.tmp_paths:
-                ctx.tmp_paths.remove(path)
-
-    async def _transcribe_and_cleanup(clip_path, language):
-        """转写返回即删段文件。
-
-        role / emotion 走的是内存里的 numpy 数组，不依赖该文件，因此这里删除
-        不会影响同段的说话人与情绪计算，两者仍与转写并行。
-        """
-        try:
-            return await _transcribe_segment(clip_path, language, concurrency)
-        finally:
-            _release_clip(clip_path)
+            ctx.tmp_paths.append(clip_path)
+            try:
+                array, sample_rate = await asyncio.to_thread(
+                    read_audio_array, clip_path
+                )
+                array = array.reshape(-1).astype("float32")
+                if len(array) == 0:
+                    raise SegmentCutError("裁剪区间为空")
+                clip_bytes = await asyncio.to_thread(
+                    encode_audio_clip_wav, array, sample_rate
+                )
+            finally:
+                try:
+                    os.remove(clip_path)
+                except FileNotFoundError:
+                    pass
+                except OSError as exc:
+                    logger.warning("删除兼容段缓存失败: %s, 错误: %s", clip_path, exc)
+                try:
+                    ctx.tmp_paths.remove(clip_path)
+                except ValueError:
+                    pass
+        return clip_bytes, array, sample_rate
 
     async def _process(index: int, segment: VadSegment) -> SegmentOutcome:
         outcome = SegmentOutcome(index=index, segment=segment)
-        # 段级名额先占住：在途段数（即同时存在的 clip 文件数）由它限流，
-        # 否则全部分段会在裁剪阶段同时落盘，临时文件峰值又回到与分段总数成正比。
-        await segment_semaphore.acquire()
-        clip_path: Optional[str] = None
+        # 段级名额限制在途内存片段数量，避免长音频一次性创建全部任务。
+        acquired = False
+        segment_failed = False
         cut_started = time.perf_counter()
         try:
+            await segment_semaphore.acquire()
+            acquired = True
             try:
-                clip_path, audio_array, sample_rate = await _cut(segment)
+                now = time.perf_counter()
+                if phase["cut_wall_started"] is None:
+                    phase["cut_wall_started"] = now
+                clip_bytes, audio_array, sample_rate = await _cut(segment)
+                phase["cut_wall_ended"] = time.perf_counter()
             except Exception as exc:
                 logger.error(f"[V2] 音频裁剪失败: {exc}")
+                segment_failed = True
                 raise SegmentCutError(f"音频分块失败: {exc}") from exc
             finally:
-                phase["cut_ms"] += (time.perf_counter() - cut_started) * 1000
+                phase["cut_sum_ms"] += (time.perf_counter() - cut_started) * 1000
 
-            tasks = [_transcribe_and_cleanup(clip_path, request.language)]
+            tasks = [
+                _transcribe_segment(
+                    clip_bytes,
+                    request.language,
+                    concurrency,
+                    filename=f"{getattr(ctx, 'task_id', 'audio')}-{index}.wav",
+                )
+            ]
             # 短于 1 秒的片段不参与聚类（特征不可靠），其说话人标签由
             # _assign_short_speakers 按时间就近继承，这里直接跳过 CAM++ 调用，
             # 长音频里这类片段约占 9%，省下的都是 GPU 与 GIL 时间。
@@ -555,6 +603,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
 
             text_result = results[0]
             if isinstance(text_result, BaseException):
+                segment_failed = True
                 raise text_result
             outcome.text, outcome.language = text_result
             # 复读修复 MUST 在 ITN 规范化与标点卫生之前：见 _apply_repetition_guard
@@ -564,6 +613,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             if need_role and segment.duration_s >= SHORT_SPEAKER_SEGMENT_S:
                 embedding = results[cursor]
                 if isinstance(embedding, BaseException):
+                    segment_failed = True
                     logger.warning(f"[说话人] 嵌入提取失败: {embedding}")
                     embedding = None
                 outcome.embedding = embedding
@@ -571,22 +621,36 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             if need_emotion:
                 emotion = results[cursor]
                 if isinstance(emotion, BaseException):
+                    segment_failed = True
                     logger.warning(f"[情绪] 推理失败: {emotion}")
                     emotion = None
                 outcome.emotion = emotion
 
             return outcome
+        except BaseException:
+            segment_failed = True
+            raise
         finally:
-            # 兜底：转写协程尚未接管该文件时（如取消）由这里删除
-            _release_clip(clip_path)
-            segment_semaphore.release()
+            # 一个段的 Qwen、CAM++、emotion2vec 全部结束后统一推进一次。
+            if progress is not None:
+                progress.update(failed=segment_failed)
+            if acquired:
+                segment_semaphore.release()
 
     segment_started = time.perf_counter()
-    outcomes = await asyncio.gather(
-        *[_process(i, seg) for i, seg in enumerate(segments)],
-        return_exceptions=True,
+    progress = create_audio_progress(
+        len(segments), f"{getattr(ctx, 'filename', 'audio')} 有效段"
     )
+    try:
+        outcomes = await asyncio.gather(
+            *[_process(i, seg) for i, seg in enumerate(segments)],
+            return_exceptions=True,
+        )
+    finally:
+        progress.close()
     phase["segment_ms"] = (time.perf_counter() - segment_started) * 1000
+    if phase["cut_wall_started"] is not None and phase["cut_wall_ended"] is not None:
+        phase["cut_wall_ms"] = (phase["cut_wall_ended"] - phase["cut_wall_started"]) * 1000
 
     for result in outcomes:
         if isinstance(result, BaseException):
@@ -674,13 +738,14 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
 
     gpu_time_ms = (time.perf_counter() - started) * 1000
     logger.info(
-        "[V2 耗时] 段数=%d 总计=%.0fms | VAD=%.0f 裁剪=%.0f 分段处理=%.0f "
+        "[V2 耗时] 段数=%d 总计=%.0fms | VAD=%.0f 裁剪累计=%.0f 裁剪墙钟=%.0f 分段处理=%.0f "
         "(Qwen 等待 %.0fms/调用 %.0fms/%d次, 说话人等待 %.0fms/推理 %.0fms/%d次, "
-        "情绪等待 %.0fms/推理 %.0fms/%d次) 聚类=%.0f ITN=%.0f",
+        "情绪等待 %.0fms/推理 %.0fms/%d次) 聚类=%.0f ITN=%.0f 低音量丢弃=%d task_id=%s",
         len(segments),
         gpu_time_ms,
         phase["vad_ms"],
-        phase["cut_ms"],
+        phase["cut_sum_ms"],
+        phase["cut_wall_ms"],
         phase["segment_ms"],
         stats["qwen_wait_ms"],
         stats["qwen_ms"],
@@ -693,6 +758,8 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         int(stats["emo_calls"]),
         phase["cluster_ms"],
         phase["itn_ms"],
+        int(vad_stats.get("low_volume_dropped", 0)),
+        getattr(ctx, "task_id", "-"),
     )
     update_stat("offline")
     return {

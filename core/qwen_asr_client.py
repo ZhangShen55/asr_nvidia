@@ -140,8 +140,10 @@ class QwenAsrClient:
         logger.error(f"[Qwen] 模型发现失败: {last_error}")
         raise QwenAsrUnavailableError() from last_error
 
-    async def transcribe(self, audio_path: str, language: Optional[str] = None) -> str:
-        """转写一个音频片段，返回服务返回的原始文本。"""
+    async def _transcribe_bytes(
+        self, audio_name: str, audio_bytes: bytes, language: Optional[str] = None
+    ) -> str:
+        """上传内存 WAV，返回服务返回的原始文本。"""
         model_id = await self.discover_model()
         payload_language = normalize_language_param(language)
 
@@ -151,15 +153,14 @@ class QwenAsrClient:
         for attempt in range(self.retry_count + 1):
             request_started = time.perf_counter()
             try:
-                with open(audio_path, "rb") as audio_file:
-                    form: dict = {"model": model_id}
-                    if payload_language:
-                        form["language"] = payload_language
-                    response = await client.post(
-                        f"{self.base_url}/v1/audio/transcriptions",
-                        data=form,
-                        files={"file": (os.path.basename(audio_path), audio_file, "audio/wav")},
-                    )
+                form: dict = {"model": model_id}
+                if payload_language:
+                    form["language"] = payload_language
+                response = await client.post(
+                    f"{self.base_url}/v1/audio/transcriptions",
+                    data=form,
+                    files={"file": (os.path.basename(audio_name), audio_bytes, "audio/wav")},
+                )
 
                 if response.status_code >= 500:
                     raise httpx.HTTPStatusError(
@@ -198,6 +199,20 @@ class QwenAsrClient:
 
         logger.error(f"[Qwen] 转写重试耗尽: {last_error}")
         raise QwenAsrCallError() from last_error
+
+    async def transcribe_bytes(
+        self, audio_bytes: bytes, language: Optional[str] = None, filename: str = "segment.wav"
+    ) -> str:
+        """转写内存中的标准化 WAV 字节，不创建段级临时文件。"""
+        return await self._transcribe_bytes(filename, audio_bytes, language=language)
+
+    async def transcribe(self, audio_path: str, language: Optional[str] = None) -> str:
+        """兼容旧调用方：读取路径后复用内存上传实现。"""
+        with open(audio_path, "rb") as audio_file:
+            audio_bytes = audio_file.read()
+        return await self._transcribe_bytes(
+            os.path.basename(audio_path), audio_bytes, language=language
+        )
 
     @staticmethod
     def _extract_text(response: httpx.Response) -> str:

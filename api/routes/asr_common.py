@@ -9,6 +9,7 @@ import time
 import uuid
 import logging
 import asyncio
+from pathlib import Path
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple, Any
 
@@ -17,6 +18,7 @@ from utils.audio_utils import (
     preprocess_audio,
     write_audio_bytes_to_temp_file,
     load_audio_tensor,
+    SERVICE_CACHE_DIR,
 )
 from utils.asr_stats import update_fail_task
 
@@ -64,14 +66,44 @@ def generate_task_id() -> str:
 
 
 def cleanup_temp_files(tmp_paths: List[str]):
-    """统一清理临时文件"""
-    for p in tmp_paths:
+    """幂等清理当前请求登记的服务缓存文件。"""
+    paths = list(dict.fromkeys(tmp_paths or []))
+    # AAC 等格式转换会在同一专属前缀下产生源文件和 WAV 文件；即使转换
+    # 过程中某一步异常，也要把同一请求前缀下的中间文件一并清理。
+    for p in list(paths):
+        if os.path.dirname(os.path.abspath(p)) == os.path.abspath(SERVICE_CACHE_DIR):
+            prefix = os.path.basename(p).split(".", 1)[0]
+            paths.extend(
+                str(candidate)
+                for candidate in Path(SERVICE_CACHE_DIR).glob(prefix + "*")
+                if candidate.is_file()
+            )
+    for p in list(dict.fromkeys(paths)):
         try:
             os.remove(p)
         except FileNotFoundError:
             pass
         except Exception as e:
             logger.warning(f"删除临时文件失败: {p}, 错误: {e}")
+
+
+def cleanup_stale_service_cache() -> int:
+    """启动时只清除带服务专属前缀的残留文件。"""
+    root = Path(SERVICE_CACHE_DIR)
+    if not root.is_dir():
+        return 0
+    removed = 0
+    for path in root.iterdir():
+        if not path.name.startswith("seacraft-asr-") or not path.is_file():
+            continue
+        try:
+            path.unlink()
+            removed += 1
+        except OSError as exc:
+            logger.warning("[缓存] 清理启动残留失败: %s, 错误: %s", path, exc)
+    if removed:
+        logger.warning("[缓存] 启动时清理服务残留 %d 个文件", removed)
+    return removed
 
 
 async def prepare_asr_context(
@@ -112,12 +144,20 @@ async def prepare_asr_context(
         return {"msg": "读取音频文件发生错误", "code": 4002}, None
 
     tmp_paths: List[str] = []
-    tmp_path = write_audio_bytes_to_temp_file(
-        content, file_name=filename, suffix=f"{suffix}", unique=unique_tmp
-    )
-    tmp_paths.append(tmp_path)
-
-    audio_tensor, sample_rate = await asyncio.to_thread(load_audio_tensor, tmp_path)
+    # VAD、裁剪和本地模型必须读取已经完成标准化的音频。此前这里误写回
+    # 原始 content：立体声/非 16 kHz 音频会绕过标准化，既可能拖慢 VAD，
+    # 也会让段裁剪得到多声道张量并触发 torchaudio 的 2D 校验错误。
+    try:
+        tmp_path = write_audio_bytes_to_temp_file(
+            audio_bytes, file_name=filename, suffix=f"{suffix}", unique=unique_tmp
+        )
+        tmp_paths.append(tmp_path)
+        audio_tensor, sample_rate = await asyncio.to_thread(load_audio_tensor, tmp_path)
+    except Exception as exc:
+        cleanup_temp_files(tmp_paths)
+        logger.error("准备标准化音频失败，文件名:%s，错误信息：%s", filename, exc)
+        update_fail_task()
+        return {"msg": "读取音频文件发生错误", "code": 4002}, None
     audio_total_s = audio_tensor.shape[-1] / sample_rate if sample_rate else 0.0
     task_id = f"{generate_task_id()}_{filename}"
 
@@ -141,6 +181,7 @@ async def prepare_asr_context(
 __all__ = [
     "AsrContext",
     "cleanup_temp_files",
+    "cleanup_stale_service_cache",
     "generate_task_id",
     "map_emotion",
     "prepare_asr_context",

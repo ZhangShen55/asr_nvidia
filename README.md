@@ -85,6 +85,20 @@ CONFIG_PATH=./config.toml python main.py
 
 本地配置中的模型路径为 `./model/<目录名>`，因此需要从仓库根目录启动。
 
+### 使用 Conda `asr` 环境启动指定端口
+
+下面的命令从仓库根目录启动一个 uvicorn 后端实例，监听 `8085` 端口：
+
+```bash
+cd /home/zhangs/workspace/asr_nvidia
+conda run --no-capture-output -n asr \
+  env CONFIG_PATH=./config.toml PYTHONPATH=. \
+  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  uvicorn main:app --host 0.0.0.0 --port 8085 --workers 1
+```
+
+服务启动后，v2 接口地址为 `http://127.0.0.1:8085/v2/seacraft_asr`；按 `Ctrl+C` 停止该后端实例。`OMP_NUM_THREADS` 和 `MKL_NUM_THREADS` 只限制底层算子线程，不限制 VAD worker 进程数；VAD 有效完整音频并发等于 `len(qwen_asr.vad_device)`。Qwen-ASR 服务地址由 `[qwen_asr].base_url` 配置，默认是 `http://127.0.0.1:8806`。
+
 ## ASR 请求
 
 ```bash
@@ -160,7 +174,7 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `[features]` | `open_v2_role`、`open_v2_emotion` |
 | `[itn]` | 文本规范化开关与失败策略 |
 | `[qwen_asr]` | v2 链路的 Qwen 服务地址、并发度、队列与 VAD 参数 |
-| `[model_device.local_model_pool]` | CAM++ 与 emotion2vec 的设备数组；每个元素对应一个独立模型实例和一个并发槽位 |
+| `[model_device_pool]` | CAM++ 与 emotion2vec 的设备数组；每个元素对应一个独立模型实例和一个并发槽位 |
 
 `speed_info` 按 1、5、10 分钟窗口统计，跨窗口句子按时间重叠比例分摊内容数量。单句语速使用 `[speech_rate].rate_factor` 修正，分时段语速不乘该系数。
 
@@ -171,8 +185,8 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `enabled` | `true` | 是否开放 `/v2/seacraft_asr` |
 | `base_url` | `http://127.0.0.1:8806` | Qwen3-ASR 服务地址（容器部署用 `http://192.168.29.12:8806`） |
 | `model` | `""` | 模型名；留空表示启动时从 `/v1/models` 自动发现（不需要 API Key） |
-| `segment_concurrency` | `4` | 单个音频内同时发往 Qwen 的 VAD 段请求数 |
-| `request_concurrency` | `32` | 所有音频合计发往 Qwen 的请求数上限（= 4 × 8） |
+| `segment_concurrency` | `16` | 单个音频内同时发往 Qwen 的 VAD 段请求数 |
+| `request_concurrency` | `128` | 所有音频合计发往 Qwen 的请求数上限 |
 | `audio_concurrency` | `8` | 同时处理的音频文件数 |
 | `queue_max_size` | `64` | 等待队列容量 |
 | `queue_wait_timeout_s` | `0` | `0` = 队列满立即拒绝；`>0` 才排队等待，超时返回 `4010` |
@@ -180,7 +194,7 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `connect_timeout_s` | `10` | Qwen 服务连接超时（秒） |
 | `retry_count` | `1` | Qwen 请求失败重试次数 |
 | `min_segment_duration_s` | `0.3` | 过滤过短 VAD 段 |
-| `vad_concurrency` | `4` | VAD 模型实例池大小（FSMN-VAD 实例不可并发复用） |
+| `vad_device` | `8 个设备元素` | 每个元素启动一个固定 FSMN-VAD worker；数组长度就是完整音频 VAD 并发 |
 | `speaker_similarity_threshold` | `0.30` | CAM++ 说话人聚类的余弦相似度阈值（按实测 sweep 取值，阈值过高会严重过分割） |
 | `vad_max_single_segment_time_ms` | `30000` | VAD 单段最长时长 |
 | `vad_max_end_silence_time_ms` | `800` | VAD 静音切分阈值 |
@@ -195,10 +209,10 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | 参数 | 含义 | 默认值 |
 |------|------|--------|
 | `audio_concurrency` | 同时处于处理中的**音频文件**数量 | 8 |
-| `segment_concurrency` | **单个音频内**同时发往 Qwen 的 VAD 段请求数 | 4 |
-| `request_concurrency` | **所有音频合计**发往 Qwen 的请求数上限 | 32 |
+| `segment_concurrency` | **单个音频内**同时发往 Qwen 的 VAD 段请求数 | 16 |
+| `request_concurrency` | **所有音频合计**发往 Qwen 的请求数上限 | 128 |
 
-### `[model_device.local_model_pool]` 配置项
+### `[model_device_pool]` 配置项
 
 控制 v2 链路本地模型副本和并发容量。数组长度是唯一槽位来源，不需要 `local_gpu_concurrency`、`cam_slots` 或 `emo_slots`：
 
@@ -210,7 +224,7 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 例如 CAM++ 3 个实例、emotion2vec 1 个实例：
 
 ```toml
-[model_device.local_model_pool]
+[model_device_pool]
 speech_campplus_devices = ["cuda:0", "cuda:0", "cuda:0"]
 emotion2vec_devices = ["cuda:0"]
 ```
@@ -219,7 +233,7 @@ emotion2vec_devices = ["cuda:0"]
 
 同一张 GPU 上增加数组元素会同时增加模型显存和推理争用，可能降低单次推理速度或触发 OOM；应结合状态接口和 `nvidia-smi` 的峰值显存、利用率及压测 P95 选择实例组合。VAD 设备仍由 `[qwen_asr].vad_device` 独立控制，Qwen 服务本身在另一个容器内。
 
-FSMN-VAD 的设备由 `[qwen_asr].vad_device` 独立控制，默认 `cpu`，也可设置为 `cuda:N`。旧部署中的整数模型设备索引仍会短期兼容读取并记录迁移告警。
+FSMN-VAD 的设备由 `[qwen_asr].vad_device` 数组独立控制，例如 `['cpu', 'cuda:0']` 会启动两个固定 worker。旧的动态池字段和旧模型设备结构不再参与实例数计算，迁移时会记录告警。
 
 ### 细小声音阈值回归
 

@@ -18,6 +18,11 @@ PUNCTUATION_CHARS = frozenset(
     "“”‘’\"'()（）《》〈〉【】〔〕「」『』"
 )
 
+# 成对标点的左半边承载结构信息。例如“《金锁记》”的“《”不能因为位于
+# 分段首字符就被删除，否则会变成“金锁记》”。这些字符仍然属于纯标点，
+# 但段首清理时必须保留。
+OPENING_PUNCTUATION_CHARS = frozenset("“‘（〔【《〈「『﹁﹃")
+
 
 def is_punctuation_only(text: str) -> bool:
     """判断文本去除空白后是否只剩标点符号。"""
@@ -28,10 +33,14 @@ def is_punctuation_only(text: str) -> bool:
 
 
 def strip_leading_punctuation(text: str) -> str:
-    """移除文本开头的连续标点，直到落到有效字符为止。"""
+    """移除误置在段首的分隔标点，保留成对标点的左半边。"""
     stripped = (text or "").strip()
     index = 0
-    while index < len(stripped) and stripped[index] in PUNCTUATION_CHARS:
+    while (
+        index < len(stripped)
+        and stripped[index] in PUNCTUATION_CHARS
+        and stripped[index] not in OPENING_PUNCTUATION_CHARS
+    ):
         index += 1
     return stripped[index:].lstrip()
 

@@ -62,8 +62,17 @@ def compute_volume_stats(
         return VolumeStats(float(start_s), float(end_s or start_s), duration, -120.0, -120.0, -120.0, 0.0, 0, 1.0, 0)
 
     frame_size = max(1, int(round(rate * frame_ms / 1000.0)))
-    frames = [chunk[i : i + frame_size] for i in range(0, len(chunk), frame_size)]
-    frame_rms = np.asarray([np.sqrt(np.mean(frame * frame)) for frame in frames], dtype=np.float32)
+    frame_count = int(np.ceil(len(chunk) / frame_size))
+    padded_size = frame_count * frame_size
+    if padded_size != len(chunk):
+        padded = np.pad(chunk, (0, padded_size - len(chunk)))
+    else:
+        padded = chunk
+    frames = padded.reshape(frame_count, frame_size)
+    # 这里原来是“每个 10ms frame 一个 Python/NumPy 调用”。长音频有数十万
+    # 个 frame，多个 VAD 请求并行时会把 CPU 时间放大到分钟级；一次 reshape
+    # 后沿 frame 维度计算，结果口径保持一致但不再逐帧调用 Python。
+    frame_rms = np.sqrt(np.mean(frames * frames, axis=1, dtype=np.float32))
     frame_dbfs = 20.0 * np.log10(np.maximum(frame_rms, 1e-12))
     rms = float(np.sqrt(np.mean(chunk * chunk)))
     peak = float(np.max(np.abs(chunk)))
@@ -121,9 +130,11 @@ def filter_low_volume_segments(
         if float(low_energy_dbfs_thres) > -100.0
         else float(rms_dbfs_thres)
     )
+    # 音频张量到 numpy/单声道的转换只做一次；此前每个分段都会重复执行。
+    audio_array = _as_mono_array(audio)
     for segment in segments:
         stats = compute_volume_stats(
-            audio,
+            audio_array,
             sample_rate,
             segment.start_s,
             segment.end_s,

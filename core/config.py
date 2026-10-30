@@ -145,17 +145,17 @@ class Settings:
     @property
     def qwen_segment_concurrency(self) -> int:
         """单个音频内同时发往 Qwen 的 VAD 段请求数。"""
-        return int(self._cfg.get("qwen_asr", {}).get("segment_concurrency", 4))
+        return max(1, int(self._cfg.get("qwen_asr", {}).get("segment_concurrency", 16)))
 
     @property
     def qwen_request_concurrency(self) -> int:
         """所有音频合计发往 Qwen 的请求数上限（全局共享）。"""
-        return int(self._cfg.get("qwen_asr", {}).get("request_concurrency", 32))
+        return max(1, int(self._cfg.get("qwen_asr", {}).get("request_concurrency", 128)))
 
     @property
     def qwen_audio_concurrency(self) -> int:
         """同时处理的音频文件数上限。"""
-        return int(self._cfg.get("qwen_asr", {}).get("audio_concurrency", 8))
+        return max(1, int(self._cfg.get("qwen_asr", {}).get("audio_concurrency", 8)))
 
     @property
     def qwen_queue_max_size(self) -> int:
@@ -255,45 +255,34 @@ class Settings:
         return self.qwen_vad_low_volume_filter_enabled
 
     @property
-    def vad_device(self) -> str:
-        """VAD 模型的运行设备。
+    def vad_device(self) -> list[str]:
+        """启动时固定预热的 VAD worker 设备数组。
 
-        默认 "cpu"：实测 CPU 与 GPU 的 FSMN-VAD 分段边界逐段完全一致，
-        而 CPU 单实例速度与 GPU 相当（1.24s vs 1.29s / 300s 片段），
-        且多进程 worker 放在 CPU 上不会各自建立 CUDA 上下文。
-        取 "cuda:N" 形式时可切回 GPU。
+        每个元素对应一个独立 FSMN-VAD 进程；数组长度就是完整音频的
+        VAD 有效并发。旧的字符串配置不再作为正式配置，发现时只记录迁移
+        告警并转换为单元素数组，避免启动阶段静默使用错误的并发语义。
         """
-        return str(self._cfg.get("qwen_asr", {}).get("vad_device", "cpu")).strip()
-
-    @property
-    def qwen_vad_pool_size(self) -> int:
-        """常驻 VAD worker 进程数（每个进程持有一份 FSMN-VAD 实例）。"""
-        return int(self._cfg.get("qwen_asr", {}).get("vad_pool_size", 8))
-
-    @property
-    def qwen_vad_pool_max(self) -> int:
-        """VAD worker 进程的扩容上限。"""
-        return int(self._cfg.get("qwen_asr", {}).get("vad_pool_max", 16))
-
-    @property
-    def qwen_vad_queue_watermark(self) -> int:
-        """等待队列深度超过该值时临时拉起额外 worker。"""
-        return int(self._cfg.get("qwen_asr", {}).get("vad_queue_watermark", 4))
-
-    @property
-    def qwen_vad_collapse_timeout_s(self) -> float:
-        """额外 worker 的空闲回收时间（秒）。"""
-        return float(self._cfg.get("qwen_asr", {}).get("vad_collapse_timeout_s", 120))
-
-    @property
-    def qwen_vad_queue_timeout_s(self) -> float:
-        """请求等待 VAD worker 的超时时间（秒）。"""
-        return float(self._cfg.get("qwen_asr", {}).get("vad_queue_timeout_s", 120))
-
-    @property
-    def qwen_vad_call_timeout_s(self) -> float:
-        """单个 VAD worker 执行一份音频的超时时间（秒）。"""
-        return float(self._cfg.get("qwen_asr", {}).get("vad_call_timeout_s", 120))
+        section = self._cfg.get("qwen_asr", {})
+        raw = section.get(
+            "vad_device",
+            ["cpu", "cpu", "cpu", "cpu", "cuda:0", "cuda:0", "cuda:0", "cuda:0"],
+        )
+        if isinstance(raw, str):
+            logger.warning("[配置迁移] qwen_asr.vad_device 已改为设备数组，旧字符串将按单 worker 兼容")
+            raw = [raw]
+        if not isinstance(raw, list):
+            raise ValueError("[qwen_asr].vad_device 必须是 cpu/cuda:N 设备数组")
+        devices: list[str] = []
+        for index, value in enumerate(raw):
+            if not isinstance(value, str):
+                raise ValueError(f"[qwen_asr].vad_device[{index}] 必须是 cpu 或 cuda:N")
+            spec = value.strip().lower()
+            if spec == "cuda":
+                spec = "cuda:0"
+            if spec != "cpu" and not (spec.startswith("cuda:") and spec.split(":", 1)[1].isdigit()):
+                raise ValueError(f"[qwen_asr].vad_device[{index}] 必须是 cpu 或 cuda:N")
+            devices.append(spec)
+        return devices
 
     @property
     def qwen_speaker_similarity_threshold(self) -> float:
@@ -337,14 +326,14 @@ class Settings:
         """判定为循环所需的最小连续重复次数。"""
         return int(self._cfg.get("qwen_asr", {}).get("repetition_min_times", 3))
 
-    # v2 链路模型落卡 - 从嵌套的 [model_device] 部分读取
+    # v2 链路模型落卡 - 从顶级 [model_device_pool] 部分读取
     @property
     def model_device_emotion2vec(self) -> str:
-        return self.model_device_emotion2vec_devices[0]
+        return self.model_device_emotion2vec_devices[0] if self.model_device_emotion2vec_devices else "cuda:0"
 
     @property
     def model_device_speech_campplus(self) -> str:
-        return self.model_device_speech_campplus_devices[0]
+        return self.model_device_speech_campplus_devices[0] if self.model_device_speech_campplus_devices else "cuda:0"
 
     @property
     def model_device_emotion2vec_devices(self) -> list[str]:
@@ -383,78 +372,36 @@ class Settings:
     def model_pool_emotion2vec_instances(self) -> int:
         return self.local_model_pool_emotion2vec_instances
 
-    def _model_pool_instances(self, name: str) -> int:
-        """读取旧版数量字段，供旧配置和外部调用兼容。"""
-        pool = self._cfg.get("model_device", {}).get("local_model_pool", {})
-        if not isinstance(pool, dict):
-            raise ValueError("[model_device].local_model_pool 必须是表")
-        value = pool.get(name, 1)
-        if isinstance(value, bool) or not isinstance(value, int) or value < 1:
-            raise ValueError(
-                f"[model_device.local_model_pool].{name} 必须是大于等于 1 的整数"
-            )
-        return value
-
     def _model_pool_devices(self, name: str) -> list[str]:
-        model_device = self._cfg.get("model_device", {})
-        pool = model_device.get("local_model_pool", {})
+        pool = self._cfg.get("model_device_pool", {})
         if not isinstance(pool, dict):
-            raise ValueError("[model_device].local_model_pool 必须是表")
-
+            raise ValueError("[model_device_pool] 必须是表")
         array_key = f"{name}_devices"
-        if array_key in pool:
-            value = pool[array_key]
-            if not isinstance(value, list):
-                raise ValueError(
-                    f"[model_device.local_model_pool].{array_key} 必须是 cuda:N 数组"
-                )
-            devices = []
-            for index, item in enumerate(value):
-                field_name = f"{array_key}[{index}]"
-                if not isinstance(item, str):
-                    raise ValueError(
-                        f"[model_device.local_model_pool].{field_name} 必须使用 cuda:N 格式"
-                    )
-                devices.append(self._validate_cuda_device(item, field_name))
-            return devices
-
-        # 兼容旧版“单设备 + 副本数”配置；新配置应使用 *_devices 数组。
-        device = self._normalize_model_device(name)
-        count = self._model_pool_instances(name)
-        return [device] * count
-
-    def _normalize_model_device(self, name: str) -> str:
-        value = self._cfg.get("model_device", {}).get(name, "cuda:0")
-        if isinstance(value, bool):
-            raise ValueError(f"[model_device].{name} 必须是 cuda:N 设备串")
-        if isinstance(value, (list, tuple, dict)):
-            raise ValueError(f"[model_device].{name} 必须是单一 cuda:N 设备串，不支持多卡列表")
-        if isinstance(value, int):
-            if value < 0:
-                raise ValueError(f"[model_device].{name} 的 GPU 编号不能为负数")
-            logger.warning(
-                "[model_device].%s 使用旧整数索引 %s，请迁移为 cuda:%s",
-                name,
-                value,
-                value,
-            )
-            return f"cuda:{value}"
-        return self._validate_cuda_device(value, name)
+        value = pool.get(array_key, [])
+        if not isinstance(value, list):
+            raise ValueError(f"[model_device_pool].{array_key} 必须是设备数组")
+        devices = []
+        for index, item in enumerate(value):
+            field_name = f"{array_key}[{index}]"
+            if not isinstance(item, str):
+                raise ValueError(f"[model_device_pool].{field_name} 必须是 cpu 或 cuda:N")
+            devices.append(self._validate_model_device(item, field_name))
+        if "model_device" in self._cfg:
+            logger.warning("[配置迁移] 已忽略旧 [model_device]，请迁移到 [model_device_pool]")
+        return devices
 
     @staticmethod
-    def _validate_cuda_device(value, field_name: str) -> str:
+    def _validate_model_device(value, field_name: str) -> str:
         if isinstance(value, bool):
-            raise ValueError(f"[model_device.local_model_pool].{field_name} 必须使用 cuda:N 格式")
-        if isinstance(value, int):
-            if value < 0:
-                raise ValueError(f"[model_device.local_model_pool].{field_name} 的 GPU 编号不能为负数")
-            return f"cuda:{value}"
+            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu 或 cuda:N 格式")
         text = str(value).strip().lower()
+        if text == "cpu":
+            return text
         if not text.startswith("cuda:"):
-            raise ValueError(f"[model_device.local_model_pool].{field_name} 必须使用 cuda:N 格式")
+            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu 或 cuda:N 格式")
         suffix = text.split(":", 1)[1]
         if not suffix.isdigit():
-            raise ValueError(f"[model_device.local_model_pool].{field_name} 必须使用 cuda:N 格式")
+            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu 或 cuda:N 格式")
         return f"cuda:{int(suffix)}"
 
 

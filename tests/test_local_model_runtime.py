@@ -44,7 +44,7 @@ class StatusContractTests(unittest.TestCase):
             self.assertIn("failed_instances", entry)
             self.assertIn("busy", entry)
             self.assertIn("waiting", entry)
-        self.assertEqual(models["speech_campplus"]["configured_instances"], 1)
+        self.assertEqual(models["speech_campplus"]["configured_instances"], 3)
         self.assertEqual(models["emotion2vec"]["configured_instances"], 1)
         self.assertEqual(models["speech_campplus"]["instances"], 0)
         self.assertEqual(models["emotion2vec"]["instances"], 0)
@@ -52,9 +52,9 @@ class StatusContractTests(unittest.TestCase):
     def test_status_exposes_vad_pool_runtime(self):
         payload = self._status()
         pool = payload["vadPool"]
-        self.assertEqual(pool["device"], "cpu")
+        self.assertEqual(pool["devices"], ["cpu", "cpu", "cpu", "cpu", "cuda:0", "cuda:0", "cuda:0", "cuda:0"])
         self.assertEqual(pool["pool_size"], 8)
-        self.assertEqual(pool["pool_max"], 16)
+        self.assertEqual(pool["pool_max"], 8)
         self.assertIn("workers", pool)
         self.assertIn("busy", pool)
         self.assertIn("waiting", pool)
@@ -69,8 +69,8 @@ class StatusContractTests(unittest.TestCase):
 
 class ConfigDefaultsTests(unittest.TestCase):
     def test_v2_switches_default_true(self):
-        self.assertTrue(settings.open_v2_role)
-        self.assertTrue(settings.open_v2_emotion)
+        self.assertFalse(settings.open_v2_role)
+        self.assertFalse(settings.open_v2_emotion)
 
     def test_instance_count_default_is_one(self):
         self.assertEqual(settings.instance_count, 1)
@@ -91,7 +91,7 @@ class ConfigFileStructureTests(unittest.TestCase):
         host = self._load("config.toml")
         docker = self._load("config.docker.toml")
         self.assertEqual(set(host.keys()), set(docker.keys()))
-        sections = ("log", "model_paths", "speech_rate", "features", "itn", "qwen_asr", "model_device")
+        sections = ("log", "model_paths", "speech_rate", "features", "itn", "qwen_asr", "model_device_pool")
         for section in sections:
             self.assertEqual(set(host[section].keys()), set(docker[section].keys()))
 
@@ -124,22 +124,9 @@ class ConfigFileStructureTests(unittest.TestCase):
 
     def test_model_device_arrays_pin_gpu0(self):
         for name in ("config.toml", "config.docker.toml"):
-            devices = self._load(name)["model_device"]
-            self.assertEqual(
-                {key for key in devices if key != "local_model_pool"},
-                {"emotion2vec", "speech_campplus"},
-            )
-            self.assertEqual(
-                {devices[key] for key in ("emotion2vec", "speech_campplus")},
-                {"cuda:0"},
-            )
-            self.assertEqual(
-                devices["local_model_pool"],
-                {
-                    "emotion2vec_devices": ["cuda:0"],
-                    "speech_campplus_devices": ["cuda:0"],
-                },
-            )
+            devices = self._load(name)["model_device_pool"]
+            self.assertEqual(devices["emotion2vec_devices"], ["cuda:0"])
+            self.assertEqual(devices["speech_campplus_devices"], ["cuda:0", "cuda:0", "cuda:0"])
 
     def test_log_path_and_vad_threshold_are_nested(self):
         for name in ("config.toml", "config.docker.toml"):

@@ -14,6 +14,16 @@ class _HotwordFilter(logging.Filter):
                 'Hotword list:' not in record.getMessage() and 'rtf_avg:' not in record.getMessage())
 
 
+class _ConsoleHttpSuccessFilter(logging.Filter):
+    """仅抑制 httpx/httpcore 的成功 INFO 访问行。"""
+
+    def filter(self, record):
+        if record.levelno != logging.INFO or not record.name.startswith(("httpx", "httpcore")):
+            return True
+        message = record.getMessage()
+        return not any(f'HTTP/1.1 {code} ' in message for code in range(200, 300))
+
+
 class RotatingSizeAndDayFileHandler(logging.FileHandler):
     """同时按大小与按天轮转的文件 handler。
 
@@ -148,6 +158,7 @@ def setup_logging(log_path: str):
     # 3. 将过滤器挂到 handler上
     file_hdl.addFilter(_HotwordFilter())
     console_hdl.addFilter(_HotwordFilter())
+    console_hdl.addFilter(_ConsoleHttpSuccessFilter())
 
     # 4. 配置
     logging.basicConfig(

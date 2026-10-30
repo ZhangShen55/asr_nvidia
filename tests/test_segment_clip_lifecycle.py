@@ -1,4 +1,4 @@
-"""段 clip 文件的生命周期：按需创建、转写返回即删、异常兜底。"""
+"""内存 clip 生命周期与兼容裁剪路径的严格清理。"""
 
 from __future__ import annotations
 
@@ -69,8 +69,8 @@ class SegmentClipLifecycleTests(unittest.TestCase):
             return list(self.SEGMENTS)
 
         class _FakeClient:
-            async def transcribe(self, path, language=None):
-                return await transcribe(path, language)
+            async def transcribe_bytes(self, audio_bytes, language=None, filename=None):
+                return await transcribe(audio_bytes, language)
 
         async def _fake_get_client():
             return _FakeClient()
@@ -120,24 +120,24 @@ class SegmentClipLifecycleTests(unittest.TestCase):
                 )
             return asyncio.run(run_qwen_asr(ctx))
 
-    def test_success_deletes_clip_right_after_transcription(self):
+    def test_success_uploads_memory_bytes_and_deletes_compat_clip_before_upload(self):
         observed = []
 
-        async def transcribe(path, _language):
-            observed.append(os.path.exists(path))
+        async def transcribe(audio_bytes, _language):
+            observed.append(audio_bytes[:4])
             return "language Chinese<asr_text>你好"
 
         ctx = FakeCtx(request=make_request())
         payload = self._run(ctx, transcribe)
 
         self.assertEqual(payload["segments"][0]["segment_text"], "你好")
-        self.assertTrue(all(observed), "转写期间段文件必须存在")
+        self.assertEqual(observed, [b"RIFF", b"RIFF"])
         for path in self.created:
-            self.assertFalse(os.path.exists(path), "转写返回后段文件应立即删除")
+            self.assertFalse(os.path.exists(path), "内存上传前兼容段文件应删除")
         self.assertNotIn(self.created[0], ctx.tmp_paths)
 
     def test_transcription_failure_still_deletes_clip(self):
-        async def transcribe(_path, _language):
+        async def transcribe(_audio_bytes, _language):
             raise RuntimeError("模拟 Qwen 失败")
 
         ctx = FakeCtx(request=make_request())
@@ -147,7 +147,7 @@ class SegmentClipLifecycleTests(unittest.TestCase):
             self.assertFalse(os.path.exists(path), "转写失败时段文件也应删除")
 
     def test_overall_exception_is_cleaned_by_finally(self):
-        async def transcribe(_path, _language):
+        async def transcribe(_audio_bytes, _language):
             return "language Chinese<asr_text>你好"
 
         ctx = FakeCtx(request=make_request())
@@ -159,7 +159,7 @@ class SegmentClipLifecycleTests(unittest.TestCase):
     def test_emotion_runs_in_parallel_without_relying_on_clip(self):
         """showEmotion=true 时，段文件已删除也不影响情绪结果。"""
 
-        async def transcribe(path, _language):
+        async def transcribe(_audio_bytes, _language):
             await asyncio.sleep(0.05)
             return "language Chinese<asr_text>你好"
 
