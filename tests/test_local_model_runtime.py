@@ -59,6 +59,19 @@ class StatusContractTests(unittest.TestCase):
         self.assertIn("waiting", pool)
         self.assertNotIn("pool_max", pool)
 
+    def test_status_exposes_resource_diagnostics_without_removing_legacy_fields(self):
+        payload = self._status()
+        diagnostics = payload["resourceDiagnostics"]
+        self.assertIn("host", diagnostics)
+        self.assertIn("vmstat", diagnostics)
+        self.assertIn("gpu", diagnostics)
+        self.assertIn("cache", diagnostics)
+        self.assertIn("requestTelemetry", diagnostics)
+        self.assertIn("processes", diagnostics)
+        # 采集失败必须有明确标志，不能用 0 伪造成功采样。
+        self.assertIn("available", diagnostics["host"])
+        self.assertIn("available", diagnostics["gpu"])
+
     def test_v118_route_is_removed(self):
         from main import create_app
 

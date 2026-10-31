@@ -99,6 +99,26 @@ conda run --no-capture-output -n asr \
 
 服务启动后，v2 接口地址为 `http://127.0.0.1:8085/v2/seacraft_asr`；按 `Ctrl+C` 停止该后端实例。`OMP_NUM_THREADS` 和 `MKL_NUM_THREADS` 只限制底层算子线程，不限制 VAD worker 进程数；VAD 有效完整音频并发等于 `len(qwen_asr.vad_device)`。Qwen-ASR 服务地址由 `[qwen_asr].base_url` 配置，默认是 `http://127.0.0.1:8806`。
 
+### 模型内存压力安全诊断
+
+诊断工具跳过已确认正常的 VAD-only A 项，按 CAM++ 单独加载、emotion2vec 单独加载、两者同时加载和 2/4/8 路完整音频逐级采样。它每秒记录 RSS/PSS、Private 内存、`VmSwap`、`MemAvailable`、Swap I/O、GPU 显存/利用率、VAD worker、缓存目录和 8085/8806 健康状态，并在红色安全条件触发时停止后续请求。工具不会发送停止或重启 8806 Qwen 的命令。
+
+```bash
+cd /home/zhangs/workspace/asr_nvidia
+conda run --no-capture-output -n asr \
+  python scripts/model_memory_pressure_diagnostics.py \
+  --base-url http://127.0.0.1:8085 \
+  --qwen-url http://127.0.0.1:8806 \
+  --audio-dir /home/zhangs/workspace/asr_nvidia/test/audio_file/音频文件 \
+  --out-dir /tmp/seacraft-model-memory-diagnostics \
+  --cooldown-s 60
+```
+
+运行前先确认 `curl http://127.0.0.1:8085/get_status` 和
+`curl http://127.0.0.1:8806/v1/models` 均正常。`--plan-only` 只生成包含 Git 提交号、配置快照、设备数组和阶段清单的 `metadata.json`，不会连接服务。输出目录中的 `snapshots.jsonl`、`stage-*.json` 和 `run-summary.json` 可直接复算报告；红色终止条件包括可用内存低于 `max(8 GiB, 总内存 20%)`、Swap 增量超过 256 MiB、连续 Swap I/O、GPU 显存使用率达到 90%、后端/Qwen 健康检查失败或 VAD worker 数量下降。
+
+`/get_status` 的 `resourceDiagnostics` 是附加字段，采集失败时通过 `available=false` 和 `reason` 表示，不把缺失值当作零；其中 `requestTelemetry` 只保留有界的阶段耗时统计，不保存音频和转写正文。
+
 ## ASR 请求
 
 ```bash

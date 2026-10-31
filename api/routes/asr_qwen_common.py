@@ -93,6 +93,12 @@ def _phase_stats() -> Dict[str, float]:
     return stats
 
 
+def get_phase_stats() -> Dict[str, float]:
+    """返回当前请求的阶段统计副本，供状态/诊断遥测读取。"""
+    stats = _PHASE_STATS.get()
+    return dict(stats or {})
+
+
 @dataclass
 class SegmentOutcome:
     """单个 VAD 段的处理结果。"""
@@ -468,6 +474,9 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         "spk_wait_ms": 0.0, "spk_ms": 0.0, "spk_calls": 0,
         "emo_wait_ms": 0.0, "emo_ms": 0.0, "emo_calls": 0,
         "qwen_wait_ms": 0.0, "qwen_ms": 0.0, "qwen_calls": 0,
+        "vad_ms": 0.0, "cut_sum_ms": 0.0, "cut_wall_ms": 0.0,
+        "segment_ms": 0.0, "cluster_ms": 0.0, "itn_ms": 0.0,
+        "cleanup_ms": 0.0,
     }
     _PHASE_STATS.set(stats)
     phase = {
@@ -502,6 +511,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     else:
         segments = await detect_segments(ctx.tmp_path)
     phase["vad_ms"] = (time.perf_counter() - vad_started) * 1000
+    stats["vad_ms"] = phase["vad_ms"]
     vad_stats = get_vad_stats()
     if not segments:
         update_fail_task()
@@ -649,8 +659,11 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     finally:
         progress.close()
     phase["segment_ms"] = (time.perf_counter() - segment_started) * 1000
+    stats["segment_ms"] = phase["segment_ms"]
     if phase["cut_wall_started"] is not None and phase["cut_wall_ended"] is not None:
         phase["cut_wall_ms"] = (phase["cut_wall_ended"] - phase["cut_wall_started"]) * 1000
+    stats["cut_sum_ms"] = phase["cut_sum_ms"]
+    stats["cut_wall_ms"] = phase["cut_wall_ms"]
 
     for result in outcomes:
         if isinstance(result, BaseException):
@@ -683,6 +696,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         if request.showRoleIdentify:
             _apply_role_identify(valid)
         phase["cluster_ms"] = (time.perf_counter() - cluster_started) * 1000
+        stats["cluster_ms"] = phase["cluster_ms"]
 
     detected_language = _dominant_language(valid)
     english_dominant = _itn_language(detected_language) == "en"
@@ -735,6 +749,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         segment.pop("_language", None)
         segment.pop("_raw_text", None)
     phase["itn_ms"] = (time.perf_counter() - itn_started) * 1000
+    stats["itn_ms"] = phase["itn_ms"]
 
     gpu_time_ms = (time.perf_counter() - started) * 1000
     logger.info(
@@ -776,5 +791,6 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
 __all__ = [
     "SegmentOutcome",
     "cluster_speakers",
+    "get_phase_stats",
     "run_qwen_asr",
 ]
