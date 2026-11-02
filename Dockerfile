@@ -75,6 +75,14 @@ RUN pip install --retries 10 --timeout 600 \
       --prefer-binary \
     -r /tmp/requirements-pip-runtime.txt
 
+# 可选 NVIDIA 后端；默认镜像不安装 TensorRT，NPU 镜像使用独立 CANN 环境。
+# 开启前须核对基础系统/glibc、PyTorch CUDA 与目标 engine 的兼容性。
+ARG ENABLE_TENSORRT=0
+COPY requirements-tensorrt.txt /tmp/requirements-tensorrt.txt
+RUN if [ "$ENABLE_TENSORRT" = "1" ]; then \
+      pip install --prefer-binary -r /tmp/requirements-tensorrt.txt; \
+    fi
+
 # 先落地默认容器配置
 COPY config.docker.toml /config.toml
 
@@ -97,6 +105,10 @@ COPY core/ core/
 COPY utils/ utils/
 COPY api/ api/
 COPY entity/ entity/
+COPY scripts/check_tensorrt_assets.py scripts/check_tensorrt_assets.py
+# 默认关闭时不要求 engine；启用 CUDA TensorRT 的交付检查来源和文件完整性。
+# 此阶段没有 GPU，实际运行时仍须按实例检查目标环境。
+RUN python scripts/check_tensorrt_assets.py --config /config.toml
 
 # 配置与 Nginx
 COPY nginx.conf /etc/nginx/nginx.conf

@@ -10,6 +10,10 @@ from typing import Any, Dict
 import torch
 
 from core.config import settings
+from core.async_utils import await_completion, run_in_thread
+from core.local_inference import (
+    InstanceFailure, TorchRunner, TorchNpuRunner, backend_for_device, npu_api,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -70,6 +74,8 @@ local_model_status: Dict[str, Dict[str, Any]] = {
 
 def device_allocated_mb(device: str) -> float:
     """取指定设备上 torch 已分配的显存（MB）；不可用时返回 0。"""
+    if not str(device).startswith("cuda:"):
+        return 0.0
     try:
         index = int(str(device).split(":")[1])
     except (AttributeError, IndexError, ValueError):
@@ -133,6 +139,12 @@ def get_local_model_status() -> Dict[str, Dict[str, Any]]:
 def _resolve_device(index: int | str) -> str:
     if isinstance(index, str) and index.strip().lower() == "cpu":
         return "cpu"
+    if isinstance(index, str) and index.startswith("npu:"):
+        api = npu_api()
+        number = int(index.split(":", 1)[1])
+        if not api.is_available() or number >= api.device_count():
+            raise RuntimeError(f"NPU 设备不可用: {index}")
+        return index
     if not torch.cuda.is_available():
         raise RuntimeError("v2 链路要求使用 GPU，但 CUDA 不可用")
     if isinstance(index, str):
@@ -162,7 +174,8 @@ class ModelPool:
     """按设备数组加载模型副本；每个句柄同一时刻只服务一个任务。"""
 
     def __init__(self, name: str, model_dir: str, device_getter=None, count_getter=None,
-                 *, devices_getter=None, fp16=False, enabled_getter=None):
+                 *, devices_getter=None, fp16=False, enabled_getter=None,
+                 tensorrt_getter=None, precision_getter=None):
         self.name = name
         self.model_dir = model_dir
         self.device_getter = device_getter
@@ -171,6 +184,9 @@ class ModelPool:
         self._return_device = devices_getter is not None
         self.fp16 = fp16
         self.enabled_getter = enabled_getter
+        self.tensorrt_getter = tensorrt_getter or (lambda: False)
+        self.precision_getter = precision_getter or (lambda: "fp16")
+        self._closing = False
         self.models: list[Any] = []
         self.devices: list[str | None] = []
         self.locks: list[asyncio.Lock] = []
@@ -200,6 +216,8 @@ class ModelPool:
         return devices
 
     def _check_enabled(self) -> None:
+        if self._closing:
+            raise ModelUnavailableError(self.name, reason="closing")
         if self.enabled_getter is not None and not self.enabled_getter():
             raise ModelUnavailableError(self.name)
 
@@ -207,39 +225,52 @@ class ModelPool:
         self._check_enabled()
         async with self._load_lock:
             self._check_enabled()
-            target = self.configured_instances
-            if len(self.models) >= target:
+            if len(self.models) >= self.configured_instances:
                 self.refresh_status()
                 return
-            devices = self.configured_devices
-            while len(self.models) < target:
-                configured_device = devices[len(self.models)]
-                model = None
-                failure = None
-                device = None
-                try:
-                    global AutoModel
-                    if AutoModel is None:
-                        from funasr import AutoModel as FunasrAutoModel
+            # 包住整个登记过程，取消不能遗失刚在线程中创建的运行器。
+            await await_completion(self._load_instances())
 
-                        AutoModel = FunasrAutoModel
+    def _build_instance(self, configured_device):
+        device = _resolve_device(configured_device)
+        backend = backend_for_device(device, self.tensorrt_getter())
+        before = device_allocated_mb(device)
+        if backend == "tensorrt":
+            from core.tensorrt_runner import TensorRTRunner
 
-                    device = _resolve_device(configured_device)
-                    before = device_allocated_mb(device)
-                    kwargs = {"model": self.model_dir, "device": device,
-                              "disable_update": True, "disable_pbar": True}
-                    if self.fp16:
-                        kwargs["fp16"] = True
-                    model = AutoModel(**kwargs)
-                except Exception as exc:  # noqa: BLE001
-                    failure = str(exc)
-                    logger.exception("[模型池] %s 副本加载失败", self.name)
-                self.models.append(model)
-                self.devices.append(device or configured_device)
-                self.locks.append(asyncio.Lock())
-                self.failures.append(failure)
-                if model is not None:
-                    self.total_allocated_mb += max(0.0, device_allocated_mb(device) - before)
+            model = TensorRTRunner(self.name, self.model_dir, device, self.precision_getter())
+        elif backend == "torch_npu":
+            model = TorchNpuRunner(self.name, self.model_dir, device)
+        else:
+            global AutoModel
+            if AutoModel is None:
+                from funasr import AutoModel as FunasrAutoModel
+
+                AutoModel = FunasrAutoModel
+            half = self.fp16 and device.startswith("cuda:")
+            kwargs = {"model": self.model_dir, "device": device,
+                      "disable_update": True, "disable_pbar": True}
+            if half:
+                kwargs["fp16"] = True
+            model = TorchRunner(AutoModel(**kwargs), device, fp16=half)
+        allocated = max(0.0, device_allocated_mb(device) - before)
+        return model, device, allocated
+
+    async def _load_instances(self):
+        devices = self.configured_devices
+        while len(self.models) < len(devices):
+            configured_device = devices[len(self.models)]
+            model, device, allocated, failure = None, configured_device, 0.0, None
+            try:
+                model, device, allocated = await run_in_thread(self._build_instance, configured_device)
+            except Exception as exc:  # noqa: BLE001
+                failure = str(exc)
+                logger.exception("[模型池] %s %s 副本加载失败", self.name, configured_device)
+            self.models.append(model)
+            self.devices.append(device)
+            self.locks.append(asyncio.Lock())
+            self.failures.append(failure)
+            self.total_allocated_mb += allocated
             self.refresh_status()
 
     def refresh_status(self) -> None:
@@ -248,12 +279,33 @@ class ModelPool:
         failed = [failure for failure in self.failures if failure]
         configured_devices = self.configured_devices
         busy = sum(lock.locked() for lock in self.locks)
+        details = []
+        for index, device in enumerate(configured_devices):
+            model = self.models[index] if index < len(self.models) else None
+            attempted = index < len(self.models)
+            backend = backend_for_device(device, self.tensorrt_getter())
+            details.append({
+                "configured_device": device, "configured_backend": backend,
+                "effective_backend": getattr(model, "effective_backend", None),
+                "configured_engine_precision": self.precision_getter(),
+                "actual_precision": getattr(model, "actual_precision", None),
+                "tensorrt_ignored": not device.startswith("cuda:"),
+                "engine": getattr(model, "engine_info", None),
+                "health": "healthy" if model is not None else ("failed" if attempted else "not_loaded"),
+                "failure": self.failures[index] if attempted else None,
+                "memory": getattr(model, "memory", None),
+            })
+        native_memory = any(d["effective_backend"] == "tensorrt" for d in details)
         entry.update({
             "loaded": bool(loaded),
             "device": next((device for model, device in zip(self.models, self.devices)
                              if model is not None), None),
             "devices": list(self.devices) if self.models else configured_devices,
-            "allocated_mb": round(self.total_allocated_mb, 2),
+            "allocated_mb": None if native_memory else round(self.total_allocated_mb, 2),
+            "torch_allocated_mb": round(self.total_allocated_mb, 2),
+            "allocated_mb_scope": ("TensorRT native allocations are not fully tracked; see instance_details.memory"
+                                   if native_memory else "PyTorch allocator delta at load"),
+            "instance_details": details,
             "instances": len(loaded),
             "configured_instances": self.configured_instances,
             "available_instances": max(0, len(loaded) - busy),
@@ -286,6 +338,13 @@ class ModelPool:
 
     async def _dispatch_waiters(self) -> None:
         """在条件锁内按 FIFO 发放租约；取消的等待者会被跳过。"""
+        if self._closing or not any(model is not None for model in self.models):
+            while self._waiters:
+                future, _ = self._waiters.popleft()
+                self.waiting = max(0, self.waiting - 1)
+                if not future.done():
+                    future.set_exception(ModelUnavailableError(self.name))
+            return
         while self._waiters:
             future, enqueued_at = self._waiters[0]
             if future.cancelled():
@@ -334,12 +393,18 @@ class ModelPool:
                     yield model, self.devices[index]
                 else:
                     yield model
+            except InstanceFailure as exc:
+                self.failures[index] = str(exc)
+                self.models[index] = None
+                close = getattr(model, "close", None)
+                if close is not None:
+                    try:
+                        await run_in_thread(close)
+                    except Exception:
+                        logger.exception("[模型池] 故障实例清理失败: %s", self.name)
+                raise
             finally:
-                self.locks[index].release()
-                async with self._condition:
-                    await self._dispatch_waiters()
-                    self.refresh_status()
-                    self._condition.notify_all()
+                await await_completion(self._release(index))
         except asyncio.CancelledError:
             async with self._condition:
                 if future is not None and not future.done():
@@ -360,6 +425,13 @@ class ModelPool:
             self.refresh_status()
             raise
 
+    async def _release(self, index):
+        async with self._condition:
+            self.locks[index].release()
+            await self._dispatch_waiters()
+            self.refresh_status()
+            self._condition.notify_all()
+
     def record_inference(self, wait_ms: float, inference_ms: float) -> None:
         """记录一次模型池租约等待和实际推理耗时。"""
         self.calls += 1
@@ -368,7 +440,21 @@ class ModelPool:
         self.refresh_status()
 
     async def close(self) -> None:
+        await await_completion(self._close())
+
+    async def _close(self):
+        self._closing = True
         async with self._load_lock:
+            async with self._condition:
+                await self._dispatch_waiters()
+                await self._condition.wait_for(lambda: not any(lock.locked() for lock in self.locks))
+            for model in self.models:
+                close = getattr(model, "close", None)
+                if close is not None:
+                    try:
+                        await run_in_thread(close)
+                    except Exception:
+                        logger.exception("[模型池] 关闭实例失败: %s", self.name)
             self.models.clear()
             self.devices.clear()
             self.locks.clear()
@@ -383,6 +469,7 @@ class ModelPool:
                 if not future.done():
                     future.cancel()
             self._waiters.clear()
+            self._closing = False
             self.refresh_status()
 
 
@@ -392,12 +479,16 @@ _MODEL_POOLS = {
         devices_getter=lambda: settings.model_device_speech_campplus_devices,
         enabled_getter=lambda: settings.open_v2_role,
         fp16=True,
+        tensorrt_getter=lambda: settings.speech_campplus_use_tensorrt,
+        precision_getter=lambda: settings.speech_campplus_tensorrt_precision,
     ),
     "emotion2vec": ModelPool(
         "emotion2vec", settings.emotion_model_dir,
         devices_getter=lambda: settings.model_device_emotion2vec_devices,
         enabled_getter=lambda: settings.open_v2_emotion,
         fp16=True,
+        tensorrt_getter=lambda: settings.emotion2vec_use_tensorrt,
+        precision_getter=lambda: settings.emotion2vec_tensorrt_precision,
     ),
 }
 

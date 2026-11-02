@@ -85,6 +85,50 @@ CONFIG_PATH=./config.toml python main.py
 
 本地配置中的模型路径为 `./model/<目录名>`，因此需要从仓库根目录启动。
 
+### 前台启动（8083）
+
+下面的命令会占用当前终端，适合调试和查看实时日志；按 `Ctrl+C` 停止服务：
+
+```bash
+cd /home/zhangs/workspace/asr_nvidia
+CONFIG_PATH=/home/zhangs/workspace/asr_nvidia/config.toml \
+PYTHONPATH=/home/zhangs/workspace/asr_nvidia \
+OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+/root/anaconda3/envs/asr/bin/python -m uvicorn main:app \
+  --host 0.0.0.0 --port 8083 --workers 1
+```
+
+### 后台启动（8083）
+
+后台启动后，日志写入 `logs/asr-nvidia-8083.log`，PID 写入
+`logs/asr-nvidia-8083.pid`：
+
+```bash
+cd /home/zhangs/workspace/asr_nvidia
+mkdir -p logs
+nohup env \
+  CONFIG_PATH=/home/zhangs/workspace/asr_nvidia/config.toml \
+  PYTHONPATH=/home/zhangs/workspace/asr_nvidia \
+  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
+  /root/anaconda3/envs/asr/bin/python -m uvicorn main:app \
+  --host 0.0.0.0 --port 8083 --workers 1 \
+  > logs/asr-nvidia-8083.log 2>&1 &
+echo $! > logs/asr-nvidia-8083.pid
+```
+
+查看后台日志和服务状态：
+
+```bash
+tail -f /home/zhangs/workspace/asr_nvidia/logs/asr-nvidia-8083.log
+curl http://127.0.0.1:8083/get_status
+```
+
+停止后台服务：
+
+```bash
+kill -TERM "$(cat /home/zhangs/workspace/asr_nvidia/logs/asr-nvidia-8083.pid)"
+```
+
 ### 使用 Conda `asr` 环境启动指定端口
 
 下面的命令从仓库根目录启动一个 uvicorn 后端实例，监听 `8085` 端口：
@@ -433,3 +477,9 @@ curl http://localhost:9000/openapi.json
 ## License
 
 MIT License
+## CAM++ / emotion2vec 可选 TensorRT
+
+四项后端配置位于 `[model_device_pool]`：两个 `*_use_tensorrt` 默认 false，两个
+`*_tensorrt_precision` 默认 `"fp16"`，支持 fp32/fp16。设备数组每个元素代表一个实例；
+CUDA 按开关选择后端，NPU 固定 torch_npu，CPU 使用 PyTorch。完整配置、可选依赖、资产校验、
+状态与回滚见 [TensorRT 说明](docs/TENSORRT.md)。修改后重启生效。

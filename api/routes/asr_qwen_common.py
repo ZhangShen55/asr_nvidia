@@ -6,7 +6,6 @@ import asyncio
 import logging
 import os
 import time
-from contextlib import nullcontext
 from contextvars import ContextVar
 from dataclasses import dataclass
 from typing import Dict, List, Optional
@@ -17,6 +16,7 @@ import torch
 from api.routes.asr_common import AsrContext, map_emotion, prepare_asr_context
 from core.config import settings
 from core.async_utils import await_completion, run_in_thread
+from core.local_inference import generate_local
 from core.models import get_model_pool, load_v2_models_if_needed, validate_v2_capabilities
 from core.qwen_asr_client import (
     QwenAsrCallError,
@@ -264,14 +264,7 @@ async def _speaker_embedding(audio_array, sample_rate):
     """
     validate_v2_capabilities(need_role=True)
     def _run(model, device):
-        device_ctx = torch.cuda.device(device) if str(device).startswith("cuda") else nullcontext()
-        with device_ctx:
-            # CAM++ 模型以 FP16 加载；FunASR 的特征提取仍会产出 FP32，
-            # 用 CUDA autocast 负责前向计算的类型转换，避免输入与权重类型冲突。
-            with torch.amp.autocast(
-                "cuda", enabled=str(device).startswith("cuda"), dtype=torch.float16
-            ):
-                result = model.generate(input=audio_array, fs=sample_rate)
+        result = generate_local(model, device, input=audio_array, fs=sample_rate)
         if not result:
             return None
         payload = result[0]
@@ -311,20 +304,8 @@ async def _segment_emotion(audio_array, sample_rate, duration_s):
         return "平淡"
 
     def _run(model, device):
-        device_ctx = torch.cuda.device(device) if str(device).startswith("cuda") else nullcontext()
-        with device_ctx:
-            with torch.amp.autocast(
-                "cuda", enabled=str(device).startswith("cuda"), dtype=torch.float16
-            ):
-                result = model.generate(
-                    # 直接喂 numpy 数组：funasr 的文件分支会额外做一次
-                    # 音频读取与重采样，实测单次 28.9ms → 18.7ms，
-                    # 输出标签与分数与文件分支逐位一致（25/25 抽样核对）。
-                    input=audio_array,
-                    fs=sample_rate,
-                    granularity="utterance",
-                    extract_embedding=False,
-                )
+        result = generate_local(model, device, input=audio_array, fs=sample_rate,
+                                granularity="utterance", extract_embedding=False)
         if not result:
             return None
         payload = result[0]

@@ -335,6 +335,42 @@ class Settings:
         return int(self._cfg.get("qwen_asr", {}).get("repetition_min_times", 3))
 
     # v2 链路模型落卡 - 从顶级 [model_device_pool] 部分读取
+    def _model_backend_option(self, name: str, option: str):
+        pool = self._cfg.get("model_device_pool", {})
+        if not isinstance(pool, dict):
+            raise ValueError("[model_device_pool] 必须是表")
+        key = f"{name}_{option}"
+        value = pool.get(key, False if option == "use_tensorrt" else "fp16")
+        if option == "use_tensorrt":
+            if type(value) is not bool:
+                raise ValueError(f"[model_device_pool].{key} 必须是 TOML 布尔值 true 或 false")
+        elif not isinstance(value, str) or value not in {"fp16", "fp32"}:
+            raise ValueError(f"[model_device_pool].{key} 必须是 fp16 或 fp32")
+        return value
+
+    @property
+    def speech_campplus_use_tensorrt(self) -> bool:
+        return self._model_backend_option("speech_campplus", "use_tensorrt")
+
+    @property
+    def speech_campplus_tensorrt_precision(self) -> str:
+        return self._model_backend_option("speech_campplus", "tensorrt_precision")
+
+    @property
+    def emotion2vec_use_tensorrt(self) -> bool:
+        return self._model_backend_option("emotion2vec", "use_tensorrt")
+
+    @property
+    def emotion2vec_tensorrt_precision(self) -> str:
+        return self._model_backend_option("emotion2vec", "tensorrt_precision")
+
+    def validate_model_backends(self) -> None:
+        """就绪前校验配置；不导入后端、不接触设备或加载权重。"""
+        for name in ("speech_campplus", "emotion2vec"):
+            self._model_backend_option(name, "use_tensorrt")
+            self._model_backend_option(name, "tensorrt_precision")
+            self._model_pool_devices(name)
+
     @property
     def model_device_emotion2vec(self) -> str:
         return self.model_device_emotion2vec_devices[0] if self.model_device_emotion2vec_devices else "cuda:0"
@@ -392,7 +428,7 @@ class Settings:
         for index, item in enumerate(value):
             field_name = f"{array_key}[{index}]"
             if not isinstance(item, str):
-                raise ValueError(f"[model_device_pool].{field_name} 必须是 cpu 或 cuda:N")
+                raise ValueError(f"[model_device_pool].{field_name} 必须是 cpu、cuda:N 或 npu:N")
             devices.append(self._validate_model_device(item, field_name))
         if "model_device" in self._cfg:
             logger.warning("[配置迁移] 已忽略旧 [model_device]，请迁移到 [model_device_pool]")
@@ -401,16 +437,16 @@ class Settings:
     @staticmethod
     def _validate_model_device(value, field_name: str) -> str:
         if isinstance(value, bool):
-            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu 或 cuda:N 格式")
+            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu、cuda:N 或 npu:N 格式")
         text = str(value).strip().lower()
         if text == "cpu":
             return text
-        if not text.startswith("cuda:"):
-            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu 或 cuda:N 格式")
+        if not text.startswith(("cuda:", "npu:")):
+            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu、cuda:N 或 npu:N 格式")
         suffix = text.split(":", 1)[1]
         if not suffix.isdigit():
-            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu 或 cuda:N 格式")
-        return f"cuda:{int(suffix)}"
+            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu、cuda:N 或 npu:N 格式")
+        return f"{text.split(':', 1)[0]}:{int(suffix)}"
 
 
 settings = Settings()

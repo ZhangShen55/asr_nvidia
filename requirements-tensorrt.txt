@@ -1,0 +1,3 @@
+# 可选 NVIDIA CUDA 12 运行依赖；关闭 TensorRT、CPU、NPU 均无需安装。
+# GPU 架构、TensorRT/CUDA 版本还须与 engine manifest 完全匹配。
+tensorrt-cu12==10.7.0.post1

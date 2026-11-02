@@ -37,3 +37,20 @@ model/
 ├── speech_campplus_sv_zh_en_16k-common_advanced/
 └── emotion2vec_plus_large/
 ```
+
+## 可选 TensorRT 验证产物
+
+CAM++ 和 emotion2vec 的 FP32、FP16 engine 分别保存在原始模型目录的 `tensorrt/<precision>/engine.plan`，同目录附带 `manifest.json`。原始 PyTorch 权重保留；服务已支持显式配置启用，默认开关为 false。
+
+本批产物针对 RTX 4090 / SM89、TensorRT 10.7.0.post1、CUDA 12.4。早期模型独立实验见 [原始实验交付说明](tensorrt-validation-20261102/README.md)，服务集成验收见下方报告。
+
+## CAM++ / emotion2vec TensorRT 资产
+
+两个模型可在各自目录的 `tensorrt/{fp32,fp16}/` 提供 `engine.plan` 与正式 `manifest.json`，
+保留原始 PyTorch 权重。`tensorrt/sources/` 保留导出来源及哈希，加载时检查资产与实际实例环境。
+四个配置项、NPU 路由、依赖隔离、输入范围、状态与回滚参见 [后端说明](../docs/TENSORRT.md)。
+现有候选验证环境为 RTX 4090 / SM89、TensorRT 10.7.0.post1、CUDA 12.4；不可直接用于 NPU。
+
+八门完整课堂性能、聚类及情绪边界结果见 [服务集成验证报告](../docs/cam-emo-tensorrt-backends-validation-20261102.md)。
+FP16 在本批共同输出段的角色划分一致，但情绪存在少量边界标签翻转；FP32 的高等传热学
+聚类与 PyTorch FP32 一致、与当前 PyTorch FP16 不同。不能把高 embedding 相似度或小规模标签一致当作无损保证。

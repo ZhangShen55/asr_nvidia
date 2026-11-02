@@ -33,6 +33,7 @@ def _set_process_name() -> None:
 async def lifespan(app: FastAPI):
     # 配置错误在任何模型预热和对外就绪之前暴露。
     _ = settings.qwen_audio_spk_emo_concurrency
+    settings.validate_model_backends()
 
     # 1) 进程命名（运维在 nvidia-smi 中据此定位本服务的显存占用）
     _set_process_name()

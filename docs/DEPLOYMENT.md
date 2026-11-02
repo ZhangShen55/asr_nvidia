@@ -308,3 +308,9 @@ docker run -d --name asr-offline --gpus '"device=0"' -p 9000:9000 \
 `v3.3` 镜像仍需挂载 SeACo-Paraformer、PUNC 与 Whisper 模型目录。
 
 Qwen 容器参数与本服务配置无关，无需回滚。
+## 可选 TensorRT 后端
+
+CAM++ / emotion2vec 的配置、依赖、模型资产、GPU/运行时兼容与独立回滚见
+[TensorRT 部署说明](TENSORRT.md)。本地/容器模板默认两个开关均为 false；NPU 固定走 torch_npu。
+Docker `ENABLE_TENSORRT=1` 只安装 NVIDIA 可选依赖，不自动打开能力或后端开关；实际 engine
+仍须在目标环境校验。当前 CUDA 12.1.1 基础镜像未被本轮 CUDA 12.4 主机实验验证。

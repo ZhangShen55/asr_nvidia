@@ -75,3 +75,7 @@ repetition_min_times = 3                 # 判定为循环的最小连续重复�
 [model_device_pool]
 speech_campplus_devices = ["cuda:0","cuda:0","cuda:0"]
 emotion2vec_devices = ["cuda:0"]
+speech_campplus_use_tensorrt = false       # 仅 CUDA 实例生效；修改后重启
+speech_campplus_tensorrt_precision = "fp16" # fp16 / fp32，选择对应 engine
+emotion2vec_use_tensorrt = false
+emotion2vec_tensorrt_precision = "fp16"
