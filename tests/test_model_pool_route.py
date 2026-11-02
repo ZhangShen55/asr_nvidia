@@ -6,6 +6,7 @@ import numpy as np
 import torch
 
 from api.routes import asr_qwen_common as route
+from core.config import settings
 
 
 class _FakeModel:
@@ -40,6 +41,11 @@ class _FakePool:
 
 
 class ModelPoolRouteTests(unittest.IsolatedAsyncioTestCase):
+    def setUp(self):
+        features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
+        features.start()
+        self.addCleanup(features.stop)
+
     async def test_speaker_and_emotion_use_pool_and_preserve_contract(self):
         audio = np.zeros(16000, dtype=np.float32)
         with patch.object(route.torch.cuda, "device", return_value=contextlib.nullcontext()), \

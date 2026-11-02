@@ -14,6 +14,7 @@ import unittest
 
 from api.routes.asr_qwen_common import run_qwen_asr
 from core.vad import VadSegment
+from core.config import settings
 from entity.data import AsrRequestParams
 
 
@@ -56,6 +57,9 @@ class SegmentClipLifecycleTests(unittest.TestCase):
 
     def setUp(self):
         self.created = []
+        features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
+        features.start()
+        self.addCleanup(features.stop)
 
     def _make_clip(self, _src, _start, _duration):
         handle = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")

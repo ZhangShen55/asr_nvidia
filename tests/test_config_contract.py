@@ -18,6 +18,19 @@ class ConfigContractTests(unittest.TestCase):
         settings = self._settings("[log]\nlog_path = \"nested.log\"\n")
         self.assertEqual(settings.log_path, "nested.log")
 
+    def test_audio_spk_emo_concurrency_defaults_and_limits(self):
+        self.assertEqual(self._settings("").qwen_audio_spk_emo_concurrency, 4)
+        settings = self._settings("[qwen_asr]\naudio_concurrency = 2\naudio_spk_emo_concurrency = 7\n")
+        self.assertEqual(settings.qwen_audio_concurrency, 2)
+        self.assertEqual(settings.qwen_audio_spk_emo_concurrency, 7)
+
+    def test_invalid_audio_spk_emo_concurrency(self):
+        for value in ["0", "-1", "true", "false", "4.0", '"4"']:
+            with self.subTest(value=value):
+                settings = self._settings(f"[qwen_asr]\naudio_spk_emo_concurrency = {value}\n")
+                with self.assertRaisesRegex(ValueError, "audio_spk_emo_concurrency.*正整数"):
+                    _ = settings.qwen_audio_spk_emo_concurrency
+
     def test_legacy_model_device_is_ignored_with_warning(self):
         settings = self._settings('[model_device]\nemotion2vec = "cuda:1"\n')
         with self.assertLogs("core.config", level=logging.WARNING) as logs:

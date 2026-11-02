@@ -7,6 +7,7 @@
 from datetime import timedelta, datetime
 
 from core.models import get_local_model_status
+from core.qwen_asr_queue import get_slot_manager
 from core.request_telemetry import snapshot as request_telemetry_snapshot
 from core.resource_diagnostics import status_snapshot
 from core.vad_pool import get_vad_pool
@@ -30,6 +31,7 @@ def format_timedelta(td: timedelta) -> str:
 def build_status_payload(stats: dict, run_start_time: datetime) -> dict:
     """组装 `/get_status` 的响应体。"""
     run_time = datetime.utcnow() - run_start_time
+    admission = get_slot_manager().snapshot()
     resource = status_snapshot()
     services = resource.get("services", {})
     resource_diagnostics = {
@@ -61,6 +63,7 @@ def build_status_payload(stats: dict, run_start_time: datetime) -> dict:
         "onlineDone": stats["online"],
         "queuedTaskList": stats["queued_task_ids"],
         "processingTaskList": stats["processing_task_ids"],
+        **admission,
         # CAM++ / emotion2vec 模型池的加载状态与显存明细；VAD 状态统一放在 vadPool。
         "localModels": get_local_model_status(),
         # VAD 进程池的实时运行状况：设备、当前 worker 数、在途与排队请求

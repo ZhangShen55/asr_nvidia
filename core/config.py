@@ -154,8 +154,16 @@ class Settings:
 
     @property
     def qwen_audio_concurrency(self) -> int:
-        """同时处理的音频文件数上限。"""
+        """同时处理的 A+B 音频文件总数上限。"""
         return max(1, int(self._cfg.get("qwen_asr", {}).get("audio_concurrency", 8)))
+
+    @property
+    def qwen_audio_spk_emo_concurrency(self) -> int:
+        """请求说话人或情绪能力的 B 类整音频并发上限。"""
+        value = self._cfg.get("qwen_asr", {}).get("audio_spk_emo_concurrency", 4)
+        if type(value) is not int or value <= 0:
+            raise ValueError("[qwen_asr].audio_spk_emo_concurrency 必须是正整数")
+        return value
 
     @property
     def qwen_queue_max_size(self) -> int:

@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import asyncio
+import tempfile
 import time
 import unittest
 from contextlib import contextmanager
+from pathlib import Path
 from unittest.mock import patch
 
 from core.config import Settings
@@ -236,7 +238,10 @@ class VadDeviceTests(unittest.TestCase):
 
 class VadConfigDefaultsTests(unittest.TestCase):
     def test_defaults_match_spec(self):
-        cfg = Settings(config_path="./config.toml")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "config.toml"
+            path.write_text("", encoding="utf-8")
+            cfg = Settings(config_path=str(path))
         self.assertEqual(len(cfg.vad_device), 8)
         self.assertEqual(cfg.vad_device[:4], ["cpu"] * 4)
         self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.6)

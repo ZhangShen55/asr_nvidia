@@ -29,14 +29,30 @@ class ModelUnavailableError(RuntimeError):
     _DETAILS = {
         "speech_campplus": (4015, "CAM++ 模型未启用或没有可用实例（没有可用副本）"),
         "emotion2vec": (4016, "emotion2vec 模型未启用或没有可用实例（没有可用副本）"),
+        "spk_emo": (4018, "CAM++ 与 emotion2vec 能力均未启用"),
     }
 
-    def __init__(self, name: str):
+    def __init__(self, name: str, *, reason: str | None = None):
         code, message = self._DETAILS.get(name, (4015, f"{name} 模型未启用或没有可用实例"))
         self.model_name = name
         self.code = code
         self.message = message
+        self.reason = reason
         super().__init__(message)
+
+
+def validate_v2_capabilities(need_role: bool = False, need_emotion: bool = False) -> None:
+    """先检查完整需求，避免一项已加载后才发现另一项被配置关闭。"""
+    role_disabled = need_role and not settings.open_v2_role
+    emotion_disabled = need_emotion and not settings.open_v2_emotion
+    if role_disabled and emotion_disabled:
+        raise ModelUnavailableError("spk_emo", reason="both_disabled")
+    if role_disabled:
+        raise ModelUnavailableError("speech_campplus", reason="role_disabled")
+    if emotion_disabled:
+        raise ModelUnavailableError("emotion2vec", reason="emotion_disabled")
+
+
 local_model_status: Dict[str, Dict[str, Any]] = {
     name: {
         "loaded": False, "device": None, "allocated_mb": 0.0, "instances": 0,
@@ -146,7 +162,7 @@ class ModelPool:
     """按设备数组加载模型副本；每个句柄同一时刻只服务一个任务。"""
 
     def __init__(self, name: str, model_dir: str, device_getter=None, count_getter=None,
-                 *, devices_getter=None, fp16=False):
+                 *, devices_getter=None, fp16=False, enabled_getter=None):
         self.name = name
         self.model_dir = model_dir
         self.device_getter = device_getter
@@ -154,6 +170,7 @@ class ModelPool:
         self.devices_getter = devices_getter
         self._return_device = devices_getter is not None
         self.fp16 = fp16
+        self.enabled_getter = enabled_getter
         self.models: list[Any] = []
         self.devices: list[str | None] = []
         self.locks: list[asyncio.Lock] = []
@@ -182,8 +199,14 @@ class ModelPool:
             devices = [self.device_getter()] * count
         return devices
 
+    def _check_enabled(self) -> None:
+        if self.enabled_getter is not None and not self.enabled_getter():
+            raise ModelUnavailableError(self.name)
+
     async def ensure_loaded(self) -> None:
+        self._check_enabled()
         async with self._load_lock:
+            self._check_enabled()
             target = self.configured_instances
             if len(self.models) >= target:
                 self.refresh_status()
@@ -280,6 +303,7 @@ class ModelPool:
 
     @asynccontextmanager
     async def lease(self):
+        self._check_enabled()
         await self.ensure_loaded()
         if not any(model is not None for model in self.models):
             raise ModelUnavailableError(self.name)
@@ -366,11 +390,13 @@ _MODEL_POOLS = {
     "speech_campplus": ModelPool(
         "speech_campplus", settings.spk_model_dir,
         devices_getter=lambda: settings.model_device_speech_campplus_devices,
+        enabled_getter=lambda: settings.open_v2_role,
         fp16=True,
     ),
     "emotion2vec": ModelPool(
         "emotion2vec", settings.emotion_model_dir,
         devices_getter=lambda: settings.model_device_emotion2vec_devices,
+        enabled_getter=lambda: settings.open_v2_emotion,
         fp16=True,
     ),
 }
@@ -379,13 +405,14 @@ _MODEL_POOLS = {
 async def load_v2_models_if_needed(need_role: bool = False, need_emotion: bool = False):
     """按请求开关懒加载对应模型池。"""
     global _model_spk_v2, _model_emotion_v2
+    validate_v2_capabilities(need_role, need_emotion)
     async with _model_lock:
-        if settings.open_v2_role and need_role:
+        if need_role:
             await _MODEL_POOLS["speech_campplus"].ensure_loaded()
             if not any(model is not None for model in _MODEL_POOLS["speech_campplus"].models):
                 raise ModelUnavailableError("speech_campplus")
             _model_spk_v2 = next((model for model in _MODEL_POOLS["speech_campplus"].models if model), None)
-        if settings.open_v2_emotion and need_emotion:
+        if need_emotion:
             await _MODEL_POOLS["emotion2vec"].ensure_loaded()
             if not any(model is not None for model in _MODEL_POOLS["emotion2vec"].models):
                 raise ModelUnavailableError("emotion2vec")

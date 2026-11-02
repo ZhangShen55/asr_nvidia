@@ -17,10 +17,12 @@ from core.qwen_asr_client import (
     QwenAsrUnsupportedLanguageError,
     normalize_language_param,
 )
+from core.config import settings
 from core.qwen_asr_queue import (
     AudioSlotManager,
     QueueFullError,
     QueueTimeoutError,
+    SpkEmoQueueFullError,
     RequestConcurrency,
 )
 from entity.data import AsrRequestParams
@@ -103,10 +105,10 @@ class SlotManagerTests(unittest.TestCase):
         async def _run():
             manager = AudioSlotManager(capacity=2, wait_timeout_s=0)
             await manager.acquire()
-            await manager.acquire()
+            lease = await manager.acquire()
             with self.assertRaises(QueueFullError):
                 await manager.acquire()
-            await manager.release()
+            await manager.release(lease)
             await manager.acquire()
             self.assertEqual(manager.active, 2)
 
@@ -115,7 +117,7 @@ class SlotManagerTests(unittest.TestCase):
     def test_wait_timeout_raises_queue_timeout(self):
         async def _run():
             manager = AudioSlotManager(capacity=1, wait_timeout_s=0.1)
-            await manager.acquire()
+            lease = await manager.acquire()
             with self.assertRaises(QueueTimeoutError):
                 await manager.acquire()
 
@@ -126,7 +128,7 @@ class SlotManagerTests(unittest.TestCase):
 
         async def _run():
             manager = AudioSlotManager(capacity=1, wait_timeout_s=0.1)
-            await manager.acquire()
+            lease = await manager.acquire()
             with self.assertRaises(QueueTimeoutError):
                 await manager.acquire()
             self.assertEqual(manager.waiting, 0)
@@ -136,7 +138,7 @@ class SlotManagerTests(unittest.TestCase):
             task = asyncio.create_task(manager.acquire())
             await asyncio.sleep(0.05)
             self.assertEqual(manager.waiting, 1)
-            await manager.release()
+            await manager.release(lease)
             await asyncio.wait_for(task, timeout=2)
             self.assertEqual(manager.waiting, 0)
 
@@ -145,7 +147,7 @@ class SlotManagerTests(unittest.TestCase):
     def test_waiter_gets_slot_after_release(self):
         async def _run():
             manager = AudioSlotManager(capacity=1, wait_timeout_s=5)
-            await manager.acquire()
+            lease = await manager.acquire()
 
             async def _waiter():
                 await manager.acquire()
@@ -153,11 +155,58 @@ class SlotManagerTests(unittest.TestCase):
 
             task = asyncio.create_task(_waiter())
             await asyncio.sleep(0.05)
-            await manager.release()
+            await manager.release(lease)
             self.assertEqual(await asyncio.wait_for(task, timeout=2), "acquired")
             self.assertEqual(manager.waiting, 0)
 
         asyncio.run(_run())
+
+
+class ClassifiedAdmissionTests(unittest.IsolatedAsyncioTestCase):
+    async def test_mixed_capacity_examples_and_error_priority(self):
+        cases = [(3, 4, None, 4017), (5, 3, 4013, 4013), (8, 0, 4013, 4013),
+                 (4, 4, 4013, 4013), (4, 3, None, None), (0, 4, None, 4017)]
+        for a_count, b_count, a_error, b_error in cases:
+            for category, expected in [("A", a_error), ("B", b_error)]:
+                with self.subTest(a=a_count, b=b_count, category=category):
+                    manager = AudioSlotManager(8, spk_emo_capacity=4)
+                    leases = [await manager.acquire("A") for _ in range(a_count)]
+                    leases += [await manager.acquire("B") for _ in range(b_count)]
+                    before = manager.snapshot()
+                    if expected:
+                        with self.assertRaises(QueueFullError) as caught:
+                            await manager.acquire(category)
+                        self.assertEqual(caught.exception.code, expected)
+                        self.assertEqual(manager.snapshot(), before)
+                        if expected == 4017:
+                            self.assertIsInstance(caught.exception, SpkEmoQueueFullError)
+                            self.assertIn("spk_emo", caught.exception.message)
+                            self.assertIn("4/4", caught.exception.message)
+                        else:
+                            self.assertIn("8/8", caught.exception.message)
+                    else:
+                        leases.append(await manager.acquire(category))
+                        self.assertEqual(manager.active, a_count + b_count + 1)
+                        self.assertEqual(manager.active_b, b_count + int(category == "B"))
+                    for lease in leases:
+                        await manager.release(lease)
+                    self.assertEqual((manager.active, manager.active_b, manager.waiting), (0, 0, 0))
+
+    async def test_lease_classification_is_immutable_and_release_is_idempotent(self):
+        from dataclasses import FrozenInstanceError
+
+        manager = AudioSlotManager(2, spk_emo_capacity=4)
+        first = await manager.acquire("B")
+        second = await manager.acquire("A")
+        with self.assertRaises(FrozenInstanceError):
+            first.category = "A"
+        other = AudioSlotManager(1)
+        await other.release(first)
+        self.assertEqual((manager.active, manager.active_b), (2, 1))
+        await manager.release(first)
+        await manager.release(first)
+        self.assertEqual((manager.active, manager.active_b), (1, 0))
+        await manager.release(second)
 
 
 class SpeakerClusteringTests(unittest.TestCase):
@@ -320,6 +369,7 @@ class V2RouteTests(unittest.TestCase):
     @patch("api.routes.asr_v2.get_slot_manager")
     def test_queue_full_returns_4013(self, mock_slots):
         manager = SimpleNamespace()
+        manager.snapshot = AudioSlotManager(8).snapshot
         manager.acquire = AsyncMock(
             side_effect=QueueFullError(
                 active=8, capacity=8
@@ -342,6 +392,7 @@ class V2RouteTests(unittest.TestCase):
     @patch("api.routes.asr_v2.get_slot_manager")
     def test_queue_timeout_returns_4010(self, mock_slots):
         manager = SimpleNamespace()
+        manager.snapshot = AudioSlotManager(8).snapshot
         manager.acquire = AsyncMock(side_effect=QueueTimeoutError())
         manager.release = AsyncMock()
         mock_slots.return_value = manager
@@ -385,6 +436,11 @@ class V2RouteTests(unittest.TestCase):
 
 class RepetitionGuardPipelineTests(unittest.TestCase):
     """复读修复在 v2 链路上的端到端行为（打桩 Qwen，行为确定）。"""
+
+    def setUp(self):
+        features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
+        features.start()
+        self.addCleanup(features.stop)
 
     def _run(self, qwen_text, segments, **request_overrides):
         from api.routes.asr_qwen_common import run_qwen_asr
@@ -632,6 +688,11 @@ class QwenClientErrorMappingTests(unittest.TestCase):
 
 class FaultInjectionTests(unittest.TestCase):
     """异常注入：角色/情绪失败必须回退为 null，且不影响转写结果。"""
+
+    def setUp(self):
+        features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
+        features.start()
+        self.addCleanup(features.stop)
 
     def _run_chain(self, ctx, client, speaker=None, emotion=None, reader=None):
         from api.routes.asr_qwen_common import run_qwen_asr

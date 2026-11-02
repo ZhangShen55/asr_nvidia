@@ -176,9 +176,14 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `4010` | 请求排队等待超时（`queue_wait_timeout_s > 0` 时可能触发） |
 | `4011` | Qwen 服务不可用或未发现可用模型 |
 | `4012` | Qwen 服务调用失败（超时、连接错误、重试耗尽） |
-| `4013` | 处理队列已满（同时处理的音频数达到 `audio_concurrency`）；消息会附带当前音频并发 `active/capacity` |
+| `4013` | 总音频处理容量满（消息包含总活动数/上限），或等待模式的共享等待队列满 |
+| `4015` | 请求的 CAM++ 说话人/角色识别能力未启用或没有可用实例 |
+| `4016` | 请求的 emotion2vec 情绪能力未启用或没有可用实例 |
+| `4017` | 仅 B 类增强容量满，消息包含 `spk_emo` 和当前增强活动数/上限 |
+| `4018` | 同时请求说话人与情绪能力，但两个功能开关均关闭 |
 
-> 默认 `queue_wait_timeout_s = 0`，即第 9 个并发音频**立即**返回 `4013`，不做静默排队。
+> 默认 `queue_wait_timeout_s = 0`：总容量满立即返回 `4013`；总容量有余量但 B 容量满返回 `4017`。
+> 两项容量同时满时优先返回 `4013`。能力开关校验早于容量检查。
 
 ## 配置
 
@@ -207,8 +212,9 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `model` | `""` | 模型名；留空表示启动时从 `/v1/models` 自动发现（不需要 API Key） |
 | `segment_concurrency` | `16` | 单个音频内同时发往 Qwen 的 VAD 段请求数 |
 | `request_concurrency` | `128` | 所有音频合计发往 Qwen 的请求数上限 |
-| `audio_concurrency` | `8` | 同时处理的音频文件数 |
-| `queue_max_size` | `64` | 等待队列容量 |
+| `audio_concurrency` | `8` | A+B 同时处理的音频总数 |
+| `audio_spk_emo_concurrency` | `4` | 请求任一增强能力的 B 类整音频上限，必须为正整数 |
+| `queue_max_size` | `64` | A+B 共享等待队列容量 |
 | `queue_wait_timeout_s` | `0` | `0` = 队列满立即拒绝；`>0` 才排队等待，超时返回 `4010` |
 | `request_timeout_s` | `120` | 单次 Qwen 请求超时（秒） |
 | `connect_timeout_s` | `10` | Qwen 服务连接超时（秒） |
@@ -224,13 +230,70 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `vad_low_volume_rms_dbfs_thres` | `-100.0` | 段级 RMS dBFS 门限；低于该值可判定为低音量，范围 `-100~0` |
 | `vad_low_volume_filter_enabled` | `false` | 是否在创建 clip/Qwen 请求前启用低音量过滤；修改后重启生效 |
 
-三层并发参数的区别：
+音频与段级并发参数的区别：
 
 | 参数 | 含义 | 默认值 |
 |------|------|--------|
-| `audio_concurrency` | 同时处于处理中的**音频文件**数量 | 8 |
+| `audio_concurrency` | 同时处于处理中的 A+B **音频文件**总数 | 8 |
+| `audio_spk_emo_concurrency` | 总音频中请求增强能力的 B 类音频数量 | 4 |
 | `segment_concurrency` | **单个音频内**同时发往 Qwen 的 VAD 段请求数 | 16 |
 | `request_concurrency` | **所有音频合计**发往 Qwen 的请求数上限 | 128 |
+
+上述配置均在重启后生效，每个服务实例独立限流。旧配置缺少新增的
+`audio_spk_emo_concurrency` 时同样采用 **4**，升级后增强音频并发会受此上限限制。
+B 上限允许大于总上限，实际 B 并发至多为 `min(audio_concurrency, audio_spk_emo_concurrency)`；
+配置值不会被静默截断。0 不能用于关闭增强能力，应使用 `[features]` 开关。
+
+三个参数 `showSpk`、`showEmotion`、`showRoleIdentify` 全为 false 的音频称为 A；
+任一个为 true 称为 B。每个 B 同时占用一个总音频名额和一个增强名额，即使开启多项也只计一个 B。
+不为 B 预留总名额，不改变 Qwen 段级信号量或模型设备数组决定的推理容量。
+
+总上限 8、B 上限 4、默认不等待时：
+
+| 正在处理 | 新 A | 新 B |
+|---|---|---|
+| 3A + 4B | 正常处理 | `4017` |
+| 5A + 3B | `4013` | `4013` |
+| 8A | `4013` | `4013` |
+| 4A + 4B | `4013` | `4013` |
+
+`queue_wait_timeout_s > 0` 时，暂时满额的请求进入 A+B 共享等待队列，同类按到达顺序处理。
+等待 B 不预占任何处理名额；B 因增强容量满而受阻时，A 可绕过它使用空闲总名额。
+当较早 B 已满足两类容量条件时，它优先于后到 A。共享等待队列满返回 `4013`，
+等待截止仍未取得完整名额返回 `4010`；`queue_max_size=0` 只允许立即获准的请求。
+
+处理名额从准入成功持有至音频准备、VAD、转写、增强推理、后处理及临时文件清理结束。
+成功、失败和取消都会回收；取消会等待已经启动且无法立即中断的线程或 VAD 工作必要收尾，
+再清理文件和归还名额，因此取消完成可能晚于取消信号发出。
+
+`GET /get_status` 用同一次快照返回音频准入状态，例如正在处理 `5A+3B`、等待 `1A+2B`：
+
+```json
+{
+  "audioConcurrency": {"configured_total": 8, "active_total": 8, "waiting_total": 3},
+  "spkEmoConcurrency": {"configured": 4, "active": 3, "waiting": 2}
+}
+```
+
+A 的活动数和等待数分别用总数减去 B 数。这里的 B 等待按完整音频计数；
+`localModels` 中的 `waiting` 则按等待 CAM++ 或 emotion2vec 的分段计数。
+首次请求前活动数和等待数均为 0，查询不会加载模型，配置关闭而被拒绝的请求不增加计数。
+
+新增 `[V2准入]` 日志记录 `request_id`、`category`（A/B）、`outcome`、`reason`、
+`code` 和两组容量 `snapshot`。既有 `[V2 耗时]` 阶段日志保留，音频准入等待通过
+遥测 `phases.audio_wait_ms` 记录，与模型池分段等待的 `spk_wait_ms` / `emo_wait_ms` 分开。
+`admission.outcome` 为 `admitted`、`rejected`、`timeout` 或 `cancelled`；
+未完成准入判定时为 `not_attempted`。准入后处理失败或取消仍为 `admitted`，
+最终结果由请求 `status` 表达。快照在授予或拒绝时取得，等待取消时为回收后的状态。
+
+`resourceDiagnostics.requestTelemetry` 增加 `admission.by_class`（A/B 请求数）和
+`admission.rejections_by_reason`（按原因计数），并以 `window=retained_events` 标明统计窗口。
+原因包括 `total_full`、`spk_emo_full`、`waiting_full`、`wait_timeout`、
+`role_disabled`、`emotion_disabled`、`both_disabled`、`cancelled`、`qwen_disabled`。
+拒绝汇总包含准入前的超时与取消；准入后的失败不计作拒绝。
+遥测最多保留 4096 个请求事件，包含近期明细的诊断快照最多输出 20 条，
+状态接口只输出汇总；这些是保留窗口统计，并非进程启动以来的累计值。
+新增日志与遥测不保存音频、转写正文或模型对象。
 
 ### `[model_device_pool]` 配置项
 
@@ -274,10 +337,15 @@ v2 链路的真实 `role` 与 `emotion` 由本机模型给出，加载与计算�
 - **加载**：CAM++ 与 emotion2vec **各自独立**，分别由 `[features].open_v2_role` 与
   `[features].open_v2_emotion` 控制（默认均为 `true`）。关闭任一个，另一个仍可正常加载。
   emotion2vec 以**半精度（fp16）**加载，权重约占 1 GB。
-- **计算**：由请求参数 `showSpk` / `showEmotion` 触发（默认均为 `false`）。模型未加载而请求开启了
-  对应开关时，对应字段回退为 `null`，不影响转写结果。
+- **计算**：`showSpk` 或 `showRoleIdentify` 请求说话人能力，`showEmotion` 请求情绪能力，
+  三个参数默认均为 `false`。未请求的能力对应字段为 `null`，不触发其模型加载。
+- **配置拒绝**：请求要求的能力被 `[features]` 关闭时，在音频准入前返回 CAM++ `4015` 或
+  emotion2vec `4016`；同时请求两项且两项都关闭返回 `4018`。设备数组非空也不能覆盖功能开关。
+  请求整体失败，不开始转写，不以 `null` 字段成功返回；仅请求已开启的另一项能力可正常处理。
+  两个功能开关均关闭且三个请求参数均为 `false` 时，仍可普通转写。
 - **并行**：role / emotion 与 Qwen 转写通过 `asyncio.gather` 并行执行，不是「转写完成后再算」。
-  任一路失败则该字段回退为 `null`，转写结果照常返回。
+  已开启且有健康实例的模型在某个分段推理失败时，该段对应字段回退为 `null`，转写照常返回；
+  模型池为空或全部加载失败则返回对应的 `4015` / `4016`，不使用组合关闭码。
 
 ### 进程名与显存定位
 

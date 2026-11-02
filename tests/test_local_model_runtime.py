@@ -1,12 +1,14 @@
 """本地模型运行时约定：进程命名、状态接口的模型显存明细与配置默认值。"""
 
 import os
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import AsyncMock, patch
 
 from fastapi.testclient import TestClient
 
-from core.config import settings
+from core.config import Settings, settings
 from core.status import APP_VERSION, ID_ENGINE_PLACEHOLDER
 
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -81,16 +83,23 @@ class StatusContractTests(unittest.TestCase):
 
 
 class ConfigDefaultsTests(unittest.TestCase):
+    def setUp(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        config = Path(directory.name) / "config.toml"
+        config.write_text("", encoding="utf-8")
+        self.defaults = Settings(config_path=str(config))
+
     def test_v2_switches_default_true(self):
-        self.assertFalse(settings.open_v2_role)
-        self.assertFalse(settings.open_v2_emotion)
+        self.assertTrue(self.defaults.open_v2_role)
+        self.assertTrue(self.defaults.open_v2_emotion)
 
     def test_instance_count_default_is_one(self):
-        self.assertEqual(settings.instance_count, 1)
+        self.assertEqual(self.defaults.instance_count, 1)
 
     def test_log_limits_present(self):
-        self.assertEqual(settings.log_max_days, 7)
-        self.assertEqual(settings.log_max_size_mb, 100)
+        self.assertEqual(self.defaults.log_max_days, 7)
+        self.assertEqual(self.defaults.log_max_size_mb, 100)
 
 
 class ConfigFileStructureTests(unittest.TestCase):

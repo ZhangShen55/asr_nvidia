@@ -8,12 +8,12 @@ import os
 import time
 import uuid
 import logging
-import asyncio
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import List, Optional, Tuple, Any
 
 from entity.data import AsrRequestParams
+from core.async_utils import await_completion, run_in_thread
 from utils.audio_utils import (
     preprocess_audio,
     write_audio_bytes_to_temp_file,
@@ -127,7 +127,7 @@ async def prepare_asr_context(
         filename = request.audioFile.filename
         if suffix == "m4a":
             suffix = "mp4"
-        audio_bytes = await preprocess_audio(content, suffix, force_resample=False)
+        audio_bytes = await await_completion(preprocess_audio(content, suffix, force_resample=False))
         if len(audio_bytes) < 1024:
             logger.error(
                 f"音频文件过小，疑似空白音频：{request.audioFile.filename}，"
@@ -152,12 +152,16 @@ async def prepare_asr_context(
             audio_bytes, file_name=filename, suffix=f"{suffix}", unique=unique_tmp
         )
         tmp_paths.append(tmp_path)
-        audio_tensor, sample_rate = await asyncio.to_thread(load_audio_tensor, tmp_path)
+        audio_tensor, sample_rate = await run_in_thread(load_audio_tensor, tmp_path)
     except Exception as exc:
         cleanup_temp_files(tmp_paths)
         logger.error("准备标准化音频失败，文件名:%s，错误信息：%s", filename, exc)
         update_fail_task()
         return {"msg": "读取音频文件发生错误", "code": 4002}, None
+    except BaseException:
+        # context 尚未交给路由时，准备阶段自行清理取消产生的部分文件。
+        cleanup_temp_files(tmp_paths)
+        raise
     audio_total_s = audio_tensor.shape[-1] / sample_rate if sample_rate else 0.0
     task_id = f"{generate_task_id()}_{filename}"
 

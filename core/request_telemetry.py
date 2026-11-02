@@ -9,6 +9,7 @@ from __future__ import annotations
 import threading
 import time
 import uuid
+from copy import deepcopy
 from collections import deque
 from datetime import datetime, timezone
 from typing import Any, Mapping
@@ -17,6 +18,29 @@ from typing import Any, Mapping
 _MAX_EVENTS = 4096
 _LOCK = threading.RLock()
 _EVENTS: deque[dict[str, Any]] = deque(maxlen=_MAX_EVENTS)
+_ADMISSION_REASONS = (
+    "total_full", "spk_emo_full", "waiting_full", "wait_timeout",
+    "role_disabled", "emotion_disabled", "both_disabled", "cancelled", "qwen_disabled",
+)
+_ADMISSION_OUTCOMES = ("admitted", "rejected", "timeout", "cancelled", "not_attempted")
+
+
+def _admission_values(admission: Mapping[str, Any]) -> dict[str, Any]:
+    """只保留有限分类与容量数字，不接受请求正文或任意维度键。"""
+    capacity = {}
+    source = admission.get("snapshot") or {}
+    for group, keys in (
+        ("audioConcurrency", ("configured_total", "active_total", "waiting_total")),
+        ("spkEmoConcurrency", ("configured", "active", "waiting")),
+    ):
+        values = source.get(group, {})
+        capacity[group] = {key: values[key] for key in keys if type(values.get(key)) is int}
+    return {
+        "category": admission.get("category") if admission.get("category") in ("A", "B") else None,
+        "outcome": admission.get("outcome") if admission.get("outcome") in _ADMISSION_OUTCOMES else None,
+        "reason": admission.get("reason") if admission.get("reason") in _ADMISSION_REASONS else None,
+        "snapshot": capacity,
+    }
 
 
 def _percentile(values: list[float], quantile: float) -> float | None:
@@ -57,6 +81,7 @@ def record_request(
     valid_segments: int | None = None,
     phases: Mapping[str, Any] | None = None,
     error: str | None = None,
+    admission: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     ended = time.perf_counter() if ended_at is None else ended_at
     phase_values = {
@@ -78,14 +103,16 @@ def record_request(
         "phases": phase_values,
         "error": error,
     }
+    if admission is not None:
+        event["admission"] = _admission_values(admission)
     with _LOCK:
         _EVENTS.append(event)
-    return event
+    return deepcopy(event)
 
 
 def snapshot(*, include_events: bool = True) -> dict[str, Any]:
     with _LOCK:
-        events = [dict(event) for event in _EVENTS]
+        events = deepcopy(list(_EVENTS))
     completed = [event for event in events if event.get("status") == "completed"]
     failed = [event for event in events if event.get("status") != "completed"]
     duration_values = [float(event.get("duration_ms", 0.0)) for event in events]
@@ -103,12 +130,27 @@ def snapshot(*, include_events: bool = True) -> dict[str, Any]:
         "phases_ms": {
             key: _phase_summary(events, key)
             for key in (
-                "vad_ms", "cut_sum_ms", "cut_wall_ms", "segment_ms", "qwen_wait_ms",
+                "audio_wait_ms", "vad_ms", "cut_sum_ms", "cut_wall_ms", "segment_ms", "qwen_wait_ms",
                 "qwen_ms", "spk_wait_ms", "spk_ms", "emo_wait_ms", "emo_ms",
                 "cluster_ms", "itn_ms", "cleanup_ms",
             )
         },
         "last_error": failed[-1].get("error") if failed else None,
+        "admission": {
+            "window": "retained_events",
+            "by_class": {
+                category: sum(event.get("admission", {}).get("category") == category for event in events)
+                for category in ("A", "B")
+            },
+            "rejections_by_reason": {
+                reason: sum(
+                    event.get("admission", {}).get("reason") == reason
+                    and event.get("admission", {}).get("outcome") in ("rejected", "timeout", "cancelled")
+                    for event in events
+                )
+                for reason in _ADMISSION_REASONS
+            },
+        },
     }
     if include_events:
         result["recent"] = events[-20:]

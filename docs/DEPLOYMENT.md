@@ -71,6 +71,53 @@ Maximum concurrency for XX sequences per request: ...
 
 ## 2. 运维
 
+### 音频准入配置迁移
+
+每个 uvicorn 实例独立执行 `[qwen_asr].audio_concurrency`（A+B 总音频数，默认 8）和
+`audio_spk_emo_concurrency`（增强 B 类音频数，默认 4）两条限制，配置修改需重启。
+旧配置缺少新增字段时也使用 4，升级前需核对客户端增强请求比例及所需上限。
+新增字段只接受正整数，非法值在 VAD 预热和服务就绪前报错；关闭功能使用 `[features]`。
+B 上限可以大于总上限，实际最多为 `min(audio_concurrency, audio_spk_emo_concurrency)`，
+状态接口保留原配置值。多实例部署的限制按进程分别生效，不是整个部署的共享总额。
+
+`showSpk`、`showEmotion`、`showRoleIdentify` 全 false 为 A，任一 true 为 B。
+B 在同一个准入动作中占用总音频和增强音频名额，增强上限不调整模型池段级推理容量。
+在默认不等待、总上限 8/B 上限 4 时：`3A+4B` 可接收 A，新 B 返回 `4017`；
+`5A+3B`、`8A`、`4A+4B` 的新 A/B 均返回总容量满 `4013`，不为 B 预留总名额。
+等待模式共享 `queue_max_size`，允许 A 绕过被 B 容量阻塞的 B；同类 FIFO，较早可处理请求优先。
+共享等待满为 `4013`，等待超时为 `4010`，等待请求不占活动名额。
+
+### 音频准入状态与诊断
+
+使用 `GET /get_status` 查看两组准入容量。正在处理 `5A+3B`、等待 `1A+2B` 时：
+
+```json
+{
+  "audioConcurrency": {"configured_total": 8, "active_total": 8, "waiting_total": 3},
+  "spkEmoConcurrency": {"configured": 4, "active": 3, "waiting": 2}
+}
+```
+
+两组字段来自同一次快照，A 的使用量等于总量减 B 量。首次请求前均为零，
+能力关闭的请求在准入前被拒绝，查询状态不会触发模型加载。
+`spkEmoConcurrency.waiting` 是等待整音频名额的 B 请求数，
+`localModels.*.waiting` 是等待单模型实例的分段数，不能相加作为音频排队数。
+
+`[V2准入]` 日志包含 `request_id`、`category`、`outcome`、`reason`、`code`、`snapshot`，
+用于区分 `total_full`（4013）、`spk_emo_full`（4017）、`waiting_full`（4013）、
+`wait_timeout`（4010）以及 `role_disabled` / `emotion_disabled` / `both_disabled`
+（4015 / 4016 / 4018）。另有 `cancelled` 和 `qwen_disabled`。
+准入时的快照用于复核容量，等待取消的快照在回收后取得；原 `[V2 耗时]` 字段保留。
+准入后的处理失败、取消仍记录 `outcome=admitted`，最终请求状态分别为 `failed`、`cancelled`。
+
+请求遥测新增 `admission` 对象（`category`、`outcome`、`reason`、`snapshot`），
+`phases.audio_wait_ms` 表示整音频准入等待，独立于分段 `spk_wait_ms` / `emo_wait_ms`。
+`resourceDiagnostics.requestTelemetry` 提供 `admission.by_class` 的 A/B 请求数、
+`admission.rejections_by_reason` 的拒绝/超时/准入前取消计数及阶段耗时分位数。
+所有汇总标记 `window=retained_events`，基于最近最多 4096 个事件；
+含明细的诊断快照最多返回近期 20 条，状态接口仅提供汇总，不是历史累计计数。
+新增记录不包含音频、转写正文或模型对象。
+
 ### 2.1 用 nvidia-smi 定位本服务的显存
 
 主服务进程承载 CAM++ 与 emotion2vec，进程名为 `asr-offline-model`；VAD 由独立的 `asr-offline-vad` worker 进程承载：
@@ -117,6 +164,13 @@ emotion2vec_devices = ["cuda:1"]
 当 `speech_campplus_devices = []` 时，`showSpk=true` 的 v2 请求返回 `4015`；当
 `emotion2vec_devices = []` 时，`showEmotion=true` 的请求返回 `4016`。未请求对应能力时，
 转写仍可正常执行。两种空数组都配置时，服务仍可启动，不会加载这两个模型。
+
+功能开关优先于设备配置：`[features].open_v2_role=false` 时，`showSpk=true` 或
+`showRoleIdentify=true` 返回 `4015`；`open_v2_emotion=false` 时，`showEmotion=true`
+返回 `4016`。同时请求两项且两项都关闭返回 `4018`；同时请求两项但只有一项关闭时，
+返回该关闭能力的单项错误。校验在音频准入前执行，非空设备数组不会触发关闭模型的加载或推理。
+三个请求参数默认均为 false，只请求已开启能力可继续处理，全部 false 时普通转写照常。
+配置关闭不会以 null 字段成功转写；null 适用于未请求的能力或已开启且有健康实例的模型段级推理失败。
 
 同一模型可以在数组中显式指定不同 GPU，实例按数组位置加载，不会自动迁移。使用
 `["cuda:0"]` 即可回到单副本；旧版 `speech_campplus = 2` / `emotion2vec = 2` 仍兼容读取，
