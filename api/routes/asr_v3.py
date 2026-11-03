@@ -17,7 +17,7 @@ from core.qwen_asr_queue import QueueFullError, QueueTimeoutError, get_slot_mana
 from core.request_telemetry import new_request_id, record_request
 from core.vad_pool import VadPoolError
 from entity.data import AsrRequestParams, get_asr_params
-from utils.asr_stats import update_fail_task
+from utils.asr_stats import add_processing_task, remove_processing_task, update_fail_task
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -33,6 +33,7 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
     response = None
     ctx = None
     lease = None
+    processing_registered = False
     cleanup_ms = 0.0
     cancelled = False
     failed = False
@@ -57,6 +58,13 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
             try:
                 lease = await slots.acquire(capabilities.category)
                 admission.update(outcome="admitted", snapshot=lease.snapshot)
+                try:
+                    # request_id 在准入前生成，覆盖音频准备、VAD、推理和清理的完整处理周期。
+                    add_processing_task(request_id)
+                    processing_registered = True
+                except Exception:
+                    # 任务列表是运维统计，写入失败不能阻断已经准入的业务请求。
+                    logger.exception("[V3] 写入处理中任务列表失败 request_id=%s", request_id)
             finally:
                 audio_wait_ms = (time.perf_counter() - wait_started) * 1000
         except (QueueFullError, QueueTimeoutError) as exc:
@@ -96,7 +104,15 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
                         cleanup_ms = (time.perf_counter() - cleanup_started) * 1000
             finally:
                 if lease is not None:
-                    await await_completion(slots.release(lease))
+                    try:
+                        await await_completion(slots.release(lease))
+                    finally:
+                        if processing_registered:
+                            try:
+                                remove_processing_task(request_id)
+                            except Exception:
+                                # 释放和业务结果不能被统计文件故障影响；下次启动会清理残留。
+                                logger.exception("[V3] 移除处理中任务失败 request_id=%s", request_id)
     except asyncio.CancelledError:
         cancelled = True
         if lease is None:

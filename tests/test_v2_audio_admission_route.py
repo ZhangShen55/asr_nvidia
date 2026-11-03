@@ -117,6 +117,8 @@ class LeaseRouteTests(unittest.IsolatedAsyncioTestCase):
                     patch.object(route, "prepare_asr_context", new=prepare), \
                     patch.object(route, "run_qwen_asr", new=run), \
                     patch.object(route, "cleanup_temp_files", side_effect=cleanup), \
+                    patch.object(route, "add_processing_task") as add_processing, \
+                    patch.object(route, "remove_processing_task") as remove_processing, \
                     patch.object(manager, "release", side_effect=release) as release_mock:
                 if "cancel" in scenario:
                     with self.assertRaises(asyncio.CancelledError):
@@ -129,8 +131,24 @@ class LeaseRouteTests(unittest.IsolatedAsyncioTestCase):
                     expected_code = {"prepare_error": 4002, "business_error": 4012, "exception": 4005}.get(scenario)
                     self.assertEqual(payload.get("code"), expected_code)
                 release_mock.assert_awaited_once()
+                add_processing.assert_called_once()
+                remove_processing.assert_called_once_with(add_processing.call_args.args[0])
                 self.assertEqual(events, ["release"] if scenario.startswith("prepare_") else ["cleanup", "release"])
                 self.assertEqual((manager.active, manager.active_b, manager.waiting), (0, 0, 0))
+
+    async def test_admission_rejection_does_not_add_processing_task(self):
+        manager = AudioSlotManager(1)
+        held = await manager.acquire("A")
+        try:
+            with patch.object(route, "get_slot_manager", return_value=manager), \
+                    patch.object(route, "add_processing_task") as add_processing, \
+                    patch.object(route, "remove_processing_task") as remove_processing:
+                response = await route.api_asr_v3(make_request())
+            self.assertEqual(response["code"], 4013)
+            add_processing.assert_not_called()
+            remove_processing.assert_not_called()
+        finally:
+            await manager.release(held)
 
 
 class AdmissionTraceTests(unittest.IsolatedAsyncioTestCase):

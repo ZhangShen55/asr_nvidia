@@ -12,7 +12,8 @@ from core.qwen_asr_queue import AudioSlotManager
 
 class AdmissionStatusTests(unittest.IsolatedAsyncioTestCase):
     def payload(self, manager):
-        stats = dict(offline=2, online=3, total_failed_tasks=1, queued_task_ids=[], processing_task_ids=[])
+        stats = dict(offline=2, online=3, total_failed_tasks=1, queued_task_ids=[],
+                     processing_task_ids=["request-in-flight"])
         with patch.object(status, "get_slot_manager", return_value=manager), \
                 patch.object(manager, "snapshot", wraps=manager.snapshot) as snapshot, \
                 patch.object(status, "status_snapshot", return_value={}), \
@@ -23,8 +24,9 @@ class AdmissionStatusTests(unittest.IsolatedAsyncioTestCase):
             load.assert_not_awaited()
         for key in ("localModels", "vadPool", "resourceDiagnostics", "deployment"):
             self.assertIn(key, result)
-        for key in ("onlineDone", "queuedTaskList", "processingTaskList"):
+        for key in ("onlineDone", "queuedTaskList"):
             self.assertNotIn(key, result)
+        self.assertEqual(result["processingTaskList"], ["request-in-flight"])
         self.assertEqual(result["totalHaveDoneProcessTasks"], 5)
         self.assertIn("config_path", result["deployment"])
         return result

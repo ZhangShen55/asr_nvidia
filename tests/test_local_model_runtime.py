@@ -30,8 +30,9 @@ class StatusContractTests(unittest.TestCase):
         self.assertEqual(payload["id_engine"], ID_ENGINE_PLACEHOLDER)
         self.assertEqual(payload["appVersion"], APP_VERSION)
         self.assertEqual(payload["appVersion"], "latest")
-        for key in ("onlineDone", "queuedTaskList", "processingTaskList"):
+        for key in ("onlineDone", "queuedTaskList"):
             self.assertNotIn(key, payload)
+        self.assertEqual(payload["processingTaskList"], [])
 
     def test_status_contains_local_model_details(self):
         payload = self._status()
