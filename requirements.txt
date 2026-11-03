@@ -8,7 +8,7 @@ fastapi>=0.95.1
 aiofiles
 uvicorn
 requests
-httpx                 # Qwen3-ASR（/v2/seacraft_asr）OpenAI 兼容接口异步客户端
+httpx                 # Qwen3-ASR（/v3/seacraft_asr）OpenAI 兼容接口异步客户端
 torch>=1.13
 torchaudio
 #ffmpeg
@@ -21,7 +21,7 @@ pydub
 tomli # TOML 配置文件解析
 WeTextProcessing==1.2.0 # 文本规范化（ITN）规则包，pynini 由 conda-forge 安装
 setproctitle==1.3.8 # 服务进程名覆写（nvidia-smi 中显示 asr-offline-model）
-tqdm # TTY 下显示 v2 每音频有效 VAD 段进度
+tqdm # TTY 下显示 v3 每音频有效 VAD 段进度
 #容器环境
 # datasets                 2.21.0 
 # modelscope               1.25.0

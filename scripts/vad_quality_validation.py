@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""低音量过滤与 Qwen v2 质量验证工具。
+"""低音量过滤与 Qwen v3 质量验证工具。
 
 本工具只读目标 WAV/Paraformer JSON，服务压测只写指定输出目录和日志快照。
 

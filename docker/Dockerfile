@@ -18,11 +18,11 @@ RUN pip install --upgrade pip setuptools wheel \
        --extra-index-url https://pypi.org/simple \
        torch==2.6.0+cu124 torchaudio==2.6.0+cu124
 COPY requirements-pip.txt requirements-pip-runtime.txt requirements-pip-extra.txt requirements-tensorrt.txt /tmp/
-RUN pip install --prefer-binary -r /tmp/requirements-pip.txt \
-    && pip install --prefer-binary -r /tmp/requirements-pip-runtime.txt \
-    && pip install --prefer-binary pynini \
-    && pip install --prefer-binary --no-deps -r /tmp/requirements-pip-extra.txt \
-    && pip install --prefer-binary -r /tmp/requirements-tensorrt.txt
+RUN pip install --prefer-binary --extra-index-url https://pypi.org/simple -r /tmp/requirements-pip.txt \
+    && pip install --prefer-binary --extra-index-url https://pypi.org/simple -r /tmp/requirements-pip-runtime.txt \
+    && pip install --prefer-binary --extra-index-url https://pypi.org/simple pynini \
+    && pip install --prefer-binary --extra-index-url https://pypi.org/simple --no-deps -r /tmp/requirements-pip-extra.txt \
+    && pip install --prefer-binary --extra-index-url https://pypi.org/simple -r /tmp/requirements-tensorrt.txt
 COPY . .
 RUN chmod +x scripts/build_cython.sh \
     && ./scripts/build_cython.sh /src
@@ -42,6 +42,10 @@ FROM ${BASE_IMAGE} AS runtime
 ENV DEBIAN_FRONTEND=noninteractive \
     PATH=/opt/venv/bin:$PATH \
     CONFIG_PATH=/config.toml \
+    ASR_DEPLOYMENT_PROFILE=cuda-tensorrt-fp16 \
+    ASR_RUNTIME_DIR=/tmp/asr-offline \
+    ASR_STATS_PATH=/tmp/asr-offline/asr_stats.json \
+    PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_NO_CACHE_DIR=1
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -49,20 +53,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=builder /opt/venv /opt/venv
-COPY --from=builder /src/main.py /src/start.sh /src/config.toml /app/
+COPY --from=builder /src/main.py /src/start.sh /app/
+COPY --from=builder /src/config.toml /config.toml
 COPY --from=builder /src/model_status_runtime.py /app/model_status_runtime.py
 COPY --from=builder /src/telemetry_runtime.py /app/telemetry_runtime.py
-COPY --from=builder /src/cython-build.json /app/cython-build.json
 COPY --from=builder /src/core /app/core
 COPY --from=builder /src/api /app/api
 COPY --from=builder /src/utils /app/utils
 COPY --from=builder /src/entity /app/entity
-COPY --from=builder /src/scripts/check_tensorrt_assets.py /app/scripts/check_tensorrt_assets.py
 COPY --from=builder /src/model /app/model
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN chmod +x /app/start.sh \
+RUN mkdir -p "$ASR_RUNTIME_DIR" \
+    && chmod +x /app/start.sh \
     && /opt/venv/bin/python -m py_compile /app/main.py \
-    && CONFIG_PATH=/app/config.toml /opt/venv/bin/python /app/scripts/check_tensorrt_assets.py --config /app/config.toml \
     && find /app -type d -name __pycache__ -prune -exec rm -rf {} +
 EXPOSE 9000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \

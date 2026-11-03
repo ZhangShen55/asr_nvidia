@@ -30,7 +30,7 @@
 | 5A+3B（总计 8） | `4013 total_full` | `4013 total_full` |
 | 8A（总计 8） | `4013 total_full` | `4013 total_full` |
 
-当 `open_v2_role=false`、`open_v2_emotion=false` 且使用非 CUDA 强制 profile 进行能力关闭验证时：A 请求正常转写并返回两个字段 `null`；携带增强参数的 B 请求返回 `code=4018`，不会加载或调用增强模型。结果见 `test/tensorrt-backends-20261102/docker-v3-disabled-capability.json`。CUDA 强制 profile 本身要求两个增强模型启用，关闭时会在启动闸门阶段拒绝就绪。
+当 `open_v2_role=false`、`open_v2_emotion=false` 且使用非 CUDA 强制 profile 进行能力关闭验证时：A 请求正常转写并返回两个字段 `null`；携带增强参数的 B 请求返回 `code=4018`，不会加载或调用增强模型。结果见 `test/tensorrt-backends-20261102/docker-v3-disabled-capability.json`。CUDA 镜像通过内部 `ASR_DEPLOYMENT_PROFILE` 强制要求两个增强模型启用，关闭时会在启动闸门阶段拒绝就绪。
 
 ## 八份完整音频 TensorRT fp16 验收
 

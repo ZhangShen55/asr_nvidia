@@ -1,15 +1,12 @@
 # CUDA Docker v3 运行配置（模型随镜像交付，运行参数建议通过卷挂载覆盖）
 
-# 启用 CUDA profile 的启动闸门：要求 CAM++/emotion2vec 使用 fp16 TensorRT engine。
-deployment_profile = "cuda-tensorrt-fp16"
-
 # 容器内并行运行的 uvicorn 实例数量。
 # 每个实例各自持有一份本地模型权重，实例数即显存倍数，默认单实例。
 instance_count = 1
 
 # 日志保留策略：按天切分 + 单文件大小上限，超期的历史日志自动删除
 [log]
-log_path = "./asr_service.log"
+log_path = "/tmp/asr-offline/asr_service.log"
 max_days = 7
 max_size_mb = 100
 

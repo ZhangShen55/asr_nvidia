@@ -63,7 +63,7 @@ class AudioProgress:
                 self._bar = None
             else:
                 logger.info(
-                    "[V2 进度] %s 完成=%d/%d 失败=%d",
+                    "[V3 进度] %s 完成=%d/%d 失败=%d",
                     self.description,
                     self.completed,
                     self.total,

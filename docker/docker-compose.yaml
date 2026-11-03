@@ -5,6 +5,9 @@ services:
     restart: unless-stopped
     environment:
       CONFIG_PATH: /config.toml
+      ASR_DEPLOYMENT_PROFILE: cuda-tensorrt-fp16
+      ASR_RUNTIME_DIR: /tmp/asr-offline
+      ASR_STATS_PATH: /tmp/asr-offline/asr_stats.json
       NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
       NVIDIA_DRIVER_CAPABILITIES: ${NVIDIA_DRIVER_CAPABILITIES:-compute,utility}
     volumes:

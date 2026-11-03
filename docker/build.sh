@@ -25,7 +25,6 @@ cp "$REPO_ROOT/main.py" "$STAGE/main.py"
 cp "$REPO_ROOT/model_status_runtime.py" "$STAGE/model_status_runtime.py"
 cp "$REPO_ROOT/telemetry_runtime.py" "$STAGE/telemetry_runtime.py"
 cp "$REPO_ROOT/setup_cython.py" "$STAGE/setup_cython.py"
-cp "$REPO_ROOT/config.toml" "$STAGE/config.toml" 2>/dev/null || true
 cp "$REPO_ROOT/docker/config.toml" "$STAGE/config.toml"
 cp "$REPO_ROOT/docker/start.sh" "$STAGE/start.sh"
 cp "$REPO_ROOT/docker/nginx.conf" "$STAGE/nginx.conf"

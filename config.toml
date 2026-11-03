@@ -10,7 +10,7 @@ log_path = "./asr_service.log"
 max_days = 7
 max_size_mb = 100
 
-# 模型路径配置（只包含 v2 链路需要的三个模型）
+# 模型路径配置（只包含 v3 链路需要的三个模型）
 [model_paths]
 vad_model_dir = "./model/speech_fsmn_vad_zh-cn-16k-common-pytorch"
 spk_model_dir = "./model/speech_campplus_sv_zh_en_16k-common_advanced"
@@ -28,7 +28,7 @@ enable_0_to_9 = false
 remove_interjections = true
 failure_mode = "passthrough"
 
-# Qwen3-ASR 适配链路（/v2/seacraft_asr）
+# Qwen3-ASR 适配链路（/v3/seacraft_asr）
 [qwen_asr]
 enabled = true
 base_url = "http://127.0.0.1:8806"      # Qwen3-ASR 服务地址（IP + 端口）
@@ -67,7 +67,7 @@ repetition_min_chars = 120               # 判定长度异常的绝对下限字�
 repetition_min_unit = 4                  # 判定为循环的重复子串最小长度
 repetition_min_times = 3                 # 判定为循环的最小连续重复次数
 
-# 功能开关配置：v2 链路的说话人与情绪能力互相独立
+# 功能开关配置：v3 链路的说话人与情绪能力互相独立
 [features]
 open_v2_role = true      # CAM++ 说话人嵌入
 open_v2_emotion = true   # emotion2vec 情绪

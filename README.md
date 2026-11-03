@@ -22,9 +22,7 @@ FastAPI 自动文档位于 `/docs`、`/redoc` 和 `/openapi.json`。
 .
 ├── main.py                     # 应用装配 + 进程命名（asr-offline-model）
 ├── config.toml                 # 本地运行配置
-├── config.docker.toml          # 容器默认配置
-├── Dockerfile
-├── start.sh                    # Nginx + 多 uvicorn 实例
+├── docker/                     # CUDA 镜像、Compose 和部署说明
 ├── api/routes/
 │   ├── asr_v3.py               # /v3/seacraft_asr
 │   ├── asr_qwen_common.py      # v3 主链路：VAD → 并发转写 → 响应封装
@@ -426,7 +424,7 @@ Qwen3-ASR 由独立容器提供，**不进本镜像**。本服务通过「IP + 8
 docker run -d --name qwen3-asr-0.6b-8806 -p 8806:8000 qwenllm/qwen3-asr:latest
 ```
 
-然后把 `base_url` 指向该地址（`config.docker.toml` 默认写 `http://192.168.29.12:8806`），重启服务即可。
+然后把 `base_url` 指向该地址（`docker/config.toml` 默认写 `http://192.168.29.12:8806`），重启服务即可。
 本阶段不要求两个容器在同一 Docker 网络。
 
 Qwen 服务侧的吞吐扩容方式（`--api-server-count` 等参数）与实测收益见
@@ -434,45 +432,9 @@ Qwen 服务侧的吞吐扩容方式（`--api-server-count` 等参数）与实测
 
 ## Docker
 
-模型已经随镜像交付，默认运行不需要挂载模型目录。
-
-```bash
-docker build -t seacraft-asr:offline .
-```
-
-Dockerfile 会检查三个模型目录（FSMN-VAD、CAM++、emotion2vec）是否存在且非空。
-依赖安装保留 Docker 构建缓存，不使用 `--no-cache`。
-
-默认启动：
-
-```bash
-docker run -d \
-  --name seacraft-asr \
-  --gpus '"device=0"' \
-  -p 9000:9000 \
-  seacraft-asr:offline
-```
-
-对外入口为 Nginx `9000` 端口，容器内默认读取 `/config.toml`，设备为 `cuda:0`，单实例运行。
-
-挂载配置仅用于调整并发、设备、语速等参数时，模型路径应继续保留 `/app/model/`：
-
-```bash
-docker run -d \
-  --name seacraft-asr \
-  --gpus '"device=0"' \
-  -p 9000:9000 \
-  -v "$(pwd)/config.docker.toml:/config.toml:ro" \
-  -e CONFIG_PATH=/config.toml \
-  seacraft-asr:offline
-```
-
-## 验证
-
-```bash
-curl http://localhost:9000/get_status
-curl http://localhost:9000/openapi.json
-```
+CUDA/TensorRT v3 镜像的构建、配置挂载、Compose 启动、健康检查和回滚说明统一放在
+[`docker/README.md`](docker/README.md)。入口文件位于 `docker/`，根目录不再保留旧的
+CentOS Dockerfile、启动脚本或重复配置模板。
 
 ## License
 

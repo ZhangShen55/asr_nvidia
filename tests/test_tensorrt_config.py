@@ -51,10 +51,16 @@ class TensorRTConfigTests(unittest.TestCase):
             _ = cfg.vad_device
 
     def test_templates_have_disabled_switches_and_fp16(self):
-        for name in ("config.toml", "config.docker.toml"):
-            cfg = Settings(config_path=name)
-            cfg.validate_model_backends()
-            self.assertFalse(cfg.speech_campplus_use_tensorrt)
-            self.assertFalse(cfg.emotion2vec_use_tensorrt)
-            self.assertEqual(cfg.speech_campplus_tensorrt_precision, "fp16")
-            self.assertEqual(cfg.emotion2vec_tensorrt_precision, "fp16")
+        local = Settings(config_path="config.toml")
+        local.validate_model_backends()
+        self.assertFalse(local.speech_campplus_use_tensorrt)
+        self.assertFalse(local.emotion2vec_use_tensorrt)
+        self.assertEqual(local.speech_campplus_tensorrt_precision, "fp16")
+        self.assertEqual(local.emotion2vec_tensorrt_precision, "fp16")
+
+        docker = Settings(config_path="docker/config.toml")
+        docker.validate_model_backends()
+        self.assertTrue(docker.speech_campplus_use_tensorrt)
+        self.assertTrue(docker.emotion2vec_use_tensorrt)
+        self.assertEqual(docker.speech_campplus_tensorrt_precision, "fp16")
+        self.assertEqual(docker.emotion2vec_tensorrt_precision, "fp16")

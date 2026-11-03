@@ -3,7 +3,7 @@ import os
 import json
 import fcntl
 
-STATS_FILE = "./asr_stats.json"
+STATS_FILE = os.getenv("ASR_STATS_PATH", "./asr_stats.json")
 
 def init_stats_file():
     """确保 stats 文件存在，并初始化字段"""

@@ -14,7 +14,7 @@
 | `speech_campplus_sv_zh_en_16k-common_advanced/` | CAM++ 说话人特征与说话人分离 | `[model_paths].spk_model_dir` | `[features].open_v2_role = true` |
 | `emotion2vec_plus_large/` | emotion2vec 情绪识别 | `[model_paths].emotion_model_dir` | `[features].open_v2_emotion = true` |
 
-`open_v2_role` 与 `open_v2_emotion` 互相独立：任一为 `false` 时对应模型不会加载，也不占用显存。
+`open_v2_role` 与 `open_v2_emotion` 是 v3 配置中保留的兼容键，互相独立：任一为 `false` 时对应模型不会加载，也不占用显存。
 
 ## Qwen3-ASR 模型不在本目录
 

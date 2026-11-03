@@ -10,6 +10,8 @@ __pycache__/
 *.safetensors
 *.bin
 *.whl
+cython-build.json
+asr_stats.json
 /model/*
 !/model/README.md
 /test/*/

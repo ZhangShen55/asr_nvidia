@@ -24,10 +24,13 @@ class Settings:
 
     @property
     def deployment_profile(self) -> str:
-        """当前部署 profile；普通源码/非 Docker 运行返回空字符串。"""
-        value = self._cfg.get("deployment_profile", "")
+        """返回部署 profile；CUDA 镜像通过内部环境变量固定启用。"""
+        value = os.getenv("ASR_DEPLOYMENT_PROFILE")
+        if value is None:
+            # 兼容旧的外部配置，但新模板不再要求用户填写该内部标记。
+            value = self._cfg.get("deployment_profile", "")
         if not isinstance(value, str):
-            raise ValueError("deployment_profile 必须是字符串")
+            raise ValueError("ASR_DEPLOYMENT_PROFILE 必须是字符串")
         return value.strip().lower()
 
     @property
@@ -94,13 +97,13 @@ class Settings:
     # 功能开关 - 从嵌套的 [features] 部分读取
     @property
     def open_v2_role(self) -> bool:
-        """v2 链路的 CAM++ 说话人嵌入开关。"""
+        """v3 链路的 CAM++ 说话人嵌入开关（配置键保持兼容）。"""
         features = self._cfg.get("features", {})
         return bool(features.get("open_v2_role", True))
 
     @property
     def open_v2_emotion(self) -> bool:
-        """v2 链路的 emotion2vec 情绪开关。"""
+        """v3 链路的 emotion2vec 情绪开关（配置键保持兼容）。"""
         features = self._cfg.get("features", {})
         return bool(features.get("open_v2_emotion", True))
 
@@ -346,7 +349,7 @@ class Settings:
         """判定为循环所需的最小连续重复次数。"""
         return int(self._cfg.get("qwen_asr", {}).get("repetition_min_times", 3))
 
-    # v2 链路模型落卡 - 从顶级 [model_device_pool] 部分读取
+    # v3 链路模型落卡 - 从顶级 [model_device_pool] 部分读取
     def _model_backend_option(self, name: str, option: str):
         pool = self._cfg.get("model_device_pool", {})
         if not isinstance(pool, dict):

@@ -194,7 +194,7 @@ def write_audio_bytes_to_temp_file(audio_bytes: bytes, file_name: str, suffix=".
     safe_name = os.path.basename(file_name or "upload")
     prefix = f"seacraft-asr-{uuid.uuid4().hex}-"
     if unique:
-        prefix = f"seacraft-asr-v2-{uuid.uuid4().hex}-"
+        prefix = f"seacraft-asr-v3-{uuid.uuid4().hex}-"
     with tempfile.NamedTemporaryFile(
         delete=False, suffix=suffix, prefix=prefix, dir=SERVICE_CACHE_DIR
     ) as tmp:

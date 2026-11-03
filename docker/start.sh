@@ -2,6 +2,9 @@
 set -euo pipefail
 
 export CONFIG_PATH="${CONFIG_PATH:-/config.toml}"
+export ASR_DEPLOYMENT_PROFILE="${ASR_DEPLOYMENT_PROFILE:-cuda-tensorrt-fp16}"
+export ASR_RUNTIME_DIR="${ASR_RUNTIME_DIR:-/tmp/asr-offline}"
+export ASR_STATS_PATH="${ASR_STATS_PATH:-${ASR_RUNTIME_DIR}/asr_stats.json}"
 export OMP_NUM_THREADS="${OMP_NUM_THREADS:-1}"
 export MKL_NUM_THREADS="${MKL_NUM_THREADS:-1}"
 export CUDA_MODULE_LOADING="${CUDA_MODULE_LOADING:-LAZY}"
@@ -13,6 +16,7 @@ PYTHON=/opt/venv/bin/python
 UVICORN=/opt/venv/bin/uvicorn
 
 cd "$APP_ROOT"
+mkdir -p "$ASR_RUNTIME_DIR"
 test -r "$CONFIG_PATH" || { echo "[ERROR] CONFIG_PATH 不可读: $CONFIG_PATH" >&2; exit 1; }
 test -x "$PYTHON" || { echo "[ERROR] runtime venv 不存在: $PYTHON" >&2; exit 1; }
 
@@ -30,7 +34,7 @@ PY
 )
 
 printf '[INFO] CONFIG_PATH=%s\n' "$CONFIG_PATH"
-printf '[INFO] deployment_profile=%s\n' "${DEPLOYMENT_PROFILE:-cuda-tensorrt-fp16}"
+printf '[INFO] deployment_profile=%s\n' "$ASR_DEPLOYMENT_PROFILE"
 printf '[INFO] 启动 %s 个 uvicorn 实例\n' "$instance_count"
 
 upstream=/etc/nginx/conf.d/backend_upstream.conf

@@ -9,7 +9,8 @@ from core.deployment import DeploymentPreflightError, validate_cuda_tensorrt_run
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def test_docker_profile_template_is_strict_fp16_and_uses_image_models():
+def test_docker_profile_is_strict_fp16_and_uses_image_models(monkeypatch):
+    monkeypatch.setenv("ASR_DEPLOYMENT_PROFILE", "cuda-tensorrt-fp16")
     settings = Settings(config_path=str(ROOT / "docker" / "config.toml"))
     settings.validate_model_backends()
     assert settings.is_cuda_tensorrt_profile
@@ -24,7 +25,8 @@ def test_docker_profile_template_is_strict_fp16_and_uses_image_models():
     assert settings.qwen_audio_spk_emo_concurrency == 4
 
 
-def test_cuda_profile_rejects_non_fp16_or_non_cuda_pool():
+def test_cuda_profile_rejects_non_fp16_or_non_cuda_pool(monkeypatch):
+    monkeypatch.setenv("ASR_DEPLOYMENT_PROFILE", "cuda-tensorrt-fp16")
     settings = Settings(config_path=str(ROOT / "docker" / "config.toml"))
     settings._cfg["model_device_pool"]["emotion2vec_tensorrt_precision"] = "fp32"
     with pytest.raises(ValueError, match="emotion2vec.*fp16"):
@@ -36,7 +38,8 @@ def test_cuda_profile_rejects_non_fp16_or_non_cuda_pool():
         settings.validate_model_backends()
 
 
-def test_cuda_profile_preflight_fails_without_visible_gpu():
+def test_cuda_profile_preflight_fails_without_visible_gpu(monkeypatch):
+    monkeypatch.setenv("ASR_DEPLOYMENT_PROFILE", "cuda-tensorrt-fp16")
     settings = Settings(config_path=str(ROOT / "docker" / "config.toml"))
     try:
         validate_cuda_tensorrt_runtime(settings)
@@ -48,7 +51,8 @@ def test_cuda_profile_preflight_fails_without_visible_gpu():
         assert settings.is_cuda_tensorrt_profile
 
 
-def test_cuda_profile_preflight_validates_existing_fp16_assets():
+def test_cuda_profile_preflight_validates_existing_fp16_assets(monkeypatch):
+    monkeypatch.setenv("ASR_DEPLOYMENT_PROFILE", "cuda-tensorrt-fp16")
     import torch
 
     if not torch.cuda.is_available():

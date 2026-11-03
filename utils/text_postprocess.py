@@ -1,4 +1,4 @@
-"""Small, deterministic text post-processing rules for the Qwen v2 response."""
+"""Small, deterministic text post-processing rules for the Qwen v3 response."""
 
 from __future__ import annotations
 

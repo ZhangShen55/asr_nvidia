@@ -19,7 +19,7 @@ from core.vad_volume import filter_low_volume_segments
 logger = logging.getLogger(__name__)
 
 
-# 每个请求保存最近一次 VAD 的段统计，供 V2 总耗时日志关联。
+# 每个请求保存最近一次 VAD 的段统计，供 V3 总耗时日志关联。
 # ContextVar 保证并发请求之间不会互相覆盖。
 _VAD_STATS: ContextVar[dict] = ContextVar("vad_stats", default={})
 

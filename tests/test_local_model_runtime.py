@@ -111,14 +111,14 @@ class ConfigFileStructureTests(unittest.TestCase):
 
     def test_host_and_docker_configs_share_structure(self):
         host = self._load("config.toml")
-        docker = self._load("config.docker.toml")
+        docker = self._load("docker/config.toml")
         self.assertEqual(set(host.keys()), set(docker.keys()))
         sections = ("log", "model_paths", "speech_rate", "features", "itn", "qwen_asr", "model_device_pool")
         for section in sections:
             self.assertEqual(set(host[section].keys()), set(docker[section].keys()))
 
     def test_removed_config_keys_are_absent(self):
-        for name in ("config.toml", "config.docker.toml"):
+        for name in ("config.toml", "docker/config.toml"):
             cfg = self._load(name)
             removed = ("id_engine", "version", "device", "ngpu", "ncpu",
                        "concurrency", "hotword_path", "audio_chunk")
@@ -132,7 +132,7 @@ class ConfigFileStructureTests(unittest.TestCase):
                 self.assertNotIn(key, paths, f"{name} 不应再包含 model_paths.{key}")
 
     def test_model_paths_point_to_three_models(self):
-        pairs = (("config.toml", "./model"), ("config.docker.toml", "/app/model"))
+        pairs = (("config.toml", "./model"), ("docker/config.toml", "/app/model"))
         for name, prefix in pairs:
             paths = self._load(name)["model_paths"]
             expected = {"vad_model_dir", "spk_model_dir", "emotion_model_dir"}
@@ -141,19 +141,23 @@ class ConfigFileStructureTests(unittest.TestCase):
                 self.assertTrue(value.startswith(prefix))
 
     def test_itn_remove_interjections_is_explicitly_true(self):
-        for name in ("config.toml", "config.docker.toml"):
+        for name in ("config.toml", "docker/config.toml"):
             self.assertIs(self._load(name)["itn"]["remove_interjections"], True)
 
     def test_model_device_arrays_pin_gpu0(self):
-        for name in ("config.toml", "config.docker.toml"):
+        for name in ("config.toml", "docker/config.toml"):
             devices = self._load(name)["model_device_pool"]
             self.assertEqual(devices["emotion2vec_devices"], ["cuda:0"])
             self.assertEqual(devices["speech_campplus_devices"], ["cuda:0", "cuda:0", "cuda:0"])
 
     def test_log_path_and_vad_threshold_are_nested(self):
-        for name in ("config.toml", "config.docker.toml"):
+        expected_log_paths = {
+            "config.toml": "./asr_service.log",
+            "docker/config.toml": "/tmp/asr-offline/asr_service.log",
+        }
+        for name, expected_log_path in expected_log_paths.items():
             cfg = self._load(name)
-            self.assertEqual(cfg["log"]["log_path"], "./asr_service.log")
+            self.assertEqual(cfg["log"]["log_path"], expected_log_path)
             self.assertNotIn("log_path", {key for key in cfg if key != "log"})
             self.assertEqual(cfg["qwen_asr"]["vad_speech_noise_thres"], 0.6)
 
