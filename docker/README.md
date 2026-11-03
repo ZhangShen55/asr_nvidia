@@ -20,31 +20,75 @@ Qwen-ASR 是独立的 GPU 服务，不放入本项目的 `asr-offline` 镜像，
 `docker-compose.yaml` 自动创建。这样可以独立调整 Qwen 的模型、KV cache 和 API worker
 数量，避免和 CAM++/emotion2vec 共用一个容器生命周期。
 
-下面是使用 Qwen 镜像默认入口的示例。具体镜像 tag、模型大小和启动参数应以实际使用的
-Qwen-ASR 镜像说明为准：
+Qwen 镜像本身不包含业务模型权重，必须把宿主机上的 Qwen 模型目录以只读方式挂入容器。
+下面的命令使用仓库压测验证过的 `Qwen3-ASR-0.6B`、vLLM 入口和参数；如果使用
+1.7B 或其它模型，需要同步修改模型目录、模型名和显存参数。
 
 ```bash
+# 宿主机上的模型目录，目录内应直接包含 config.json、权重文件等模型文件。
+QWEN_MODEL_DIR=/srv/models/Qwen3-ASR-0.6B
+
 docker run -d \
   --name qwen3-asr-0.6b-8806 \
   --restart unless-stopped \
-  --gpus all \
+  --gpus '"device=0"' \
   --shm-size 16g \
+  -v "${QWEN_MODEL_DIR}:/models/Qwen3-ASR-0.6B:ro" \
   -p 8806:8000 \
-  qwenllm/qwen3-asr:latest
+  --entrypoint qwen-asr-serve \
+  qwenllm/qwen3-asr:latest \
+  /models/Qwen3-ASR-0.6B \
+  --host 0.0.0.0 \
+  --port 8000 \
+  --served-model-name Qwen3-ASR-0.6B \
+  --dtype bfloat16 \
+  --max-model-len 1024 \
+  --max-num-seqs 128 \
+  --max-num-batched-tokens 16384 \
+  --gpu-memory-utilization 0.45 \
+  --api-server-count 4
 ```
 
-确认 Qwen 服务就绪：
+参数含义和调整边界：
+
+- `--gpus '"device=0"'` 只把宿主机 GPU 0 分配给 Qwen。若 Qwen 与本项目共享一张卡，改成
+  `--gpus all` 也能运行，但需要重新评估两边的显存峰值；多卡部署时建议分别绑定 GPU。
+- `--max-model-len 1024` 与本项目 `vad_max_single_segment_time_ms = 30000` 配套，不能随意调小；
+  调大 VAD 单段长度时，应同步增大该值并重新压测显存。
+- `--max-num-seqs 128` 和 `--max-num-batched-tokens 16384` 是 Qwen 服务侧的批处理上限；本项目
+  侧的 `request_concurrency` 不能超过 Qwen 实际可承受的吞吐。
+- `--gpu-memory-utilization 0.45` 为 Qwen 预留显存比例；如果 Qwen 独占 GPU，可按模型和显存
+  余量提高，和本项目共享 GPU 时不要直接提高。
+- `--api-server-count 4` 增加 Qwen API 前端进程数，不会改变本项目的 A/B 音频准入上限。
+
+确认模型目录和容器参数：
 
 ```bash
+test -f "${QWEN_MODEL_DIR}/config.json"
+docker logs --tail=100 qwen3-asr-0.6b-8806
 curl --fail http://127.0.0.1:8806/v1/models
 ```
 
-然后在挂载给 `asr-offline` 的配置中设置：
+然后在挂载给 `asr-offline` 的配置中设置 Qwen 地址和模型名：
 
 ```toml
 [qwen_asr]
 base_url = "http://宿主机地址:8806"
+model = "Qwen3-ASR-0.6B"
+segment_concurrency = 16
+request_concurrency = 128
+audio_concurrency = 8
+audio_spk_emo_concurrency = 4
+queue_max_size = 64
+queue_wait_timeout_s = 0
+request_timeout_s = 120
+connect_timeout_s = 10
+retry_count = 1
 ```
+
+`model` 也可以保持为空，让本项目从 Qwen 的 `/v1/models` 自动发现。上述并发参数属于
+`asr-offline` 侧；Qwen 容器的 `--max-num-seqs`、`--max-num-batched-tokens` 和
+`--api-server-count` 属于 Qwen 侧，两边需要分别配置。
 
 如果两个容器使用同一个自定义 Docker 网络，可以改为 Qwen 容器名，例如
 `http://qwen3-asr-0.6b-8806:8000`；如果使用当前 compose 的默认网络和宿主机端口映射，
