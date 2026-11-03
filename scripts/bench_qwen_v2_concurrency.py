@@ -329,7 +329,7 @@ def post_audio(
     show_emotion: bool,
     timeout: int = 7200,
 ) -> Dict[str, Any]:
-    url = f"{base_url.rstrip('/')}/v2/seacraft_asr"
+    url = f"{base_url.rstrip('/')}/v3/seacraft_asr"
     data = {}
     if show_spk:
         data["showSpk"] = "true"

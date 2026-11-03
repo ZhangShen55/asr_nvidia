@@ -24,13 +24,13 @@ def create_validation_app():
     from main import create_app, lifespan as service_lifespan
     from core.async_utils import run_in_thread
     from core.local_inference import generate_local
-    from core.models import get_model_pool, load_v2_models_if_needed
+    from core.models import get_model_pool, load_v3_models_if_needed
     from core.request_telemetry import snapshot
 
     @asynccontextmanager
     async def lifespan(app):
         async with service_lifespan(app):
-            await load_v2_models_if_needed(True, True)
+            await load_v3_models_if_needed(True, True)
             with wave.open(os.environ["LOCAL_BACKEND_WARMUP"], "rb") as handle:
                 audio = np.frombuffer(handle.readframes(handle.getnframes()), dtype="<i2").astype(np.float32) / 32768
             for name in ("speech_campplus", "emotion2vec"):
@@ -147,7 +147,7 @@ def trial(args, label, samples, blobs):
             error = None
             status_code = None
             try:
-                response = session.post(url + "/v2/seacraft_asr",
+                response = session.post(url + "/v3/seacraft_asr",
                     files={"audioFile": (f"course-{index + 1}-{request_id}.wav", blobs[index], "audio/wav")},
                     data={"showSpk": "true", "showEmotion": "true"}, timeout=args.timeout)
                 elapsed = time.perf_counter() - start

@@ -1,40 +1,50 @@
-# setup_cython.py
+"""Build the protected application modules as in-place Cython extensions."""
+
+from __future__ import annotations
+
+import glob
+import os
+from pathlib import Path
+
+from Cython.Build import cythonize
 from setuptools import setup
 from setuptools.extension import Extension
-from Cython.Build import cythonize
-import glob, os
+
+
+PROTECTED_ROOTS = ("core", "api", "utils", "entity")
+
 
 def list_py(patterns, excludes=("__init__.py",)):
     files = []
-    for pat in patterns:
-        files += glob.glob(pat, recursive=True)
-    files = [f for f in files if f.endswith(".py") and os.path.basename(f) not in excludes]
-    return files
+    for pattern in patterns:
+        files.extend(glob.glob(pattern, recursive=True))
+    return sorted(
+        path for path in files
+        if path.endswith(".py") and os.path.basename(path) not in excludes
+    )
+
 
 def to_module_name(path: str) -> str:
-    # "core/concurrency.py" -> "core.concurrency"
     return os.path.splitext(path)[0].replace(os.sep, ".")
 
-modules = list_py([
-    "core/**/*.py",
-    "utils/**/*.py",
-    "api/routes/**/*.py",
-    "entity/**/*.py",
-])
+
+# api/**/*.py deliberately covers both api modules and nested route modules.
+modules = list_py([f"{root}/**/*.py" for root in PROTECTED_ROOTS])
+if not modules:
+    raise RuntimeError("未发现可编译的 Cython 业务模块")
 
 extensions = [
     Extension(
-        name=to_module_name(m),
-        sources=[m],
+        name=to_module_name(module),
+        sources=[module],
         extra_compile_args=["-std=gnu99", "-O3", "-fPIC"],
-        extra_link_args=[],
     )
-    for m in modules
+    for module in modules
 ]
 
 ext_modules = cythonize(
     extensions,
-    nthreads=4,
+    nthreads=int(os.environ.get("CYTHON_NTHREADS", "4")),
     compiler_directives={
         "language_level": "3",
         "boundscheck": False,
@@ -44,7 +54,4 @@ ext_modules = cythonize(
     },
 )
 
-setup(
-    name="seacraftasr_core",
-    ext_modules=ext_modules,
-)
+setup(name="seacraftasr_core", ext_modules=ext_modules)

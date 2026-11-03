@@ -28,7 +28,7 @@ import requests
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 DEFAULT_AUDIO = REPO_ROOT / "test/audio_file/教师1.aac"
-V2_PHASE_RE = re.compile(
+V3_PHASE_RE = re.compile(
     r"Qwen 等待 ([\d.]+)ms/调用 ([\d.]+)ms/(\d+)次, "
     r"说话人等待 ([\d.]+)ms/推理 ([\d.]+)ms/(\d+)次, "
     r"情绪等待 ([\d.]+)ms/推理 ([\d.]+)ms/(\d+)次"
@@ -67,7 +67,7 @@ def one_request(base_url: str, audio: Path, timeout: float) -> dict:
     try:
         with audio.open("rb") as handle:
             response = requests.post(
-                f"{base_url.rstrip('/')}/v2/seacraft_asr",
+                f"{base_url.rstrip('/')}/v3/seacraft_asr",
                 files={"audioFile": (audio.name, handle, "audio/aac")},
                 data={"showSpk": "true", "showEmotion": "true"},
                 timeout=timeout,
@@ -157,7 +157,7 @@ def run_level(
         with log_path.open("r", encoding="utf-8", errors="replace") as handle:
             handle.seek(log_offset)
             for line in handle:
-                match = V2_PHASE_RE.search(line)
+                match = V3_PHASE_RE.search(line)
                 if match:
                     values = [float(match.group(i)) for i in (1, 2, 4, 5, 7, 8)]
                     phase_logs.append({

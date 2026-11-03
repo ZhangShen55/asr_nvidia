@@ -43,7 +43,7 @@ def sample_gpu():
 
 
 def post_audio(base_url, path, show_spk=False, show_emotion=False, timeout=1800):
-    url = f"{base_url.rstrip('/')}/v2/seacraft_asr"
+    url = f"{base_url.rstrip('/')}/v3/seacraft_asr"
     data = {}
     if show_spk:
         data["showSpk"] = "true"

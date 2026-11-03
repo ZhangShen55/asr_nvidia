@@ -463,7 +463,8 @@ class VadPool:
                 if not pending.finished.done():
                     pending.finished.set_result(payload)
             else:
-                detail = str(payload).strip().splitlines()[-1] if payload else "未知错误"
+                lines = str(payload).strip().splitlines() if payload else []
+                detail = lines[len(lines) - 1] if lines else "未知错误"
                 if not pending.finished.done():
                     pending.finished.set_exception(VadPoolError(f"VAD 切分失败：{detail}"))
         self._dispatch()

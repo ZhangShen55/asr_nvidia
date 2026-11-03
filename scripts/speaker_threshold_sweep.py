@@ -26,7 +26,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from api.routes.asr_qwen_common import SegmentOutcome, cluster_speakers
 from core.config import settings
-from core.models import get_spk_model, load_v2_models_if_needed
+from core.models import get_spk_model, load_v3_models_if_needed
 from core.vad import VadSegment, detect_segments
 from utils.audio_utils import (
     extract_audio_clip_array,
@@ -41,7 +41,7 @@ def collect_embeddings(audio_path):
     print(f"[VAD] 切出 {len(segments)} 段", flush=True)
 
     async def _run():
-        await load_v2_models_if_needed(need_role=True, need_emotion=False)
+        await load_v3_models_if_needed(need_role=True, need_emotion=False)
         model = get_spk_model()
         if model is None:
             raise RuntimeError("CAM++ 模型未加载（检查 open_v2_role 开关）")

@@ -6,7 +6,7 @@ from unittest.mock import AsyncMock, patch
 
 from core import status
 from core.config import settings
-from core.models import ModelUnavailableError, validate_v2_capabilities
+from core.models import ModelUnavailableError, validate_v3_capabilities
 from core.qwen_asr_queue import AudioSlotManager
 
 
@@ -21,9 +21,10 @@ class AdmissionStatusTests(unittest.IsolatedAsyncioTestCase):
             result = status.build_status_payload(stats, datetime.utcnow())
             snapshot.assert_called_once_with()
             load.assert_not_awaited()
-        for key in ("localModels", "vadPool", "resourceDiagnostics", "queuedTaskList", "processingTaskList"):
+        for key in ("localModels", "vadPool", "resourceDiagnostics", "deployment", "queuedTaskList", "processingTaskList"):
             self.assertIn(key, result)
         self.assertEqual(result["totalHaveDoneProcessTasks"], 5)
+        self.assertIn("config_path", result["deployment"])
         return result
 
     async def test_before_first_request_and_disabled_rejection_preserve_zero_counts(self):
@@ -31,7 +32,7 @@ class AdmissionStatusTests(unittest.IsolatedAsyncioTestCase):
         with patch.dict(settings._cfg, {"features": {"open_v2_role": False, "open_v2_emotion": False}}):
             before = self.payload(manager)
             with self.assertRaises(ModelUnavailableError) as error:
-                validate_v2_capabilities(True, True)
+                validate_v3_capabilities(True, True)
             self.assertEqual(error.exception.code, 4018)
             after = self.payload(manager)
         self.assertEqual(before["audioConcurrency"], {"configured_total": 2, "active_total": 0, "waiting_total": 0})

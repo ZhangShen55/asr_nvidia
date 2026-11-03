@@ -7,7 +7,7 @@ from unittest.mock import AsyncMock, patch
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from api.routes import asr_v2 as route
+from api.routes import asr_v3 as route
 from core.config import settings
 from core import request_telemetry as telemetry
 from core.qwen_asr_queue import AudioSlotManager, QueueFullError
@@ -42,7 +42,7 @@ class CapabilityRouteTests(unittest.TestCase):
                     patch("core.models.ModelPool.ensure_loaded", new_callable=AsyncMock) as load, \
                     patch("api.routes.asr_qwen_common.detect_segments", new_callable=AsyncMock) as vad, \
                     patch("api.routes.asr_qwen_common.get_qwen_client", new_callable=AsyncMock) as qwen:
-                response = client.post("/v2/seacraft_asr", files={"audioFile": ("a.wav", b"x"*2048)},
+                response = client.post("/v3/seacraft_asr", files={"audioFile": ("a.wav", b"x"*2048)},
                                        data={"showSpk": str(spk).lower(), "showEmotion": str(emo).lower(),
                                              "showRoleIdentify": str(identify).lower()})
                 self.assertEqual(response.status_code, 200)
@@ -73,7 +73,7 @@ class LeaseRouteTests(unittest.IsolatedAsyncioTestCase):
                     patch.object(route, "get_slot_manager", return_value=manager), \
                     patch.object(route, "prepare_asr_context", new=AsyncMock(return_value=(None, context(request)))), \
                     patch.object(route, "run_qwen_asr", side_effect=run):
-                payload = await route.api_asr_v2(request)
+                payload = await route.api_asr_v3(request)
                 self.assertIn("segment_words", payload["segments"][0])
                 self.assertEqual((manager.active, manager.active_b), (0, 0))
 
@@ -120,12 +120,12 @@ class LeaseRouteTests(unittest.IsolatedAsyncioTestCase):
                     patch.object(manager, "release", side_effect=release) as release_mock:
                 if "cancel" in scenario:
                     with self.assertRaises(asyncio.CancelledError):
-                        await route.api_asr_v2(request)
+                        await route.api_asr_v3(request)
                 elif scenario == "prepare_exception":
                     with self.assertRaisesRegex(RuntimeError, "prepare failed"):
-                        await route.api_asr_v2(request)
+                        await route.api_asr_v3(request)
                 else:
-                    payload = await route.api_asr_v2(request)
+                    payload = await route.api_asr_v3(request)
                     expected_code = {"prepare_error": 4002, "business_error": 4012, "exception": 4005}.get(scenario)
                     self.assertEqual(payload.get("code"), expected_code)
                 release_mock.assert_awaited_once()
@@ -160,7 +160,7 @@ class AdmissionTraceTests(unittest.IsolatedAsyncioTestCase):
                 with patch.object(route, "get_slot_manager", return_value=manager), \
                         patch.object(route, "prepare_asr_context", new_callable=AsyncMock) as prepare, \
                         self.assertLogs(route.logger, level="INFO") as logs:
-                    response = await route.api_asr_v2(request)
+                    response = await route.api_asr_v3(request)
                 self.assertEqual(response["code"], code)
                 event = self.latest()
                 self.assertEqual(event["admission"]["category"], category)
@@ -168,7 +168,7 @@ class AdmissionTraceTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual(event["admission"]["snapshot"], manager.snapshot())
                 self.assertEqual(event["status"], "failed")
                 self.assertGreaterEqual(event["phases"]["audio_wait_ms"], 0)
-                self.assertTrue(any("[V2准入]" in log and f"reason={reason}" in log and f"code={code}" in log
+                self.assertTrue(any("[V3准入]" in log and f"reason={reason}" in log and f"code={code}" in log
                                     for log in logs.output))
                 prepare.assert_not_awaited()
             finally:
@@ -187,10 +187,10 @@ class AdmissionTraceTests(unittest.IsolatedAsyncioTestCase):
         with patch.object(route, "get_slot_manager", return_value=manager), \
                 patch.object(route, "prepare_asr_context", new=AsyncMock(return_value=(None, context(request)))), \
                 patch.object(route, "run_qwen_asr", side_effect=run):
-            await route.api_asr_v2(request)
+            await route.api_asr_v3(request)
             self.assertEqual(self.latest()["phases"]["qwen_ms"], 123)
             with patch.dict(settings._cfg, {"features": {"open_v2_role": False, "open_v2_emotion": False}}):
-                response = await route.api_asr_v2(make_request(showSpk=True, showEmotion=True))
+                response = await route.api_asr_v3(make_request(showSpk=True, showEmotion=True))
             self.assertEqual(response["code"], 4018)
             event = self.latest()
             self.assertTrue(all(value == 0 for value in event["phases"].values()))
@@ -202,7 +202,7 @@ class AdmissionTraceTests(unittest.IsolatedAsyncioTestCase):
         manager = AudioSlotManager(1, wait_timeout_s=5)
         held = await manager.acquire("A")
         with patch.object(route, "get_slot_manager", return_value=manager):
-            waiting = asyncio.create_task(route.api_asr_v2(make_request(showEmotion=True)))
+            waiting = asyncio.create_task(route.api_asr_v3(make_request(showEmotion=True)))
             await asyncio.sleep(0)
             self.assertEqual(manager.waiting_b, 1)
             waiting.cancel()
@@ -223,10 +223,10 @@ class AdmissionTraceTests(unittest.IsolatedAsyncioTestCase):
                     patch.object(route, "run_qwen_asr", new=AsyncMock(side_effect=failure)):
                 if isinstance(failure, asyncio.CancelledError):
                     with self.assertRaises(asyncio.CancelledError):
-                        await route.api_asr_v2(request)
+                        await route.api_asr_v3(request)
                     expected_status = "cancelled"
                 else:
-                    self.assertEqual((await route.api_asr_v2(request))["code"], 4005)
+                    self.assertEqual((await route.api_asr_v3(request))["code"], 4005)
                     expected_status = "failed"
             event = self.latest()
             self.assertEqual(event["status"], expected_status)
@@ -251,7 +251,7 @@ class MixedAdmissionIntegrationTests(unittest.IsolatedAsyncioTestCase):
             return None, context(request)
 
         async def start(category):
-            task = asyncio.create_task(route.api_asr_v2(make_request(showEmotion=category == "B")))
+            task = asyncio.create_task(route.api_asr_v3(make_request(showEmotion=category == "B")))
             tasks.append(task)
             await asyncio.wait_for(entered.get(), timeout=1)
 
@@ -263,11 +263,11 @@ class MixedAdmissionIntegrationTests(unittest.IsolatedAsyncioTestCase):
                 for category in ["A"] * 3 + ["B"] * 4:
                     await start(category)
                 self.assertEqual((manager.active, manager.active_b), (7, 4))
-                self.assertEqual((await route.api_asr_v2(make_request(showEmotion=True)))["code"], 4017)
+                self.assertEqual((await route.api_asr_v3(make_request(showEmotion=True)))["code"], 4017)
                 await start("A")
                 self.assertEqual((manager.active, manager.active_b), (8, 4))
                 for enhanced in (False, True):
-                    self.assertEqual((await route.api_asr_v2(make_request(showEmotion=enhanced)))["code"], 4013)
+                    self.assertEqual((await route.api_asr_v3(make_request(showEmotion=enhanced)))["code"], 4013)
             finally:
                 finish.set()
                 responses = await asyncio.gather(*tasks)

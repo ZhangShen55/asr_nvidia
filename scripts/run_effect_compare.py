@@ -1,4 +1,4 @@
-"""效果比对：调用 /v2/seacraft_asr 生成新结果，并与变更前的基线结果对比。
+"""效果比对：调用 /v3/seacraft_asr 生成新结果，并与变更前的基线结果对比。
 
 用法：
     python scripts/run_effect_compare.py --base-url http://127.0.0.1:8083 \
@@ -34,7 +34,7 @@ def post(base_url: str, path: str, timeout: int = 3600) -> dict:
     started = time.perf_counter()
     with open(path, "rb") as handle:
         response = requests.post(
-            f"{base_url.rstrip('/')}/v2/seacraft_asr",
+            f"{base_url.rstrip('/')}/v3/seacraft_asr",
             files={"audioFile": (os.path.basename(path), handle, "audio/wav")},
             data={"showSpk": "true", "showEmotion": "true"},
             timeout=timeout,

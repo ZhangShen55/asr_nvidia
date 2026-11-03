@@ -96,7 +96,7 @@ def main():
                 def request(index):
                     barrier.wait(30)
                     started = time.perf_counter()
-                    response = requests.post(url + "/v2/seacraft_asr", files={"audioFile":
+                    response = requests.post(url + "/v3/seacraft_asr", files={"audioFile":
                         (f"short-{backend}-{count}-{index}.wav", blobs[index], "audio/wav")},
                         data={"showSpk": "true", "showEmotion": "true"}, timeout=120)
                     elapsed = time.perf_counter() - started

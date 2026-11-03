@@ -364,9 +364,9 @@ class V2RouteTests(unittest.TestCase):
         client = self._client()
         paths = client.get("/openapi.json").json()["paths"]
         self.assertNotIn("/v1.1.8/seacraft_asr", paths)
-        self.assertIn("/v2/seacraft_asr", paths)
+        self.assertIn("/v3/seacraft_asr", paths)
 
-    @patch("api.routes.asr_v2.get_slot_manager")
+    @patch("api.routes.asr_v3.get_slot_manager")
     def test_queue_full_returns_4013(self, mock_slots):
         manager = SimpleNamespace()
         manager.snapshot = AudioSlotManager(8).snapshot
@@ -380,7 +380,7 @@ class V2RouteTests(unittest.TestCase):
 
         client = self._client()
         response = client.post(
-            "/v2/seacraft_asr",
+            "/v3/seacraft_asr",
             files={"audioFile": ("a.wav", b"0" * 2048, "audio/wav")},
         )
         self.assertEqual(response.json()["code"], 4013)
@@ -389,7 +389,7 @@ class V2RouteTests(unittest.TestCase):
             "处理队列已满，请稍后再试（当前音频并发：8/8）",
         )
 
-    @patch("api.routes.asr_v2.get_slot_manager")
+    @patch("api.routes.asr_v3.get_slot_manager")
     def test_queue_timeout_returns_4010(self, mock_slots):
         manager = SimpleNamespace()
         manager.snapshot = AudioSlotManager(8).snapshot
@@ -399,13 +399,13 @@ class V2RouteTests(unittest.TestCase):
 
         client = self._client()
         response = client.post(
-            "/v2/seacraft_asr",
+            "/v3/seacraft_asr",
             files={"audioFile": ("a.wav", b"0" * 2048, "audio/wav")},
         )
         self.assertEqual(response.json()["code"], 4010)
 
-    @patch("api.routes.asr_v2.run_qwen_asr")
-    @patch("api.routes.asr_v2.prepare_asr_context")
+    @patch("api.routes.asr_v3.run_qwen_asr")
+    @patch("api.routes.asr_v3.prepare_asr_context")
     def test_success_response_contains_expected_fields(self, mock_prepare, mock_run):
         ctx = FakeCtx(request=make_request())
         mock_prepare.return_value = (None, ctx)
@@ -425,7 +425,7 @@ class V2RouteTests(unittest.TestCase):
 
         client = self._client()
         response = client.post(
-            "/v2/seacraft_asr",
+            "/v3/seacraft_asr",
             files={"audioFile": ("a.wav", b"0" * 2048, "audio/wav")},
         )
         payload = response.json()
@@ -552,7 +552,7 @@ class RepetitionGuardPipelineTests(unittest.TestCase):
                 patch("api.routes.asr_qwen_common.get_qwen_client", _fake_get_client)
             )
             stack.enter_context(
-                patch("api.routes.asr_qwen_common.load_v2_models_if_needed", _noop_load)
+                patch("api.routes.asr_qwen_common.load_v3_models_if_needed", _noop_load)
             )
             stack.enter_context(
                 patch("api.routes.asr_qwen_common._speaker_embedding", _speaker)
@@ -713,7 +713,7 @@ class FaultInjectionTests(unittest.TestCase):
 
         with ExitStack() as stack:
             stack.enter_context(
-                patch("api.routes.asr_qwen_common.load_v2_models_if_needed", _noop_load)
+                patch("api.routes.asr_qwen_common.load_v3_models_if_needed", _noop_load)
             )
             stack.enter_context(
                 patch("api.routes.asr_qwen_common.detect_segments", _fake_detect)

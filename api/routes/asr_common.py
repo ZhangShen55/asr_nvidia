@@ -1,4 +1,4 @@
-"""v2 链路共用的请求上下文准备与临时文件清理。
+"""v3 链路共用的请求上下文准备与临时文件清理。
 
 `/v1.1.8/seacraft_asr` 下线后，本模块只保留 v2 需要的部分：
 请求参数解析后的上下文构建、情绪标签映射与临时文件清理。
@@ -112,7 +112,7 @@ async def prepare_asr_context(
 ) -> Tuple[Optional[dict], Optional[AsrContext]]:
     """读取并预处理音频，构建 ASR 上下文。失败时返回 (error_response, None)。
 
-    unique_tmp=True 时使用唯一临时文件名，供 v2 链路的并发请求使用。
+    unique_tmp=True 时使用唯一临时文件名，供 v3 链路的并发请求使用。
     """
     if request.audioFile is None:
         logger.error("音频为空")
@@ -123,8 +123,9 @@ async def prepare_asr_context(
     try:
         start_time = time.perf_counter()
         content = await request.audioFile.read()
-        suffix = request.audioFile.filename.split(".")[-1].lower()
         filename = request.audioFile.filename
+        suffix_parts = str(filename or "").split(".")
+        suffix = suffix_parts[len(suffix_parts) - 1].lower()
         if suffix == "m4a":
             suffix = "mp4"
         audio_bytes = await await_completion(preprocess_audio(content, suffix, force_resample=False))
@@ -162,7 +163,9 @@ async def prepare_asr_context(
         # context 尚未交给路由时，准备阶段自行清理取消产生的部分文件。
         cleanup_temp_files(tmp_paths)
         raise
-    audio_total_s = audio_tensor.shape[-1] / sample_rate if sample_rate else 0.0
+    audio_shape = getattr(audio_tensor, "shape", ())
+    audio_samples = audio_shape[len(audio_shape) - 1] if audio_shape else 0
+    audio_total_s = audio_samples / sample_rate if sample_rate else 0.0
     task_id = f"{generate_task_id()}_{filename}"
 
     ctx = AsrContext(

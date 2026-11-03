@@ -109,7 +109,7 @@ def post_audio(
     try:
         with path.open("rb") as handle:
             response = requests.post(
-                f"{base_url.rstrip('/')}/v2/seacraft_asr",
+                f"{base_url.rstrip('/')}/v3/seacraft_asr",
                 files={"audioFile": (path.name, handle, "application/octet-stream")},
                 data={
                     "showSpk": "true" if show_spk else "false",

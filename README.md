@@ -4,13 +4,13 @@
 逐段并发调用独立的 **Qwen3-ASR** 服务完成转写，并在本机用 CAM++ 与 emotion2vec 给出说话人角色与情绪。
 
 > `/v1.1.8/seacraft_asr`（SeACo-Paraformer + PUNC + Whisper 法语链路）已随本次变更下线，
-> 服务只保留 `/v2/seacraft_asr`、`/get_status`、`/clear_tasks_list` 三个接口。
+> 服务只保留 `/v3/seacraft_asr`、`/get_status`、`/clear_tasks_list` 三个接口。
 
 ## 接口
 
 | 方法 | 路径 | 说明 |
 |------|------|------|
-| `POST` | `/v2/seacraft_asr` | 离线 ASR 转写（Qwen3-ASR 链路） |
+| `POST` | `/v3/seacraft_asr` | 离线 ASR 转写（Qwen3-ASR 链路） |
 | `GET` | `/get_status` | 服务状态、任务统计与本地模型显存明细 |
 | `DELETE` | `/clear_tasks_list` | 清空当前实例的处理中任务列表 |
 
@@ -26,17 +26,17 @@ FastAPI 自动文档位于 `/docs`、`/redoc` 和 `/openapi.json`。
 ├── Dockerfile
 ├── start.sh                    # Nginx + 多 uvicorn 实例
 ├── api/routes/
-│   ├── asr_v2.py               # /v2/seacraft_asr
-│   ├── asr_qwen_common.py      # v2 主链路：VAD → 并发转写 → 响应封装
-│   ├── asr_common.py           # v2 共用：请求上下文、情绪标签映射、临时文件清理
+│   ├── asr_v3.py               # /v3/seacraft_asr
+│   ├── asr_qwen_common.py      # v3 主链路：VAD → 并发转写 → 响应封装
+│   ├── asr_common.py           # v3 共用：请求上下文、情绪标签映射、临时文件清理
 │   └── status.py
 ├── core/
 │   ├── config.py
 │   ├── logging.py              # 日志按天 + 按大小双轮转
 │   ├── models.py               # CAM++ / emotion2vec 懒加载 + 显存登记
-│   ├── vad.py                  # v2 链路的本地 VAD 切分
+│   ├── vad.py                  # v3 链路的本地 VAD 切分
 │   ├── qwen_asr_client.py      # Qwen3-ASR 异步客户端（模型发现 / 转写 / 重试）
-│   ├── qwen_asr_queue.py       # v2 链路的音频排队与两级请求并发控制
+│   ├── qwen_asr_queue.py       # v3 链路的音频排队与两级请求并发控制
 │   └── status.py               # 状态接口响应组装
 ├── entity/data.py
 ├── model/                      # 模型权重，不进入 Git
@@ -141,7 +141,7 @@ conda run --no-capture-output -n asr \
   uvicorn main:app --host 0.0.0.0 --port 8085 --workers 1
 ```
 
-服务启动后，v2 接口地址为 `http://127.0.0.1:8085/v2/seacraft_asr`；按 `Ctrl+C` 停止该后端实例。`OMP_NUM_THREADS` 和 `MKL_NUM_THREADS` 只限制底层算子线程，不限制 VAD worker 进程数；VAD 有效完整音频并发等于 `len(qwen_asr.vad_device)`。Qwen-ASR 服务地址由 `[qwen_asr].base_url` 配置，默认是 `http://127.0.0.1:8806`。
+服务启动后，v3 接口地址为 `http://127.0.0.1:8085/v3/seacraft_asr`；按 `Ctrl+C` 停止该后端实例。`OMP_NUM_THREADS` 和 `MKL_NUM_THREADS` 只限制底层算子线程，不限制 VAD worker 进程数；VAD 有效完整音频并发等于 `len(qwen_asr.vad_device)`。Qwen-ASR 服务地址由 `[qwen_asr].base_url` 配置，默认是 `http://127.0.0.1:8806`。
 
 ### 模型内存压力安全诊断
 
@@ -166,7 +166,7 @@ conda run --no-capture-output -n asr \
 ## ASR 请求
 
 ```bash
-curl -X POST "http://localhost:8083/v2/seacraft_asr" \
+curl -X POST "http://localhost:8083/v3/seacraft_asr" \
   -F "audioFile=@sample.wav" \
   -F "language=auto" \
   -F "wordTimestamps=true" \
@@ -181,7 +181,7 @@ curl -X POST "http://localhost:8083/v2/seacraft_asr" \
 |------|--------|------|
 | `audioFile` | 必填 | 上传音频 |
 | `language` | `auto` | 下发给 Qwen 的语言标记；`auto` 表示不指定，由模型自动识别 |
-| `wordTimestamps` | `false` | 是否返回词级时间戳（v2 链路固定返回空数组） |
+| `wordTimestamps` | `false` | 是否返回词级时间戳（v3 链路固定返回空数组） |
 | `showSpk` | `false` | 是否启用说话人分离 |
 | `showEmotion` | `false` | 是否返回情绪标签 |
 | `showRoleIdentify` | `false` | 是否识别教师/学生角色 |
@@ -191,7 +191,7 @@ curl -X POST "http://localhost:8083/v2/seacraft_asr" \
 响应包含 `language`、`segments`、`text`、`speed_info`、`load_audio_time_ms`、`gpu_time_ms` 与 `language_ratio`。
 分段中的 `role`、`emotion` 和 `segment_words` 根据请求参数返回。`text` 为最终保留分段按空格拼接并经文本规范化（ITN）处理后的结果。纯「啊 / 哦 / 嗯 / 呃」分段会被移除；英文为有效文本占比最高时，边界明确的中文口气词会转换为 `ah / oh / um / uh`。
 
-### v2 处理流程
+### v3 处理流程
 
 1. 服务本地用 FunASR FSMN-VAD 把音频切成若干语音段；
 2. 每个语音段并发发往 Qwen3-ASR 服务（单段一个请求，**不做相邻段合并**）；
@@ -242,7 +242,7 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `[speech_rate]` | 单句语速修正系数 |
 | `[features]` | `open_v2_role`、`open_v2_emotion` |
 | `[itn]` | 文本规范化开关与失败策略 |
-| `[qwen_asr]` | v2 链路的 Qwen 服务地址、并发度、队列与 VAD 参数 |
+| `[qwen_asr]` | v3 链路的 Qwen 服务地址、并发度、队列与 VAD 参数 |
 | `[model_device_pool]` | CAM++ 与 emotion2vec 的设备数组；每个元素对应一个独立模型实例和一个并发槽位 |
 
 `speed_info` 按 1、5、10 分钟窗口统计，跨窗口句子按时间重叠比例分摊内容数量。单句语速使用 `[speech_rate].rate_factor` 修正，分时段语速不乘该系数。
@@ -251,7 +251,7 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `enabled` | `true` | 是否开放 `/v2/seacraft_asr` |
+| `enabled` | `true` | 是否开放 `/v3/seacraft_asr` |
 | `base_url` | `http://127.0.0.1:8806` | Qwen3-ASR 服务地址（容器部署用 `http://192.168.29.12:8806`） |
 | `model` | `""` | 模型名；留空表示启动时从 `/v1/models` 自动发现（不需要 API Key） |
 | `segment_concurrency` | `16` | 单个音频内同时发往 Qwen 的 VAD 段请求数 |
@@ -323,8 +323,8 @@ A 的活动数和等待数分别用总数减去 B 数。这里的 B 等待按完
 `localModels` 中的 `waiting` 则按等待 CAM++ 或 emotion2vec 的分段计数。
 首次请求前活动数和等待数均为 0，查询不会加载模型，配置关闭而被拒绝的请求不增加计数。
 
-新增 `[V2准入]` 日志记录 `request_id`、`category`（A/B）、`outcome`、`reason`、
-`code` 和两组容量 `snapshot`。既有 `[V2 耗时]` 阶段日志保留，音频准入等待通过
+新增 `[V3准入]` 日志记录 `request_id`、`category`（A/B）、`outcome`、`reason`、
+`code` 和两组容量 `snapshot`。既有 `[V3 耗时]` 阶段日志保留，音频准入等待通过
 遥测 `phases.audio_wait_ms` 记录，与模型池分段等待的 `spk_wait_ms` / `emo_wait_ms` 分开。
 `admission.outcome` 为 `admitted`、`rejected`、`timeout` 或 `cancelled`；
 未完成准入判定时为 `not_attempted`。准入后处理失败或取消仍为 `admitted`，
@@ -341,7 +341,7 @@ A 的活动数和等待数分别用总数减去 B 数。这里的 B 等待按完
 
 ### `[model_device_pool]` 配置项
 
-控制 v2 链路本地模型副本和并发容量。数组长度是唯一槽位来源，不需要 `local_gpu_concurrency`、`cam_slots` 或 `emo_slots`：
+控制 v3 链路本地模型副本和并发容量。数组长度是唯一槽位来源，不需要 `local_gpu_concurrency`、`cam_slots` 或 `emo_slots`：
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
@@ -376,7 +376,7 @@ python scripts/vad_reference.py --output /tmp/vad-reference.json
 
 ### role / emotion 的加载条件
 
-v2 链路的真实 `role` 与 `emotion` 由本机模型给出，加载与计算条件是两回事：
+v3 链路的真实 `role` 与 `emotion` 由本机模型给出，加载与计算条件是两回事：
 
 - **加载**：CAM++ 与 emotion2vec **各自独立**，分别由 `[features].open_v2_role` 与
   `[features].open_v2_emotion` 控制（默认均为 `true`）。关闭任一个，另一个仍可正常加载。

@@ -120,7 +120,7 @@ def main():
         common["showRoleIdentify"] = "true"
 
     v118 = post(args.base_url, "/v1.1.8/seacraft_asr", args.audio, **common)
-    v2 = post(args.base_url, "/v2/seacraft_asr", args.audio, **common)
+    v2 = post(args.base_url, "/v3/seacraft_asr", args.audio, **common)
 
     mapping = align(v2.get("segments"), v118.get("segments"))
 

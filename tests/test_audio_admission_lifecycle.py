@@ -9,7 +9,7 @@ from unittest.mock import AsyncMock, patch
 import numpy as np
 import torch
 
-from api.routes import asr_common, asr_qwen_common as pipeline, asr_v2 as route
+from api.routes import asr_common, asr_qwen_common as pipeline, asr_v3 as route
 from core.config import settings
 from core.models import ModelPool
 from core.qwen_asr_queue import AudioSlotManager
@@ -59,7 +59,7 @@ class AudioLifecycleTests(unittest.IsolatedAsyncioTestCase):
                     patch.object(asr_common, "write_audio_bytes_to_temp_file", side_effect=write), \
                     patch.object(asr_common, "load_audio_tensor", side_effect=load), \
                     patch.object(route, "run_qwen_asr", new_callable=AsyncMock) as run:
-                task = asyncio.create_task(route.api_asr_v2(request))
+                task = asyncio.create_task(route.api_asr_v3(request))
                 try:
                     await self.cancel_and_check(task, started, manager, b_count=1)
                     self.assertTrue(audio_path.exists())
@@ -96,7 +96,7 @@ class AudioLifecycleTests(unittest.IsolatedAsyncioTestCase):
                 patch.object(route, "run_qwen_asr", side_effect=run), \
                 patch.object(pipeline, "get_model_pool", return_value=pool), \
                 patch("core.models.AutoModel", return_value=Model()):
-            task = asyncio.create_task(route.api_asr_v2(request))
+            task = asyncio.create_task(route.api_asr_v3(request))
             try:
                 await self.cancel_and_check(task, started, manager, b_count=1)
                 self.assertTrue(pool.locks[0].locked())
@@ -130,7 +130,7 @@ class AudioLifecycleTests(unittest.IsolatedAsyncioTestCase):
                     patch.object(pipeline, "detect_segments", new=AsyncMock(return_value=[VadSegment(0, 3)])), \
                     patch.object(pipeline, "extract_audio_clip", side_effect=extract), \
                     patch.object(pipeline, "get_qwen_client", new_callable=AsyncMock) as qwen:
-                task = asyncio.create_task(route.api_asr_v2(request))
+                task = asyncio.create_task(route.api_asr_v3(request))
                 try:
                     await self.cancel_and_check(task, started, manager, b_count=0)
                 finally:
@@ -160,7 +160,7 @@ class AudioLifecycleTests(unittest.IsolatedAsyncioTestCase):
             with patch.object(route, "get_slot_manager", return_value=manager), \
                     patch.object(route, "prepare_asr_context", new=AsyncMock(return_value=(None, ctx))), \
                     patch.object(pipeline, "detect_segments", side_effect=detect):
-                task = asyncio.create_task(route.api_asr_v2(request))
+                task = asyncio.create_task(route.api_asr_v3(request))
                 try:
                     await self.cancel_and_check(task, started, manager, b_count=0)
                     self.assertTrue(audio_path.exists())

@@ -1,4 +1,4 @@
-"""v2 链路的本地模型加载、模型池调度与显存登记。"""
+"""v3 链路的本地模型加载、模型池调度与显存登记。"""
 
 import asyncio
 import logging
@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 # patch 这个模块属性替换真实模型构造器。
 AutoModel = None
 
-_model_spk_v2 = None
-_model_emotion_v2 = None
+_model_spk_v3 = None
+_model_emotion_v3 = None
 _model_lock = asyncio.Lock()
 _LOCAL_MODELS = ("vad", "speech_campplus", "emotion2vec")
 
@@ -45,7 +45,7 @@ class ModelUnavailableError(RuntimeError):
         super().__init__(message)
 
 
-def validate_v2_capabilities(need_role: bool = False, need_emotion: bool = False) -> None:
+def validate_v3_capabilities(need_role: bool = False, need_emotion: bool = False) -> None:
     """先检查完整需求，避免一项已加载后才发现另一项被配置关闭。"""
     role_disabled = need_role and not settings.open_v2_role
     emotion_disabled = need_emotion and not settings.open_v2_emotion
@@ -97,33 +97,29 @@ def record_model_memory(name: str, device: str, allocated_mb: float) -> None:
 
 
 def record_vad_runtime(
-    device: str | list[str],
-    instances: int,
-    loaded: bool,
-    allocated_mb: float,
-    pool_size: int | None = None,
-    pool_max: int | None = None,
+    device,
+    instances,
+    loaded,
+    allocated_mb,
+    pool_size=None,
+    pool_max=None,
     *,
-    configured_instances: int | None = None,
-    successful_instances: int | None = None,
-    failed_instances: int = 0,
-    devices: list[str] | None = None,
-    busy: int = 0,
-    waiting: int = 0,
-    failures: list[str] | None = None,
-) -> None:
-    entry = local_model_status["vad"]
-    entry["loaded"] = bool(loaded)
-    entry["device"] = device[0] if isinstance(device, list) and device else device
-    entry["devices"] = list(devices if devices is not None else (device if isinstance(device, list) else [device]))
-    entry["instances"] = max(0, int(instances))
-    entry["allocated_mb"] = round(max(0.0, allocated_mb), 2)
-    entry["configured_instances"] = int(configured_instances if configured_instances is not None else (instances or 0))
-    entry["available_instances"] = max(0, int(successful_instances if successful_instances is not None else instances) - int(busy))
-    entry["failed_instances"] = int(failed_instances)
-    entry["busy"] = int(busy)
-    entry["waiting"] = int(waiting)
-    entry["failure"] = (failures or [None])[-1]
+    configured_instances=None,
+    successful_instances=None,
+    failed_instances=0,
+    devices=None,
+    busy=0,
+    waiting=0,
+    failures=None,
+):
+    """登记 VAD worker 状态，委托给未编译的动态字典 helper。"""
+    from model_status_runtime import update_vad_runtime
+
+    update_vad_runtime(
+        local_model_status["vad"], device, instances, loaded, allocated_mb,
+        configured_instances, successful_instances, failed_instances,
+        devices, busy, waiting, failures,
+    )
 
 
 def get_local_model_status() -> Dict[str, Dict[str, Any]]:
@@ -146,7 +142,7 @@ def _resolve_device(index: int | str) -> str:
             raise RuntimeError(f"NPU 设备不可用: {index}")
         return index
     if not torch.cuda.is_available():
-        raise RuntimeError("v2 链路要求使用 GPU，但 CUDA 不可用")
+        raise RuntimeError("v3 链路要求使用 GPU，但 CUDA 不可用")
     if isinstance(index, str):
         spec = index.strip().lower()
         if spec == "cuda":
@@ -312,7 +308,7 @@ class ModelPool:
             "failed_instances": len(failed),
             "busy": busy,
             "waiting": self.waiting,
-            "failure": failed[-1] if failed else None,
+            "failure": failed[len(failed) - 1] if failed else None,
             "wait_total_ms": round(self.wait_total_ms, 2),
             "inference_total_ms": round(self.inference_total_ms, 2),
             "calls": self.calls,
@@ -493,21 +489,21 @@ _MODEL_POOLS = {
 }
 
 
-async def load_v2_models_if_needed(need_role: bool = False, need_emotion: bool = False):
+async def load_v3_models_if_needed(need_role: bool = False, need_emotion: bool = False):
     """按请求开关懒加载对应模型池。"""
-    global _model_spk_v2, _model_emotion_v2
-    validate_v2_capabilities(need_role, need_emotion)
+    global _model_spk_v3, _model_emotion_v3
+    validate_v3_capabilities(need_role, need_emotion)
     async with _model_lock:
         if need_role:
             await _MODEL_POOLS["speech_campplus"].ensure_loaded()
             if not any(model is not None for model in _MODEL_POOLS["speech_campplus"].models):
                 raise ModelUnavailableError("speech_campplus")
-            _model_spk_v2 = next((model for model in _MODEL_POOLS["speech_campplus"].models if model), None)
+            _model_spk_v3 = next((model for model in _MODEL_POOLS["speech_campplus"].models if model), None)
         if need_emotion:
             await _MODEL_POOLS["emotion2vec"].ensure_loaded()
             if not any(model is not None for model in _MODEL_POOLS["emotion2vec"].models):
                 raise ModelUnavailableError("emotion2vec")
-            _model_emotion_v2 = next((model for model in _MODEL_POOLS["emotion2vec"].models if model), None)
+            _model_emotion_v3 = next((model for model in _MODEL_POOLS["emotion2vec"].models if model), None)
 
 
 def get_model_pool(name: str) -> ModelPool:
@@ -515,15 +511,15 @@ def get_model_pool(name: str) -> ModelPool:
 
 
 def get_spk_model():
-    return _model_spk_v2
+    return _model_spk_v3
 
 
-def get_emotion_v2_model():
-    return _model_emotion_v2
+def get_emotion_v3_model():
+    return _model_emotion_v3
 
 
-async def close_v2_model_pools() -> None:
+async def close_v3_model_pools() -> None:
     await asyncio.gather(*[pool.close() for pool in _MODEL_POOLS.values()])
-    global _model_spk_v2, _model_emotion_v2
-    _model_spk_v2 = None
-    _model_emotion_v2 = None
+    global _model_spk_v3, _model_emotion_v3
+    _model_spk_v3 = None
+    _model_emotion_v3 = None

@@ -99,7 +99,7 @@ def trial(args, label, cam_trt, emo_trt, faulty=None):
             write_json(directory / "status-before.json", status.json())
 
             def request(speaker, emotion, tag):
-                response = client.post(url + "/v2/seacraft_asr",
+                response = client.post(url + "/v3/seacraft_asr",
                     files={"audioFile": (f"rollback-{label}-{tag}.wav", blob, "audio/wav")},
                     data={"showSpk": str(speaker).lower(), "showEmotion": str(emotion).lower()}, timeout=180)
                 value = response.json()

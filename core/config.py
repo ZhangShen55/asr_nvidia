@@ -22,6 +22,18 @@ class Settings:
     def __post_init__(self):
         self._cfg = _load_toml(self.config_path)
 
+    @property
+    def deployment_profile(self) -> str:
+        """当前部署 profile；普通源码/非 Docker 运行返回空字符串。"""
+        value = self._cfg.get("deployment_profile", "")
+        if not isinstance(value, str):
+            raise ValueError("deployment_profile 必须是字符串")
+        return value.strip().lower()
+
+    @property
+    def is_cuda_tensorrt_profile(self) -> bool:
+        return self.deployment_profile == "cuda-tensorrt-fp16"
+
     # 日志配置
     @property
     def log_path(self) -> str:
@@ -128,7 +140,7 @@ class Settings:
             failure_mode=self.itn_failure_mode,
         )
 
-    # Qwen3-ASR 适配链路（/v2/seacraft_asr）配置 - 从嵌套的 [qwen_asr] 部分读取
+    # Qwen3-ASR 适配链路（/v3/seacraft_asr）配置 - 从嵌套的 [qwen_asr] 部分读取
     @property
     def qwen_asr_enabled(self) -> bool:
         return bool(self._cfg.get("qwen_asr", {}).get("enabled", True))
@@ -367,9 +379,19 @@ class Settings:
     def validate_model_backends(self) -> None:
         """就绪前校验配置；不导入后端、不接触设备或加载权重。"""
         for name in ("speech_campplus", "emotion2vec"):
-            self._model_backend_option(name, "use_tensorrt")
-            self._model_backend_option(name, "tensorrt_precision")
-            self._model_pool_devices(name)
+            use_tensorrt = self._model_backend_option(name, "use_tensorrt")
+            precision = self._model_backend_option(name, "tensorrt_precision")
+            devices = self._model_pool_devices(name)
+            if self.is_cuda_tensorrt_profile:
+                if not use_tensorrt or precision != "fp16":
+                    raise ValueError(
+                        f"CUDA TensorRT profile 要求 {name}_use_tensorrt=true 且 "
+                        f"{name}_tensorrt_precision=fp16"
+                    )
+                if not devices or not all(device.startswith("cuda:") for device in devices):
+                    raise ValueError(
+                        f"CUDA TensorRT profile 要求 {name}_devices 全部为 cuda:N"
+                    )
 
     @property
     def model_device_emotion2vec(self) -> str:

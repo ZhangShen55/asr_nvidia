@@ -112,11 +112,11 @@ def safe_concat(prev_text: str, add_text: str) -> str:
         return prev_text
 
     # 若前一块已以空白结尾，则去掉下一块的前导空白，避免双空格
-    if prev_text[-1].isspace():
+    if prev_text[len(prev_text) - 1].isspace():
         add_text = add_text.lstrip()
 
     # 在“英→英”边界补一个空格
-    if _needs_space(prev_text[-1], add_text[0]):
+    if _needs_space(prev_text[len(prev_text) - 1], add_text[0]):
         return prev_text + ' ' + add_text
 
     # 默认直接拼

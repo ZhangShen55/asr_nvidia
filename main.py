@@ -6,9 +6,10 @@ from datetime import datetime
 from core.config import settings
 from core.logging import setup_logging
 from core.qwen_asr_client import close_qwen_client
-from core.models import close_v2_model_pools
+from core.models import close_v3_model_pools, load_v3_models_if_needed, get_local_model_status
 from core.vad_pool import start_vad_pool, stop_vad_pool
-from api.routes.asr_v2 import router as asr_v2_router
+from core.deployment import validate_cuda_tensorrt_runtime, DeploymentPreflightError
+from api.routes.asr_v3 import router as asr_v3_router
 from api.routes.asr_common import cleanup_stale_service_cache
 from api.routes.status import router as status_router
 from utils.asr_stats import reset_stats
@@ -34,6 +35,25 @@ async def lifespan(app: FastAPI):
     # 配置错误在任何模型预热和对外就绪之前暴露。
     _ = settings.qwen_audio_spk_emo_concurrency
     settings.validate_model_backends()
+    if settings.is_cuda_tensorrt_profile:
+        try:
+            app.state.deployment_preflight = validate_cuda_tensorrt_runtime(settings)
+            # Docker profile 不允许首个请求承担 engine 加载或静默回退。
+            await load_v3_models_if_needed(need_role=True, need_emotion=True)
+            statuses = get_local_model_status()
+            failed = {
+                name: value.get("failure")
+                for name, value in statuses.items()
+                if value.get("failed_instances")
+            }
+            if failed:
+                raise DeploymentPreflightError(f"模型实例加载失败: {failed}")
+        except Exception as exc:
+            raise RuntimeError(f"CUDA TensorRT profile 启动前检查失败: {exc}") from exc
+    else:
+        app.state.deployment_preflight = {
+            "profile": settings.deployment_profile, "checked": False,
+        }
 
     # 1) 进程命名（运维在 nvidia-smi 中据此定位本服务的显存占用）
     _set_process_name()
@@ -59,7 +79,7 @@ async def lifespan(app: FastAPI):
     finally:
         # 释放 VAD worker 进程池、本地模型池与 Qwen 客户端连接池
         await stop_vad_pool()
-        await close_v2_model_pools()
+        await close_v3_model_pools()
         await close_qwen_client()
 
 
@@ -75,9 +95,9 @@ def create_app() -> FastAPI:
         allow_headers=["*"],
     )
 
-    # 路由装配（路径与契约保持不变）
+    # 路由装配（路径迁移为 v3，业务契约保持不变）
     app.include_router(status_router)
-    app.include_router(asr_v2_router)
+    app.include_router(asr_v3_router)
 
     return app
 

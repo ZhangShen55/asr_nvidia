@@ -79,7 +79,7 @@ class StatusContractTests(unittest.TestCase):
 
         paths = TestClient(create_app()).get("/openapi.json").json()["paths"]
         self.assertNotIn("/v1.1.8/seacraft_asr", paths)
-        self.assertIn("/v2/seacraft_asr", paths)
+        self.assertIn("/v3/seacraft_asr", paths)
 
 
 class ConfigDefaultsTests(unittest.TestCase):

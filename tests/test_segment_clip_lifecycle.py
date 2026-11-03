@@ -101,7 +101,7 @@ class SegmentClipLifecycleTests(unittest.TestCase):
             # 单测不加载真实本地模型
             stack.enter_context(
                 patch(
-                    "api.routes.asr_qwen_common.load_v2_models_if_needed",
+                    "api.routes.asr_qwen_common.load_v3_models_if_needed",
                     new=AsyncMock(),
                 )
             )

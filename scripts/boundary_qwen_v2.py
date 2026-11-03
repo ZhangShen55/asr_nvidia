@@ -23,7 +23,7 @@ import requests
 def post(base_url, path, timeout=3600):
     with open(path, "rb") as handle:
         response = requests.post(
-            f"{base_url.rstrip('/')}/v2/seacraft_asr",
+            f"{base_url.rstrip('/')}/v3/seacraft_asr",
             files={"audioFile": (os.path.basename(path), handle, "audio/wav")},
             timeout=timeout,
         )

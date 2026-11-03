@@ -41,14 +41,14 @@ import soundfile as sf
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 PREFIX = "seaco_paraformer-"
-V2_PHASE_RE = re.compile(
-    r"\[V2 耗时\] 段数=(\d+) 总计=([\d.]+)ms \| VAD=([\d.]+) 裁剪=([\d.]+)"
+V3_PHASE_RE = re.compile(
+    r"\[(?:V3|V2) 耗时\] 段数=(\d+) 总计=([\d.]+)ms \| VAD=([\d.]+) 裁剪=([\d.]+)"
     r" 分段处理=([\d.]+).*?Qwen 等待 ([\d.]+)ms/调用 ([\d.]+)ms/(\d+)次.*?"
     r"聚类=([\d.]+) ITN=([\d.]+)"
     r"(?: 低音量丢弃=([\d.]+))? task_id=([^ ]+)"
 )
-V2_PHASE_LEGACY_RE = re.compile(
-    r"\[V2 耗时\] 段数=(\d+).*?总计=([\d.]+)ms.*?VAD=([\d.]+)"
+V3_PHASE_LEGACY_RE = re.compile(
+    r"\[(?:V3|V2) 耗时\] 段数=(\d+).*?总计=([\d.]+)ms.*?VAD=([\d.]+)"
 )
 REPAIR_RE = re.compile(
     r"\[复读修复\] 长度 (\d+) -> (\d+)（原上限 (\d+)，时长 ([\d.]+)s）"
@@ -244,7 +244,7 @@ def post_one(base_url: str, row: dict[str, Any], root: Path, out_dir: Path, time
     try:
         with wav_path.open("rb") as audio:
             response = requests.post(
-                f"{base_url.rstrip('/')}/v2/seacraft_asr",
+                f"{base_url.rstrip('/')}/v3/seacraft_asr",
                 # 使用稳定清单 ID 作为上传文件名，避免多个目录都叫“教师1.wav”时，
                 # 服务日志中的 task_id 无法回溯到具体相对路径。
                 files={"audioFile": (f"{row['id']}.wav", audio, "audio/wav")},
@@ -454,7 +454,7 @@ def parse_logs(log_slice: Path) -> dict[str, Any]:
         match = KEEP_RE.search(line)
         if match:
             keeps.append({"length": int(match.group(1)), "limit": int(match.group(2)), "duration_s": float(match.group(3)), "line": line[:400]})
-        match = V2_PHASE_RE.search(line)
+        match = V3_PHASE_RE.search(line)
         if match:
             phases.append({
                 "segments": int(match.group(1)), "total_ms": float(match.group(2)),
@@ -464,7 +464,7 @@ def parse_logs(log_slice: Path) -> dict[str, Any]:
                 "cluster_ms": float(match.group(9)), "itn_ms": float(match.group(10)),
                 "low_volume_dropped": int(float(match.group(11) or 0)), "task_id": match.group(12),
             })
-        elif V2_PHASE_LEGACY_RE.search(line):
+        elif V3_PHASE_LEGACY_RE.search(line):
             phases.append({"legacy": True, "line": line[:500]})
         match = VAD_SUMMARY_RE.search(line)
         if match:
@@ -624,7 +624,7 @@ def write_report(report: dict[str, Any], path: Path) -> None:
         f"- Paraformer 基线段：{seg.get('baseline_segments', 0)}。",
         f"- Qwen 最终响应段：{seg.get('qwen_segments', 0)}。",
         f"- 服务日志 VAD 汇总：{report['vad']['summary_count']} 个；原始段 {report['vad']['raw_segments']}，过滤后 {report['vad']['filtered_segments']}，低音量丢弃 {report['vad']['low_volume_dropped']}。",
-        f"- V2 阶段日志：{report['repetition']['log_phases']} 条；Qwen 调用总数 {report['qwen']['calls_total']}，Qwen 调用耗时 P50/P95 {report['phase_metrics']['qwen_ms']['p50']}/{report['phase_metrics']['qwen_ms']['p95']} ms。",
+        f"- V3 阶段日志：{report['repetition']['log_phases']} 条；Qwen 调用总数 {report['qwen']['calls_total']}，Qwen 调用耗时 P50/P95 {report['phase_metrics']['qwen_ms']['p50']}/{report['phase_metrics']['qwen_ms']['p95']} ms。",
         f"- 阶段耗时 P50/P95（ms）：VAD {report['phase_metrics']['vad_ms']['p50']}/{report['phase_metrics']['vad_ms']['p95']}，裁剪 {report['phase_metrics']['cut_ms']['p50']}/{report['phase_metrics']['cut_ms']['p95']}，分段处理 {report['phase_metrics']['segment_ms']['p50']}/{report['phase_metrics']['segment_ms']['p95']}。",
         f"- 基线独有段：{seg.get('baseline_only', 0)}；Qwen 独有段：{seg.get('qwen_only', 0)}。",
         f"- 基线独有段自动提示：{report['candidate_auto_hints']}。",

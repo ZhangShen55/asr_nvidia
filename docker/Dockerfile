@@ -1,0 +1,70 @@
+# syntax=docker/dockerfile:1.7
+ARG BASE_IMAGE=docker.1ms.run/nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
+
+FROM ${BASE_IMAGE} AS builder
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      build-essential gcc g++ python3 python3-dev python3-venv python3-pip \
+      ffmpeg libsndfile1 libgomp1 ca-certificates curl \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /src
+RUN python3 -m venv /opt/venv
+ENV PATH=/opt/venv/bin:$PATH \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    PIP_NO_CACHE_DIR=1
+RUN pip install --upgrade pip setuptools wheel \
+    && pip install --prefer-binary --index-url https://download.pytorch.org/whl/cu124 \
+       --extra-index-url https://pypi.org/simple \
+       torch==2.6.0+cu124 torchaudio==2.6.0+cu124
+COPY requirements-pip.txt requirements-pip-runtime.txt requirements-pip-extra.txt requirements-tensorrt.txt /tmp/
+RUN pip install --prefer-binary -r /tmp/requirements-pip.txt \
+    && pip install --prefer-binary -r /tmp/requirements-pip-runtime.txt \
+    && pip install --prefer-binary pynini \
+    && pip install --prefer-binary --no-deps -r /tmp/requirements-pip-extra.txt \
+    && pip install --prefer-binary -r /tmp/requirements-tensorrt.txt
+COPY . .
+RUN chmod +x scripts/build_cython.sh \
+    && ./scripts/build_cython.sh /src
+# 构建层路径映射到默认运行路径，允许无 GPU 的 manifest 完整性检查。
+RUN mkdir -p /app && ln -s /src/model /app/model \
+    && CONFIG_PATH=/src/config.toml python scripts/check_tensorrt_assets.py --config /src/config.toml
+RUN python - <<'PY'
+import importlib
+for module in ("main", "api.routes.asr_v3", "core.deployment", "core.models", "utils.audio_utils", "entity.data"):
+    importlib.import_module(module)
+print("Cython runtime import smoke test: OK")
+PY
+# 导入 smoke test 只用于构建校验，不把解释器缓存带入运行层。
+RUN find /src/core /src/api /src/utils /src/entity -type d -name __pycache__ -prune -exec rm -rf {} +
+
+FROM ${BASE_IMAGE} AS runtime
+ENV DEBIAN_FRONTEND=noninteractive \
+    PATH=/opt/venv/bin:$PATH \
+    CONFIG_PATH=/config.toml \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      python3 python3-venv ffmpeg libsndfile1 libgomp1 nginx curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /src/main.py /src/start.sh /src/config.toml /app/
+COPY --from=builder /src/model_status_runtime.py /app/model_status_runtime.py
+COPY --from=builder /src/telemetry_runtime.py /app/telemetry_runtime.py
+COPY --from=builder /src/cython-build.json /app/cython-build.json
+COPY --from=builder /src/core /app/core
+COPY --from=builder /src/api /app/api
+COPY --from=builder /src/utils /app/utils
+COPY --from=builder /src/entity /app/entity
+COPY --from=builder /src/scripts/check_tensorrt_assets.py /app/scripts/check_tensorrt_assets.py
+COPY --from=builder /src/model /app/model
+COPY nginx.conf /etc/nginx/nginx.conf
+RUN chmod +x /app/start.sh \
+    && /opt/venv/bin/python -m py_compile /app/main.py \
+    && CONFIG_PATH=/app/config.toml /opt/venv/bin/python /app/scripts/check_tensorrt_assets.py --config /app/config.toml \
+    && find /app -type d -name __pycache__ -prune -exec rm -rf {} +
+EXPOSE 9000
+HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
+  CMD curl --fail --silent http://127.0.0.1:9000/get_status >/dev/null || exit 1
+ENTRYPOINT ["/app/start.sh"]

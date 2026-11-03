@@ -141,7 +141,12 @@ def extract_audio_clip_array(audio_tensor, sample_rate: int, start_time: float, 
     funasr 的文件分支里还包含一次额外的音频读取与重采样开销。
     """
     start_sample = max(0, int(start_time * sample_rate))
-    end_sample = min(audio_tensor.shape[-1], int((start_time + duration) * sample_rate))
+    # Cython 的 boundscheck=False 会把部分动态序列的负索引优化成越界访问；
+    # 显式取最后一个维度，保证源码和扩展运行时一致。
+    shape = getattr(audio_tensor, "shape", ())
+    if not shape:
+        raise ValueError("音频张量缺少 shape")
+    end_sample = min(shape[len(shape) - 1], int((start_time + duration) * sample_rate))
     if end_sample <= start_sample:
         raise ValueError("裁剪区间为空")
 
@@ -255,10 +260,14 @@ def plan_audio_chunks(
         pos = end
 
     # 最后一块过短则合并到倒数第二块
-    if len(chunks) >= 2 and (chunks[-1][1] - chunks[-1][0]) < min_last_s:
-        prev_start, _ = chunks[-2]
-        _, last_end = chunks[-1]
-        chunks[-2] = (prev_start, last_end)
+    if len(chunks) >= 2:
+        last_chunk = chunks[len(chunks) - 1]
+        previous_chunk = chunks[len(chunks) - 2]
+        if (last_chunk[1] - last_chunk[0]) >= min_last_s:
+            return chunks
+        prev_start, _ = previous_chunk
+        _, last_end = last_chunk
+        chunks[len(chunks) - 2] = (prev_start, last_end)
         chunks.pop()
 
     return chunks

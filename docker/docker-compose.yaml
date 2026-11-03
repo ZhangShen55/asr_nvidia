@@ -1,0 +1,27 @@
+services:
+  asr-offline:
+    image: ${ASR_IMAGE:?请设置 ASR_IMAGE，例如 asr_offline:v3_20261103120000}
+    container_name: asr-offline-v3
+    restart: unless-stopped
+    environment:
+      CONFIG_PATH: /config.toml
+      NVIDIA_VISIBLE_DEVICES: ${NVIDIA_VISIBLE_DEVICES:-all}
+      NVIDIA_DRIVER_CAPABILITIES: ${NVIDIA_DRIVER_CAPABILITIES:-compute,utility}
+    volumes:
+      - ${ASR_CONFIG:-./config.toml}:/config.toml:ro
+    ports:
+      - "${ASR_PORT:-9000}:9000"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    shm_size: "2gb"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://127.0.0.1:9000/get_status >/dev/null"]
+      interval: 30s
+      timeout: 10s
+      start_period: 120s
+      retries: 3

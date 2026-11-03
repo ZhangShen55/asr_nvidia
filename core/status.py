@@ -11,6 +11,7 @@ from core.qwen_asr_queue import get_slot_manager
 from core.request_telemetry import snapshot as request_telemetry_snapshot
 from core.resource_diagnostics import status_snapshot
 from core.vad_pool import get_vad_pool
+from core.config import settings
 
 # 引擎标识：配置项已删除，返回固定占位值以保持响应字段结构不变
 ID_ENGINE_PLACEHOLDER = "1"
@@ -70,6 +71,11 @@ def build_status_payload(stats: dict, run_start_time: datetime) -> dict:
         "vadPool": get_vad_pool().stats(),
         # 资源诊断为附加字段；采集失败明确标记 available=false，不影响业务字段。
         "resourceDiagnostics": resource_diagnostics,
+        "deployment": {
+            "profile": settings.deployment_profile,
+            "config_path": settings.config_path,
+            "cuda_tensorrt": settings.is_cuda_tensorrt_profile,
+        },
     }
 
 

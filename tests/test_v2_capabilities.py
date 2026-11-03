@@ -18,10 +18,10 @@ class CapabilityValidationTests(unittest.TestCase):
                 code = 4018 if role_disabled and emotion_disabled else (
                     4015 if role_disabled else 4016 if emotion_disabled else None)
                 if code is None:
-                    models.validate_v2_capabilities(need_role, need_emotion)
+                    models.validate_v3_capabilities(need_role, need_emotion)
                 else:
                     with self.assertRaises(models.ModelUnavailableError) as caught:
-                        models.validate_v2_capabilities(need_role, need_emotion)
+                        models.validate_v3_capabilities(need_role, need_emotion)
                     self.assertEqual(caught.exception.code, code)
 
 
@@ -47,7 +47,7 @@ class DisabledRuntimeTests(unittest.IsolatedAsyncioTestCase):
         with patch.object(models, "settings", SimpleNamespace(open_v2_role=True, open_v2_emotion=False)), \
                 patch.object(models.ModelPool, "ensure_loaded", new_callable=AsyncMock) as load:
             with self.assertRaises(models.ModelUnavailableError) as caught:
-                await models.load_v2_models_if_needed(True, True)
+                await models.load_v3_models_if_needed(True, True)
             self.assertEqual(caught.exception.code, 4016)
             load.assert_not_awaited()
 

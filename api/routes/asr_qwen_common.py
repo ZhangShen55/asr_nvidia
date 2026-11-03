@@ -1,4 +1,4 @@
-"""v2（Qwen3-ASR）转写链路：VAD 切分 → 并发转写 → 响应封装。"""
+"""v3（Qwen3-ASR）转写链路：VAD 切分 → 并发转写 → 响应封装。"""
 
 from __future__ import annotations
 
@@ -17,7 +17,7 @@ from api.routes.asr_common import AsrContext, map_emotion, prepare_asr_context
 from core.config import settings
 from core.async_utils import await_completion, run_in_thread
 from core.local_inference import generate_local
-from core.models import get_model_pool, load_v2_models_if_needed, validate_v2_capabilities
+from core.models import get_model_pool, load_v3_models_if_needed, validate_v3_capabilities
 from core.qwen_asr_client import (
     QwenAsrCallError,
     QwenAsrUnavailableError,
@@ -83,7 +83,7 @@ class SegmentCutError(RuntimeError):
 
 
 @dataclass(frozen=True)
-class V2Capabilities:
+class V3Capabilities:
     need_role: bool
     need_emotion: bool
 
@@ -92,9 +92,9 @@ class V2Capabilities:
         return "B" if self.need_role or self.need_emotion else "A"
 
 
-def resolve_v2_capabilities(request) -> V2Capabilities:
+def resolve_v3_capabilities(request) -> V3Capabilities:
     """只解析请求需求，不加载模型或占用名额。"""
-    return V2Capabilities(
+    return V3Capabilities(
         need_role=bool(request.showSpk or request.showRoleIdentify),
         need_emotion=bool(request.showEmotion),
     )
@@ -262,7 +262,7 @@ async def _speaker_embedding(audio_array, sample_rate):
     直接喂 numpy 数组而不是文件路径：funasr 的文件分支里有一次额外的
     音频读取与重采样，实测单次调用 98.8ms → 49.3ms，且嵌入结果逐位相同。
     """
-    validate_v2_capabilities(need_role=True)
+    validate_v3_capabilities(need_role=True)
     def _run(model, device):
         result = generate_local(model, device, input=audio_array, fs=sample_rate)
         if not result:
@@ -299,7 +299,7 @@ async def _speaker_embedding(audio_array, sample_rate):
 
 async def _segment_emotion(audio_array, sample_rate, duration_s):
     """推断片段情绪；超出 1~10 秒的片段记为平淡。"""
-    validate_v2_capabilities(need_emotion=True)
+    validate_v3_capabilities(need_emotion=True)
     if duration_s < EMOTION_MIN_DURATION_S or duration_s > EMOTION_MAX_DURATION_S:
         return "平淡"
 
@@ -482,10 +482,10 @@ def _apply_role_identify(outcomes) -> None:
 
 
 async def run_qwen_asr(ctx: AsrContext) -> dict:
-    """v2 转写主链路。"""
+    """v3 转写主链路。"""
     request = ctx.request
-    capabilities = resolve_v2_capabilities(request)
-    validate_v2_capabilities(capabilities.need_role, capabilities.need_emotion)
+    capabilities = resolve_v3_capabilities(request)
+    validate_v3_capabilities(capabilities.need_role, capabilities.need_emotion)
     started = time.perf_counter()
     stats = reset_phase_stats()
     phase = {
@@ -503,7 +503,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     need_role = capabilities.need_role
     need_emotion = capabilities.need_emotion
 
-    await load_v2_models_if_needed(
+    await load_v3_models_if_needed(
         need_role=need_role,
         need_emotion=need_emotion,
     )
@@ -547,7 +547,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
                 encode_audio_clip_wav, array, sample_rate
             )
         else:
-            # 兼容尚未预加载张量的旧调用方。正常 v2 请求总是走上面的
+            # 兼容尚未预加载张量的旧调用方。正常 v3 请求总是走上面的
             # 内存张量分支；这里只为旧客户端/测试保留一次兼容裁剪，并
             # 在读取后立即登记并删除生成的路径。
             clip_path = None
@@ -596,7 +596,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
                 clip_bytes, audio_array, sample_rate = await _cut(segment)
                 phase["cut_wall_ended"] = time.perf_counter()
             except Exception as exc:
-                logger.error(f"[V2] 音频裁剪失败: {exc}")
+                logger.error(f"[V3] 音频裁剪失败: {exc}")
                 segment_failed = True
                 raise SegmentCutError(f"音频分块失败: {exc}") from exc
             finally:
@@ -687,7 +687,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             ):
                 update_fail_task()
                 return {"msg": result.message, "code": result.code}
-            logger.error(f"[V2] 转写失败: {result}")
+            logger.error(f"[V3] 转写失败: {result}")
             update_fail_task()
             return {"msg": "Qwen 服务调用失败，请稍后再试", "code": 4012}
 
@@ -764,7 +764,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
 
     gpu_time_ms = (time.perf_counter() - started) * 1000
     logger.info(
-        "[V2 耗时] 段数=%d 总计=%.0fms | VAD=%.0f 裁剪累计=%.0f 裁剪墙钟=%.0f 分段处理=%.0f "
+        "[V3 耗时] 段数=%d 总计=%.0fms | VAD=%.0f 裁剪累计=%.0f 裁剪墙钟=%.0f 分段处理=%.0f "
         "(Qwen 等待 %.0fms/调用 %.0fms/%d次, 说话人等待 %.0fms/推理 %.0fms/%d次, "
         "情绪等待 %.0fms/推理 %.0fms/%d次) 聚类=%.0f ITN=%.0f 低音量丢弃=%d task_id=%s",
         len(segments),

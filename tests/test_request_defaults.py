@@ -8,11 +8,11 @@ from entity.data import AsrRequestParams, get_asr_params
 
 class RequestDefaultsTests(unittest.TestCase):
     def test_capability_classification_for_all_switch_combinations(self):
-        from api.routes.asr_qwen_common import resolve_v2_capabilities
+        from api.routes.asr_qwen_common import resolve_v3_capabilities
 
         for spk, emotion, identify in product((False, True), repeat=3):
             with self.subTest(spk=spk, emotion=emotion, identify=identify):
-                result = resolve_v2_capabilities(SimpleNamespace(
+                result = resolve_v3_capabilities(SimpleNamespace(
                     showSpk=spk, showEmotion=emotion, showRoleIdentify=identify,
                 ))
                 self.assertEqual(result.need_role, spk or identify)
@@ -21,7 +21,7 @@ class RequestDefaultsTests(unittest.TestCase):
 
     def test_openapi_enhancement_defaults_are_false(self):
         from fastapi import FastAPI
-        from api.routes.asr_v2 import router
+        from api.routes.asr_v3 import router
 
         app = FastAPI()
         app.include_router(router)

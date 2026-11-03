@@ -130,7 +130,7 @@ def main():
     args = parser.parse_args()
 
     v118 = post(args.base_url, "/v1.1.8/seacraft_asr", args.audio, showSpk="true")
-    v2 = post(args.base_url, "/v2/seacraft_asr", args.audio, showSpk="true", showEmotion="true")
+    v2 = post(args.base_url, "/v3/seacraft_asr", args.audio, showSpk="true", showEmotion="true")
 
     text_118 = normalize(v118.get("text", ""))
     text_v2 = normalize(v2.get("text", ""))

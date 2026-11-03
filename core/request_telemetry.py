@@ -83,31 +83,16 @@ def record_request(
     error: str | None = None,
     admission: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
-    ended = time.perf_counter() if ended_at is None else ended_at
-    phase_values = {
-        str(key): round(float(value), 3)
-        for key, value in (phases or {}).items()
-        if isinstance(value, (int, float))
-    }
-    event = {
-        "request_id": request_id,
-        "task_id": task_id,
-        "filename": filename,
-        "started_at": datetime.now(timezone.utc).isoformat(timespec="milliseconds"),
-        "duration_ms": round(max(0.0, ended - started_at) * 1000, 3),
-        "status": status,
-        "http_status": http_status,
-        "code": code,
-        "retry_count": int(retry_count),
-        "valid_segments": valid_segments,
-        "phases": phase_values,
-        "error": error,
-    }
-    if admission is not None:
-        event["admission"] = _admission_values(admission)
-    with _LOCK:
-        _EVENTS.append(event)
-    return deepcopy(event)
+    from telemetry_runtime import record_request as _record_request
+
+    return _record_request(
+        _EVENTS, _LOCK,
+        request_id=request_id, task_id=task_id, filename=filename,
+        started_at=started_at, ended_at=ended_at, status=status,
+        http_status=http_status, code=code, retry_count=retry_count,
+        valid_segments=valid_segments, phases=phases, error=error,
+        admission=admission,
+    )
 
 
 def snapshot(*, include_events: bool = True) -> dict[str, Any]:
@@ -135,7 +120,7 @@ def snapshot(*, include_events: bool = True) -> dict[str, Any]:
                 "cluster_ms", "itn_ms", "cleanup_ms",
             )
         },
-        "last_error": failed[-1].get("error") if failed else None,
+        "last_error": failed[len(failed) - 1].get("error") if failed else None,
         "admission": {
             "window": "retained_events",
             "by_class": {
@@ -153,7 +138,7 @@ def snapshot(*, include_events: bool = True) -> dict[str, Any]:
         },
     }
     if include_events:
-        result["recent"] = events[-20:]
+        result["recent"] = events[max(0, len(events) - 20):]
     return result
 
 
