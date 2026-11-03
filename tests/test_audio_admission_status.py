@@ -21,8 +21,10 @@ class AdmissionStatusTests(unittest.IsolatedAsyncioTestCase):
             result = status.build_status_payload(stats, datetime.utcnow())
             snapshot.assert_called_once_with()
             load.assert_not_awaited()
-        for key in ("localModels", "vadPool", "resourceDiagnostics", "deployment", "queuedTaskList", "processingTaskList"):
+        for key in ("localModels", "vadPool", "resourceDiagnostics", "deployment"):
             self.assertIn(key, result)
+        for key in ("onlineDone", "queuedTaskList", "processingTaskList"):
+            self.assertNotIn(key, result)
         self.assertEqual(result["totalHaveDoneProcessTasks"], 5)
         self.assertIn("config_path", result["deployment"])
         return result

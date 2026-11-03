@@ -1,7 +1,8 @@
 """状态查询的响应组装。
 
 引擎标识与版本不再来自配置（配置项已随接口下线一并删除），
-这里返回固定占位值，保证运维平台的字段结构保持不变。
+这里返回固定占位值。状态中的并发、模型和资源字段来自当前 v3 运行时；旧版
+onlineDone、queuedTaskList、processingTaskList 不再对外返回。
 """
 
 from datetime import timedelta, datetime
@@ -58,12 +59,9 @@ def build_status_payload(stats: dict, run_start_time: datetime) -> dict:
         "appVersion": APP_VERSION,
         "nowTime": (datetime.utcnow() + timedelta(hours=8)).strftime("%Y-%m-%d %H:%M:%S"),
         "runTime": format_timedelta(run_time),
-        "totalHaveDoneProcessTasks": stats["offline"] + stats["online"],
+        "totalHaveDoneProcessTasks": stats.get("offline", 0) + stats.get("online", 0),
         "totalFailedTasks": stats["total_failed_tasks"],
-        "offlineDone": stats["offline"],
-        "onlineDone": stats["online"],
-        "queuedTaskList": stats["queued_task_ids"],
-        "processingTaskList": stats["processing_task_ids"],
+        "offlineDone": stats.get("offline", 0),
         **admission,
         # CAM++ / emotion2vec 模型池的加载状态与显存明细；VAD 状态统一放在 vadPool。
         "localModels": get_local_model_status(),
