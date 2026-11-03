@@ -21,26 +21,27 @@ Qwen-ASR 是独立的 GPU 服务，不放入本项目的 `asr-offline` 镜像，
 数量，避免和 CAM++/emotion2vec 共用一个容器生命周期。
 
 Qwen 镜像本身不包含业务模型权重，必须把宿主机上的 Qwen 模型目录以只读方式挂入容器。
-下面的命令使用仓库压测验证过的 `Qwen3-ASR-0.6B`、vLLM 入口和参数；如果使用
-1.7B 或其它模型，需要同步修改模型目录、模型名和显存参数。
+下面的命令按本机正在运行的 `qwen3-asr-1.7b-8806` 容器整理，使用
+`Qwen3-ASR-1.7B`、vLLM 入口和已验证参数；如果使用其它模型，需要同步修改模型目录、
+模型名和显存参数。
 
 ```bash
 # 宿主机上的模型目录，目录内应直接包含 config.json、权重文件等模型文件。
-QWEN_MODEL_DIR=/srv/models/Qwen3-ASR-0.6B
+QWEN_MODEL_DIR=/mnt2/model_zoo/llm_model/Qwen3-ASR-1.7B
 
 docker run -d \
-  --name qwen3-asr-0.6b-8806 \
+  --name qwen3-asr-1.7b-8806 \
   --restart unless-stopped \
   --gpus '"device=0"' \
   --shm-size 16g \
-  -v "${QWEN_MODEL_DIR}:/models/Qwen3-ASR-0.6B:ro" \
+  -v "${QWEN_MODEL_DIR}:/models/Qwen3-ASR-1.7B:ro" \
   -p 8806:8000 \
   --entrypoint qwen-asr-serve \
   qwenllm/qwen3-asr:latest \
-  /models/Qwen3-ASR-0.6B \
+  /models/Qwen3-ASR-1.7B \
   --host 0.0.0.0 \
   --port 8000 \
-  --served-model-name Qwen3-ASR-0.6B \
+  --served-model-name Qwen3-ASR-1.7B \
   --dtype bfloat16 \
   --max-model-len 1024 \
   --max-num-seqs 128 \
@@ -65,7 +66,7 @@ docker run -d \
 
 ```bash
 test -f "${QWEN_MODEL_DIR}/config.json"
-docker logs --tail=100 qwen3-asr-0.6b-8806
+docker logs --tail=100 qwen3-asr-1.7b-8806
 curl --fail http://127.0.0.1:8806/v1/models
 ```
 
@@ -74,7 +75,7 @@ curl --fail http://127.0.0.1:8806/v1/models
 ```toml
 [qwen_asr]
 base_url = "http://宿主机地址:8806"
-model = "Qwen3-ASR-0.6B"
+model = "Qwen3-ASR-1.7B"
 segment_concurrency = 16
 request_concurrency = 128
 audio_concurrency = 8
@@ -91,7 +92,7 @@ retry_count = 1
 `--api-server-count` 属于 Qwen 侧，两边需要分别配置。
 
 如果两个容器使用同一个自定义 Docker 网络，可以改为 Qwen 容器名，例如
-`http://qwen3-asr-0.6b-8806:8000`；如果使用当前 compose 的默认网络和宿主机端口映射，
+`http://qwen3-asr-1.7b-8806:8000`；如果使用当前 compose 的默认网络和宿主机端口映射，
 则使用宿主机可访问的 IP 和 `8806` 端口。启动 `asr-offline` 前应先确认该 `/v1/models`
 接口可访问。
 
