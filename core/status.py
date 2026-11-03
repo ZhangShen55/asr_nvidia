@@ -2,7 +2,7 @@
 
 引擎标识与版本不再来自配置（配置项已随接口下线一并删除），
 这里返回固定占位值。状态中的并发、模型和资源字段来自当前 v3 运行时；旧版
-onlineDone、queuedTaskList 不再对外返回，processingTaskList 保留为当前已准入请求。
+onlineDone、queuedTaskList 不再对外返回，processingTaskList 保留为当前已准入请求的文件名。
 """
 
 from datetime import timedelta, datetime
@@ -33,6 +33,9 @@ def format_timedelta(td: timedelta) -> str:
 def build_status_payload(stats: dict, run_start_time: datetime) -> dict:
     """组装 `/get_status` 的响应体。"""
     run_time = datetime.utcnow() - run_start_time
+    processing_names = stats.get("processing_task_names", {})
+    if not isinstance(processing_names, dict):
+        processing_names = {}
     admission = get_slot_manager().snapshot()
     resource = status_snapshot()
     services = resource.get("services", {})
@@ -62,9 +65,12 @@ def build_status_payload(stats: dict, run_start_time: datetime) -> dict:
         "totalHaveDoneProcessTasks": stats.get("offline", 0) + stats.get("online", 0),
         "totalFailedTasks": stats["total_failed_tasks"],
         "offlineDone": stats.get("offline", 0),
-        # 只报告已经通过音频准入、正在执行完整处理生命周期的请求。
-        # 拷贝列表，避免调用方修改状态快照时影响本次读取对象。
-        "processingTaskList": list(stats.get("processing_task_ids", [])),
+        # 只报告已经通过音频准入、正在执行完整处理生命周期的音频文件名。
+        # 通过 request_id 映射文件名，保证同名文件并发时仍能独立移除。
+        "processingTaskList": [
+            processing_names.get(task_id, task_id)
+            for task_id in stats.get("processing_task_ids", [])
+        ],
         **admission,
         # CAM++ / emotion2vec 模型池的加载状态与显存明细；VAD 状态统一放在 vadPool。
         "localModels": get_local_model_status(),

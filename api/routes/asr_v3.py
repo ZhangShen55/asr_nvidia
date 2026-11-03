@@ -60,7 +60,7 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
                 admission.update(outcome="admitted", snapshot=lease.snapshot)
                 try:
                     # request_id 在准入前生成，覆盖音频准备、VAD、推理和清理的完整处理周期。
-                    add_processing_task(request_id)
+                    add_processing_task(request_id, getattr(request.audioFile, "filename", None))
                     processing_registered = True
                 except Exception:
                     # 任务列表是运维统计，写入失败不能阻断已经准入的业务请求。

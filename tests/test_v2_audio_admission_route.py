@@ -132,6 +132,7 @@ class LeaseRouteTests(unittest.IsolatedAsyncioTestCase):
                     self.assertEqual(payload.get("code"), expected_code)
                 release_mock.assert_awaited_once()
                 add_processing.assert_called_once()
+                self.assertEqual(add_processing.call_args.args[1], "a.wav")
                 remove_processing.assert_called_once_with(add_processing.call_args.args[0])
                 self.assertEqual(events, ["release"] if scenario.startswith("prepare_") else ["cleanup", "release"])
                 self.assertEqual((manager.active, manager.active_b, manager.waiting), (0, 0, 0))

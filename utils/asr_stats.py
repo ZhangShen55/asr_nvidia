@@ -9,12 +9,16 @@ def init_stats_file():
     """确保 stats 文件存在，并初始化字段"""
     if not os.path.exists(STATS_FILE):
         with open(STATS_FILE, "w") as f:
-            json.dump({"offline": 0, "online": 0, "queued_task_ids": [],"processing_task_ids": [],"total_failed_tasks": 0}, f)
+            json.dump({"offline": 0, "online": 0, "queued_task_ids": [],
+                       "processing_task_ids": [], "processing_task_names": {},
+                       "total_failed_tasks": 0}, f)
 
 def reset_stats():
     """重置 stats 文件中的计数"""
     with open(STATS_FILE, "w") as f:
-        json.dump({"offline": 0, "online": 0, "queued_task_ids": [],"processing_task_ids": [],"total_failed_tasks": 0}, f)
+        json.dump({"offline": 0, "online": 0, "queued_task_ids": [],
+                   "processing_task_ids": [], "processing_task_names": {},
+                   "total_failed_tasks": 0}, f)
 
 def update_stat(key: str, inc: int = 1):
     """更新某项统计计数"""
@@ -38,15 +42,18 @@ def read_stats():
     return stats
 
 
-def add_processing_task(task_id: str):
+def add_processing_task(task_id: str, filename: str | None = None):
     init_stats_file()
     with open(STATS_FILE, "r+") as f:
         fcntl.flock(f, fcntl.LOCK_EX)
         stats = json.load(f)
         if "processing_task_ids" not in stats:
             stats["processing_task_ids"] = []
+        if "processing_task_names" not in stats or not isinstance(stats["processing_task_names"], dict):
+            stats["processing_task_names"] = {}
         if task_id not in stats["processing_task_ids"]:
             stats["processing_task_ids"].append(task_id)
+        stats["processing_task_names"][task_id] = filename or task_id
         f.seek(0)
         json.dump(stats, f)
         f.truncate()
@@ -59,6 +66,8 @@ def remove_processing_task(task_id: str):
         stats = json.load(f)
         if "processing_task_ids" in stats and task_id in stats["processing_task_ids"]:
             stats["processing_task_ids"].remove(task_id)
+        if isinstance(stats.get("processing_task_names"), dict):
+            stats["processing_task_names"].pop(task_id, None)
         f.seek(0)
         json.dump(stats, f)
         f.truncate()
@@ -69,6 +78,7 @@ def clear_processing_tasks():
     """清空正在处理的任务列表"""
     stats = read_stats()
     stats["processing_task_ids"] = []  # 清空列表
+    stats["processing_task_names"] = {}
     with open(STATS_FILE, "r+") as f:
         fcntl.flock(f, fcntl.LOCK_EX)
         f.seek(0)
@@ -83,11 +93,16 @@ def update_processing_tasks(task_id: str, add: bool = True):
     with open(STATS_FILE, "r+") as f:
         fcntl.flock(f, fcntl.LOCK_EX)
         stats = json.load(f)
+        if "processing_task_names" not in stats or not isinstance(stats["processing_task_names"], dict):
+            stats["processing_task_names"] = {}
         if add:
-            stats["processing_task_ids"].append(task_id)
+            if task_id not in stats["processing_task_ids"]:
+                stats["processing_task_ids"].append(task_id)
+            stats["processing_task_names"][task_id] = task_id
         else:
             if task_id in stats["processing_task_ids"]:
                 stats["processing_task_ids"].remove(task_id)
+            stats["processing_task_names"].pop(task_id, None)
         f.seek(0)
         json.dump(stats, f)
         f.truncate()
