@@ -330,7 +330,8 @@ openspec/changes/archive/<change>/       历史上的每次变更（proposal / d
 
 | 坑 | 说明 |
 |---|---|
-| **Dockerfile 第 1 行必须是 `# syntax=...`** | 三个新 Dockerfile 曾在首行加中文注释，导致 parser directive 失效、回退内置 frontend、inline cache 复用率下降。注释要写在 `# syntax` **下面**。 |
+| **Dockerfile 第 1 行必须是 `# syntax=...`** | 三个 profile Dockerfile 曾把中文注释放在首行，把 directive 挤到第 2 行，被当作普通注释静默忽略，回退到内置 frontend。**验证方法**：`docker build --progress=plain` 日志里出现 `resolve image config for docker-image://docker.io/docker/dockerfile:1.7` 才算生效；没有这一行就是失效。 |
+| 别把构建慢归因于 `# syntax` | `# syntax` **只影响 Dockerfile 解析器版本，与 inline cache 无关**。inline cache 由 `--build-arg BUILDKIT_INLINE_CACHE=1` 控制（见 `docker/build.sh`）。三份镜像各 8~9 分钟是结构性的：每份都要 COPY 5.2GB 模型并导出 16GB 层，profile 不同导致 COPY 层不共享。 |
 | `test/` vs `tests/` | 前者是实验脚本，后者才是 pytest。 |
 | `config.toml` 与文档默认值不一致 | 上线后经过实测调参，历史文档里留下的默认值（如 `after_start/before_end` 写过 3/3、6/6、0/0）都是调参过程的快照。**以 `config.toml` 为准**，同时记得回写 README。 |
 | `vad_snr_thres` 的定位 | 当前取 `18.0`，**它是段级过滤的主要承担者**（历史统计里 665 次丢弃中 614 次是 snr 命中）。不要因为早期报告说"SNR 不承担主要过滤"就把它调回去。 |
