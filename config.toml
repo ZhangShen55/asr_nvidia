@@ -68,9 +68,11 @@ vad_decibel_low_frame_ratio_thres = 0.8 # 段级 decibel 过滤：抽取帧中�
 # 段级 RMS dBFS 过滤
 vad_low_volume_rms_dbfs_thres = -40.0
 vad_low_volume_filter_enabled = true
-# 段级过滤范围，单位：分钟；0=整段，-1=该侧不限制
-after_start = 0
-before_end = 0
+# 段级过滤窗口，单位：分钟；0=整段都参与过滤，-1=该侧不限制
+# 3/3：只有落在开头 3 分钟、结尾 3 分钟内的段才做低音量/SNR/RMS 过滤；
+# 窗口外的中间段无条件保留，避免误删讲授主体。改动需重启生效。
+after_start = 3
+before_end = 3
 
 # 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
 # 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
