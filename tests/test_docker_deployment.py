@@ -31,8 +31,13 @@ def test_compose_declares_gpu_and_read_only_config_mount():
 def test_build_script_and_docs_use_v3_time_tag_and_v3_route():
     script = (DOCKER / "build.sh").read_text()
     readme = (DOCKER / "README.md").read_text()
-    assert re.search(r"asr_offline:v3_", script)
-    assert "asr_offline:v3_<YYYYMMDDHHMMSS>" in readme
+    assert re.search(r"asr_offline-rtx4090:v3_", script)
+    assert "asr_offline-rtx3090:v3_" in readme
+    assert "asr_offline-rtx4070tisuper:v3_" in readme
+    assert "asr_offline-rtx4090:v3_" in readme
+    assert "GPU_PROFILE=rtx3090-sm86" in readme
+    assert "GPU_PROFILE=rtx4070tisuper-sm89" in readme
+    assert "GPU_PROFILE=rtx4090-sm89" in readme
     assert "/v3/seacraft_asr" in readme
     assert "/v2/seacraft_asr" in readme
     assert "CONFIG_PATH" in readme

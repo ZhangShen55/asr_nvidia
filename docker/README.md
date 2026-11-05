@@ -9,7 +9,8 @@ emotion2vec 模型和已验证的 fp16 TensorRT engine。运行时配置通过�
 
 - Docker、Docker Compose v2 和 NVIDIA Container Toolkit 已安装。
 - 宿主机 NVIDIA 驱动能提供 CUDA 12.4 兼容运行时，并能看到 manifest 声明的 GPU 架构（当前资产验证环境为 RTX 4090 / SM89）。
-- 可以拉取目标基础镜像；首次构建会下载 Python、PyTorch 2.6.0 cu124、TensorRT 10.7.0.post1 和 ASR 依赖。
+- 基础镜像必须在构建机本地可用；如果使用远端提供的离线 tar 包，可先执行
+  `docker load -i /home/model_zoo/qwen_asr/cuda_12.4.1-cudnn-runtime-ubuntu22.04.tar`，不需要再次拉取。
 - 宿主机准备好上游 Qwen-ASR 地址，并在挂载配置中修改 `[qwen_asr].base_url`。
 
 构建阶段会校验两个模型的 fp16 engine、manifest、模型来源 SHA256 和 TensorRT 资产；运行阶段还会校验真实 GPU、CUDA 与 TensorRT 版本。任何必需资产不完整或不兼容都会阻止服务就绪，不能自动回退 PyTorch。
@@ -105,9 +106,38 @@ cd docker
 ASR_IMAGE=asr_offline:v3_$(date +%Y%m%d%H%M%S) ./build.sh
 ```
 
-`build.sh` 先建立临时白名单 staging 上下文，只复制应用、三个模型和 fp16 校验来源；测试、样本音频、缓存、fp32 engine 和无关模型不会进入构建上下文。未显式设置 `ASR_IMAGE` 时，脚本自动生成 `asr_offline:v3_<YYYYMMDDHHMMSS>`。
+`build.sh` 先建立临时白名单 staging 上下文，只复制应用、三个模型和目标 GPU 的 fp16 校验来源；测试、样本音频、缓存、fp32 engine 和其他 GPU 的 engine 不会进入构建上下文。未显式设置 `ASR_IMAGE` 时，脚本默认构建 4090 profile。
 
-由于基础镜像尚未拉取完成时构建无法开始，请先单独执行：
+生产部署可以分别构建三张 GPU 专用镜像。每次 staging 都会把选中的 profile 放到镜像内统一的
+`tensorrt/fp16/`，所以容器启动时只会加载这一张 GPU 对应的 engine：
+
+```bash
+# RTX 3090 / SM86
+GPU_PROFILE=rtx3090-sm86 \
+ASR_IMAGE=asr_offline-rtx3090:v3_20261103192500 \
+DOCKERFILE=Dockerfile.rtx3090 \
+./build.sh
+
+# RTX 4070 Ti SUPER / SM89
+GPU_PROFILE=rtx4070tisuper-sm89 \
+ASR_IMAGE=asr_offline-rtx4070tisuper:v3_20261103192500 \
+DOCKERFILE=Dockerfile.rtx4070tisuper \
+./build.sh
+
+# RTX 4090 / SM89
+GPU_PROFILE=rtx4090-sm89 \
+ASR_IMAGE=asr_offline-rtx4090:v3_20261103192500 \
+DOCKERFILE=Dockerfile.rtx4090 \
+./build.sh
+```
+
+三份入口文件分别是 `Dockerfile.rtx3090`、`Dockerfile.rtx4070tisuper` 和
+`Dockerfile.rtx4090`。默认基础镜像必须已经在本机存在；构建脚本使用 `--pull=false`，不会因为
+构建重新拉取 CUDA 基础镜像。Docker daemon 的中间层缓存和 inline cache metadata 会保留，后续
+构建会复用依赖、编译和运行时层；不要执行 `docker builder prune` 或 `docker system prune`，否则
+缓存会被清理。若需要显式清理，先确认不再需要这些镜像和缓存。
+
+如果构建机没有离线镜像包，再单独执行：
 
 ```bash
 docker pull docker.1ms.run/nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04

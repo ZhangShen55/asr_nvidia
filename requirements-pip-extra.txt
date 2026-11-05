@@ -2,3 +2,5 @@
 # WeTextProcessing 依赖 pynini，pynini 由 conda-forge 提供（PyPI 的 cp310 manylinux wheel
 # 与镜像内的 glibc 2.17 不兼容），因此这里必须 --no-deps 安装。
 WeTextProcessing==1.2.0
+# WeTextProcessing 以 --no-deps 安装时不会自动带入该运行时依赖。
+importlib_resources

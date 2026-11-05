@@ -1,0 +1,29 @@
+{
+  "source": "/home/zhangs/.codex/attachments/1f48900f-1ef0-4535-910c-b86546575920/已粘贴的文本.txt",
+  "count": 665,
+  "reason_counts": {
+    "low_volume:snr": 614,
+    "low_volume:rms_dbfs,snr": 51
+  },
+  "rms_dbfs": {
+    "min": -47.32,
+    "p10": -39.93,
+    "p50": -22.89,
+    "p90": -14.17,
+    "max": -9.2
+  },
+  "snr_db": {
+    "min": 3.95,
+    "p10": 9.77,
+    "p50": 24.25,
+    "p90": 33.89,
+    "max": 39.86
+  },
+  "inferred_snr_threshold_note": "日志没有记录配置值；所有记录均含 snr，最大 snr=39.86 dB，因此实际门槛至少不低于该值，接近40 dB的可能性较高.",
+  "rms_threshold_reference_dbfs": -41.0,
+  "snr_comparison_reference_db": 28.0,
+  "snr_inferred_reference_db": 40.0,
+  "rms_below_-41_count": 51,
+  "snr_below_28_count": 418,
+  "snr_at_or_above_28_count": 247
+}

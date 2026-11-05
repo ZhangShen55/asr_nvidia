@@ -189,7 +189,13 @@ class QwenAsrClient:
                 raise
             except (httpx.TimeoutException, httpx.TransportError) as e:
                 last_error = e
-                logger.warning(f"[Qwen] 请求异常（第 {attempt + 1} 次）: {e}")
+                logger.warning(
+                    "[Qwen] 请求异常（第 %d 次）: type=%s repr=%r elapsed=%.3fs",
+                    attempt + 1,
+                    type(e).__name__,
+                    e,
+                    time.perf_counter() - request_started,
+                )
             except Exception as e:
                 last_error = e
                 logger.warning(f"[Qwen] 请求失败（第 {attempt + 1} 次）: {e}")

@@ -1,0 +1,92 @@
+{
+  "schema_version": "vad-edge-energy-snr.v1",
+  "audio_root": "/home/zhangs/workspace/asr_nvidia/test/audio_file/音频文件",
+  "model_dir": "/home/zhangs/workspace/asr_nvidia/model/speech_fsmn_vad_zh-cn-16k-common-pytorch",
+  "file_count": 45,
+  "successful_file_count": 45,
+  "error_count": 0,
+  "errors": [],
+  "window_definition": "前5分钟：与[0,300s)有重叠的完整VAD段；后5分钟：与[duration-300s,duration)有重叠的完整VAD段。指标按完整VAD段计算，边界段另记录overlap。",
+  "thresholds": {
+    "max_single_segment_time": 30000,
+    "max_end_silence_time": 800,
+    "speech_noise_thres": 0.6,
+    "decibel_thres": -100.0,
+    "snr_thres": -100.0,
+    "min_segment_duration_s": 0.3,
+    "low_volume_filter_enabled": false,
+    "low_volume_rms_dbfs_thres": -41.0
+  },
+  "segment_metric_definition": "estimated_snr_db = segment RMS dBFS - 10ms frame RMS dBFS p10; this is project diagnostic SNR, not FunASR internal snr_thres.",
+  "overall": {
+    "前5分钟": {
+      "segment_count": 1960,
+      "segment_duration_sum_s": 6689.05,
+      "rms_dbfs": {
+        "p01": -57.7829,
+        "p10": -44.5196,
+        "p25": -36.533,
+        "p50": -28.8002,
+        "p75": -20.0051,
+        "p90": -16.2022,
+        "p99": -11.9539
+      },
+      "estimated_snr_db": {
+        "p01": 4.7539,
+        "p10": 10.957,
+        "p25": 16.6761,
+        "p50": 24.7794,
+        "p75": 33.387,
+        "p90": 45.5235,
+        "p99": 78.711
+      },
+      "rms_lt_-50_rate": 5.2,
+      "rms_lt_-48_rate": 6.73,
+      "rms_lt_-46_rate": 8.88,
+      "rms_lt_-44_rate": 10.46,
+      "rms_lt_-42_rate": 12.86,
+      "rms_lt_-40_rate": 16.43,
+      "rms_lt_-38_rate": 21.02,
+      "snr_lt_0_rate": 0.0,
+      "snr_lt_3_rate": 0.15,
+      "snr_lt_6_rate": 2.55,
+      "snr_lt_9_rate": 6.48,
+      "snr_lt_12_rate": 12.5
+    },
+    "后5分钟": {
+      "segment_count": 2192,
+      "segment_duration_sum_s": 7863.0,
+      "rms_dbfs": {
+        "p01": -56.2904,
+        "p10": -44.5248,
+        "p25": -34.3954,
+        "p50": -24.7417,
+        "p75": -18.1005,
+        "p90": -12.9393,
+        "p99": -9.3622
+      },
+      "estimated_snr_db": {
+        "p01": 5.163,
+        "p10": 10.1594,
+        "p25": 16.1936,
+        "p50": 24.1239,
+        "p75": 32.7411,
+        "p90": 46.4714,
+        "p99": 77.9744
+      },
+      "rms_lt_-50_rate": 4.33,
+      "rms_lt_-48_rate": 5.84,
+      "rms_lt_-46_rate": 8.35,
+      "rms_lt_-44_rate": 10.72,
+      "rms_lt_-42_rate": 12.77,
+      "rms_lt_-40_rate": 15.05,
+      "rms_lt_-38_rate": 17.11,
+      "snr_lt_0_rate": 0.0,
+      "snr_lt_3_rate": 0.09,
+      "snr_lt_6_rate": 2.28,
+      "snr_lt_9_rate": 7.12,
+      "snr_lt_12_rate": 14.28
+    }
+  },
+  "elapsed_s": 475.09
+}
