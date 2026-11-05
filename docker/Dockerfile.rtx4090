@@ -1,5 +1,5 @@
-# RTX 4090 / SM89 专用入口；build.sh 只把 rtx4090-sm89 engine 放入 staging。
 # syntax=docker/dockerfile:1.7
+# RTX 4090 / SM89 专用入口；build.sh 只把 rtx4090-sm89 engine 放入 staging。
 ARG BASE_IMAGE=docker.1ms.run/nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
 
 FROM ${BASE_IMAGE} AS builder
