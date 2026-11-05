@@ -210,11 +210,11 @@ class VadPool:
         self._devices = [str(item).strip().lower() for item in devices]
         self._model_dir = model_dir if model_dir is not None else settings.vad_model_dir
         self._vad_kwargs = {
-            "max_single_segment_time": settings.qwen_vad_max_single_segment_time_ms,
-            "max_end_silence_time": settings.qwen_vad_max_end_silence_time_ms,
-            "speech_noise_thres": settings.qwen_vad_speech_noise_thres,
-            "decibel_thres": settings.qwen_vad_decibel_thres,
-            "snr_thres": settings.qwen_vad_snr_thres,
+            "max_single_segment_time": settings.vad_max_single_segment_time_ms,
+            "max_end_silence_time": settings.vad_max_end_silence_time_ms,
+            "speech_noise_thres": settings.vad_speech_noise_thres,
+            "decibel_thres": settings.vad_decibel_thres,
+            "snr_thres": settings.vad_snr_thres,
         }
         if vad_kwargs:
             self._vad_kwargs.update(vad_kwargs)
@@ -241,7 +241,7 @@ class VadPool:
             return
         if not self._devices:
             self._refresh_vad_status()
-            raise VadPoolError("qwen_asr.vad_device 不能为空，至少配置一个 VAD worker")
+            raise VadPoolError("vad.vad_device 不能为空，至少配置一个 VAD worker")
         async with self._start_lock:
             if self._started:
                 return

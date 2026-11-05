@@ -46,7 +46,7 @@ class TensorRTConfigTests(unittest.TestCase):
         self.assertEqual(cfg.model_device_emotion2vec_devices, [])
 
     def test_vad_device_contract_does_not_accept_npu(self):
-        cfg = self.config('[qwen_asr]\nvad_device=["npu:0"]\n')
+        cfg = self.config('[vad]\nvad_device=["npu:0"]\n')
         with self.assertRaises(ValueError):
             _ = cfg.vad_device
 

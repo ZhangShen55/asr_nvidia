@@ -39,7 +39,7 @@ class ConfigContractTests(unittest.TestCase):
 
     def test_device_arrays_define_instances_and_order(self):
         settings = self._settings(
-            '[qwen_asr]\nvad_device = ["cpu", "cuda:0"]\n'
+            '[vad]\nvad_device = ["cpu", "cuda:0"]\n'
             '[model_device_pool]\n'
             'speech_campplus_devices = ["cuda:1", "cuda:1", "cuda:2"]\n'
             'emotion2vec_devices = ["cuda:0"]\n'
@@ -52,7 +52,7 @@ class ConfigContractTests(unittest.TestCase):
 
     def test_empty_arrays_disable_models(self):
         settings = self._settings(
-            '[qwen_asr]\nvad_device = []\n'
+            '[vad]\nvad_device = []\n'
             '[model_device_pool]\nspeech_campplus_devices = []\nemotion2vec_devices = []\n'
         )
         self.assertEqual(settings.vad_device, [])
@@ -63,18 +63,18 @@ class ConfigContractTests(unittest.TestCase):
         settings = self._settings('[model_device_pool]\nspeech_campplus_devices = ["gpu:0"]\n')
         with self.assertRaises(ValueError):
             _ = settings.model_device_speech_campplus_devices
-        settings = self._settings('[qwen_asr]\nvad_device = ["cuda:x"]\n')
+        settings = self._settings('[vad]\nvad_device = ["cuda:x"]\n')
         with self.assertRaises(ValueError):
             _ = settings.vad_device
 
     def test_low_volume_defaults_and_boundaries(self):
-        settings = self._settings("[qwen_asr]\n")
-        self.assertEqual(settings.qwen_vad_decibel_thres, -100.0)
-        self.assertEqual(settings.qwen_vad_snr_thres, -100.0)
-        self.assertEqual(settings.qwen_vad_low_volume_rms_dbfs_thres, -100.0)
-        self.assertFalse(settings.qwen_vad_low_volume_filter_enabled)
+        settings = self._settings("[vad]\n")
+        self.assertEqual(settings.qwen_vad_decibel_thres, -40.0)
+        self.assertEqual(settings.qwen_vad_snr_thres, -18.0)
+        self.assertEqual(settings.qwen_vad_low_volume_rms_dbfs_thres, -40.0)
+        self.assertTrue(settings.qwen_vad_low_volume_filter_enabled)
         settings = self._settings(
-            "[qwen_asr]\n"
+            "[vad]\n"
             "vad_decibel_thres = -80\n"
             "vad_snr_thres = 5\n"
             "vad_low_volume_rms_dbfs_thres = -42.5\n"
@@ -84,6 +84,14 @@ class ConfigContractTests(unittest.TestCase):
         self.assertEqual(settings.vad_snr_thres, 5.0)
         self.assertEqual(settings.vad_low_volume_rms_dbfs_thres, -42.5)
         self.assertTrue(settings.vad_low_volume_filter_enabled)
+
+    def test_legacy_qwen_vad_keys_do_not_override_vad_section(self):
+        settings = self._settings(
+            "[qwen_asr]\nvad_device=[\"cuda:9\"]\nvad_snr_thres=99\n"
+            "[vad]\nvad_device=[\"cpu\"]\nvad_snr_thres=-18\n"
+        )
+        self.assertEqual(settings.vad_device, ["cpu"])
+        self.assertEqual(settings.vad_snr_thres, -18.0)
 
 
 if __name__ == "__main__":

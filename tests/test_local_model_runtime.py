@@ -162,7 +162,7 @@ class ConfigFileStructureTests(unittest.TestCase):
             cfg = self._load(name)
             self.assertEqual(cfg["log"]["log_path"], expected_log_path)
             self.assertNotIn("log_path", {key for key in cfg if key != "log"})
-            self.assertEqual(cfg["qwen_asr"]["vad_speech_noise_thres"], 0.6)
+            self.assertEqual(cfg["vad"]["vad_speech_noise_thres"], 0.8)
 
 
 if __name__ == "__main__":

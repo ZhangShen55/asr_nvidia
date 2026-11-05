@@ -35,6 +35,7 @@ class VolumeStats:
     noise_floor_dbfs: float
     snr_db: float
     frame_count: int
+    sampled_frame_count: int
     low_energy_frame_ratio: float
     valid_speech_frame_count: int
 
@@ -50,8 +51,9 @@ def compute_volume_stats(
     *,
     frame_ms: int = 10,
     low_energy_dbfs_thres: float = -40.0,
+    frame_sample_ratio: float = 1.0,
 ) -> VolumeStats:
-    """计算一个区间的 RMS/峰值、估计 SNR 和 10 ms 帧统计。"""
+    """计算一个区间的 RMS/峰值、估计 SNR 和抽样帧统计。"""
     array = _as_mono_array(audio)
     rate = max(1, int(sample_rate))
     start = max(0, int(round(float(start_s) * rate)))
@@ -59,7 +61,14 @@ def compute_volume_stats(
     chunk = array[start:max(start, stop)]
     duration = len(chunk) / rate
     if len(chunk) == 0:
-        return VolumeStats(float(start_s), float(end_s or start_s), duration, -120.0, -120.0, -120.0, 0.0, 0, 1.0, 0)
+        return VolumeStats(
+            float(start_s), float(end_s or start_s), duration,
+            -120.0, -120.0, -120.0, 0.0, 0, 0, 1.0, 0,
+        )
+
+    ratio = float(frame_sample_ratio)
+    if not np.isfinite(ratio) or ratio <= 0.0 or ratio > 1.0:
+        raise ValueError("frame_sample_ratio 必须在 (0, 1] 范围内")
 
     frame_size = max(1, int(round(rate * frame_ms / 1000.0)))
     frame_count = int(np.ceil(len(chunk) / frame_size))
@@ -74,13 +83,19 @@ def compute_volume_stats(
     # 后沿 frame 维度计算，结果口径保持一致但不再逐帧调用 Python。
     frame_rms = np.sqrt(np.mean(frames * frames, axis=1, dtype=np.float32))
     frame_dbfs = 20.0 * np.log10(np.maximum(frame_rms, 1e-12))
+    sampled_count = max(1, min(len(frames), int(round(len(frames) * ratio))))
+    if sampled_count == len(frames):
+        sampled_dbfs = frame_dbfs
+    else:
+        indices = np.linspace(0, len(frames) - 1, sampled_count, dtype=np.int64)
+        sampled_dbfs = frame_dbfs[np.unique(indices)]
     rms = float(np.sqrt(np.mean(chunk * chunk)))
     peak = float(np.max(np.abs(chunk)))
     noise_floor = float(np.percentile(frame_dbfs, 10))
     segment_dbfs = dbfs(rms)
     snr = segment_dbfs - noise_floor
-    low_ratio = float(np.mean(frame_dbfs < float(low_energy_dbfs_thres)))
-    valid = int(np.count_nonzero(frame_dbfs >= float(low_energy_dbfs_thres)))
+    low_ratio = float(np.mean(sampled_dbfs < float(low_energy_dbfs_thres)))
+    valid = int(np.count_nonzero(sampled_dbfs >= float(low_energy_dbfs_thres)))
     return VolumeStats(
         start_s=float(start_s),
         end_s=float(end_s if end_s is not None else start_s + duration),
@@ -90,6 +105,7 @@ def compute_volume_stats(
         noise_floor_dbfs=noise_floor,
         snr_db=snr,
         frame_count=len(frames),
+        sampled_frame_count=len(sampled_dbfs),
         low_energy_frame_ratio=low_ratio,
         valid_speech_frame_count=valid,
     )
@@ -100,13 +116,23 @@ def low_volume_reason(
     *,
     rms_dbfs_thres: float = -100.0,
     snr_thres: float = -100.0,
+    decibel_enabled: bool = False,
+    decibel_frame_ratio_thres: float = 0.8,
+    rms_enabled: bool = True,
+    snr_enabled: bool = True,
 ) -> str | None:
-    """返回低音量丢弃原因；小于等于 -100 的门限表示该规则关闭。"""
+    """返回段级丢弃原因；小于等于 -100 的门限表示对应数值规则关闭。"""
     reasons = []
-    if float(rms_dbfs_thres) > -100.0 and stats.rms_dbfs < float(rms_dbfs_thres):
+    if rms_enabled and float(rms_dbfs_thres) > -100.0 and stats.rms_dbfs < float(rms_dbfs_thres):
         reasons.append("rms_dbfs")
-    if float(snr_thres) > -100.0 and stats.snr_db < float(snr_thres):
+    if snr_enabled and float(snr_thres) > -100.0 and stats.snr_db < float(snr_thres):
         reasons.append("snr")
+    if (
+        decibel_enabled
+        and stats.low_energy_frame_ratio >= float(decibel_frame_ratio_thres)
+        and float(decibel_frame_ratio_thres) >= 0.0
+    ):
+        reasons.append("decibel")
     return "low_volume:" + ",".join(reasons) if reasons else None
 
 
@@ -119,10 +145,21 @@ def filter_low_volume_segments(
     rms_dbfs_thres: float = -100.0,
     snr_thres: float = -100.0,
     low_energy_dbfs_thres: float = -100.0,
+    frame_sample_ratio: float = 1.0,
+    low_energy_frame_ratio_thres: float = 0.8,
+    decibel_enabled: bool = False,
+    rms_enabled: bool | None = None,
+    snr_enabled: bool | None = None,
 ) -> tuple[list, list[tuple[object, VolumeStats, str]]]:
     """按段级声音特征过滤，返回 (保留段, [(丢弃段, 特征, 原因)])。"""
     if not enabled:
         return list(segments), []
+    if rms_enabled is None:
+        rms_enabled = True
+    if snr_enabled is None:
+        snr_enabled = True
+    # 与 RMS/SNR 一致，-100 及以下表示关闭该数值规则，即使 enable 仍为 true。
+    decibel_enabled = bool(decibel_enabled and float(low_energy_dbfs_thres) > -100.0)
     kept = []
     dropped = []
     energy_threshold = (
@@ -139,11 +176,16 @@ def filter_low_volume_segments(
             segment.start_s,
             segment.end_s,
             low_energy_dbfs_thres=energy_threshold,
+            frame_sample_ratio=frame_sample_ratio,
         )
         reason = low_volume_reason(
             stats,
             rms_dbfs_thres=rms_dbfs_thres,
             snr_thres=snr_thres,
+            decibel_enabled=decibel_enabled,
+            decibel_frame_ratio_thres=low_energy_frame_ratio_thres,
+            rms_enabled=rms_enabled,
+            snr_enabled=snr_enabled,
         )
         if reason:
             dropped.append((segment, stats, reason))

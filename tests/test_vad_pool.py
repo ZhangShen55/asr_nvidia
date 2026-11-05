@@ -26,13 +26,13 @@ FAKE_RUNNER = "tests.fake_vad:run_vad_task"
 @contextmanager
 def with_vad_device(value):
     """临时改写 vad_device（配置属性没有 setter，直接改底层字典）。"""
-    section = app_settings._cfg.setdefault("qwen_asr", {})
+    section = app_settings._cfg.setdefault("vad", {})
     missing = object()
     old = section.get("vad_device", missing)
     if value is None:
         section.pop("vad_device", None)
     else:
-        section["vad_device"] = value
+        section["vad_device"] = [value] if isinstance(value, str) else value
     try:
         yield
     finally:
@@ -244,26 +244,26 @@ class VadConfigDefaultsTests(unittest.TestCase):
             cfg = Settings(config_path=str(path))
         self.assertEqual(len(cfg.vad_device), 8)
         self.assertEqual(cfg.vad_device[:4], ["cpu"] * 4)
-        self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.6)
+        self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.8)
 
     def test_defaults_when_keys_are_absent(self):
         cfg = Settings.__new__(Settings)
         cfg._cfg = {}
         cfg.config_path = ""
         self.assertEqual(len(cfg.vad_device), 8)
-        self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.6)
+        self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.8)
 
     def test_threshold_range_is_validated(self):
         cfg = Settings.__new__(Settings)
-        cfg._cfg = {"qwen_asr": {"vad_speech_noise_thres": 0.3}}
+        cfg._cfg = {"vad": {"vad_speech_noise_thres": 0.3}}
         self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.3)
-        cfg._cfg["qwen_asr"]["vad_speech_noise_thres"] = 1.1
+        cfg._cfg["vad"]["vad_speech_noise_thres"] = 1.1
         with self.assertRaises(ValueError):
             _ = cfg.qwen_vad_speech_noise_thres
 
     def test_pool_default_forwards_threshold(self):
         pool = make_pool(vad_kwargs=None)
-        self.assertEqual(pool._vad_kwargs["speech_noise_thres"], 0.6)
+        self.assertEqual(pool._vad_kwargs["speech_noise_thres"], 0.8)
 
 
 if __name__ == "__main__":

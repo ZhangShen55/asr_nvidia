@@ -211,7 +211,7 @@ VAD worker 池。VAD 默认在 CPU 上，因此默认不放大显存：
 
 ### 2.4 VAD 进程池与 CPU 配额
 
-VAD 配置位于 `[qwen_asr]` 的 `vad_device` 数组中，每个元素对应一个固定 worker：
+VAD 配置位于 `[vad]` 的 `vad_device` 数组中，每个元素对应一个固定 worker：
 
 | 配置项 | 默认值 | 说明 |
 |---|---:|---|

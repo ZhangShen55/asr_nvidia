@@ -201,28 +201,77 @@ class Settings:
     def qwen_retry_count(self) -> int:
         return int(self._cfg.get("qwen_asr", {}).get("retry_count", 1))
 
+    def _vad_section(self) -> dict:
+        """Return the sole VAD configuration section and flag legacy keys."""
+        section = self._cfg.get("vad", {})
+        if not isinstance(section, dict):
+            raise ValueError("[vad] 必须是 TOML 表")
+        legacy = self._cfg.get("qwen_asr", {})
+        if isinstance(legacy, dict):
+            legacy_keys = {
+                "vad_device", "min_segment_duration_s", "vad_max_single_segment_time_ms",
+                "vad_max_end_silence_time_ms", "vad_speech_noise_thres", "vad_decibel_thres",
+                "vad_snr_thres", "vad_low_volume_rms_dbfs_thres", "vad_low_volume_filter_enabled",
+                "vad_decibel_thres_filter_enabled", "vad_snr_thres_filter_enabled",
+                "vad_segment_decibel_thres", "vad_decibel_frame_sample_ratio",
+                "vad_decibel_low_frame_ratio_thres", "after_start", "before_end",
+            }
+            found = sorted(legacy_keys.intersection(legacy))
+            if found and not getattr(self, "_legacy_vad_warning_emitted", False):
+                logger.warning(
+                    "[配置迁移] [qwen_asr] 中的 VAD 配置已迁移到 [vad]，旧键仅告警且不会生效: %s",
+                    ", ".join(found),
+                )
+                self._legacy_vad_warning_emitted = True
+        return section
+
     @property
     def qwen_min_segment_duration_s(self) -> float:
-        return float(self._cfg.get("qwen_asr", {}).get("min_segment_duration_s", 0.3))
+        return self.vad_min_segment_duration_s
+
+    @property
+    def vad_min_segment_duration_s(self) -> float:
+        value = float(self._vad_section().get("min_segment_duration_s", 0.3))
+        if not math.isfinite(value) or value < 0:
+            raise ValueError("[vad].min_segment_duration_s 必须是非负有限数值")
+        return value
 
     @property
     def qwen_vad_max_single_segment_time_ms(self) -> int:
-        return int(self._cfg.get("qwen_asr", {}).get("vad_max_single_segment_time_ms", 30000))
+        return self.vad_max_single_segment_time_ms
+
+    @property
+    def vad_max_single_segment_time_ms(self) -> int:
+        value = int(self._vad_section().get("vad_max_single_segment_time_ms", 12000))
+        if value <= 0:
+            raise ValueError("[vad].vad_max_single_segment_time_ms 必须是正整数")
+        return value
 
     @property
     def qwen_vad_max_end_silence_time_ms(self) -> int:
-        return int(self._cfg.get("qwen_asr", {}).get("vad_max_end_silence_time_ms", 800))
+        return self.vad_max_end_silence_time_ms
+
+    @property
+    def vad_max_end_silence_time_ms(self) -> int:
+        value = int(self._vad_section().get("vad_max_end_silence_time_ms", 800))
+        if value < 0:
+            raise ValueError("[vad].vad_max_end_silence_time_ms 必须是非负整数")
+        return value
 
     @property
     def qwen_vad_speech_noise_thres(self) -> float:
+        return self.vad_speech_noise_thres
+
+    @property
+    def vad_speech_noise_thres(self) -> float:
         """FSMN-VAD 的语音/噪声判定阈值（越小越灵敏）。"""
-        raw = self._cfg.get("qwen_asr", {}).get("vad_speech_noise_thres", 0.6)
+        raw = self._vad_section().get("vad_speech_noise_thres", 0.8)
         try:
             value = float(raw)
         except (TypeError, ValueError) as exc:
-            raise ValueError("[qwen_asr].vad_speech_noise_thres 必须是 0.0~1.0 数值") from exc
+            raise ValueError("[vad].vad_speech_noise_thres 必须是 0.0~1.0 数值") from exc
         if not math.isfinite(value) or not 0.0 <= value <= 1.0:
-            raise ValueError("[qwen_asr].vad_speech_noise_thres 必须在 0.0~1.0 范围内")
+            raise ValueError("[vad].vad_speech_noise_thres 必须在 0.0~1.0 范围内")
         return value
 
     @staticmethod
@@ -231,79 +280,123 @@ class Settings:
         try:
             value = float(raw)
         except (TypeError, ValueError) as exc:
-            raise ValueError(f"[qwen_asr].{key} 必须是有限数值，范围 {lower}~{upper}") from exc
+            raise ValueError(f"[vad].{key} 必须是有限数值，范围 {lower}~{upper}") from exc
         if not math.isfinite(value) or value < lower or value > upper:
-            raise ValueError(f"[qwen_asr].{key} 必须在 {lower}~{upper} 范围内")
+            raise ValueError(f"[vad].{key} 必须在 {lower}~{upper} 范围内")
         return value
 
     @property
     def qwen_vad_decibel_thres(self) -> float:
         """FunASR 帧级 log 能量阈值，单位不是 dBFS；-100 表示不额外限制。"""
-        return self._validated_vad_float(self._cfg.get("qwen_asr", {}), "vad_decibel_thres", -100.0, -100.0, 0.0)
+        return self.vad_decibel_thres
 
     @property
     def qwen_vad_snr_thres(self) -> float:
         """FunASR 帧级 SNR 阈值；-100 表示不额外限制。"""
-        return self._validated_vad_float(self._cfg.get("qwen_asr", {}), "vad_snr_thres", -100.0, -100.0, 100.0)
+        return self.vad_snr_thres
 
     @property
     def qwen_vad_low_volume_rms_dbfs_thres(self) -> float:
         """段级 RMS dBFS 低音量门限，低于该值才会被过滤。"""
-        return self._validated_vad_float(
-            self._cfg.get("qwen_asr", {}), "vad_low_volume_rms_dbfs_thres", -100.0, -100.0, 0.0
-        )
+        return self.vad_low_volume_rms_dbfs_thres
 
     @property
     def qwen_vad_low_volume_filter_enabled(self) -> bool:
-        raw = self._cfg.get("qwen_asr", {}).get("vad_low_volume_filter_enabled", False)
-        if not isinstance(raw, bool):
-            raise ValueError("[qwen_asr].vad_low_volume_filter_enabled 必须是 true 或 false")
-        return raw
+        return self.vad_low_volume_filter_enabled
 
-    # 直名别名便于标定脚本和运维代码读取，同时保持 qwen_asr 配置命名兼容。
     @property
     def vad_decibel_thres(self) -> float:
-        return self.qwen_vad_decibel_thres
+        return self._validated_vad_float(self._vad_section(), "vad_decibel_thres", -40.0, -100.0, 0.0)
 
     @property
     def vad_snr_thres(self) -> float:
-        return self.qwen_vad_snr_thres
+        return self._validated_vad_float(self._vad_section(), "vad_snr_thres", -18.0, -100.0, 100.0)
 
     @property
     def vad_low_volume_rms_dbfs_thres(self) -> float:
-        return self.qwen_vad_low_volume_rms_dbfs_thres
+        return self._validated_vad_float(
+            self._vad_section(), "vad_low_volume_rms_dbfs_thres", -40.0, -100.0, 0.0
+        )
 
     @property
     def vad_low_volume_filter_enabled(self) -> bool:
-        return self.qwen_vad_low_volume_filter_enabled
+        raw = self._vad_section().get("vad_low_volume_filter_enabled", True)
+        if not isinstance(raw, bool):
+            raise ValueError("[vad].vad_low_volume_filter_enabled 必须是 true 或 false")
+        return raw
 
+    @property
+    def vad_decibel_thres_filter_enabled(self) -> bool:
+        raw = self._vad_section().get("vad_decibel_thres_filter_enabled", True)
+        if not isinstance(raw, bool):
+            raise ValueError("[vad].vad_decibel_thres_filter_enabled 必须是 true 或 false")
+        return raw
+
+    @property
+    def vad_snr_thres_filter_enabled(self) -> bool:
+        raw = self._vad_section().get("vad_snr_thres_filter_enabled", True)
+        if not isinstance(raw, bool):
+            raise ValueError("[vad].vad_snr_thres_filter_enabled 必须是 true 或 false")
+        return raw
+
+    @property
+    def vad_segment_decibel_thres(self) -> float:
+        return self._validated_vad_float(self._vad_section(), "vad_segment_decibel_thres", -40.0, -120.0, 0.0)
+
+    @property
+    def vad_decibel_frame_sample_ratio(self) -> float:
+        value = self._validated_vad_float(self._vad_section(), "vad_decibel_frame_sample_ratio", 0.5, 1e-9, 1.0)
+        return value
+
+    @property
+    def vad_decibel_low_frame_ratio_thres(self) -> float:
+        return self._validated_vad_float(self._vad_section(), "vad_decibel_low_frame_ratio_thres", 0.8, 0.0, 1.0)
+
+    @staticmethod
+    def _validated_vad_scope_minutes(section: dict, key: str, default: float = 3.0) -> float:
+        raw = section.get(key, default)
+        try:
+            value = float(raw)
+        except (TypeError, ValueError) as exc:
+            raise ValueError(f"[vad].{key} 必须是大于等于 -1 的有限数值") from exc
+        if not math.isfinite(value) or value < -1.0:
+            raise ValueError(f"[vad].{key} 必须是大于等于 -1 的有限数值")
+        return value
+
+    @property
+    def vad_after_start(self) -> float:
+        return self._validated_vad_scope_minutes(self._vad_section(), "after_start")
+
+    @property
+    def vad_before_end(self) -> float:
+        return self._validated_vad_scope_minutes(self._vad_section(), "before_end")
+
+    # 直名别名便于标定脚本和运维代码读取，同时保持 qwen_asr 调用方的 Python API 兼容。
     @property
     def vad_device(self) -> list[str]:
         """启动时固定预热的 VAD worker 设备数组。
 
         每个元素对应一个独立 FSMN-VAD 进程；数组长度就是完整音频的
-        VAD 有效并发。旧的字符串配置不再作为正式配置，发现时只记录迁移
-        告警并转换为单元素数组，避免启动阶段静默使用错误的并发语义。
+        VAD 有效并发。旧的 `[qwen_asr]` 配置不会作为回退来源。
         """
-        section = self._cfg.get("qwen_asr", {})
+        section = self._vad_section()
         raw = section.get(
             "vad_device",
             ["cpu", "cpu", "cpu", "cpu", "cuda:0", "cuda:0", "cuda:0", "cuda:0"],
         )
         if isinstance(raw, str):
-            logger.warning("[配置迁移] qwen_asr.vad_device 已改为设备数组，旧字符串将按单 worker 兼容")
-            raw = [raw]
+            raise ValueError("[vad].vad_device 必须是 cpu/cuda:N 设备数组")
         if not isinstance(raw, list):
-            raise ValueError("[qwen_asr].vad_device 必须是 cpu/cuda:N 设备数组")
+            raise ValueError("[vad].vad_device 必须是 cpu/cuda:N 设备数组")
         devices: list[str] = []
         for index, value in enumerate(raw):
             if not isinstance(value, str):
-                raise ValueError(f"[qwen_asr].vad_device[{index}] 必须是 cpu 或 cuda:N")
+                raise ValueError(f"[vad].vad_device[{index}] 必须是 cpu 或 cuda:N")
             spec = value.strip().lower()
             if spec == "cuda":
                 spec = "cuda:0"
             if spec != "cpu" and not (spec.startswith("cuda:") and spec.split(":", 1)[1].isdigit()):
-                raise ValueError(f"[qwen_asr].vad_device[{index}] 必须是 cpu 或 cuda:N")
+                raise ValueError(f"[vad].vad_device[{index}] 必须是 cpu 或 cuda:N")
             devices.append(spec)
         return devices
 

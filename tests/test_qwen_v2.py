@@ -679,6 +679,58 @@ class ResponseStructureTests(unittest.TestCase):
             result = asyncio.run(run_qwen_asr(ctx))
         self.assertEqual(result["code"], 4008)
 
+    def test_downstream_tasks_only_use_segments_returned_after_vad_filtering(self):
+        from api.routes.asr_qwen_common import run_qwen_asr
+        from core.vad import VadSegment
+
+        ctx = FakeCtx(request=make_request(showSpk=True, showEmotion=True))
+        retained = [VadSegment(0.0, 2.0)]
+        qwen_calls = []
+        speaker_calls = []
+        emotion_calls = []
+
+        async def _filtered_detect(_path):
+            # 段级 decibel/SNR/RMS 过滤已经在 detect_segments 内完成，
+            # 下游只能看见保留下来的段；被删除候选不会创建任务。
+            return retained
+
+        def _fake_clip(_src, _start, _duration):
+            return "/tmp/fake_clip.wav"
+
+        class _FakeClient:
+            async def transcribe(self, path, language=None):
+                qwen_calls.append((path, language))
+                return "language Chinese<asr_text>你好"
+
+        async def _fake_get_client():
+            return _FakeClient()
+
+        async def _fake_speaker(audio_array, sample_rate):
+            speaker_calls.append((audio_array, sample_rate))
+            return torch.zeros(8)
+
+        async def _fake_emotion(audio_array, sample_rate, duration_s):
+            emotion_calls.append((audio_array, sample_rate, duration_s))
+            return "平淡"
+
+        async def _noop_load(**_kwargs):
+            return None
+
+        with ExitStack() as stack:
+            stack.enter_context(patch("api.routes.asr_qwen_common.load_v3_models_if_needed", _noop_load))
+            stack.enter_context(patch("api.routes.asr_qwen_common.detect_segments", _filtered_detect))
+            stack.enter_context(patch("api.routes.asr_qwen_common.extract_audio_clip", _fake_clip))
+            stack.enter_context(patch("api.routes.asr_qwen_common.read_audio_array", fake_read_audio_array))
+            stack.enter_context(patch("api.routes.asr_qwen_common.get_qwen_client", _fake_get_client))
+            stack.enter_context(patch("api.routes.asr_qwen_common._speaker_embedding", _fake_speaker))
+            stack.enter_context(patch("api.routes.asr_qwen_common._segment_emotion", _fake_emotion))
+            result = asyncio.run(run_qwen_asr(ctx))
+
+        self.assertEqual(len(result["segments"]), 1)
+        self.assertEqual(len(qwen_calls), 1)
+        self.assertEqual(len(speaker_calls), 1)
+        self.assertEqual(len(emotion_calls), 1)
+
 
 class QwenClientErrorMappingTests(unittest.TestCase):
     def test_error_codes(self):

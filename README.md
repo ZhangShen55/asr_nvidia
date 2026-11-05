@@ -139,7 +139,7 @@ conda run --no-capture-output -n asr \
   uvicorn main:app --host 0.0.0.0 --port 8085 --workers 1
 ```
 
-服务启动后，v3 接口地址为 `http://127.0.0.1:8085/v3/seacraft_asr`；按 `Ctrl+C` 停止该后端实例。`OMP_NUM_THREADS` 和 `MKL_NUM_THREADS` 只限制底层算子线程，不限制 VAD worker 进程数；VAD 有效完整音频并发等于 `len(qwen_asr.vad_device)`。Qwen-ASR 服务地址由 `[qwen_asr].base_url` 配置，默认是 `http://127.0.0.1:8806`。
+服务启动后，v3 接口地址为 `http://127.0.0.1:8085/v3/seacraft_asr`；按 `Ctrl+C` 停止该后端实例。`OMP_NUM_THREADS` 和 `MKL_NUM_THREADS` 只限制底层算子线程，不限制 VAD worker 进程数；VAD 有效完整音频并发等于 `len(vad.vad_device)`。Qwen-ASR 服务地址由 `[qwen_asr].base_url` 配置，默认是 `http://127.0.0.1:8806`。
 
 ### 模型内存压力安全诊断
 
@@ -240,7 +240,8 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `[speech_rate]` | 单句语速修正系数 |
 | `[features]` | `open_v2_role`、`open_v2_emotion` |
 | `[itn]` | 文本规范化开关与失败策略 |
-| `[qwen_asr]` | v3 链路的 Qwen 服务地址、并发度、队列与 VAD 参数 |
+| `[qwen_asr]` | v3 链路的 Qwen 服务地址、并发度和队列 |
+| `[vad]` | FSMN-VAD worker、切分参数、全局 VAD 阈值和段级过滤参数 |
 | `[model_device_pool]` | CAM++ 与 emotion2vec 的设备数组；每个元素对应一个独立模型实例和一个并发槽位 |
 
 `speed_info` 按 1、5、10 分钟窗口统计，跨窗口句子按时间重叠比例分摊内容数量。单句语速使用 `[speech_rate].rate_factor` 修正，分时段语速不乘该系数。
@@ -261,16 +262,27 @@ ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除�
 | `request_timeout_s` | `120` | 单次 Qwen 请求超时（秒） |
 | `connect_timeout_s` | `10` | Qwen 服务连接超时（秒） |
 | `retry_count` | `1` | Qwen 请求失败重试次数 |
-| `min_segment_duration_s` | `0.3` | 过滤过短 VAD 段 |
-| `vad_device` | `8 个设备元素` | 每个元素启动一个固定 FSMN-VAD worker；数组长度就是完整音频 VAD 并发 |
 | `speaker_similarity_threshold` | `0.30` | CAM++ 说话人聚类的余弦相似度阈值（按实测 sweep 取值，阈值过高会严重过分割） |
-| `vad_max_single_segment_time_ms` | `30000` | VAD 单段最长时长 |
-| `vad_max_end_silence_time_ms` | `800` | VAD 静音切分阈值 |
-| `vad_speech_noise_thres` | `0.6` | VAD 语音/噪声判定阈值：`0.3` 偏灵敏，`0.6` 正常，`0.8` 偏不灵敏；修改后重启生效 |
-| `vad_decibel_thres` | `-100.0` | FunASR 帧级 log 能量门限，单位不是 dBFS；`-100` 保持原行为 |
-| `vad_snr_thres` | `-100.0` | FunASR 帧级 SNR 门限；`-100` 保持原行为 |
-| `vad_low_volume_rms_dbfs_thres` | `-100.0` | 段级 RMS dBFS 门限；低于该值可判定为低音量，范围 `-100~0` |
-| `vad_low_volume_filter_enabled` | `false` | 是否在创建 clip/Qwen 请求前启用低音量过滤；修改后重启生效 |
+
+### `[vad]` 配置项
+
+| 配置项 | 默认值 | 说明 |
+|--------|--------|------|
+| `vad_device` | `["cpu", ...]` | 每个元素启动一个固定 FSMN-VAD worker；数组长度决定完整音频 VAD 并发 |
+| `min_segment_duration_s` | `0.3` | 过滤过短 VAD 段，单位：秒 |
+| `vad_max_single_segment_time_ms` | `12000` | VAD 单段最长时长，单位：毫秒 |
+| `vad_max_end_silence_time_ms` | `800` | VAD 结束静音时长，单位：毫秒 |
+| `vad_speech_noise_thres` | `0.8` | 语音/噪声判定阈值：越高越不敏感 |
+| `vad_decibel_thres` | `-40.0` | FunASR 全局帧级 log 能量阈值，不是 dBFS；`-100` 保持原行为 |
+| `vad_snr_thres` | `-18.0` | FunASR 全局帧级 SNR 阈值，同时作为段级 SNR 数值来源；`-100` 关闭该数值规则 |
+| `vad_decibel_thres_filter_enabled` | `true` | 段级低能量帧比例过滤开关 |
+| `vad_segment_decibel_thres` | `-40.0` | 段级 dBFS 低能量帧阈值 |
+| `vad_decibel_frame_sample_ratio` | `0.5` | 段内 decibel 抽帧比例，范围 `(0,1]` |
+| `vad_decibel_low_frame_ratio_thres` | `0.8` | 抽样帧中低于段级阈值的比例达到该值时删除段 |
+| `vad_snr_thres_filter_enabled` | `true` | 段级 SNR 过滤开关 |
+| `vad_low_volume_rms_dbfs_thres` | `-40.0` | 段级 RMS dBFS 门限，低于该值时删除段 |
+| `vad_low_volume_filter_enabled` | `true` | 段级 RMS 过滤开关 |
+| `after_start` / `before_end` | `3` / `3` | 段级过滤作用于完整音频前后 N 分钟；`0` 表示整段，`-1` 表示该侧不限制 |
 
 音频与段级并发参数的区别：
 
@@ -356,9 +368,9 @@ emotion2vec_devices = ["cuda:0"]
 
 两个模型池独立排队、互不借用容量；空数组表示禁用对应能力，请求会得到 CAM++ `4015` 或 emotion2vec `4016`。部分副本加载失败时，只有成功加载的实例计入容量，失败原因可从 `/get_status` 的 `localModels` 查询。该接口同时提供每个池的 `configured_instances`、`instances`、`available_instances`、`busy`、`waiting`、`failed_instances` 和等待摘要。
 
-同一张 GPU 上增加数组元素会同时增加模型显存和推理争用，可能降低单次推理速度或触发 OOM；应结合状态接口和 `nvidia-smi` 的峰值显存、利用率及压测 P95 选择实例组合。VAD 设备仍由 `[qwen_asr].vad_device` 独立控制，Qwen 服务本身在另一个容器内。
+同一张 GPU 上增加数组元素会同时增加模型显存和推理争用，可能降低单次推理速度或触发 OOM；应结合状态接口和 `nvidia-smi` 的峰值显存、利用率及压测 P95 选择实例组合。VAD 设备由 `[vad].vad_device` 独立控制，Qwen 服务本身在另一个容器内。
 
-FSMN-VAD 的设备由 `[qwen_asr].vad_device` 数组独立控制，例如 `['cpu', 'cuda:0']` 会启动两个固定 worker。旧的动态池字段和旧模型设备结构不再参与实例数计算，迁移时会记录告警。
+FSMN-VAD 的设备由 `[vad].vad_device` 数组独立控制，例如 `['cpu', 'cuda:0']` 会启动两个固定 worker。旧 `[qwen_asr]` VAD 字段和旧动态池字段不再参与实例数计算，迁移时会记录告警。
 
 ### 细小声音阈值回归
 

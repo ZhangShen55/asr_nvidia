@@ -162,7 +162,7 @@ def _resolve_device(index: int | str) -> str:
 def resolve_vad_device() -> str:
     devices = settings.vad_device
     if not devices:
-        raise RuntimeError("qwen_asr.vad_device 不能为空，至少配置一个 VAD worker")
+        raise RuntimeError("vad.vad_device 不能为空，至少配置一个 VAD worker")
     return _resolve_device(devices[0])
 
 
