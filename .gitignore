@@ -20,3 +20,4 @@ asr_stats.json
 *.log
 *.log.*
 .docker-cache/
+logs/
