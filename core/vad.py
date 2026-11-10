@@ -77,7 +77,9 @@ def _audio_duration_s(audio, sample_rate: int) -> float:
         audio = audio.detach().cpu().numpy()
     array = np.asarray(audio)
     if array.ndim > 1:
-        samples = array.shape[-1]
+        # 这里不能写成 array.shape[-1]：Cython 以 wraparound=False 编译时会把
+        # 负下标直接当成越界访问，读到非法内存后进程会段错误。
+        samples = array.shape[array.ndim - 1]
     else:
         samples = array.size
     return float(samples) / float(sample_rate) if sample_rate else 0.0
