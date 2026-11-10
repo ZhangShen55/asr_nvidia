@@ -1,47 +1,38 @@
-# SeaCraftASR 配置文件
-
-# 容器内并行运行的 uvicorn 实例数量。
-# 每个实例各自持有一份本地模型权重，实例数即显存倍数，默认单实例。
 instance_count = 1
 
-# 日志保留策略：按天切分 + 单文件大小上限，超期的历史日志自动删除
 [log]
 log_path = "./asr_service.log"
 max_days = 7
 max_size_mb = 100
 
-# 模型路径配置（只包含 v3 链路需要的三个模型）
 [model_paths]
 vad_model_dir = "./model/speech_fsmn_vad_zh-cn-16k-common-pytorch"
 spk_model_dir = "./model/speech_campplus_sv_zh_en_16k-common_advanced"
 emotion_model_dir = "./model/emotion2vec_plus_large"
 
-# 语速计算配置
 [speech_rate]
 rate_factor = 0.4  # 语速修正系数（数值偏高时下调），最终语速 = 原始字/分钟 * rate_factor
 
-# WeTextProcessing 1.2.0 ITN 配置。规则只规范化文本，不改变时间轴或 ASR 语义。
 [itn]
-enabled = false
+enabled = true
 enable_standalone_number = true
 enable_0_to_9 = false
 remove_interjections = true
 failure_mode = "passthrough"
 
-# Qwen3-ASR 适配链路（/v3/seacraft_asr）
 [qwen_asr]
 enabled = true
-base_url = "http://192.168.29.11:8806"      # Qwen3-ASR 服务地址（IP + 端口）
+base_url = "http://qwen3-asr:8000"      # Qwen3-ASR 服务地址（IP + 端口）
 model = ""                              # 留空表示从 /v1/models 自动发现
-segment_concurrency = 16                # 单个音频内同时发往 Qwen 的 VAD 段请求数
-request_concurrency = 128               # 所有音频合计同时发往 Qwen 的请求数
+segment_concurrency = 15                # 单个音频内同时发往 Qwen 的 VAD 段请求数
+request_concurrency = 120               # 所有音频合计同时发往 Qwen 的请求数
 audio_concurrency = 8                   # A+B 同时处理的音频总数
 audio_spk_emo_concurrency = 4           # B 类音频上限（请求说话人、情绪或角色识别）
 queue_max_size = 64                     # A+B 共享等待队列容量
 queue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排队等待
 request_timeout_s = 120                 # 单次 Qwen 请求超时
 connect_timeout_s = 10                  # Qwen 服务连接超时
-retry_count = 1                         # Qwen 请求失败重试次数
+retry_count = 2                         # Qwen 请求失败重试次数
 speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）
 
 [vad]
@@ -64,10 +55,12 @@ vad_decibel_thres = -40.0
 vad_segment_decibel_thres = -40.0
 vad_decibel_frame_sample_ratio = 0.5 # 每秒采取帧率
 vad_decibel_low_frame_ratio_thres = 0.8 # 段级 decibel 过滤：抽取帧中低能量比例达到 0.8 时删除该段
+vad_decibel_thres_filter_enabled = true
 
 # 段级 RMS dBFS 过滤
 vad_low_volume_rms_dbfs_thres = -40.0
 vad_low_volume_filter_enabled = true
+
 # 段级过滤窗口，单位：分钟；0=整段都参与过滤，-1=该侧不限制
 # 3/3：只有落在开头 3 分钟、结尾 3 分钟内的段才做低音量/SNR/RMS 过滤；
 # 窗口外的中间段无条件保留，避免误删讲授主体。改动需重启生效。
@@ -93,7 +86,7 @@ open_v2_emotion = true   # emotion2vec 情绪
 [model_device_pool]
 speech_campplus_devices = ["cuda:0","cuda:0","cuda:0"]  # 每个元素对应一个 CAM++ 实例
 emotion2vec_devices = ["cuda:0"]      # 每个元素对应一个 emotion2vec 实例
-speech_campplus_use_tensorrt = false       # 仅 CUDA 实例生效；修改后重启
+speech_campplus_use_tensorrt = true       # 仅 CUDA 实例生效；修改后重启
 speech_campplus_tensorrt_precision = "fp16" # fp16 / fp32，选择对应 engine
-emotion2vec_use_tensorrt = false
+emotion2vec_use_tensorrt = true
 emotion2vec_tensorrt_precision = "fp16"
