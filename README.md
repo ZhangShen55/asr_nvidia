@@ -200,14 +200,31 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 
 `language_ratio` 的键为语种**简写**（`zh` / `en` / `yue` / …），值为该语种文本字符占比（百分比，保留一位小数，合计 100.0）。
 模型返回的语种名不在映射表内时原样透传。顶层 `language` 字段仍返回模型返回的语种全称（如 `Chinese` / `English`）。
+完整映射表（22 个语种）见 [`utils/qwen_response.py`](utils/qwen_response.py) 的 `LANGUAGE_ABBREVIATIONS`：
 
-### 文本规范化与标点卫生
+| 语种 | 简写 | 语种 | 简写 | 语种 | 简写 |
+|------|------|------|------|------|------|
+| Chinese | `zh` | English | `en` | Cantonese | `yue` |
+| German | `de` | Italian | `it` | Portuguese | `pt` |
+| Spanish | `es` | French | `fr` | Thai | `th` |
+| Malay | `ms` | Japanese | `ja` | Korean | `ko` |
+| Russian | `ru` | Hindi | `hi` | Arabic | `ar` |
+| Vietnamese | `vi` | Indonesian | `id` | Dutch | `nl` |
+| Turkish | `tr` | Polish | `pl` | Greek | `el` |
+| Hebrew | `he` | | | | |
 
-ITN（WeTextProcessing）默认开启，负责数字规范化与语气词剔除。ITN 之后还有两条与 ITN 开关**无关**、
-始终执行的标点卫生规则：
+### 文本后处理
 
-- 整段文本只有标点符号时，该段从 `segments` 中移除；
-- 分段文本以标点开头时，移除开头**连续的所有标点**，直到落到有效字符。
+上游拿到的文本已经过下列处理，与模型原始输出不完全一致，属于预期行为：
+
+1. **复读修复**：模型偶尔在长片段上产生「同一短语无限重复」的循环，服务检测到后折叠重复部分。
+2. **ITN 文本规范化**（默认开启，由 `[itn] enabled` 控制）：WeTextProcessing 负责数字规范化（如「二零二五」→「2025」）与部分语气词剔除。ITN 之后还有两条与 ITN 开关**无关**、
+   始终执行的标点卫生规则：
+   - 整段文本只有标点符号时，该段从 `segments` 中移除；
+   - 分段文本以标点开头时，移除开头**连续的所有标点**，直到落到有效字符。
+3. **独立语气词剔除**：纯「啊 / 哦 / 嗯 / 呃」这类独立成段的口头禅会被移除，不计入 `segments` 与 `text`。
+
+因此 `segments` 条数会少于音频中实际的人声段数，`text` 是最终保留分段的有序拼接。
 
 ### 错误码
 
