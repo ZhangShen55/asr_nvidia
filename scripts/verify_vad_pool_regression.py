@@ -2,7 +2,7 @@
 
 Usage:
     conda run -n asr python scripts/verify_vad_pool_regression.py --device cpu
-    conda run -n asr python scripts/verify_vad_pool_regression.py --device cuda:0
+    conda run -n asr python scripts/verify_vad_pool_regression.py --device npu:7
 
 The direct model is the pre-change execution path. The pool is constrained to
 one worker here so the comparison measures result equivalence rather than
@@ -17,8 +17,8 @@ import time
 from pathlib import Path
 from typing import Any, List, Tuple
 
-from core.vad import _parse_vad_result
-from core.vad_pool import VadPool
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -27,30 +27,18 @@ VAD_KWARGS = {
     "max_single_segment_time": 30000,
     "max_end_silence_time": 800,
 }
-AUDIO_FILES = (
-    REPO_ROOT / "test/audio_file/储能学术英语实践.wav",
-    REPO_ROOT / "test/audio_file/传播学_1124501_马道全_2025年4月24号8时30分.aac",
-    REPO_ROOT
-    / "test/audio_file/形式语言与自动机理论_1623301_1623302_1623303;1623304_康达周_2025年4月24号11时20分.aac",
-)
+
 
 
 def _spans(payload: Any) -> List[Tuple[float, float]]:
-    if isinstance(payload, list) and payload and isinstance(payload[0], dict):
-        return [(segment.start_s, segment.end_s) for segment in _parse_vad_result(payload)]
+    from core.vad import _parse_vad_result
     return [(segment.start_s, segment.end_s) for segment in _parse_vad_result(payload)]
 
 
 def _direct_model(device: str):
-    from funasr import AutoModel
+    from core.vad_pool import build_vad_model
+    return build_vad_model(str(MODEL_DIR), device, VAD_KWARGS)
 
-    return AutoModel(
-        model=str(MODEL_DIR),
-        device=device,
-        vad_kwargs=VAD_KWARGS,
-        disable_update=True,
-        disable_pbar=True,
-    )
 
 
 def _direct_spans(model: Any, audio: Path) -> List[Tuple[float, float]]:
@@ -62,34 +50,35 @@ def _direct_spans(model: Any, audio: Path) -> List[Tuple[float, float]]:
     return _spans(payload)
 
 
-async def _pool_spans(pool: VadPool, audio: Path) -> List[Tuple[float, float]]:
+async def _pool_spans(pool: Any, audio: Path) -> List[Tuple[float, float]]:
     return _spans(await pool.detect(str(audio)))
 
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--device", choices=("cpu", "cuda:0"), default="cpu")
-    parser.add_argument("--audio", action="append", type=Path)
+    parser.add_argument("--device", default="cpu", help="cpu or npu:7 (container mapping: npu:0)")
+    parser.add_argument("--audio", action="append", type=Path, required=True)
     args = parser.parse_args()
-    audio_files = tuple(args.audio) if args.audio else AUDIO_FILES
+    from core.vad_pool import VadPool
+    from core.local_inference import backend_for_device
+    from scripts.bench_vad_cpu_vs_gpu import vad_kwargs
+    backend_for_device(args.device)
+    VAD_KWARGS.update(vad_kwargs())
+    audio_files = tuple(args.audio)
 
     import asyncio
 
     direct = _direct_model(args.device)
     results = []
     pool = VadPool(
-        pool_size=1,
-        pool_max=1,
-        watermark=0,
-        queue_timeout_s=120,
-        device=args.device,
+        devices=[args.device],
         model_dir=str(MODEL_DIR),
         vad_kwargs=VAD_KWARGS,
     )
 
     async def run() -> None:
-        await pool.start()
         try:
+            await pool.start()
             for audio in audio_files:
                 started = time.perf_counter()
                 baseline = _direct_spans(direct, audio)
@@ -99,7 +88,7 @@ def main() -> None:
                 pooled_s = time.perf_counter() - started
                 same = baseline == pooled
                 result = {
-                    "audio": str(audio.relative_to(REPO_ROOT)),
+                    "audio": str(audio),
                     "baseline_segments": len(baseline),
                     "pool_segments": len(pooled),
                     "same_boundaries": same,
@@ -120,7 +109,12 @@ def main() -> None:
         finally:
             await pool.stop()
 
-    asyncio.run(run())
+    try:
+        asyncio.run(run())
+    finally:
+        close = getattr(direct, "close", None)
+        if close is not None:
+            close()
     if not all(result["same_boundaries"] for result in results):
         raise SystemExit(1)
 

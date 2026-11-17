@@ -1,3 +1,5 @@
+> 迁移前历史记录；其中旧环境/端口/脚本参数不作为当前操作入口。保留原数据和推导供追溯。当前使用 [NPU迁移报告](npu-910b-migration-validation-20261117.md)、[README](../README.md) 与 [昇腾交付说明](../docker/README.md)。
+
 # NPU（昇腾 910B）可行性调研报告
 
 > 调研对象：`asr_offline` 服务在 v2 链路中使用的三个**本地**模型 —— FSMN-VAD、CAM++（说话人嵌入）、

@@ -1,0 +1,355 @@
+{
+  "schema": 1,
+  "status": "passed",
+  "scope": "New clean build-prefix CPU semantic parity using existing source and final frontguard Cython artifacts; no rebuild",
+  "runtime_python": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/bin/python",
+  "compiled_stage": "/tmp/asr-cython-frontguard-20261117-nhxp0l35",
+  "cpu_only": true,
+  "npu_initialized": false,
+  "npu_forward_checked": false,
+  "service_started": false,
+  "real_project_checkpoint_loaded": false,
+  "tiny_hf_cpu_checkpoint_used": true,
+  "outputs_equal": true,
+  "source": {
+    "mode": "source",
+    "python": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/bin/python",
+    "root": "/home/zhangs/asr_nvidia",
+    "module_origins": {
+      "core.model_loading": "/home/zhangs/asr_nvidia/core/model_loading.py",
+      "core.qwen_asr_runtime": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+      "core.local_inference": "/home/zhangs/asr_nvidia/core/local_inference.py"
+    },
+    "module_sha256": {
+      "core.model_loading": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c",
+      "core.qwen_asr_runtime": "cd643eeec82961c9ec724aefc70cd04b6c664da23123a9967ec90c7d3f0d23bc",
+      "core.local_inference": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+    },
+    "torch_version": "2.5.1",
+    "cpu_only": true,
+    "project_large_checkpoint_loaded": false,
+    "tiny_hf_cpu_checkpoint_used": true,
+    "torch_npu_imported": true,
+    "npu_initialized": false,
+    "service_started": false,
+    "npu_forward_checked": false,
+    "blocked_accelerator_transfers": [],
+    "move_inputs": {
+      "input_features": {
+        "dtype": "torch.bfloat16",
+        "device": "cpu",
+        "shape": [
+          2,
+          3
+        ],
+        "values": [
+          [
+            1.0,
+            2.5,
+            -3.25
+          ],
+          [
+            0.125,
+            -0.5,
+            16.0
+          ]
+        ]
+      },
+      "input_ids": {
+        "dtype": "torch.int64",
+        "device": "cpu",
+        "shape": [
+          1,
+          4
+        ],
+        "values": [
+          [
+            1,
+            129,
+            32767,
+            123456
+          ]
+        ]
+      },
+      "attention_mask": {
+        "dtype": "torch.int64",
+        "device": "cpu",
+        "shape": [
+          1,
+          4
+        ],
+        "values": [
+          [
+            1,
+            1,
+            0,
+            1
+          ]
+        ]
+      },
+      "input_features_mask": {
+        "dtype": "torch.int32",
+        "device": "cpu",
+        "shape": [
+          1,
+          3
+        ],
+        "values": [
+          [
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "boolean_mask": {
+        "dtype": "torch.bool",
+        "device": "cpu",
+        "shape": [
+          1,
+          3
+        ],
+        "values": [
+          [
+            true,
+            false,
+            true
+          ]
+        ]
+      },
+      "nested": [
+        {
+          "fp64": {
+            "dtype": "torch.bfloat16",
+            "device": "cpu",
+            "shape": [
+              2
+            ],
+            "values": [
+              0.10009765625,
+              0.2001953125
+            ]
+          }
+        },
+        [
+          {
+            "dtype": "torch.int32",
+            "device": "cpu",
+            "shape": [
+              2
+            ],
+            "values": [
+              1,
+              0
+            ]
+          }
+        ]
+      ]
+    },
+    "pytest_exit_code": 0,
+    "pytest_log": "/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/source.pytest.log",
+    "pytest_summary": "10 passed in 6.04s",
+    "default_dtype_after_tests": "torch.float32",
+    "test_file_sha256": "802178b01db204cd27aa3a8da906e7422cb55aa2b7a71195164bda39a7119bfb"
+  },
+  "compiled": {
+    "mode": "compiled",
+    "python": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/bin/python",
+    "root": "/tmp/asr-cython-frontguard-20261117-nhxp0l35",
+    "module_origins": {
+      "core.model_loading": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/model_loading.cpython-310-aarch64-linux-gnu.so",
+      "core.qwen_asr_runtime": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+      "core.local_inference": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/local_inference.cpython-310-aarch64-linux-gnu.so"
+    },
+    "module_sha256": {
+      "core.model_loading": "943ecb56e1b21cb7aa6bf847223a478e8ed6f1c08d1addbd0d31526924b36f6b",
+      "core.qwen_asr_runtime": "2d05481a63ef18487de24b0fb061c9010eb1b92e91489e6a30dcb520f7eb4302",
+      "core.local_inference": "815b177efe5592ab3a8576f2c8561d79446f4a4338188e7da97f50a961b62bf8"
+    },
+    "torch_version": "2.5.1",
+    "cpu_only": true,
+    "project_large_checkpoint_loaded": false,
+    "tiny_hf_cpu_checkpoint_used": true,
+    "torch_npu_imported": true,
+    "npu_initialized": false,
+    "service_started": false,
+    "npu_forward_checked": false,
+    "blocked_accelerator_transfers": [],
+    "move_inputs": {
+      "input_features": {
+        "dtype": "torch.bfloat16",
+        "device": "cpu",
+        "shape": [
+          2,
+          3
+        ],
+        "values": [
+          [
+            1.0,
+            2.5,
+            -3.25
+          ],
+          [
+            0.125,
+            -0.5,
+            16.0
+          ]
+        ]
+      },
+      "input_ids": {
+        "dtype": "torch.int64",
+        "device": "cpu",
+        "shape": [
+          1,
+          4
+        ],
+        "values": [
+          [
+            1,
+            129,
+            32767,
+            123456
+          ]
+        ]
+      },
+      "attention_mask": {
+        "dtype": "torch.int64",
+        "device": "cpu",
+        "shape": [
+          1,
+          4
+        ],
+        "values": [
+          [
+            1,
+            1,
+            0,
+            1
+          ]
+        ]
+      },
+      "input_features_mask": {
+        "dtype": "torch.int32",
+        "device": "cpu",
+        "shape": [
+          1,
+          3
+        ],
+        "values": [
+          [
+            1,
+            1,
+            0
+          ]
+        ]
+      },
+      "boolean_mask": {
+        "dtype": "torch.bool",
+        "device": "cpu",
+        "shape": [
+          1,
+          3
+        ],
+        "values": [
+          [
+            true,
+            false,
+            true
+          ]
+        ]
+      },
+      "nested": [
+        {
+          "fp64": {
+            "dtype": "torch.bfloat16",
+            "device": "cpu",
+            "shape": [
+              2
+            ],
+            "values": [
+              0.10009765625,
+              0.2001953125
+            ]
+          }
+        },
+        [
+          {
+            "dtype": "torch.int32",
+            "device": "cpu",
+            "shape": [
+              2
+            ],
+            "values": [
+              1,
+              0
+            ]
+          }
+        ]
+      ]
+    },
+    "pytest_exit_code": 0,
+    "pytest_log": "/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/compiled.pytest.log",
+    "pytest_summary": "10 passed in 5.83s",
+    "default_dtype_after_tests": "torch.float32",
+    "test_file_sha256": "802178b01db204cd27aa3a8da906e7422cb55aa2b7a71195164bda39a7119bfb"
+  },
+  "commands": [
+    {
+      "mode": "source",
+      "exit_code": 0,
+      "stdout": "{\"mode\": \"source\", \"output\": \"/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/source.json\", \"summary\": \"10 passed in 6.04s\", \"pytest_exit_code\": 0, \"module_origins\": {\"core.model_loading\": \"/home/zhangs/asr_nvidia/core/model_loading.py\", \"core.qwen_asr_runtime\": \"/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py\", \"core.local_inference\": \"/home/zhangs/asr_nvidia/core/local_inference.py\"}}\n",
+      "stderr": "\nAuthorized users only. All activities may be monitored and reported.\n",
+      "command": "set +u\n. /usr/local/Ascend/ascend-toolkit/set_env.sh\nexport TORCH_DEVICE_BACKEND_AUTOLOAD=0 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1\n/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/bin/python /tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/probe.py --root /home/zhangs/asr_nvidia --mode source --output /tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/source.json --tests /tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/test_compiled_qwen_model_loading.py"
+    },
+    {
+      "mode": "compiled",
+      "exit_code": 0,
+      "stdout": "{\"mode\": \"compiled\", \"output\": \"/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/compiled.json\", \"summary\": \"10 passed in 5.83s\", \"pytest_exit_code\": 0, \"module_origins\": {\"core.model_loading\": \"/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/model_loading.cpython-310-aarch64-linux-gnu.so\", \"core.qwen_asr_runtime\": \"/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so\", \"core.local_inference\": \"/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/local_inference.cpython-310-aarch64-linux-gnu.so\"}}\n",
+      "stderr": "\nAuthorized users only. All activities may be monitored and reported.\n",
+      "command": "set +u\n. /usr/local/Ascend/ascend-toolkit/set_env.sh\nexport TORCH_DEVICE_BACKEND_AUTOLOAD=0 PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 OMP_NUM_THREADS=1 MKL_NUM_THREADS=1\n/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/bin/python /tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/probe.py --root /tmp/asr-cython-frontguard-20261117-nhxp0l35 --mode compiled --output /tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/compiled.json --tests /tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/test_compiled_qwen_model_loading.py"
+    }
+  ],
+  "evidence_files": {
+    "source.json": {
+      "path": "/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/source.json",
+      "bytes": 2979,
+      "sha256": "d62e9d002a0f13f934588ae37309e83e8680c050bcb511c4292c6a11a9028258"
+    },
+    "compiled.json": {
+      "path": "/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/compiled.json",
+      "bytes": 3157,
+      "sha256": "da162a45c2caaa02e12c6f5d2a2014cf4a530794a648116d208a5841a4c86f98"
+    },
+    "source.pytest.log": {
+      "path": "/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/source.pytest.log",
+      "bytes": 99,
+      "sha256": "91b1f159c2fb30dadbf9bff68e289d9deda515e297b7c29fd48c0c6a945ca61e"
+    },
+    "compiled.pytest.log": {
+      "path": "/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/compiled.pytest.log",
+      "bytes": 99,
+      "sha256": "720bf8521ec60de9629382da22269a0b0348795ce7cdddeb138b0c990d3fed07"
+    },
+    "probe.py": {
+      "path": "/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/probe.py",
+      "bytes": 4496,
+      "sha256": "5acbcad2dd3ef047db397fe0ad29d0ff9fe6caca514848e06cfa1846fd6aaec8"
+    },
+    "test_compiled_qwen_model_loading.py": {
+      "path": "/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/test_compiled_qwen_model_loading.py",
+      "bytes": 19062,
+      "sha256": "802178b01db204cd27aa3a8da906e7422cb55aa2b7a71195164bda39a7119bfb"
+    }
+  },
+  "previous_evidence_preserved": {
+    "formal_asr_report": "/tmp/asr-qwen-frontguard-cpu-20261117-r9uy5a4s/formal-runtime/parity.json",
+    "formal_asr_sha256": "6cf3c832e9ab3caf12489433ef04e41a083341b76b49148d1ce4279a93f5c0e0",
+    "failed_build_attempt_directory": "/tmp/asr-qwen-frontguard-cpu-20261117-r9uy5a4s",
+    "not_overwritten": true
+  },
+  "limitations": [
+    "This supplements clean build-environment usability and existing CPU Cython/source semantic parity; not NPU/API/steady/full-audio acceptance.",
+    "Backend discovery may import torch_npu; observed initialization remains false.",
+    "No recompilation, project source/dependency mutation or prior-prefix repair was performed."
+  ]
+}

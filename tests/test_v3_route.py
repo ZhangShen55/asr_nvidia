@@ -9,10 +9,11 @@ def test_v3_is_registered_and_v2_is_removed():
     app.include_router(router)
     client = TestClient(app)
 
-    paths = {route.path for route in app.routes if hasattr(route, "path")}
+    paths = set(app.openapi()["paths"])
     assert "/v3/seacraft_asr" in paths
     assert "/v2/seacraft_asr" not in paths
     assert client.post("/v2/seacraft_asr").status_code == 404
+    assert client.post("/v3/seacraft_asr").status_code == 422
 
 
 def test_v3_openapi_keeps_false_enhancement_defaults():
@@ -27,6 +28,6 @@ def test_v3_openapi_keeps_false_enhancement_defaults():
 def test_main_application_registers_only_v3_qwen_route():
     import main
 
-    paths = {route.path for route in main.app.routes if hasattr(route, "path")}
+    paths = set(main.app.openapi()["paths"])
     assert "/v3/seacraft_asr" in paths
     assert "/v2/seacraft_asr" not in paths

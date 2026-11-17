@@ -1,4 +1,4 @@
-"""v2（Qwen3-ASR）链路的单元测试：语言透传、语种占比、响应结构、并发与排队。"""
+"""v3 Qwen链路的业务契约：内存推理接口、语言、分段、并发与排队。"""
 
 import asyncio
 import unittest
@@ -455,7 +455,7 @@ class RepetitionGuardPipelineTests(unittest.TestCase):
             return "/tmp/fake_clip.wav"
 
         class _FakeClient:
-            async def transcribe(self, path, language=None):
+            async def transcribe_bytes(self, audio_bytes, language=None, filename="segment.wav"):
                 return f"language Chinese<asr_text>{qwen_text}"
 
         async def _fake_get_client():
@@ -526,7 +526,7 @@ class RepetitionGuardPipelineTests(unittest.TestCase):
             return "/tmp/fake_clip.wav"
 
         class _FakeClient:
-            async def transcribe(self, path, language=None):
+            async def transcribe_bytes(self, audio_bytes, language=None, filename="segment.wav"):
                 return f"language Chinese<asr_text>{hallucination}"
 
         async def _fake_get_client():
@@ -585,8 +585,8 @@ class ResponseStructureTests(unittest.TestCase):
             def __init__(self):
                 self.calls = []
 
-            async def transcribe(self, path, language=None):
-                self.calls.append((path, language))
+            async def transcribe_bytes(self, audio_bytes, language=None, filename="segment.wav"):
+                self.calls.append((audio_bytes, language))
                 return "language Chinese<asr_text>你好"
 
         fake_client = _FakeClient()
@@ -627,6 +627,8 @@ class ResponseStructureTests(unittest.TestCase):
         self.assertEqual(result["segments"][0]["ed"], "2.00")
         # auto 语言不应下发给 Qwen
         self.assertEqual(fake_client.calls[0][1], "auto")
+        self.assertIsInstance(fake_client.calls[0][0], bytes)
+        self.assertTrue(fake_client.calls[0][0].startswith(b"RIFF"))
 
     def test_unsupported_language_maps_to_4009(self):
         from api.routes.asr_qwen_common import run_qwen_asr
@@ -641,7 +643,7 @@ class ResponseStructureTests(unittest.TestCase):
             return "/tmp/fake_clip.wav"
 
         class _FakeClient:
-            async def transcribe(self, path, language=None):
+            async def transcribe_bytes(self, audio_bytes, language=None, filename="segment.wav"):
                 raise QwenAsrUnsupportedLanguageError()
 
         async def _fake_get_client():
@@ -698,8 +700,8 @@ class ResponseStructureTests(unittest.TestCase):
             return "/tmp/fake_clip.wav"
 
         class _FakeClient:
-            async def transcribe(self, path, language=None):
-                qwen_calls.append((path, language))
+            async def transcribe_bytes(self, audio_bytes, language=None, filename="segment.wav"):
+                qwen_calls.append((audio_bytes, language))
                 return "language Chinese<asr_text>你好"
 
         async def _fake_get_client():
@@ -802,7 +804,7 @@ class FaultInjectionTests(unittest.TestCase):
         ctx = FakeCtx(request=make_request(showSpk=True, showEmotion=True))
 
         class _FakeClient:
-            async def transcribe(self, path, language=None):
+            async def transcribe_bytes(self, audio_bytes, language=None, filename="segment.wav"):
                 return "language Chinese<asr_text>你好"
 
         async def _boom_speaker(audio_array, sample_rate):
@@ -824,7 +826,7 @@ class FaultInjectionTests(unittest.TestCase):
         ctx = FakeCtx(request=make_request(showSpk=True, showEmotion=True))
 
         class _FakeClient:
-            async def transcribe(self, path, language=None):
+            async def transcribe_bytes(self, audio_bytes, language=None, filename="segment.wav"):
                 return "language Chinese<asr_text>你好"
 
         async def _boom_speaker(audio_array, sample_rate):
@@ -848,7 +850,7 @@ class FaultInjectionTests(unittest.TestCase):
         ctx = FakeCtx(request=make_request(showSpk=True, showEmotion=True))
 
         class _FakeClient:
-            async def transcribe(self, path, language=None):
+            async def transcribe_bytes(self, audio_bytes, language=None, filename="segment.wav"):
                 return "language Chinese<asr_text>你好"
 
         def _reader(path):
@@ -877,7 +879,7 @@ class FaultInjectionTests(unittest.TestCase):
         ctx = FakeCtx(request=make_request(showSpk=True))
 
         class _FakeClient:
-            async def transcribe(self, path, language=None):
+            async def transcribe_bytes(self, audio_bytes, language=None, filename="segment.wav"):
                 raise QwenAsrCallError()
 
         async def _speaker(audio_array, sample_rate):

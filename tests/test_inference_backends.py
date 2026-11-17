@@ -13,8 +13,8 @@ from core.models import ModelPool, ModelUnavailableError, _resolve_device, local
 
 class FakeRunner(InferenceRunner):
     def __init__(self, *args, **kwargs):
-        self.effective_backend = "tensorrt"
-        self.actual_precision = "fp16"
+        self.effective_backend = "torch_npu"
+        self.actual_precision = "fp32"
         self.closed = False
 
     def generate(self, **kwargs):
@@ -30,8 +30,9 @@ class BackendSelectionTests(unittest.TestCase):
 
         api = Mock()
         api.device.return_value = contextlib.nullcontext()
-        model = Mock()
-        model.to.return_value = model
+        import torch
+        model = torch.nn.Linear(2, 2)
+        model.to = Mock(return_value=model)
         with patch("core.local_inference.npu_api", return_value=api), \
                 patch("core.local_inference.load_native_network", return_value=model), \
                 patch("torch.cuda.device", side_effect=AssertionError("CUDA called")), \
@@ -42,12 +43,12 @@ class BackendSelectionTests(unittest.TestCase):
             model.to.assert_called_once_with("npu:1")
             runner.close()
 
-    def test_device_overrides_switch(self):
-        for enabled in (False, True):
-            self.assertEqual(backend_for_device("npu:2", enabled), "torch_npu")
-            self.assertEqual(backend_for_device("cpu", enabled), "pytorch_cpu")
-        self.assertEqual(backend_for_device("cuda:1", True), "tensorrt")
-        self.assertEqual(backend_for_device("cuda:1", False), "pytorch_cuda")
+    def test_devices_are_cpu_or_npu_and_cuda_is_rejected(self):
+        self.assertEqual(backend_for_device("npu:7"), "torch_npu")
+        self.assertEqual(backend_for_device("cpu"), "pytorch_cpu")
+        for value in ("cuda:0", "npu:-1", "npu:x", "gpu:0"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                backend_for_device(value)
 
     def test_resolve_npu_never_queries_cuda(self):
         api = Mock()
@@ -60,7 +61,7 @@ class BackendSelectionTests(unittest.TestCase):
     def test_runner_manages_own_context_and_precision(self):
         with patch("torch.amp.autocast", side_effect=AssertionError("outer AMP called")), \
                 patch("torch.cuda.device", side_effect=AssertionError("outer CUDA called")):
-            self.assertEqual(generate_local(FakeRunner(), "cuda:0", input=None)[0]["scores"], [1.0])
+            self.assertEqual(generate_local(FakeRunner(), "npu:7", input=None)[0]["scores"], [1.0])
 
     def test_input_validation(self):
         from core.local_inference import waveform_tensor
@@ -73,7 +74,7 @@ class BackendSelectionTests(unittest.TestCase):
 
 
 class BackendPoolTests(unittest.IsolatedAsyncioTestCase):
-    async def test_four_switch_combinations_preserve_route_outputs(self):
+    async def test_four_cpu_npu_combinations_preserve_route_outputs(self):
         import torch
         from api.routes import asr_qwen_common as route
         from core.config import settings
@@ -83,82 +84,73 @@ class BackendPoolTests(unittest.IsolatedAsyncioTestCase):
                 return [{"spk_embedding": np.ones(192, np.float32),
                          "labels": ["开心/happy", "中立/neutral"], "scores": [0.9, 0.1]}]
 
-        class Trt(FakeRunner):
+        class Npu(FakeRunner):
             def generate(self, **kwargs):
                 return Model().generate(**kwargs)
 
-        for cam_enabled, emo_enabled in [(False, False), (True, False), (False, True), (True, True)]:
-            with self.subTest(cam=cam_enabled, emo=emo_enabled):
-                with patch("core.models._resolve_device", return_value="cuda:0"), \
-                        patch("core.models.AutoModel", side_effect=lambda **kw: Model()), \
-                        patch("core.tensorrt_runner.TensorRTRunner", side_effect=lambda *a: Trt()), \
-                        patch("torch.cuda.device", side_effect=lambda *a: contextlib.nullcontext()), \
-                        patch("torch.cuda.synchronize"), \
-                        patch("torch.amp.autocast", side_effect=lambda *a, **kw: contextlib.nullcontext()), \
-                        patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}}):
-                    pools = {name: ModelPool(name, "/model/test", devices_getter=lambda: ["cuda:0"],
-                              tensorrt_getter=lambda enabled=enabled: enabled, fp16=True)
-                             for name, enabled in [("speech_campplus", cam_enabled), ("emotion2vec", emo_enabled)]}
-                    with patch.object(route, "get_model_pool", side_effect=lambda name: pools[name]):
-                        embedding, emotion = await asyncio.gather(
-                            route._speaker_embedding(np.zeros(16000, np.float32), 16000),
-                            route._segment_emotion(np.zeros(16000, np.float32), 16000, 1.0))
-                    self.assertEqual(embedding.shape, (192,))
-                    self.assertEqual(embedding.dtype, torch.float32)
-                    self.assertEqual(emotion, "积极")
-                    for name, enabled in [("speech_campplus", cam_enabled), ("emotion2vec", emo_enabled)]:
-                        self.assertEqual(pools[name].models[0].effective_backend,
-                                         "tensorrt" if enabled else "pytorch_cuda")
-                        self.assertFalse(pools[name].locks[0].locked())
-                        await pools[name].close()
+        for cam_device, emo_device in [("cpu", "cpu"), ("npu:7", "cpu"), ("cpu", "npu:7"), ("npu:7", "npu:7")]:
+            with self.subTest(cam=cam_device, emo=emo_device), \
+                    patch("core.models._resolve_device", side_effect=lambda d: d), \
+                    patch("core.models.AutoModel", side_effect=lambda **kw: Model()), \
+                    patch("core.models.TorchNpuRunner", side_effect=lambda *a: Npu()), \
+                    patch("core.models.device_allocated_mb", return_value=0.0), \
+                    patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}}):
+                pools = {name: ModelPool(name, "/model/test", devices_getter=lambda d=device: [d])
+                         for name, device in [("speech_campplus", cam_device), ("emotion2vec", emo_device)]}
+                with patch.object(route, "get_model_pool", side_effect=lambda name: pools[name]):
+                    embedding, emotion = await asyncio.gather(
+                        route._speaker_embedding(np.zeros(16000, np.float32), 16000),
+                        route._segment_emotion(np.zeros(16000, np.float32), 16000, 1.0))
+                self.assertEqual(embedding.shape, (192,))
+                self.assertEqual(embedding.dtype, torch.float32)
+                self.assertEqual(emotion, "积极")
+                for name, device in [("speech_campplus", cam_device), ("emotion2vec", emo_device)]:
+                    self.assertEqual(pools[name].models[0].effective_backend, backend_for_device(device))
+                    self.assertFalse(pools[name].locks[0].locked())
+                    await pools[name].close()
 
-    async def test_mixed_pool_and_npu_ignore_engine(self):
-        npu = FakeRunner()
-        npu.effective_backend = "torch_npu"
-        with patch("core.models._resolve_device", side_effect=lambda d: d), \
+    async def test_mixed_pool_has_independent_cpu_npu_backends(self):
+        with patch("core.models.device_allocated_mb", return_value=0.0), patch("core.models._resolve_device", side_effect=lambda d: d), \
                 patch("core.models.AutoModel", return_value=Mock()), \
-                patch("core.models.TorchNpuRunner", return_value=npu) as npu_factory, \
-                patch("core.tensorrt_runner.TensorRTRunner", side_effect=lambda *a: FakeRunner()) as trt:
+                patch("core.models.device_allocated_mb", return_value=0.0), \
+                patch("core.models.TorchNpuRunner", side_effect=lambda *a: FakeRunner()) as factory:
             pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda:
-                             ["cuda:0", "npu:1", "cpu", "cuda:0"], tensorrt_getter=lambda: True)
+                             ["cpu", "npu:7", "cpu", "npu:7"])
             await pool.ensure_loaded()
-            self.assertEqual(trt.call_count, 2)
-            self.assertEqual(npu_factory.call_args.args, ("speech_campplus", "/model/cam", "npu:1"))
+            self.assertEqual(factory.call_count, 2)
+            self.assertEqual(factory.call_args.args, ("speech_campplus", "/model/cam", "npu:7"))
             details = local_model_status["speech_campplus"]["instance_details"]
             self.assertEqual([d["effective_backend"] for d in details],
-                             ["tensorrt", "torch_npu", "pytorch_cpu", "tensorrt"])
-            self.assertIsNone(local_model_status["speech_campplus"]["allocated_mb"])
+                             ["pytorch_cpu", "torch_npu", "pytorch_cpu", "torch_npu"])
+            self.assertIsNone(local_model_status["speech_campplus"]["runtime_hbm_mb"])
             await pool.close()
 
     async def test_unloaded_status_does_not_load_models(self):
         with patch("core.models.AutoModel", side_effect=AssertionError("loaded")):
-            pool = ModelPool("emotion2vec", "/model/emo", devices_getter=lambda: ["npu:0"],
-                             tensorrt_getter=lambda: True)
+            pool = ModelPool("emotion2vec", "/model/emo", devices_getter=lambda: ["npu:0"])
             pool.refresh_status()
             detail = local_model_status["emotion2vec"]["instance_details"][0]
             self.assertEqual(detail["configured_backend"], "torch_npu")
             self.assertEqual(detail["health"], "not_loaded")
             self.assertIsNone(detail["effective_backend"])
 
-    async def test_trt_failure_does_not_fall_back_and_other_instances_survive(self):
-        with patch("core.models._resolve_device", side_effect=lambda d: d), \
+    async def test_npu_failure_does_not_fall_back_and_other_instances_survive(self):
+        with patch("core.models.device_allocated_mb", return_value=0.0), patch("core.models._resolve_device", side_effect=lambda d: d), \
                 patch("core.models.AutoModel", side_effect=AssertionError("fallback")), \
-                patch("core.tensorrt_runner.TensorRTRunner", side_effect=[RuntimeError("bad engine"), FakeRunner()]):
-            pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["cuda:0"] * 2,
-                             tensorrt_getter=lambda: True)
+                patch("core.models.TorchNpuRunner", side_effect=[RuntimeError("bad NPU weight"), FakeRunner()]):
+            pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["npu:7"] * 2)
             await pool.ensure_loaded()
             self.assertIsNone(pool.models[0])
             async with pool.lease() as (runner, _):
                 self.assertIs(runner, pool.models[1])
-            self.assertIn("bad engine", pool.failures[0])
+            self.assertIn("bad NPU weight", pool.failures[0])
             await pool.close()
 
     async def test_broken_instance_wakes_waiters_with_unavailable(self):
         runner = FakeRunner()
-        with patch("core.models._resolve_device", return_value="cuda:0"), \
-                patch("core.tensorrt_runner.TensorRTRunner", return_value=runner):
-            pool = ModelPool("emotion2vec", "/model/emo", devices_getter=lambda: ["cuda:0"],
-                             tensorrt_getter=lambda: True)
+        with patch("core.models.device_allocated_mb", return_value=0.0), patch("core.models._resolve_device", return_value="npu:7"), \
+                patch("core.models.TorchNpuRunner", return_value=runner):
+            pool = ModelPool("emotion2vec", "/model/emo", devices_getter=lambda: ["npu:7"])
 
             async def waiter():
                 async with pool.lease():
@@ -168,7 +160,7 @@ class BackendPoolTests(unittest.IsolatedAsyncioTestCase):
                 async with pool.lease():
                     waiting = asyncio.create_task(waiter())
                     await asyncio.sleep(0.01)
-                    raise InstanceFailure("CUDA context lost")
+                    raise InstanceFailure("NPU context lost")
             with self.assertRaises(ModelUnavailableError) as error:
                 await asyncio.wait_for(waiting, 2)
             self.assertEqual(error.exception.code, 4016)
@@ -181,10 +173,9 @@ class BackendPoolTests(unittest.IsolatedAsyncioTestCase):
     async def test_repeated_cancel_holds_lease_until_delayed_device_complete(self):
         submitted, complete = threading.Event(), threading.Event()
         runner = FakeRunner()
-        with patch("core.models._resolve_device", return_value="cuda:0"), \
-                patch("core.tensorrt_runner.TensorRTRunner", return_value=runner):
-            pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["cuda:0"],
-                             tensorrt_getter=lambda: True)
+        with patch("core.models.device_allocated_mb", return_value=0.0), patch("core.models._resolve_device", return_value="npu:7"), \
+                patch("core.models.TorchNpuRunner", return_value=runner):
+            pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["npu:7"])
 
             def device_work():
                 submitted.set()  # 模拟 enqueue 已返回，设备仍未完成。
@@ -224,10 +215,9 @@ class BackendPoolTests(unittest.IsolatedAsyncioTestCase):
                 raise TimeoutError("test loading")
             return runner
 
-        with patch("core.models._resolve_device", return_value="cuda:0"), \
-                patch("core.tensorrt_runner.TensorRTRunner", side_effect=build):
-            pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["cuda:0"],
-                             tensorrt_getter=lambda: True)
+        with patch("core.models.device_allocated_mb", return_value=0.0), patch("core.models._resolve_device", return_value="npu:7"), \
+                patch("core.models.TorchNpuRunner", side_effect=build):
+            pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["npu:7"])
             loading = asyncio.create_task(pool.ensure_loaded())
             await asyncio.to_thread(started.wait, 2)
             loading.cancel()
@@ -239,3 +229,92 @@ class BackendPoolTests(unittest.IsolatedAsyncioTestCase):
             self.assertIs(pool.models[0], runner)
             await pool.close()
             self.assertTrue(runner.closed)
+
+    async def test_close_failure_keeps_ownership_rejects_leases_and_can_retry(self):
+        first, second = FakeRunner(), FakeRunner()
+        attempts = []
+
+        def close_first():
+            attempts.append(1)
+            if len(attempts) == 1:
+                raise RuntimeError("controlled close failure")
+            first.closed = True
+
+        first.close = close_first
+        second.close = Mock(wraps=second.close)
+        pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["cpu", "cpu"])
+        with patch.object(pool, "_build_instance", side_effect=[(first, "cpu", 1.0), (second, "cpu", 2.0)]):
+            await pool.ensure_loaded()
+        with self.assertRaisesRegex(RuntimeError, "instance#0.*controlled close failure"):
+            await pool.close()
+        self.assertIs(pool.models[0], first)
+        self.assertIsNone(pool.models[1])
+        self.assertTrue(second.closed)
+        self.assertTrue(pool._closing)
+        self.assertEqual(local_model_status[pool.name]["available_instances"], 0)
+        self.assertEqual(local_model_status[pool.name]["pending_close_instances"], 1)
+        self.assertEqual(local_model_status[pool.name]["instance_details"][0]["health"], "close_failed")
+        with self.assertRaises(ModelUnavailableError) as error:
+            await pool.ensure_loaded()
+        self.assertEqual(error.exception.code, 4015)
+        await pool.close()
+        self.assertTrue(first.closed)
+        self.assertEqual(len(attempts), 2)
+        second.close.assert_called_once()
+        self.assertEqual(pool.models, [])
+        self.assertFalse(pool._closing)
+
+    async def test_failed_inference_cleanup_is_quarantined_until_close_retry(self):
+        runner = FakeRunner()
+        attempts = []
+
+        def close():
+            attempts.append(1)
+            if len(attempts) == 1:
+                raise RuntimeError("cleanup failed")
+            runner.closed = True
+
+        runner.close = close
+        pool = ModelPool("emotion2vec", "/model/emo", devices_getter=lambda: ["cpu"])
+        with patch.object(pool, "_build_instance", return_value=(runner, "cpu", 1.0)):
+            await pool.ensure_loaded()
+        with self.assertRaises(InstanceFailure):
+            async with pool.lease():
+                raise InstanceFailure("device lost")
+        self.assertIsNone(pool.models[0])
+        self.assertIs(pool._unclosed_instances[0], runner)
+        with self.assertRaises(ModelUnavailableError):
+            async with pool.lease():
+                self.fail("quarantined instance reused")
+        await pool.close()
+        self.assertTrue(runner.closed)
+        self.assertFalse(pool._unclosed_instances)
+
+    async def test_repeated_cancel_cannot_interrupt_other_instance_closes(self):
+        first, second = FakeRunner(), FakeRunner()
+        started, release = threading.Event(), threading.Event()
+
+        def blocking_close():
+            started.set()
+            if not release.wait(5):
+                raise TimeoutError("controlled close wait")
+            first.closed = True
+
+        first.close = blocking_close
+        pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["cpu", "cpu"])
+        with patch.object(pool, "_build_instance", side_effect=[(first, "cpu", 0.0), (second, "cpu", 0.0)]):
+            await pool.ensure_loaded()
+        closing = asyncio.create_task(pool.close())
+        self.assertTrue(await asyncio.to_thread(started.wait, 2))
+        closing.cancel()
+        await asyncio.sleep(0.01)
+        closing.cancel()
+        await asyncio.sleep(0.01)
+        self.assertFalse(closing.done())
+        self.assertIs(pool.models[0], first)
+        release.set()
+        with self.assertRaises(asyncio.CancelledError):
+            await closing
+        self.assertTrue(first.closed)
+        self.assertTrue(second.closed)
+        self.assertEqual(pool.models, [])

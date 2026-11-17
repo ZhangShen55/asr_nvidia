@@ -1,0 +1,72 @@
+[
+  {
+    "path": "model/speech_campplus_sv_zh_en_16k-common_advanced/campplus_cn_en_common.pt",
+    "exists": true,
+    "bytes": 28044640,
+    "sha256": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+  },
+  {
+    "path": "model/speech_campplus_sv_zh_en_16k-common_advanced/config.yaml",
+    "exists": true,
+    "bytes": 537,
+    "sha256": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9"
+  },
+  {
+    "path": "model/emotion2vec_plus_large/model.pt",
+    "exists": true,
+    "bytes": 1945790254,
+    "sha256": "be501a01f26fcdc7663a062dff86af839afbaef7c4de32f5e42d7e1ad2784da4"
+  },
+  {
+    "path": "model/emotion2vec_plus_large/config.yaml",
+    "exists": true,
+    "bytes": 5552,
+    "sha256": "f4fa0eb82cc78bfebb43c56d68791afb01788085a18897d20999af7bc45d51d3"
+  },
+  {
+    "path": "model/emotion2vec_plus_large/tokens.txt",
+    "exists": true,
+    "bytes": 108,
+    "sha256": "2becf005b6ed6d4a7408b3b205ebe97b86650854eae0ca54eeb14f4b41c14213"
+  },
+  {
+    "path": "model/speech_fsmn_vad_zh-cn-16k-common-pytorch/model.pt",
+    "exists": true,
+    "bytes": 1721366,
+    "sha256": "b3be75be477f0780277f3bae0fe489f48718f585f3a6e45d7dd1fbb1a4255fc5"
+  },
+  {
+    "path": "model/speech_fsmn_vad_zh-cn-16k-common-pytorch/config.yaml",
+    "exists": true,
+    "bytes": 1311,
+    "sha256": "899b215ee7d1733a6d076acb33944e72e9dc788d7bb39d4ab010a5255b9bda13"
+  },
+  {
+    "path": "model/speech_fsmn_vad_zh-cn-16k-common-pytorch/am.mvn",
+    "exists": true,
+    "bytes": 8040,
+    "sha256": "6820fef9687708c4fc3fab2530179c8fcea6262daa25514380056cd8f6eb1754"
+  },
+  {
+    "path": "/home/model/Qwen3-ASR-1.7B-hf/config.json",
+    "exists": true,
+    "bytes": 2399,
+    "sha256": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+  },
+  {
+    "path": "/home/model/Qwen3-ASR-1.7B-hf/preprocessor_config.json",
+    "exists": false
+  },
+  {
+    "path": "/home/model/Qwen3-ASR-1.7B-hf/tokenizer_config.json",
+    "exists": true,
+    "bytes": 998,
+    "sha256": "945e980986de2ca7768f3326bfdbb4fbea3406f972b8ae0be233089f2b253c11"
+  },
+  {
+    "path": "/home/model/Qwen3-ASR-1.7B-hf/model.safetensors",
+    "exists": true,
+    "bytes": 4076193080,
+    "sha256": "2db53c7d81bd9b8cbc6a074e89be2c968a0d373fb4ee68bb1b1e14f7042dfee1"
+  }
+]

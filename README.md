@@ -1,7 +1,7 @@
 # SeaCraftASR
 
 基于 FastAPI 的离线语音转写服务，面向教育课堂录音。服务本地用 FunASR FSMN-VAD 做语音切分，
-逐段并发调用独立的 **Qwen3-ASR** 服务完成转写，并在本机用 CAM++ 与 emotion2vec 给出说话人角色与情绪。
+在华为 Ascend 910B 上用本地 **Qwen3-ASR-1.7B** 原始权重逐段转写，CAM++ 与 emotion2vec 使用原生 torch_npu。v3 请求、响应、错误码和后处理契约保持不变。
 
 > `/v1.1.8/seacraft_asr`（SeACo-Paraformer + PUNC + Whisper 法语链路）已随本次变更下线，
 > 服务只保留 `/v3/seacraft_asr`、`/get_status`、`/clear_tasks_list` 三个接口。
@@ -22,7 +22,7 @@ FastAPI 自动文档位于 `/docs`、`/redoc` 和 `/openapi.json`。
 .
 ├── main.py                     # 应用装配 + 进程命名（asr-offline-model）
 ├── config.toml                 # 本地运行配置
-├── docker/                     # CUDA 镜像、Compose 和部署说明
+├── docker/                     # 昇腾镜像、Compose 和部署说明
 ├── api/routes/
 │   ├── asr_v3.py               # /v3/seacraft_asr
 │   ├── asr_qwen_common.py      # v3 主链路：VAD → 并发转写 → 响应封装
@@ -33,7 +33,7 @@ FastAPI 自动文档位于 `/docs`、`/redoc` 和 `/openapi.json`。
 │   ├── logging.py              # 日志按天 + 按大小双轮转
 │   ├── models.py               # CAM++ / emotion2vec 懒加载 + 显存登记
 │   ├── vad.py                  # v3 链路的本地 VAD 切分
-│   ├── qwen_asr_client.py      # Qwen3-ASR 异步客户端（模型发现 / 转写 / 重试）
+│   ├── qwen_asr_client.py      # Qwen3-ASR 本地异步客户端（懒加载 / 实例串行 / 重试）
 │   ├── qwen_asr_queue.py       # v3 链路的音频排队与两级请求并发控制
 │   └── status.py               # 状态接口响应组装
 ├── entity/data.py
@@ -62,104 +62,36 @@ model/
 |------|------|
 | FSMN-VAD | 语音端点检测（切分转写单元） |
 | CAM++ | 说话人嵌入与说话人聚类 |
-| emotion2vec_plus_large | 情绪识别（fp16） |
+| emotion2vec_plus_large | 情绪识别（原生 FP32 基线） |
 
 模型权重被 `.gitignore` 忽略，但会进入 Docker 构建上下文并复制到镜像 `/app/model/`。
 
 ## 本地运行
 
-本地推荐使用已安装依赖的 Conda 环境 `asr`：
+开发主机 `xjtu910b7`，源码 `/home/zhangs/asr_nvidia`，仅使用宿主物理卡 `npu:7`。
+卡 7 已有其他服务，测试结果属于共享卡测量。解释器固定为 `/home/zhangs/conda-envs/asr/bin/python`。
 
 ```bash
-conda activate asr
-python main.py
+cd /home/zhangs/asr_nvidia
+set +u
+. /usr/local/Ascend/ascend-toolkit/set_env.sh
+/home/zhangs/conda-envs/asr/bin/python scripts/check_npu_environment.py --config config.toml
+CONFIG_PATH=./config.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
+  /home/zhangs/conda-envs/asr/bin/python main.py \
+  --host 127.0.0.1 --port 8083 --workers 1
 ```
 
-服务监听 `0.0.0.0:8083`。默认读取当前目录的 `config.toml`，也可以显式指定配置：
+正式入口为 `python main.py`（支持 --host/--port/--workers 1）。关闭时向本次父进程发送 TERM，先完成 lifespan 再走 Python atexit；当前 NPU 运行时可能接管 INT，不能仅以 Ctrl+C 判断退出。等待 NPU 工作及 VAD worker 退出。测试必须记录自身 PID/进程树和端口，统一 finally 收尾并核对端口解除监听；不要按名称或端口批量终止既有服务。
+启动预检校验依赖、设备及三个小模型资产，VAD 固定进程池预热后才就绪；Qwen、CAM++、emotion2vec 在首次需要时加载。Qwen 目录默认 `/home/model/Qwen3-ASR-1.7B-hf`，不再依赖外部 HTTP 服务。
 
-```bash
-CONFIG_PATH=./config.toml python main.py
-```
+依赖分为 `requirements-pip-runtime.txt`（通用运行）、`requirements-npu.txt`（与 CANN 配套的 NPU 栈）、`requirements-dev.txt`、`requirements-build.txt`。环境重建使用 `scripts/rebuild_npu_env.sh` 的独立前缀，不原地升级当前 `asr`。
 
-本地配置中的模型路径为 `./model/<目录名>`，因此需要从仓库根目录启动。
+### 模型内存压力诊断
 
-### 前台启动（8083）
+`scripts/model_memory_pressure_diagnostics.py` 只附着显式 `--backend-pid` 对应的本项目实例，采集 NPU HBM、RSS/PSS、Swap、VAD worker、缓存与健康状态；它不拥有被测服务的关闭权。启动服务的测试程序负责收尾。
+`/get_status` 的 `resourceDiagnostics` 保留既有业务结构，资源段改为 `npu`；采样失败用 `available=false` 和原因表达。`requestTelemetry` 有界保存阶段统计，不保存音频或正文。
 
-下面的命令会占用当前终端，适合调试和查看实时日志；按 `Ctrl+C` 停止服务：
-
-```bash
-cd /home/zhangs/workspace/asr_nvidia
-CONFIG_PATH=/home/zhangs/workspace/asr_nvidia/config.toml \
-PYTHONPATH=/home/zhangs/workspace/asr_nvidia \
-OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
-/root/anaconda3/envs/asr/bin/python -m uvicorn main:app \
-  --host 0.0.0.0 --port 8083 --workers 1
-```
-
-### 后台启动（8083）
-
-后台启动后，日志写入 `logs/asr-nvidia-8083.log`，PID 写入
-`logs/asr-nvidia-8083.pid`：
-
-```bash
-cd /home/zhangs/workspace/asr_nvidia
-mkdir -p logs
-nohup env \
-  CONFIG_PATH=/home/zhangs/workspace/asr_nvidia/config.toml \
-  PYTHONPATH=/home/zhangs/workspace/asr_nvidia \
-  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
-  /root/anaconda3/envs/asr/bin/python -m uvicorn main:app \
-  --host 0.0.0.0 --port 8083 --workers 1 \
-  > logs/asr-nvidia-8083.log 2>&1 &
-echo $! > logs/asr-nvidia-8083.pid
-```
-
-查看后台日志和服务状态：
-
-```bash
-tail -f /home/zhangs/workspace/asr_nvidia/logs/asr-nvidia-8083.log
-curl http://127.0.0.1:8083/get_status
-```
-
-停止后台服务：
-
-```bash
-kill -TERM "$(cat /home/zhangs/workspace/asr_nvidia/logs/asr-nvidia-8083.pid)"
-```
-
-### 使用 Conda `asr` 环境启动指定端口
-
-下面的命令从仓库根目录启动一个 uvicorn 后端实例，监听 `8085` 端口：
-
-```bash
-cd /home/zhangs/workspace/asr_nvidia
-conda run --no-capture-output -n asr \
-  env CONFIG_PATH=./config.toml PYTHONPATH=. \
-  OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 \
-  uvicorn main:app --host 0.0.0.0 --port 8085 --workers 1
-```
-
-服务启动后，v3 接口地址为 `http://127.0.0.1:8085/v3/seacraft_asr`；按 `Ctrl+C` 停止该后端实例。`OMP_NUM_THREADS` 和 `MKL_NUM_THREADS` 只限制底层算子线程，不限制 VAD worker 进程数；VAD 有效完整音频并发等于 `len(vad.vad_device)`。Qwen-ASR 服务地址由 `[qwen_asr].base_url` 配置，默认是 `http://127.0.0.1:8806`。
-
-### 模型内存压力安全诊断
-
-诊断工具跳过已确认正常的 VAD-only A 项，按 CAM++ 单独加载、emotion2vec 单独加载、两者同时加载和 2/4/8 路完整音频逐级采样。它每秒记录 RSS/PSS、Private 内存、`VmSwap`、`MemAvailable`、Swap I/O、GPU 显存/利用率、VAD worker、缓存目录和 8085/8806 健康状态，并在红色安全条件触发时停止后续请求。工具不会发送停止或重启 8806 Qwen 的命令。
-
-```bash
-cd /home/zhangs/workspace/asr_nvidia
-conda run --no-capture-output -n asr \
-  python scripts/model_memory_pressure_diagnostics.py \
-  --base-url http://127.0.0.1:8085 \
-  --qwen-url http://127.0.0.1:8806 \
-  --audio-dir /home/zhangs/workspace/asr_nvidia/test/audio_file/音频文件 \
-  --out-dir /tmp/seacraft-model-memory-diagnostics \
-  --cooldown-s 60
-```
-
-运行前先确认 `curl http://127.0.0.1:8085/get_status` 和
-`curl http://127.0.0.1:8806/v1/models` 均正常。`--plan-only` 只生成包含 Git 提交号、配置快照、设备数组和阶段清单的 `metadata.json`，不会连接服务。输出目录中的 `snapshots.jsonl`、`stage-*.json` 和 `run-summary.json` 可直接复算报告；红色终止条件包括可用内存低于 `max(8 GiB, 总内存 20%)`、Swap 增量超过 256 MiB、连续 Swap I/O、GPU 显存使用率达到 90%、后端/Qwen 健康检查失败或 VAD worker 数量下降。
-
-`/get_status` 的 `resourceDiagnostics` 是附加字段，采集失败时通过 `available=false` 和 `reason` 表示，不把缺失值当作零；其中 `requestTelemetry` 只保留有界的阶段耗时统计，不保存音频和转写正文。
+音频递归清单与原始 GBK 路径映射由 `scripts/build_audio_manifest.py` 生成，见 `docs/npu-910b-migration-20261117/audio-manifest.json`；使用稳定 ASCII sample_id 上传，不重命名或覆盖原文件。
 
 ## ASR 请求
 
@@ -184,7 +116,7 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 | `showEmotion` | `false` | 是否返回情绪标签 |
 | `showRoleIdentify` | `false` | 是否识别教师/学生角色 |
 
-> `showSpk`、`showEmotion`、`showRoleIdentify` 的默认值均为 `false`（12 服务器口径）。
+> `showSpk`、`showEmotion`、`showRoleIdentify` 的默认值均为 `false`。
 
 响应包含 `language`、`segments`、`text`、`speed_info`、`load_audio_time_ms`、`gpu_time_ms` 与 `language_ratio`。
 分段中的 `role`、`emotion` 和 `segment_words` 根据请求参数返回。`text` 为最终保留分段按空格拼接并经文本规范化（ITN）处理后的结果。纯「啊 / 哦 / 嗯 / 呃」分段会被移除；英文为有效文本占比最高时，边界明确的中文口气词会转换为 `ah / oh / um / uh`。
@@ -192,7 +124,7 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 ### v3 处理流程
 
 1. 服务本地用 FunASR FSMN-VAD 把音频切成若干语音段；
-2. 每个语音段并发发往 Qwen3-ASR 服务（单段一个请求，**不做相邻段合并**）；
+2. 每个语音段交给本地 Qwen3-ASR 实例（单段一个请求，**不做相邻段合并**）；
 3. 响应分段的 `bg` / `ed` 直接取该 VAD 段的起止时间；
 4. 复读修复、单字语气词移除、语言占比判定、英文口气词替换、ITN 和标点清理依次执行，最终统计只使用最终保留分段。
 
@@ -233,8 +165,8 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 | `4008` | 音频为空或未检测到任何人声 |
 | `4009` | 提交的语种不被 Qwen 支持 |
 | `4010` | 请求排队等待超时（`queue_wait_timeout_s > 0` 时可能触发） |
-| `4011` | Qwen 服务不可用或未发现可用模型 |
-| `4012` | Qwen 服务调用失败（超时、连接错误、重试耗尽） |
+| `4011` | 本地 Qwen 目录/权重不可读、设备不可用或加载失败 |
+| `4012` | 本地 Qwen 推理异常或超时（重试耗尽） |
 | `4013` | 总音频处理容量满（消息包含总活动数/上限），或等待模式的共享等待队列满 |
 | `4015` | 请求的 CAM++ 说话人/角色识别能力未启用或没有可用实例 |
 | `4016` | 请求的 emotion2vec 情绪能力未启用或没有可用实例 |
@@ -257,7 +189,7 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 | `[speech_rate]` | 单句语速修正系数 |
 | `[features]` | `open_v2_role`、`open_v2_emotion` |
 | `[itn]` | 文本规范化开关与失败策略 |
-| `[qwen_asr]` | v3 链路的 Qwen 服务地址、并发度和队列 |
+| `[qwen_asr]` | v3 链路的 本地 Qwen 目录、设备、并发度和队列 |
 | `[vad]` | FSMN-VAD worker、切分参数、全局 VAD 阈值和段级过滤参数 |
 | `[model_device_pool]` | CAM++ 与 emotion2vec 的设备数组；每个元素对应一个独立模型实例和一个并发槽位 |
 
@@ -268,30 +200,39 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
 | `enabled` | `true` | 是否开放 `/v3/seacraft_asr` |
-| `base_url` | `http://127.0.0.1:8806` | Qwen3-ASR 服务地址（容器部署用 `http://192.168.29.12:8806`） |
-| `model` | `""` | 模型名；留空表示启动时从 `/v1/models` 自动发现（不需要 API Key） |
-| `segment_concurrency` | `16` | 单个音频内同时发往 Qwen 的 VAD 段请求数 |
-| `request_concurrency` | `128` | 所有音频合计发往 Qwen 的请求数上限 |
+| `model` | `""` | 本地模型显示名称；不发起模型发现请求 |
+| `local_model_dir` | `/home/model/Qwen3-ASR-1.7B-hf` | 原始 HF 权重与 processor 目录 |
+| `local_device` | `npu:7` | 宿主目标 NPU；容器仅映射物理 7 时使用逻辑 `npu:0` |
+| `local_dtype` | `bfloat16` | 支持 bfloat16/float16/float32；默认采用已验证 BF16 |
+| `local_instance_count` | `1` | 独立实例数，每份复制权重；每实例串行执行 |
+| `max_new_tokens` | `256` | 每段生成上限 |
+| `segment_concurrency` | `1` | 单音频在途本地转写任务上限 |
+| `request_concurrency` | `1` | 所有音频的在途本地转写任务上限 |
 | `audio_concurrency` | `8` | A+B 同时处理的音频总数 |
 | `audio_spk_emo_concurrency` | `4` | 请求任一增强能力的 B 类整音频上限，必须为正整数 |
 | `queue_max_size` | `64` | A+B 共享等待队列容量 |
 | `queue_wait_timeout_s` | `0` | `0` = 队列满立即拒绝；`>0` 才排队等待，超时返回 `4010` |
 | `request_timeout_s` | `120` | 单次 Qwen 请求超时（秒） |
-| `connect_timeout_s` | `10` | Qwen 服务连接超时（秒） |
-| `retry_count` | `1` | Qwen 请求失败重试次数 |
+| `retry_count` | `2` | Qwen 请求失败重试次数 |
 | `speaker_similarity_threshold` | `0.30` | CAM++ 说话人聚类的余弦相似度阈值（按实测 sweep 取值，阈值过高会严重过分割） |
 
 ### `[vad]` 配置项
 
+下表列配置声明值。原FunASR通过nested kwargs传参，当前权重的FSMN实际选项来自原始model_conf：
+单段8000ms、结束静音800ms、speech_noise=0.6、全局decibel=-100、全局snr=-100。
+CPU原始AutoModel与原生NPU保持同一既有行为；服务段级过滤独立使用SNR18、segment_decibel=-40等参数。
+不能将声明值、实际FSMN选项和段级过滤混为一层；本次不变更参数绑定或数值。
+完整来源和原始选项见[课堂阈值评审](docs/npu-910b-migration-20261117/classroom-threshold-review.md)。
+
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `vad_device` | `["cpu", ...]` | 每个元素启动一个固定 FSMN-VAD worker；数组长度决定完整音频 VAD 并发 |
+| `vad_device` | `["cpu", "cpu", "npu:7", "npu:7"]` | 每个元素启动一个固定 FSMN-VAD worker；数组长度决定完整音频 VAD 并发 |
 | `min_segment_duration_s` | `0.3` | 过滤过短 VAD 段，单位：秒 |
-| `vad_max_single_segment_time_ms` | `12000` | VAD 单段最长时长，单位：毫秒 |
+| `vad_max_single_segment_time_ms` | `12000` | 历史nested声明；当前权重实际单段上限8000ms |
 | `vad_max_end_silence_time_ms` | `800` | VAD 结束静音时长，单位：毫秒 |
-| `vad_speech_noise_thres` | `0.8` | 语音/噪声判定阈值：越高越不敏感 |
-| `vad_decibel_thres` | `-40.0` | FunASR 全局帧级 log 能量阈值，不是 dBFS；`-100` 保持原行为 |
-| `vad_snr_thres` | `-18.0` | FunASR 全局帧级 SNR 阈值，同时作为段级 SNR 数值来源；`-100` 关闭该数值规则 |
+| `vad_speech_noise_thres` | `0.8` | 历史nested声明；当前模型实际采用0.6 |
+| `vad_decibel_thres` | `-40.0` | 全局log能量声明，非dBFS；当前模型实际为-100，段级门槛另设 |
+| `vad_snr_thres` | `18.0` | 服务段级SNR真实取值；nested声明未覆盖FSMN全局-100 |
 | `vad_decibel_thres_filter_enabled` | `true` | 段级低能量帧比例过滤开关 |
 | `vad_segment_decibel_thres` | `-40.0` | 段级 dBFS 低能量帧阈值 |
 | `vad_decibel_frame_sample_ratio` | `0.5` | 段内 decibel 抽帧比例，范围 `(0,1]` |
@@ -307,8 +248,8 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 |------|------|--------|
 | `audio_concurrency` | 同时处于处理中的 A+B **音频文件**总数 | 8 |
 | `audio_spk_emo_concurrency` | 总音频中请求增强能力的 B 类音频数量 | 4 |
-| `segment_concurrency` | **单个音频内**同时发往 Qwen 的 VAD 段请求数 | 16 |
-| `request_concurrency` | **所有音频合计**发往 Qwen 的请求数上限 | 128 |
+| `segment_concurrency` | **单个音频内**同时执行本地转写的 VAD 段任务数 | 1 |
+| `request_concurrency` | **所有音频合计**本地转写任务数上限 | 1 |
 
 上述配置均在重启后生效，每个服务实例独立限流。旧配置缺少新增的
 `audio_spk_emo_concurrency` 时同样采用 **4**，升级后增强音频并发会受此上限限制。
@@ -372,22 +313,22 @@ A 的活动数和等待数分别用总数减去 B 数。这里的 B 等待按完
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `speech_campplus_devices` | [`"cuda:0"`] | 每个元素加载一个 CAM++ 实例；长度决定 CAM++ 最大并发 |
-| `emotion2vec_devices` | [`"cuda:0"`] | 每个元素加载一个 emotion2vec 实例；长度决定 emotion2vec 最大并发 |
+| `speech_campplus_devices` | [`"npu:7", "npu:7", "npu:7"`] | 每个元素加载一个 CAM++ 实例；长度决定 CAM++ 最大并发 |
+| `emotion2vec_devices` | [`"npu:7"`] | 每个元素加载一个 emotion2vec 实例；长度决定 emotion2vec 最大并发 |
 
 例如 CAM++ 3 个实例、emotion2vec 1 个实例：
 
 ```toml
 [model_device_pool]
-speech_campplus_devices = ["cuda:0", "cuda:0", "cuda:0"]
-emotion2vec_devices = ["cuda:0"]
+speech_campplus_devices = ["npu:7", "npu:7", "npu:7"]
+emotion2vec_devices = ["npu:7"]
 ```
 
 两个模型池独立排队、互不借用容量；空数组表示禁用对应能力，请求会得到 CAM++ `4015` 或 emotion2vec `4016`。部分副本加载失败时，只有成功加载的实例计入容量，失败原因可从 `/get_status` 的 `localModels` 查询。该接口同时提供每个池的 `configured_instances`、`instances`、`available_instances`、`busy`、`waiting`、`failed_instances` 和等待摘要。
 
-同一张 GPU 上增加数组元素会同时增加模型显存和推理争用，可能降低单次推理速度或触发 OOM；应结合状态接口和 `nvidia-smi` 的峰值显存、利用率及压测 P95 选择实例组合。VAD 设备由 `[vad].vad_device` 独立控制，Qwen 服务本身在另一个容器内。
+同一张 NPU 上增加数组元素会同时增加模型 HBM 和推理争用，可能降低单次推理速度或触发 OOM；应结合状态接口和 `npu-smi info` 的峰值 HBM、利用率及压测 P95 选择实例组合。VAD 设备由 `[vad].vad_device` 独立控制，Qwen 本地实例也在主服务进程内，共享目标 NPU。
 
-FSMN-VAD 的设备由 `[vad].vad_device` 数组独立控制，例如 `['cpu', 'cuda:0']` 会启动两个固定 worker。旧 `[qwen_asr]` VAD 字段和旧动态池字段不再参与实例数计算，迁移时会记录告警。
+FSMN-VAD 的设备由 `[vad].vad_device` 数组独立控制，例如 `['cpu', 'npu:7']` 会启动两个固定 worker。旧 `[qwen_asr]` VAD 字段和旧动态池字段不再参与实例数计算，迁移时会记录告警。
 
 ### 细小声音阈值回归
 
@@ -399,7 +340,7 @@ python scripts/vad_reference.py --output /tmp/vad-reference.json
 
 报告包含 46 个“细小声音”标注段的抑制率、未标注段保留率、VAD 段数、Qwen 请求数、耗时以及 RMS/峰值诊断。区间命中定义为 VAD 输出与标注区间重叠达到标注区间的 50%；响度只用于诊断，不作为唯一判据。该长测不会进入默认快速测试，也不修改原始音频和标注文件。
 
-`vad_decibel_thres` 使用 FunASR 内部 log 能量单位，不能直接填入 RMS dBFS；`vad_low_volume_rms_dbfs_thres` 才是面向采集音量的段级门限。新过滤默认关闭，推荐值必须来自参考音频扫描并同时满足细小声音抑制率、标注区间无有效识别内容和正常语音保留率。扫描可用 `--target-suppression-rate`、`--target-retention-rate`、`--coarse-step`、`--fine-step` 和 `--output` 覆盖目标与输出路径。回滚时将开关改回 `false` 并重启，原有 `vad_speech_noise_thres` 语义不变。现有 `min_segment_duration_s` 仍是通用兼容过滤，但不参与本次低音量第一阶段标定。
+`vad_decibel_thres` 使用 FunASR 内部 log 能量单位，不能直接填入 RMS dBFS；`vad_low_volume_rms_dbfs_thres` 才是面向采集音量的段级门限。历史试验最初默认关闭；当前宿主与容器模板启用三项段级过滤、窗口为开头/结尾各3分钟。新推荐值必须来自参考音频扫描并同时满足细小声音抑制率、标注区间无有效识别内容和正常语音保留率。扫描可用 `--target-suppression-rate`、`--target-retention-rate`、`--coarse-step`、`--fine-step` 和 `--output` 覆盖目标与输出路径。回滚时将开关改回 `false` 并重启，原有 `vad_speech_noise_thres` 语义不变。现有 `min_segment_duration_s` 仍是通用兼容过滤，但不参与本次低音量第一阶段标定。
 
 ### role / emotion 的加载条件
 
@@ -407,7 +348,7 @@ v3 链路的真实 `role` 与 `emotion` 由本机模型给出，加载与计算�
 
 - **加载**：CAM++ 与 emotion2vec **各自独立**，分别由 `[features].open_v2_role` 与
   `[features].open_v2_emotion` 控制（默认均为 `true`）。关闭任一个，另一个仍可正常加载。
-  emotion2vec 以**半精度（fp16）**加载，权重约占 1 GB。
+  emotion2vec 使用禁用 HF32 的原生 FP32 正确性基线；低精度/编译候选独立测量后再决定是否采用。
 - **计算**：`showSpk` 或 `showRoleIdentify` 请求说话人能力，`showEmotion` 请求情绪能力，
   三个参数默认均为 `false`。未请求的能力对应字段为 `null`，不触发其模型加载。
 - **配置拒绝**：请求要求的能力被 `[features]` 关闭时，在音频准入前返回 CAM++ `4015` 或
@@ -418,59 +359,29 @@ v3 链路的真实 `role` 与 `emotion` 由本机模型给出，加载与计算�
   已开启且有健康实例的模型在某个分段推理失败时，该段对应字段回退为 `null`，转写照常返回；
   模型池为空或全部加载失败则返回对应的 `4015` / `4016`，不使用组合关闭码。
 
-### 进程名与显存定位
+### 进程与 HBM 定位
 
-三个本地模型由**同一个服务进程**承载（拆成三个进程会多出约 0.8 GB 的 CUDA context 开销）。
-服务启动时把进程名覆写为 `asr-offline-model`，因此在 `nvidia-smi` 的进程列表里可以直接定位本服务：
-
-```bash
-nvidia-smi --query-compute-apps=pid,process_name,used_memory --format=csv
-```
-
-由于同进程承载，`nvidia-smi` 只能看到聚合显存。**逐模型的显存明细**通过状态接口获取：
+VAD 每数组元素对应独立 spawn worker；CAM++、emotion2vec、Qwen 由主服务内的独立模型池实例承载。`localModels` 与 `vadPool` 原键名保留，`qwenModel` 为同级新增字段，状态查询不触发加载。
+`allocated_mb`/`memory_allocated_mb` 是 PyTorch 分配估计，reserved 是缓存分配器；`npu-smi info` 提供进程 HBM 与整卡 HBM，不可把共享卡全部占用归因本项目。未知值为 null 或 available=false，不能以零冒充无占用。
 
 ```bash
-curl http://localhost:8083/get_status | jq .localModels
+npu-smi info
+curl http://127.0.0.1:8083/get_status
 ```
 
-```json
-{
-  "vad": { "loaded": true, "device": "cuda:0", "allocated_mb": 1.6, "instances": 4 },
-  "speech_campplus": { "loaded": true, "device": "cuda:0", "allocated_mb": 26.7, "instances": 1 },
-  "emotion2vec": { "loaded": true, "device": "cuda:0", "allocated_mb": 313.3, "instances": 1 }
-}
-```
+`instance_count` 默认 1；增加 uvicorn 进程或 `local_instance_count` 会复制本地 Qwen 权重，必须重新标定资源与并发。
+`ASCEND_VISIBLE_DEVICES` 指定宿主物理卡，容器内设备编号从 0 重新映射；单独映射物理 7 的模板使用 `npu:0`。
+旧 `base_url`/`connect_timeout_s` 仅兼容读取，不发 HTTP；四个旧 TensorRT 键被忽略并提示迁移，`cuda:N` 配置直接拒绝。
 
-`instance_count` 默认 `1`；配置为 N 时容器内并行 N 个 uvicorn 实例，**每个实例各自持有一份模型权重**，
-本地模型显存占用为单实例的 N 倍。
-
-### Qwen 服务部署
-
-Qwen3-ASR 由独立容器提供，**不进本镜像**。本服务通过「IP + 8806」访问，不需要 API Key：
-
-```bash
-# 容器侧示例
-docker run -d --name qwen3-asr-0.6b-8806 -p 8806:8000 qwenllm/qwen3-asr:latest
-```
-
-然后把 `base_url` 指向该地址（`docker/config.toml` 默认写 `http://192.168.29.12:8806`），重启服务即可。
-本阶段不要求两个容器在同一 Docker 网络。
-
-Qwen 服务侧的吞吐扩容方式（`--api-server-count` 等参数）与实测收益见
-`docs/qwen-asr-v2-throughput-optimization.md`；本服务侧的并发默认值维持不变。
+`bg`/`ed` 继续为两位小数字符串，`load_audio_time_ms`/`gpu_time_ms` 保持字符串。`gpu_time_ms` 保持原主链路墙钟计时范围，不表示纯 NPU kernel 时间。
 
 ## Docker
 
-CUDA/TensorRT v3 镜像的构建、配置挂载、Compose 启动、健康检查和回滚说明统一放在
-[`docker/README.md`](docker/README.md)。入口文件位于 `docker/`，根目录不再保留旧的
-CentOS Dockerfile、启动脚本或重复配置模板。
+昇腾 Dockerfile、Compose、独立 conda-pack 环境和设备/IPC 映射见 [docker/README.md](docker/README.md)。
+本轮验证交付文件和构建闭包，实际镜像构建与上线在服务稳定后进行。候选基础镜像存在不等于已通过容器验收。
+
+性能、精度、样本与执行证据见 [NPU 迁移报告](docs/npu-910b-migration-validation-20261117.md)。原 NVIDIA 报告仅作历史标定来源。
 
 ## License
 
 MIT License
-## CAM++ / emotion2vec 可选 TensorRT
-
-四项后端配置位于 `[model_device_pool]`：两个 `*_use_tensorrt` 默认 false，两个
-`*_tensorrt_precision` 默认 `"fp16"`，支持 fp32/fp16。设备数组每个元素代表一个实例；
-CUDA 按开关选择后端，NPU 固定 torch_npu，CPU 使用 PyTorch。完整配置、可选依赖、资产校验、
-状态与回滚见 [TensorRT 说明](docs/TENSORRT.md)。修改后重启生效。

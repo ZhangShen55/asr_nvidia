@@ -20,7 +20,7 @@ class _FakeModel:
 
 
 class _FakeLease:
-    def __init__(self, model, device=None):
+    def __init__(self, model, device="cpu"):
         self.model = model
         self.device = device
 
@@ -32,7 +32,7 @@ class _FakeLease:
 
 
 class _FakePool:
-    def __init__(self, model, device=None):
+    def __init__(self, model, device="cpu"):
         self.model = model
         self.device = device
 
@@ -48,7 +48,7 @@ class ModelPoolRouteTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_speaker_and_emotion_use_pool_and_preserve_contract(self):
         audio = np.zeros(16000, dtype=np.float32)
-        with patch.object(route.torch.cuda, "device", return_value=contextlib.nullcontext()), \
+        with patch("core.local_inference.device_scope", return_value=contextlib.nullcontext()), \
                 patch.object(route, "get_model_pool", side_effect=lambda name: _FakePool(
                     _FakeModel("spk" if name == "speech_campplus" else "emo")
                 )):
@@ -62,19 +62,18 @@ class ModelPoolRouteTests(unittest.IsolatedAsyncioTestCase):
     async def test_pool_device_is_used_by_inference(self):
         audio = np.zeros(16000, dtype=np.float32)
         devices = []
-        original_device = route.torch.cuda.device
 
         def capture_device(device):
             devices.append(device)
             return contextlib.nullcontext()
 
-        with patch.object(route.torch.cuda, "device", side_effect=capture_device), \
+        with patch("core.local_inference.device_scope", side_effect=capture_device), \
                 patch.object(route, "get_model_pool", side_effect=lambda name: _FakePool(
-                    _FakeModel("spk" if name == "speech_campplus" else "emo"), "cuda:2"
+                    _FakeModel("spk" if name == "speech_campplus" else "emo"), "cpu"
                 )):
             await route._speaker_embedding(audio, 16000)
             await route._segment_emotion(audio, 16000, 2.0)
-        self.assertEqual(devices, ["cuda:2", "cuda:2"])
+        self.assertEqual(devices, ["cpu", "cpu"])
 
     async def test_pool_failure_is_returned_as_request_level_degradation(self):
         class FailingPool:
@@ -83,7 +82,7 @@ class ModelPoolRouteTests(unittest.IsolatedAsyncioTestCase):
 
         audio = np.zeros(16000, dtype=np.float32)
         with patch.object(route, "get_model_pool", return_value=FailingPool()), \
-                patch.object(route.torch.cuda, "device", return_value=contextlib.nullcontext()):
+                patch("core.local_inference.device_scope", return_value=contextlib.nullcontext()):
             with self.assertRaises(RuntimeError):
                 await route._speaker_embedding(audio, 16000)
 

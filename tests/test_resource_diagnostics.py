@@ -11,7 +11,10 @@ from core.resource_diagnostics import (
     SafetyPolicy,
     cache_snapshot,
     evaluate_safety,
-    gpu_snapshot,
+    collect_snapshot,
+    npu_snapshot,
+    parse_npu_smi,
+    service_processes,
     host_memory_snapshot,
     status_snapshot,
     vmstat_snapshot,
@@ -47,26 +50,101 @@ class ResourceDiagnosticsTests(unittest.TestCase):
         self.assertEqual(result["files"], 1)
         self.assertEqual(result["bytes"], 3)
 
-    def test_gpu_unavailable_is_explicit(self):
+    def test_npu_unavailable_is_explicit(self):
         with patch(
             "core.resource_diagnostics.subprocess.run",
-            side_effect=FileNotFoundError("nvidia-smi"),
+            side_effect=FileNotFoundError("npu-smi"),
         ):
-            result = gpu_snapshot()
+            result = npu_snapshot()
         self.assertFalse(result["available"])
         self.assertIn("reason", result)
+
+    def test_npu_table_uses_exact_hbm_and_process_rows(self):
+        table = """
+| NPU   Name                | Health        | Power(W) Temp(C) Hugepages-Usage(page) |
+| Chip                      | Bus-Id        | AICore(%) Memory-Usage(MB) HBM-Usage(MB) |
+| 0     910B3               | OK            | 92.6 35 0 / 0 |
+| 0                         | 0000:C1:00.0  | 0 0 / 0 56623/ 65536 |
+| 7     910B3               | OK            | 84.0 37 0 / 0 |
+| 0                         | 0000:42:00.0  | 26 0 / 0 15362/ 65536 |
+| NPU     Chip              | Process id    | Process name | Process memory(MB) |
+| 7       0                 | 1601397       | uvicorn      | 11875 |
+"""
+        result = parse_npu_smi(table)
+        self.assertTrue(result["available"])
+        card = result["npus"][1]
+        self.assertEqual(card["index"], 7)
+        self.assertEqual(card["hbm_used_mb"], 15362)
+        self.assertEqual(card["hbm_total_mb"], 65536)
+        self.assertEqual(card["hbm_free_mb"], 50174)
+        self.assertEqual(card["utilization_aicore"], 26)
+        self.assertEqual(result["compute_apps"][0]["pid"], 1601397)
+
+    def test_unparseable_hbm_stays_unknown(self):
+        result = parse_npu_smi("| 7 910B3 | OK | 84 37 0 / 0 |\n| 0 | 0000:42:00.0 | N/A 0 / 0 N/A |")
+        self.assertFalse(result["available"])
+        self.assertIsNone(result["npus"][0]["hbm_used_mb"])
+        self.assertIsNone(result["npus"][0]["hbm_total_mb"])
+
+    def test_only_target_card_is_used_by_safety_gate(self):
+        baseline = SafetyBaseline({}, {}, {}, {})
+        data = {"npu": {"available": True, "npus": [
+            {"index": 0, "hbm_total_mb": 1000, "hbm_used_mb": 999},
+            {"index": 7, "hbm_total_mb": 1000, "hbm_used_mb": 200},
+        ]}}
+        decision = evaluate_safety(data, baseline)
+        self.assertEqual(decision.level, "green")
+        data["npu"]["npus"][1]["hbm_used_mb"] = 950
+        self.assertTrue(evaluate_safety(data, baseline).should_stop)
+        self.assertIn("NPU 7", evaluate_safety(data, baseline).reasons[0])
+
+    def test_missing_target_hbm_is_not_reported_as_safe_zero(self):
+        decision = evaluate_safety({"npu": {"available": False}}, SafetyBaseline({}, {}, {}, {}))
+        self.assertEqual(decision.level, "yellow")
+        self.assertIn("不可用", decision.warnings[0])
+
+    def test_service_processes_only_attributes_target_descendants(self):
+        rows = [
+            {"pid": 10, "ppid": 1, "cmdline": "uvicorn main:app"},
+            {"pid": 11, "ppid": 10, "cmdline": "asr-offline-vad"},
+            {"pid": 20, "ppid": 1, "cmdline": "uvicorn unrelated:app"},
+            {"pid": 21, "ppid": 20, "cmdline": "asr-offline-vad"},
+            {"pid": 22, "ppid": 1, "cmdline": "vllm"},
+        ]
+        with patch("core.resource_diagnostics._process_listing", return_value=rows):
+            result = service_processes(10)
+        self.assertEqual([row["pid"] for row in result["backend"]], [10])
+        self.assertEqual([row["pid"] for row in result["vad"]], [11])
+        self.assertNotIn("qwen", result)
+
+    def test_snapshot_separates_shared_occupancy_and_checks_only_backend_http(self):
+        with patch("core.resource_diagnostics.service_processes", return_value={"backend": [{"pid": 10}], "vad": [{"pid": 11}]}), \
+                patch("core.resource_diagnostics.process_snapshot", return_value={"available": True, "pid": 10}), \
+                patch("core.resource_diagnostics.npu_snapshot", return_value={"available": True, "compute_apps": [{"pid": 10}, {"pid": 99}]}), \
+                patch("core.resource_diagnostics.endpoint_health", return_value={"ok": True}) as health:
+            result = collect_snapshot(backend_pid=10, include_process_tree=False)
+        self.assertEqual(result["npu"]["service_compute_apps"], [{"pid": 10}])
+        self.assertEqual(result["npu"]["other_compute_apps"], [{"pid": 99}])
+        self.assertEqual(health.call_count, 1)
+        self.assertNotIn("qwen", result["health"])
+
+    def test_status_defaults_to_own_pid(self):
+        with patch("core.resource_diagnostics.os.getpid", return_value=123), \
+                patch("core.resource_diagnostics.collect_snapshot", return_value={}) as collect:
+            status_snapshot()
+        self.assertEqual(collect.call_args.kwargs["backend_pid"], 123)
 
     def test_safety_policy_detects_memory_swap_health_and_vad(self):
         baseline = SafetyBaseline(
             memory={"available": True, "total_bytes": 32 * BYTES_PER_GIB, "available_bytes": 16 * BYTES_PER_GIB, "swap_used_bytes": 0},
             vmstat={"available": True, "swap_in_pages": 100, "swap_out_pages": 100},
-            gpu={"available": True, "gpus": [{"index": 0, "memory_total_mb": 1000, "memory_used_mb": 100}]},
+            npu={"available": True, "npus": [{"index": 7, "hbm_total_mb": 1000, "hbm_used_mb": 100}]},
             cache={"available": True, "disk_free_ratio": 0.8, "disk_total_bytes": 1000},
         )
         snapshot_data = {
             "host": {"available": True, "total_bytes": 32 * BYTES_PER_GIB, "available_bytes": 7 * BYTES_PER_GIB, "swap_used_bytes": 300 * BYTES_PER_MIB},
             "vmstat": {"available": True, "swap_in_pages": 101, "swap_out_pages": 101},
-            "gpu": {"available": True, "gpus": [{"index": 0, "memory_total_mb": 1000, "memory_used_mb": 950}]},
+            "npu": {"available": True, "npus": [{"index": 7, "hbm_total_mb": 1000, "hbm_used_mb": 950}]},
             "cache": {"available": True, "disk_free_ratio": 0.05, "disk_total_bytes": 1000},
             "services": {"vad": [{"pid": 1}]},
             "health": {},

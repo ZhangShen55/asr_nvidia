@@ -26,6 +26,7 @@ def main() -> None:
     parser.add_argument("--pool", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--pool-size", default="unknown")
+    parser.add_argument("--device", default="npu:7", help="report label; use npu:0 only for mapped container")
     args = parser.parse_args()
     baseline = load_dir(args.baseline)
     pool = load_dir(args.pool)
@@ -34,8 +35,8 @@ def main() -> None:
         "# CAM++/emotion2vec 同卡模型池完整音频并发报告",
         "",
         f"- 测试音频：完整长音频；`showSpk=true`、`showEmotion=true`。",
-        f"- 基线：CAM++/emotion2vec 各 1 副本；模型池：各 {args.pool_size} 副本，全部 `cuda:0`。",
-        "- 指标来自 benchmark 原始 JSON；Qwen-asr 服务保持运行，压测只访问 8084。",
+        f"- 基线：CAM++/emotion2vec 各 1 副本；模型池：各 {args.pool_size} 副本，设备 `{args.device}`。",
+        "- 指标来自 benchmark 原始 JSON；客户端不管理服务生命周期，测试启动者负责结束后关闭服务并验证端口。",
         "",
         "## 并发结果",
         "",
@@ -67,7 +68,7 @@ def main() -> None:
         "## 结论",
         "",
         f"- 至少一个完成档位有吞吐提升：{'是' if any(improvements) else '尚未证明'}。",
-        "- 需要结合 `before/after` 中的 GPU 0 利用率、显存、模型池 busy/waiting、Qwen waiting/KV 和错误率判断同卡抢占代价。",
+        "- 需要结合 `before/after` 中的 NPU 监控原始快照、设备内存、模型池 busy/waiting、Qwen waiting 和错误率判断同卡抢占代价。",
         "- 角色/情绪一致性与文本、分段、时间轴对比需从各档原始响应补充；模型池不能改变音频级 CAM++ 聚类边界。",
         "",
         "## 原始数据",

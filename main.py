@@ -6,17 +6,16 @@ from datetime import datetime
 from core.config import settings
 from core.logging import setup_logging
 from core.qwen_asr_client import close_qwen_client
-from core.models import close_v3_model_pools, load_v3_models_if_needed, get_local_model_status
+from core.models import close_v3_model_pools
 from core.vad_pool import start_vad_pool, stop_vad_pool
-from core.deployment import validate_cuda_tensorrt_runtime, DeploymentPreflightError
+from core.deployment import validate_npu_runtime
+from core.async_utils import await_completion
 from api.routes.asr_v3 import router as asr_v3_router
 from api.routes.asr_common import cleanup_stale_service_cache
 from api.routes.status import router as status_router
 from utils.asr_stats import reset_stats
 
-# 服务进程的统一进程名：nvidia-smi 的进程列表读 /proc/<pid>/cmdline 的 argv[0]，
-# 覆写后运维能直接定位「哪一行是本服务占的显存」。
-# 本地模型（VAD / CAM++ / emotion2vec）同进程承载，因此不再按模型拆分进程名。
+# 主服务与独立 VAD worker 使用不同名称，设备资源按进程分别归因。
 PROCESS_NAME = "asr-offline-model"
 
 
@@ -32,30 +31,13 @@ def _set_process_name() -> None:
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    app.state.shutdown_failed = False
     # 配置错误在任何模型预热和对外就绪之前暴露。
     _ = settings.qwen_audio_spk_emo_concurrency
     settings.validate_model_backends()
-    if settings.is_cuda_tensorrt_profile:
-        try:
-            app.state.deployment_preflight = validate_cuda_tensorrt_runtime(settings)
-            # Docker profile 不允许首个请求承担 engine 加载或静默回退。
-            await load_v3_models_if_needed(need_role=True, need_emotion=True)
-            statuses = get_local_model_status()
-            failed = {
-                name: value.get("failure")
-                for name, value in statuses.items()
-                if value.get("failed_instances")
-            }
-            if failed:
-                raise DeploymentPreflightError(f"模型实例加载失败: {failed}")
-        except Exception as exc:
-            raise RuntimeError(f"CUDA TensorRT profile 启动前检查失败: {exc}") from exc
-    else:
-        app.state.deployment_preflight = {
-            "profile": settings.deployment_profile, "checked": False,
-        }
+    app.state.deployment_preflight = validate_npu_runtime(settings)
 
-    # 1) 进程命名（运维在 nvidia-smi 中据此定位本服务的显存占用）
+    # 命名仅用于运维识别，不代表包含独立 VAD worker 的占用。
     _set_process_name()
 
     # 2) 日志初始化
@@ -72,19 +54,32 @@ async def lifespan(app: FastAPI):
 
     # 5) 预热 VAD worker 进程池：全部核心 worker 就绪后服务才对外就绪，
     #    避免第一个请求承担 FSMN-VAD 的模型加载延迟
-    await start_vad_pool()
+    async def shutdown():
+        failures = []
+        for close in (stop_vad_pool, close_v3_model_pools, close_qwen_client):
+            try:
+                await close()
+            except Exception as exc:
+                failures.append((close.__name__, str(exc)))
+        if failures:
+            raise RuntimeError(f"服务收尾失败: {failures}")
 
     try:
+        await start_vad_pool()
         yield
     finally:
-        # 释放 VAD worker 进程池、本地模型池与 Qwen 客户端连接池
-        await stop_vad_pool()
-        await close_v3_model_pools()
-        await close_qwen_client()
+        # 启动部分失败同样回收；调用方重复取消也不能遗弃正在关闭的资源。
+        try:
+            await await_completion(shutdown())
+        except BaseException:
+            # Uvicorn会记录lifespan失败，但TERM重放仍可能返回0；显式保留失败供CLI退出码判定。
+            app.state.shutdown_failed = True
+            raise
 
 
 def create_app() -> FastAPI:
     app = FastAPI(title="SeaCraftASR", lifespan=lifespan)
+    app.state.shutdown_failed = False
 
     # CORS
     app.add_middleware(
@@ -104,9 +99,36 @@ def create_app() -> FastAPI:
 
 app = create_app()
 
-# 方便本地调试：容器里用 start.sh，多进程由 Nginx + 多 uvicorn 实例负责
-if __name__ == "__main__":
+def run_server(argv=None):
+    """统一启动入口；TERM重放必须走Python退出，保证NPU运行时atexit。"""
+    import argparse
+    import signal
     import uvicorn
 
+    parser = argparse.ArgumentParser(description="SeaCraftASR Ascend local service")
+    parser.add_argument("--host", default="0.0.0.0")
+    parser.add_argument("--port", type=int, default=8083)
+    parser.add_argument("--workers", type=int, choices=(1,), default=1)
+    parser.add_argument("--timeout-graceful-shutdown", type=int, default=180)
+    args = parser.parse_args(argv)
+
+    def exit_after_shutdown(_signum, _frame):
+        # Uvicorn先执行lifespan，再重放原信号；默认TERM会绕过Python atexit。
+        # NPU运行时还可能接管INT，因此正式关闭使用TERM + Python SystemExit。
+        raise SystemExit(0)
+
+    original_term = signal.signal(signal.SIGTERM, exit_after_shutdown)
     _set_process_name()
-    uvicorn.run("main:app", host="0.0.0.0", port=8083, reload=False)
+    try:
+        # 单worker不需要字符串再导入，保证CLI读取的就是实际lifespan所在app的失败状态。
+        uvicorn.run(app, host=args.host, port=args.port, workers=1, reload=False,
+                    timeout_graceful_shutdown=args.timeout_graceful_shutdown)
+    finally:
+        signal.signal(signal.SIGTERM, original_term)
+        if getattr(app.state, "shutdown_failed", False):
+            # 不允许TERM的SystemExit(0)洗白lifespan收尾失败；正常TERM仍保持0。
+            raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    run_server()

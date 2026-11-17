@@ -178,15 +178,14 @@ class AudioSlotManager:
                                   asyncio.get_running_loop().create_future())
             self._queues[category].append(waiter)
             self._publish()
-        owner = asyncio.current_task()
-        cancellations = owner.cancelling()
         try:
-            # shield 只保护授予通知；异常分支仍必须负责收回可能已授予的租约。
-            lease = await asyncio.wait_for(asyncio.shield(waiter.future),
-                                           timeout=max(0.0, waiter.deadline - self._clock()))
-            # wait_for 在通知完成和外层取消竞争时可能返回通知结果，仍须尊重取消。
-            if owner.cancelling() > cancellations:
-                raise asyncio.CancelledError
+            # Python 3.10 的 wait_for 在授予与取消竞争时可能吞掉取消，
+            # 且 Task.cancelling() 尚不存在。wait 不取消通知对象，并正常传播外层取消。
+            done, _ = await asyncio.wait({waiter.future},
+                                         timeout=max(0.0, waiter.deadline - self._clock()))
+            if not done:
+                raise asyncio.TimeoutError
+            lease = waiter.future.result()
             return lease
         except asyncio.TimeoutError:
             snapshot = await await_completion(self._withdraw(waiter))

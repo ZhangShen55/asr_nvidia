@@ -1,0 +1,94 @@
+{
+  "schema": 1,
+  "before_fix": {
+    "exit_code": 0,
+    "application_failed": true,
+    "port_listening": false,
+    "events": [
+      "start",
+      "stop_vad",
+      "close_models",
+      "close_qwen"
+    ],
+    "npu_initialized": false,
+    "log": "/tmp/asr-main-shutdown-before-20261117-cbbbj9zo/service.log"
+  },
+  "before_raw": {
+    "path": "/tmp/asr-main-shutdown-before-20261117-cbbbj9zo/result.json",
+    "sha256": "79b5ff000c6669d19692d6912951056652ca5ad74c97c1e73b49fed089904878"
+  },
+  "after_fix_source_and_compiled": {
+    "schema": 1,
+    "results": {
+      "source": {
+        "normal": {
+          "exit_code": 0,
+          "application_failed": false,
+          "port_listening": false,
+          "events": [
+            "start",
+            "stop_vad",
+            "close_models",
+            "close_qwen"
+          ],
+          "npu_initialized": false,
+          "log": "/tmp/asr-mainexit-source-compiled-20261117-js5xcqhm/source/normal/service.log"
+        },
+        "failed": {
+          "exit_code": 1,
+          "application_failed": true,
+          "port_listening": false,
+          "events": [
+            "start",
+            "stop_vad",
+            "close_models",
+            "close_qwen"
+          ],
+          "npu_initialized": false,
+          "log": "/tmp/asr-mainexit-source-compiled-20261117-js5xcqhm/source/failed/service.log"
+        }
+      },
+      "compiled": {
+        "normal": {
+          "exit_code": 0,
+          "application_failed": false,
+          "port_listening": false,
+          "events": [
+            "start",
+            "stop_vad",
+            "close_models",
+            "close_qwen"
+          ],
+          "npu_initialized": false,
+          "log": "/tmp/asr-mainexit-source-compiled-20261117-js5xcqhm/compiled/normal/service.log"
+        },
+        "failed": {
+          "exit_code": 1,
+          "application_failed": true,
+          "port_listening": false,
+          "events": [
+            "start",
+            "stop_vad",
+            "close_models",
+            "close_qwen"
+          ],
+          "npu_initialized": false,
+          "log": "/tmp/asr-mainexit-source-compiled-20261117-js5xcqhm/compiled/failed/service.log"
+        }
+      }
+    },
+    "main_sha256": "7f596a1661c01ed3c2e5641a7224ed1d2ac39a84798a8d0126e7df74e2bb53c2",
+    "source_stage_main_equal": true,
+    "test_sha256": "c6fbeace83b834ac501fd3a39cd6c3ead3acc997896580ba507e4d8ec34bd7c7",
+    "npu_initialized": false,
+    "models_from_disk_loaded": false,
+    "fixture_ports_closed": true,
+    "reportdir": "/tmp/asr-mainexit-source-compiled-20261117-js5xcqhm"
+  },
+  "after_raw": {
+    "path": "/tmp/asr-mainexit-source-compiled-20261117-js5xcqhm/result.json",
+    "sha256": "41436eef363e9187021eaa3c867d349fa3cdab75adc4ae410a1aa13019330934"
+  },
+  "change": "lifespan聚合失败保留状态；同一个app对象传给Uvicorn；CLI收尾失败退出1，正常TERM退出0并恢复原handler。",
+  "scope": "真实CPU Uvicorn随机回环端口，关闭hook故障注入；没有项目checkpoint、VAD子worker或NPU初始化，所有fixture端口最终释放。"
+}

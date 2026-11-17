@@ -18,6 +18,12 @@ class ConfigContractTests(unittest.TestCase):
         settings = self._settings("[log]\nlog_path = \"nested.log\"\n")
         self.assertEqual(settings.log_path, "nested.log")
 
+    def test_calibrated_qwen_limits_keep_one_model_copy(self):
+        settings = self._settings("")
+        self.assertEqual(settings.qwen_segment_concurrency, 1)
+        self.assertEqual(settings.qwen_request_concurrency, 1)
+        self.assertEqual(settings.qwen_local_instance_count, 1)
+
     def test_audio_spk_emo_concurrency_defaults_and_limits(self):
         self.assertEqual(self._settings("").qwen_audio_spk_emo_concurrency, 4)
         settings = self._settings("[qwen_asr]\naudio_concurrency = 2\naudio_spk_emo_concurrency = 7\n")
@@ -32,21 +38,21 @@ class ConfigContractTests(unittest.TestCase):
                     _ = settings.qwen_audio_spk_emo_concurrency
 
     def test_legacy_model_device_is_ignored_with_warning(self):
-        settings = self._settings('[model_device]\nemotion2vec = "cuda:1"\n')
+        settings = self._settings('[model_device]\nemotion2vec = "npu:1"\n')
         with self.assertLogs("core.config", level=logging.WARNING) as logs:
             self.assertEqual(settings.model_device_emotion2vec_devices, [])
         self.assertTrue(any("model_device_pool" in message for message in logs.output))
 
     def test_device_arrays_define_instances_and_order(self):
         settings = self._settings(
-            '[vad]\nvad_device = ["cpu", "cuda:0"]\n'
+            '[vad]\nvad_device = ["cpu", "npu:0"]\n'
             '[model_device_pool]\n'
-            'speech_campplus_devices = ["cuda:1", "cuda:1", "cuda:2"]\n'
-            'emotion2vec_devices = ["cuda:0"]\n'
+            'speech_campplus_devices = ["npu:1", "npu:1", "npu:2"]\n'
+            'emotion2vec_devices = ["npu:0"]\n'
         )
-        self.assertEqual(settings.vad_device, ["cpu", "cuda:0"])
-        self.assertEqual(settings.model_device_speech_campplus_devices, ["cuda:1", "cuda:1", "cuda:2"])
-        self.assertEqual(settings.model_device_emotion2vec_devices, ["cuda:0"])
+        self.assertEqual(settings.vad_device, ["cpu", "npu:0"])
+        self.assertEqual(settings.model_device_speech_campplus_devices, ["npu:1", "npu:1", "npu:2"])
+        self.assertEqual(settings.model_device_emotion2vec_devices, ["npu:0"])
         self.assertEqual(settings.local_model_pool_speech_campplus_instances, 3)
         self.assertEqual(settings.local_model_pool_emotion2vec_instances, 1)
 
@@ -63,14 +69,14 @@ class ConfigContractTests(unittest.TestCase):
         settings = self._settings('[model_device_pool]\nspeech_campplus_devices = ["gpu:0"]\n')
         with self.assertRaises(ValueError):
             _ = settings.model_device_speech_campplus_devices
-        settings = self._settings('[vad]\nvad_device = ["cuda:x"]\n')
+        settings = self._settings('[vad]\nvad_device = ["npu:x"]\n')
         with self.assertRaises(ValueError):
             _ = settings.vad_device
 
     def test_low_volume_defaults_and_boundaries(self):
         settings = self._settings("[vad]\n")
         self.assertEqual(settings.qwen_vad_decibel_thres, -40.0)
-        self.assertEqual(settings.qwen_vad_snr_thres, -18.0)
+        self.assertEqual(settings.qwen_vad_snr_thres, 18.0)
         self.assertEqual(settings.qwen_vad_low_volume_rms_dbfs_thres, -40.0)
         self.assertTrue(settings.qwen_vad_low_volume_filter_enabled)
         settings = self._settings(
@@ -87,7 +93,7 @@ class ConfigContractTests(unittest.TestCase):
 
     def test_legacy_qwen_vad_keys_do_not_override_vad_section(self):
         settings = self._settings(
-            "[qwen_asr]\nvad_device=[\"cuda:9\"]\nvad_snr_thres=99\n"
+            "[qwen_asr]\nvad_device=[\"npu:9\"]\nvad_snr_thres=99\n"
             "[vad]\nvad_device=[\"cpu\"]\nvad_snr_thres=-18\n"
         )
         self.assertEqual(settings.vad_device, ["cpu"])

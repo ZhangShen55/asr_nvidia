@@ -1,19 +1,17 @@
-# Docker 构建用：无 av（由 conda-forge 预装，避免源码编译 ffmpeg 依赖）
-modelscope
+# 通用业务依赖；版本来自当前 asr 环境 metadata，实际前向另行验证。
+modelscope==1.40.3
 funasr==1.2.6
-addict
-datasets==2.21.0
-pyarrow==20.0.0
-fastapi>=0.95.1
-aiofiles
-uvicorn
-requests
-torch>=1.13
-torchaudio
+fastapi==0.162.5
+aiofiles==25.1.0
+uvicorn==0.54.0
+requests==2.34.2
 numpy==1.26.4
-ffmpeg-python
-python-multipart
-soundfile
-librosa
-pydub
-tomli
+ffmpeg-python==0.2.0
+python-multipart==0.0.32
+soundfile==0.14.0
+librosa==0.11.0
+pydub==0.25.1
+tomli==2.5.0
+scipy==1.15.3
+scikit-learn==1.7.2
+psutil==7.2.2

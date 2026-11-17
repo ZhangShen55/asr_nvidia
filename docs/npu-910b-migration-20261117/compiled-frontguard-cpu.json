@@ -1,0 +1,78 @@
+{
+  "stage": "/tmp/asr-cython-frontguard-20261117-nhxp0l35",
+  "repository": "/home/zhangs/asr_nvidia",
+  "scope": "actual CPU fbank/ALiBi and controlled HF dtype windows; compiled application modules; no checkpoint/model asset read, NPU or service",
+  "passed": true,
+  "checks": {
+    "source_snapshot_matches_current": true,
+    "all_target_modules_loaded_from_stage_so": true,
+    "global_dtype_restored_after_cases": true,
+    "no_npu_initialization_observed": true
+  },
+  "cases": {
+    "compiled_cam_fbank_hf_window": {
+      "passed": true,
+      "shape": [
+        1,
+        98,
+        80
+      ],
+      "dtype": "torch.float32",
+      "maxabs": 0.0
+    },
+    "compiled_emo_alibi_hf_window_and_cache": {
+      "passed": true,
+      "shape": [
+        1,
+        16,
+        98,
+        98
+      ],
+      "maxabs": 0.0,
+      "instance_local": true,
+      "idempotent": true,
+      "explicit_bf16_output_preserved": true
+    },
+    "compiled_cpu_automodel_factory_hf_window": {
+      "passed": true,
+      "constructed_dtypes": [
+        "torch.float32"
+      ],
+      "actual_precision": "fp32",
+      "device": "cpu",
+      "checkpoint_read": false
+    },
+    "compiled_cpu_automodel_generate_hf_window": {
+      "passed": true,
+      "maxabs": 0.0,
+      "dtype": "torch.float32"
+    }
+  },
+  "source_snapshot_sha256": "3221de119a56d0d6bd7a24051b205759aea4ede7a09929740186f340988bd37a",
+  "source_changed": [],
+  "modules": {
+    "core.local_inference": {
+      "file": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/local_inference.cpython-310-aarch64-linux-gnu.so",
+      "sha256": "815b177efe5592ab3a8576f2c8561d79446f4a4338188e7da97f50a961b62bf8",
+      "source_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+    },
+    "core.model_loading": {
+      "file": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/model_loading.cpython-310-aarch64-linux-gnu.so",
+      "sha256": "943ecb56e1b21cb7aa6bf847223a478e8ed6f1c08d1addbd0d31526924b36f6b",
+      "source_sha256": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c"
+    },
+    "core.models": {
+      "file": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/models.cpython-310-aarch64-linux-gnu.so",
+      "sha256": "9817c6a79c3d03e6dc54db6850095732a03c3ddae3c714dbd0d0ac143d6c4909",
+      "source_sha256": "19edd7f9c567f9c34b953607ef667f9a50515f14b192e45e83a64ede9ce9541d"
+    }
+  },
+  "npu_before": {
+    "module_imported": false,
+    "python_initialized_flag": null
+  },
+  "npu_after": {
+    "module_imported": true,
+    "python_initialized_flag": false
+  }
+}

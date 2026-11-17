@@ -1,232 +1,90 @@
-# ASR Offline v3 CUDA 部署
+# 昇腾 910B v3 交付
 
-本目录提供 NVIDIA CUDA 12.4 的 v3 生产部署入口。镜像基于
-`docker.1ms.run/nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04`，内置 VAD、CAM++、
-emotion2vec 模型和已验证的 fp16 TensorRT engine。运行时配置通过挂载注入，模型不需要
-再挂载到宿主机。
+本目录准备 CANN 8.1.RC1、Linux aarch64、Python 3.10 的候选交付文件。文件检查、环境metadata、镜像构建、真实NPU前向与上线是不同证据等级。当前迁移要求先把完整服务跑稳，之后再实际构建与上线；本文的命令不能视为已经执行。
 
-## 前置条件
+## 环境和依赖
 
-- Docker、Docker Compose v2 和 NVIDIA Container Toolkit 已安装。
-- 宿主机 NVIDIA 驱动能提供 CUDA 12.4 兼容运行时，并能看到 manifest 声明的 GPU 架构（当前资产验证环境为 RTX 4090 / SM89）。
-- 基础镜像必须在构建机本地可用；如果使用远端提供的离线 tar 包，可先执行
-  `docker load -i /home/model_zoo/qwen_asr/cuda_12.4.1-cudnn-runtime-ubuntu22.04.tar`，不需要再次拉取。
-- 宿主机准备好上游 Qwen-ASR 地址，并在挂载配置中修改 `[qwen_asr].base_url`。
+宿主开发使用 `/home/zhangs/conda-envs/asr/bin/python`、物理 `npu:7`。不要原地升级现有环境，也不要把其site-packages通过PYTHONPATH叠加到系统Python。
 
-构建阶段会校验两个模型的 fp16 engine、manifest、模型来源 SHA256 和 TensorRT 资产；运行阶段还会校验真实 GPU、CUDA 与 TensorRT 版本。任何必需资产不完整或不兼容都会阻止服务就绪，不能自动回退 PyTorch。
+- `requirements-pip.txt`：通用业务依赖；`requirements-pip-runtime.txt`：进程/进度依赖。
+- `requirements-npu.txt`：torch/torch-npu/torchaudio 2.5.1、transformers 5.13.0等目标版本。emotion2vec的NPU实例使用该torch-npu提供的GELU V2 `npu_gelu(..., approximate="none")`，保持CPU原始GELU/erf语义；目标wheel必须保留此算子schema，不能静默回退默认tanh近似。该适配不新增pip依赖；HF32设置与模型数值一致性仍需真实设备验证。
+- `requirements-pip-extra.txt`：ITN；先由conda安装av=14.2.0、pynini=2.1.7。
+- `requirements-dev.txt`：测试客户端和pytest；`requirements-build.txt`：独立构建环境工具。
 
-## 部署 Qwen-ASR 上游服务
+`requirements-conda-linux-aarch64.txt`和`requirements-lock-npu.txt`记录本轮参考环境的完整conda/pip来源；`environment-reference.json`保存pip元数据基线。rebuild脚本使用显式conda清单与pip-owned锁，避免接管conda的av/pynini，并严格比较pip list。
 
-Qwen-ASR 是独立的 GPU 服务，不放入本项目的 `asr-offline` 镜像，也不由本项目的
-`docker-compose.yaml` 自动创建。这样可以独立调整 Qwen 的模型、KV cache 和 API worker
-数量，避免和 CAM++/emotion2vec 共用一个容器生命周期。
-
-Qwen 镜像本身不包含业务模型权重，必须把宿主机上的 Qwen 模型目录以只读方式挂入容器。
-下面的命令按本机正在运行的 `qwen3-asr-1.7b-8806` 容器整理，使用
-`Qwen3-ASR-1.7B`、vLLM 入口和已验证参数；如果使用其它模型，需要同步修改模型目录、
-模型名和显存参数。
+创建不存在的独立前缀（会安装软件）：
 
 ```bash
-# 宿主机上的模型目录，目录内应直接包含 config.json、权重文件等模型文件。
-QWEN_MODEL_DIR=/mnt2/model_zoo/llm_model/Qwen3-ASR-1.7B
-
-docker run -d \
-  --name qwen3-asr-1.7b-8806 \
-  --restart unless-stopped \
-  --gpus '"device=0"' \
-  --shm-size 16g \
-  -v "${QWEN_MODEL_DIR}:/models/Qwen3-ASR-1.7B:ro" \
-  -p 8806:8000 \
-  --entrypoint qwen-asr-serve \
-  qwenllm/qwen3-asr:latest \
-  /models/Qwen3-ASR-1.7B \
-  --host 0.0.0.0 \
-  --port 8000 \
-  --served-model-name Qwen3-ASR-1.7B \
-  --dtype bfloat16 \
-  --max-model-len 1024 \
-  --max-num-seqs 128 \
-  --max-num-batched-tokens 16384 \
-  --gpu-memory-utilization 0.45 \
-  --api-server-count 4
+ASR_CONDA_EXE=/data/anaconda3/bin/conda ASR_WITH_DEV_TOOLS=1 ASR_WITH_BUILD_TOOLS=1 \
+  ./scripts/rebuild_npu_env.sh /tmp/asr-build-env
 ```
 
-参数含义和调整边界：
-
-- `--gpus '"device=0"'` 只把宿主机 GPU 0 分配给 Qwen。若 Qwen 与本项目共享一张卡，改成
-  `--gpus all` 也能运行，但需要重新评估两边的显存峰值；多卡部署时建议分别绑定 GPU。
-- `--max-model-len 1024` 与本项目 `vad_max_single_segment_time_ms = 30000` 配套，不能随意调小；
-  调大 VAD 单段长度时，应同步增大该值并重新压测显存。
-- `--max-num-seqs 128` 和 `--max-num-batched-tokens 16384` 是 Qwen 服务侧的批处理上限；本项目
-  侧的 `request_concurrency` 不能超过 Qwen 实际可承受的吞吐。
-- `--gpu-memory-utilization 0.45` 为 Qwen 预留显存比例；如果 Qwen 独占 GPU，可按模型和显存
-  余量提高，和本项目共享 GPU 时不要直接提高。
-- `--api-server-count 4` 增加 Qwen API 前端进程数，不会改变本项目的 A/B 音频准入上限。
-
-确认模型目录和容器参数：
+脚本拒绝覆盖已有前缀，记录pip/conda快照、包差异和import结果；Cython/conda-pack仅安装于独立构建前缀。解析版本并不表示NPU前向通过。源运行前需要CANN共享库和编译器Python模块路径；source后不能用项目路径覆盖PYTHONPATH：
 
 ```bash
-test -f "${QWEN_MODEL_DIR}/config.json"
-docker logs --tail=100 qwen3-asr-1.7b-8806
-curl --fail http://127.0.0.1:8806/v1/models
+set +u
+source /usr/local/Ascend/ascend-toolkit/set_env.sh
+set -u
+/home/zhangs/conda-envs/asr/bin/python scripts/check_npu_environment.py --config config.toml
 ```
 
-然后在挂载给 `asr-offline` 的配置中设置 Qwen 地址和模型名：
+`--metadata-only`不初始化NPU，不能作为硬件验收。CANN路径可用`ASR_CANN_ENV`覆盖，但必须存在。未经验证的硬件/运行时不宣称兼容。
 
-```toml
-[qwen_asr]
-base_url = "http://宿主机地址:8806"
-model = "Qwen3-ASR-1.7B"
-segment_concurrency = 16
-request_concurrency = 128
-audio_concurrency = 8
-audio_spk_emo_concurrency = 4
-queue_max_size = 64
-queue_wait_timeout_s = 0
-request_timeout_s = 120
-connect_timeout_s = 10
-retry_count = 1
+## 镜像构建（服务稳定后）
+
+默认底座为构建机已有的 `jy-algorithm-app-asr-ascend_cann8.1.rc1-ub2204py310:v1.1.9_260709`。允许`BASE_IMAGE`指定已验证的等价CANN底座，`--pull=false`不会升级或清除本机镜像。该历史镜像的系统Python可能有旧包，因此运行层仅用独立环境解释器。
+
+```bash
+ASR_ENV_PREFIX=/tmp/asr-build-env \
+ASR_IMAGE=asr_offline:v3_20261117120000 ./docker/build.sh
 ```
 
-`model` 也可以保持为空，让本项目从 Qwen 的 `/v1/models` 自动发现。上述并发参数属于
-`asr-offline` 侧；Qwen 容器的 `--max-num-seqs`、`--max-num-batched-tokens` 和
-`--api-server-count` 属于 Qwen 侧，两边需要分别配置。
+build.sh使用临时staging，校验并复制VAD、CAM++、emotion2vec原始权重/配置，排除旧engine目录；不修改`model/`，不把样本、报告或Qwen大模型打进镜像。Qwen由运行时只读挂载提供。环境用conda-pack归档，解包至`/opt/asr`并执行conda-unpack；构建/运行Python ABI和目标aarch64必须匹配。也可通过`ASR_ENV_ARCHIVE`传入已制备的归档，归档需含`bin/python`和`bin/conda-unpack`。
 
-如果两个容器使用同一个自定义 Docker 网络，可以改为 Qwen 容器名，例如
-`http://qwen3-asr-1.7b-8806:8000`；如果使用当前 compose 的默认网络和宿主机端口映射，
-则使用宿主机可访问的 IP 和 `8806` 端口。启动 `asr-offline` 前应先确认该 `/v1/models`
-接口可访问。
+缺少conda-pack或锁定的Cython会明确失败，不自动pip升级。Cython只在带`.asr-build-stage`标记的临时工作区运行，保留构建metadata，并在不自动初始化设备的构建层做扩展导入检查；这不是NPU验收。不能把macOS或不同Python ABI的环境归档用于此镜像。
 
-## 构建镜像
+## 启动入口与设备编号
 
-在仓库根目录执行：
+Compose配置的是宿主绑定：`--privileged --runtime=ascend --ipc=host`的等价设置和`ASCEND_VISIBLE_DEVICES=7`。只映射物理7号卡时，容器内通常为`npu:0`，须按实际可见设备核对；不能直接在容器配置写宿主`npu:7`。
 
 ```bash
 cd docker
-ASR_IMAGE=asr_offline:v3_$(date +%Y%m%d%H%M%S) ./build.sh
-```
-
-`build.sh` 先建立临时白名单 staging 上下文，只复制应用、三个模型和目标 GPU 的 fp16 校验来源；测试、样本音频、缓存、fp32 engine 和其他 GPU 的 engine 不会进入构建上下文。未显式设置 `ASR_IMAGE` 时，脚本默认构建 4090 profile。
-
-生产部署可以分别构建三张 GPU 专用镜像。每次 staging 都会把选中的 profile 放到镜像内统一的
-`tensorrt/fp16/`，所以容器启动时只会加载这一张 GPU 对应的 engine：
-
-```bash
-# RTX 3090 / SM86
-GPU_PROFILE=rtx3090-sm86 \
-ASR_IMAGE=asr_offline-rtx3090:v3_20261103192500 \
-DOCKERFILE=Dockerfile.rtx3090 \
-./build.sh
-
-# RTX 4070 Ti SUPER / SM89
-GPU_PROFILE=rtx4070tisuper-sm89 \
-ASR_IMAGE=asr_offline-rtx4070tisuper:v3_20261103192500 \
-DOCKERFILE=Dockerfile.rtx4070tisuper \
-./build.sh
-
-# RTX 4090 / SM89
-GPU_PROFILE=rtx4090-sm89 \
-ASR_IMAGE=asr_offline-rtx4090:v3_20261103192500 \
-DOCKERFILE=Dockerfile.rtx4090 \
-./build.sh
-```
-
-三份入口文件分别是 `Dockerfile.rtx3090`、`Dockerfile.rtx4070tisuper` 和
-`Dockerfile.rtx4090`。默认基础镜像必须已经在本机存在；构建脚本使用 `--pull=false`，不会因为
-构建重新拉取 CUDA 基础镜像。Docker daemon 的中间层缓存和 inline cache metadata 会保留，后续
-构建会复用依赖、编译和运行时层；不要执行 `docker builder prune` 或 `docker system prune`，否则
-缓存会被清理。若需要显式清理，先确认不再需要这些镜像和缓存。
-
-如果构建机没有离线镜像包，再单独执行：
-
-```bash
-docker pull docker.1ms.run/nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
-```
-
-## 配置挂载与启动
-
-复制并编辑配置模板：
-
-```bash
-cp docker/config.toml /path/to/asr-config.toml
-# 修改 qwen_asr.base_url、队列、日志等运行参数；保留镜像内 /app/model 路径
-```
-
-使用 compose 启动时，必须显式提供符合 v3 时间格式的镜像 tag：
-
-```bash
-cd docker
-ASR_IMAGE=asr_offline:v3_20261103120000 \
-ASR_CONFIG=/path/to/asr-config.toml \
-docker compose -f docker-compose.yaml up -d
-```
-
-compose 只读挂载一个配置文件到 `/config.toml`，并设置 `CONFIG_PATH=/config.toml`。镜像内也提供同路径的默认模板，生产部署应使用挂载文件。模型默认位于 `/app/model/`，不要把模型目录作为宿主机卷覆盖。
-
-CUDA TensorRT profile 由镜像内部的 `ASR_DEPLOYMENT_PROFILE=cuda-tensorrt-fp16` 环境变量启用，
-不需要也不应该写进挂载的 `config.toml`。这样用户配置只负责业务运行参数，镜像仍能强制校验
-fp16 TensorRT 资产；Compose 已显式传入该内部变量。
-
-profile 要求：
-
-- `speech_campplus_use_tensorrt = true`、`emotion2vec_use_tensorrt = true`
-- 两个 TensorRT 精度均为 `fp16`
-- `audio_concurrency` 默认 8，`audio_spk_emo_concurrency` 默认 4
-
-应用日志和任务统计写入容器的 `/tmp/asr-offline/`，不会在 `/app` 下生成
-`asr_service.log` 或 `asr_stats.json`。运行镜像的 `/app` 只包含入口、运行时辅助模块、
-Cython 扩展和模型，不包含配置副本、构建脚本、测试文件或 Python 缓存。
-
-## 健康检查和接口
-
-```bash
-docker compose -f docker-compose.yaml ps
+export ASR_IMAGE=asr_offline:v3_20261117120000
+export ASR_CONFIG=./config.toml
+export QWEN_MODEL_DIR=/home/model/Qwen3-ASR-1.7B-hf
+export ASCEND_VISIBLE_DEVICES=7
+export ASR_PORT=9000
+export ASR_CONTAINER_NAME=asr-npu-v3-test
+export ASR_COMPOSE_PROJECT=asr-npu-v3-test
+docker compose -p "$ASR_COMPOSE_PROJECT" up -d
 curl --fail http://127.0.0.1:9000/get_status
 ```
 
-Qwen 转写接口为 `POST /v3/seacraft_asr`。本次镜像不注册 `/v2/seacraft_asr`；旧客户端会收到 404。`GET /get_status` 的 `deployment` 字段显示实际配置路径和 profile，`localModels.instance_details` 显示每个 TensorRT 实例的 engine、精度和兼容状态。
+三个小模型从`/app/model/`加载；Qwen挂载为`/app/qwen-model`，不依赖外部HTTP模型服务。`CONFIG_PATH=/config.toml`区分配置挂载与模型路径。`start.sh`是容器内entrypoint，负责source CANN、使用`/opt/asr/bin/python main.py --host 127.0.0.1 --port <端口> --workers 1`、预检和nginx；不能在其中添加`docker run`参数冒充设备绑定。
 
-普通转写请求（A）不携带增强参数；请求 `showSpk=true`、`showEmotion=true` 或 `showRoleIdentify=true` 属于 B。A/B 共用 `audio_concurrency`，B 还受 `audio_spk_emo_concurrency` 限制。配置关闭能力时返回既有能力错误码，不以 `null` 伪装成功。
+当前默认采用原生运行器、`instance_count=1`、Qwen `local_instance_count=1`，`segment_concurrency=1`、`request_concurrency=1`，容器设备保持`npu:0`。宿主物理7号共享卡以相同12秒片段、每档2轮4B+4A共16个测量请求标定：
 
-## 停止、日志和回滚
+| Qwen副本 | segment/request门限 | P50（秒） | P95（秒） |
+|---:|:---:|---:|---:|
+| 1 | 1/1 | 20.0201 | 23.5629 |
+| 1 | 2/2 | 14.1411 | 23.7260 |
+| 2 | 2/2 | 14.4533 | 22.8981 |
+
+完整课堂对照选择单副本与1/1门限，最终数据与原始SHA见主迁移报告；上面的短音频三档保留作历史参考。每增加一个完整服务进程也会复制Qwen及增强模型池。上述是宿主原生FP32/BF16实际路径的重复容量工作负载，不是8份独立质量样本，也不能替代容器实际承载验收；镜像构建和容器NPU实测仍按后置流程执行。容器SNR=18.0及3/3过滤窗口对齐本轮现行宿主业务配置，非新增调参。
+
+## API与检查
+
+仅提供`POST /v3/seacraft_asr`、`GET /get_status`、`DELETE /clear_tasks_list`；旧路由不恢复。保持v3请求默认值、错误码、字段类型与`gpu_time_ms`原计时口径。状态查询不触发Qwen或增强模型懒加载，VAD按启动契约预热。
+
+健康检查只表示服务就绪，不能代替转写、聚类、情绪或错误路径验收。完整测试矩阵和质量证据见本次OpenSpec change中的`test-plan.md`。
+
+## 测试结束必须停止
+
+Compose默认`restart: "no"`、`init: true`。在测试成功、失败或取消后的统一收尾中执行本次项目的关闭，并核验进程和监听端口释放：
 
 ```bash
-docker compose -f docker-compose.yaml logs -f asr-offline
-docker compose -f docker-compose.yaml stop
-docker compose -f docker-compose.yaml down
+docker compose -p "$ASR_COMPOSE_PROJECT" down
 ```
 
-回滚时停止当前 compose，使用上一份完整的 `asr_offline:v3_<时间>` 镜像和上一份配置重新启动。v2 不在新镜像中保留兼容别名，接口兼容回滚依赖上一完整镜像。
-
-## 是否在容器启动时自动构建 TensorRT engine
-
-技术上可行，但当前镜像不能直接执行这件事。容器内构建需要同时具备：
-
-- `--gpus all` 提供实际目标 GPU；
-- TensorRT builder、CUDA、PyTorch 和与目标环境匹配的运行库；
-- `onnx==1.17.0` 等导出依赖，以及 `scripts/export_local_tensorrt.py` 和完整模型权重；
-- 可写的 engine 缓存目录；
-- 足够的磁盘、主机内存和 GPU 显存用于导出、构图和 tactic 搜索。
-
-当前生产 Dockerfile 使用 runtime 依赖，构建脚本只把已验证的 fp16 资产复制进镜像，并且不会把
-TensorRT 导出依赖和导出脚本放入运行层。因此，直接在当前容器启动时运行导出命令会失败或产生
-不完整资产，需要另外制作 builder 镜像或修改镜像分层。
-
-即使补齐依赖，也不建议每次服务重启都自动转换，原因是：
-
-1. 首次启动会变成长时间的构建阶段，构建期间服务无法就绪；模型越大，TensorRT tactic 搜索越耗时。
-2. 容器重建或缓存丢失会重复构建，导致发布时间和启动时间不可预测。
-3. 构建时可能遇到显存不足、磁盘不足、TensorRT 算子不支持或驱动异常；若与服务进程同时启动，还会发生资源争用。
-4. 当前服务按 `tensorrt/<precision>/engine.plan` 读取资产，尚未实现按 GPU UUID 自动选择多套 engine；不同 GPU 的资产不能安全地互相覆盖。
-5. 自动构建后的 engine 仍需完成数值、角色聚类、情绪标签和并发压测，不能只以“构建成功”作为上线条件。
-
-更稳妥的部署方式是“目标 GPU 上一次性构建，运行镜像只加载已验收资产”：
-
-1. 在目标 4070 Ti Super 主机上启动一次带 GPU 的 builder 容器，安装 `requirements-tensorrt-export.txt`，执行模型 README 中的构建命令。
-2. 将生成的 `engine.plan`、`manifest.json` 和 `tensorrt/sources/` 持久化到模型目录或制品仓库。
-3. 运行 `asr-offline` 前执行 `scripts/check_tensorrt_assets.py` 和目标机实测验证。
-4. 验收通过后再构建或启动生产 runtime 镜像；后续普通重启不再重新构建。
-
-如果未来需要支持多种 NVIDIA GPU，可以按 GPU 架构、TensorRT/CUDA 版本维护不同 engine 制品，
-在部署阶段选择对应目录。将自动构建限定为“首次安装或显式升级动作”，并采用临时文件写入后原子替换，
-稳定性会明显高于每次入口启动都转换。
+不要删除模型卷、镜像、缓存或日志；不要按端口或进程名终止服务器已有uvicorn。入口以独立进程组管理自己创建的进程，先向自有`main.py`服务父进程发TERM，让Uvicorn先通过lifespan关闭VAD与模型池；统一入口把随后重放的TERM转为Python SystemExit，从而执行NPU运行时atexit。NPU初始化后INT可能失效，正式入口不能换回`python -m uvicorn main:app`。nginx master接收QUIT。默认150秒宽限后才向未退出的自有组发TERM，再等10秒后KILL；entrypoint以0.2秒有界轮询监督自有子进程，关闭时逐PID收集退出码；非零退出、无法归属的127或超时均记失败。外部TERM且全部正常收尾时返回0，INT保留130且不会被后续TERM覆盖。Compose给予180秒停止时间。重启策略不得在测试后留下后台接口。TIME_WAIT不等于仍在LISTEN，原有服务继续占用HBM也不属于本次泄漏。保留日志、配置、样本哈希、退出与端口检查证据，关闭失败不宣称整批验收完成。

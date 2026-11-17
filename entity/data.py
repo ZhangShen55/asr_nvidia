@@ -38,8 +38,8 @@ async def get_asr_params(
     showSpeed: Annotated[bool, Form()] = False,
     showRoleIdentify: Annotated[bool, Form()] = False,
 ) -> AsrRequestParams:
-    # 显式提交空 language 与未提交 language 语义不同：
-    # 前者按不支持语言处理，后者使用默认 auto。
+    # 保留表单中显式空串，避免Form默认值覆盖原始输入；
+    # 客户端按既有规则将空串、None和auto归一为不指定语种。
     form = await request.form()
     if "language" in form:
         raw_language = form.get("language")

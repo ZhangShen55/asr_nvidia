@@ -25,7 +25,8 @@ def update_vad_runtime(
         devices = device if isinstance(device, list) else [device]
     entry["devices"] = list(devices)
     entry["instances"] = max(0, int(instances))
-    entry["allocated_mb"] = round(max(0.0, allocated_mb), 2)
+    entry["allocated_mb"] = None if allocated_mb is None else round(max(0.0, float(allocated_mb)), 2)
+    entry["memory_scope"] = "pytorch_allocated_per_worker"
     if configured_instances is None:
         configured_instances = instances or 0
     if successful_instances is None:

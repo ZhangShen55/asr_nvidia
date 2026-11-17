@@ -1,9 +1,9 @@
 import asyncio
 import io
 import unittest
+from unittest.mock import patch
 import wave
 
-import httpx
 import numpy as np
 
 from core.qwen_asr_client import QwenAsrClient
@@ -23,26 +23,37 @@ class MemoryClipTests(unittest.TestCase):
     def test_qwen_uploads_bytes_without_a_path(self):
         seen = {}
 
-        async def scenario():
-            def handler(request):
-                body = request.content
-                seen["body"] = body
-                self.assertIn(b'filename="segment.wav"', body)
-                self.assertIn(b"audio/wav", body)
-                return httpx.Response(
-                    200,
-                    json={"text": "[Chinese]\n内存上传"},
-                    headers={"content-type": "application/json"},
-                )
+        class Runtime:
+            failure = None
 
-            client = QwenAsrClient("http://qwen", model="model", retry_count=0)
-            client._client = httpx.AsyncClient(transport=httpx.MockTransport(handler))
+            def __init__(self, *args):
+                pass
+
+            def transcribe(self, payload, language):
+                seen["body"] = payload
+                seen["language"] = language
+                return "language Chinese<asr_text>内存上传"
+
+            def close(self):
+                seen["closed"] = True
+
+        async def scenario():
+            payload = encode_audio_clip_wav(np.zeros(1600, dtype=np.float32), 16000)
+            client = QwenAsrClient("http://legacy-unused", model="model", retry_count=0,
+                                   runtime_factory=Runtime)
             try:
-                text = await client.transcribe_bytes(b"RIFFmemory", filename="segment.wav")
-                self.assertIn("内存上传", text)
-                self.assertIn(b"RIFFmemory", seen["body"])
+                # filename remains a compatible keyword; the local runner receives
+                # the same in-memory WAV bytes and never requires a segment path.
+                with patch("builtins.open", side_effect=AssertionError("段级推理不得落盘")), \
+                     patch("tempfile.NamedTemporaryFile", side_effect=AssertionError("段级推理不得创建临时文件")):
+                    text = await client.transcribe_bytes(payload, filename="segment.wav")
+                self.assertEqual(text, "language Chinese<asr_text>内存上传")
+                self.assertIs(seen["body"], payload)
+                self.assertTrue(seen["body"].startswith(b"RIFF"))
+                self.assertIsNone(seen["language"])
             finally:
                 await client.aclose()
+            self.assertTrue(seen["closed"])
 
         asyncio.run(scenario())
 

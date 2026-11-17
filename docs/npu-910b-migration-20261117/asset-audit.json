@@ -1,0 +1,4376 @@
+{
+  "assets": [
+    {
+      "path": ".gitignore",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 333,
+        "sha256": "3bec0ef08562045efd6a99086d0b9db73ede7829eadc3e1ad7e375570c98808f",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 234,
+        "sha256": "f67dd061a2900d4f33b4d56405fcddac9da20deab8ab1709c831148f6993cf84"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "AGENT.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 26370,
+        "sha256": "ad2390253ee6940982e217a77a5aede087a0d36e6cf036b22e4acd87993a8f51",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 26850,
+        "sha256": "e263577d1aadc788c8d42a38d9cb5d6a6b7c1b5fba2e12e75c0aeb644aa03d72"
+      },
+      "audit_expectation_matches": true,
+      "final_default_note": "single Qwen replica, segment/request concurrency 1/1 after two complete eight-source trials; model mathematics unchanged"
+    },
+    {
+      "path": "README.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 24841,
+        "sha256": "c82975f4244bcf908c2060a85467577853c6bc0eb267040a820ec6d43104c948",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 26287,
+        "sha256": "feb6b085e266a2c306bdf2f1c9d1de4dd82b3926daabc1fe4cbc42d225524611"
+      },
+      "audit_expectation_matches": true,
+      "final_default_note": "single Qwen replica, segment/request concurrency 1/1 after two complete eight-source trials; model mathematics unchanged"
+    },
+    {
+      "path": "api/routes/status.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1017,
+        "sha256": "a1de0faf6431129ef7107ba2efcc83c08697a1dafa4762fe4918587716c936a8",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 540,
+        "sha256": "c71ed8d36212bb3cdd12c582b7ee477b883cfeb0acda35a50faf01b770914d9f"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "config.toml",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5016,
+        "sha256": "6b1540f4242241e1e673f078c993baf401eb3a8220b026e66d91f2da2d03f3ca",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4487,
+        "sha256": "b19d5bdd4d3ddba52b760c7e90d51d3efb42ac2db16d75ef8738e86578150265"
+      },
+      "audit_expectation_matches": true,
+      "final_default_note": "single Qwen replica, segment/request concurrency 1/1 after two complete eight-source trials; model mathematics unchanged"
+    },
+    {
+      "path": "core/config.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 23912,
+        "sha256": "0da933f202100d56dea4668993058165af2563e9a63628a6f438929c6db75d2f",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 23876,
+        "sha256": "d37b2624123ca10dc91a94a20c32d5918e70007876339af7d0e72c714fdd6eba"
+      },
+      "audit_expectation_matches": true,
+      "final_default_note": "single Qwen replica, segment/request concurrency 1/1 after two complete eight-source trials; model mathematics unchanged"
+    },
+    {
+      "path": "core/deployment.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3544,
+        "sha256": "107b7c00dd0469c97acadcab34c32182a0321b67bd7e39ee740d1c89feb65966",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3093,
+        "sha256": "4e322b0d1dcd2f28eb1fbeb679049ffda02a0f694641a9184bc4a44ef97052e2"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/local_inference.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 19287,
+        "sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 7791,
+        "sha256": "4eb74c145b5a6476cafe4f69a92cd3b0c6e1f88e6c6dab8884f55e3e5700c3a6"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/model_assets.py",
+      "action": "retired",
+      "reason": "CUDA/TensorRT engine asset validator retired; original native checkpoints checked by NPU preflight",
+      "replacement": "core/deployment.py; core/local_inference.py",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2800,
+        "sha256": "6388bd8d306e0852607589073ef5f68c88edf5927d5ebd11b6aa2c3bd6d3761f"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "core/model_loading.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2104,
+        "sha256": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/models.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 22591,
+        "sha256": "19edd7f9c567f9c34b953607ef667f9a50515f14b192e45e83a64ede9ce9541d",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 21515,
+        "sha256": "7fd05d82d64a6945e1cb38c4c5b8ca043275167f88671f8ee176e016d867a82e"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/npu_resource_status.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3534,
+        "sha256": "38dce7800a4e1bbc0fc11a7f4a50a545be3df9aa2e150359b36cb3a6ccc34bb6",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/qwen_asr_client.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 12821,
+        "sha256": "e3bb4fd4f399d5cee5b7238e692f7c527ba12b7313fe2a17933bfd3ea88f3767",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 10471,
+        "sha256": "c09f0f2ca6fa5484ba7040a4179ea064500373002abb1d8d5f20b68cf74fa367"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/qwen_asr_queue.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 11198,
+        "sha256": "325b4e3f39c50ec0137261eca182b91ca0e7bf8557ffd15ccc5e2f3b764b4024",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 11301,
+        "sha256": "136c367976143424705bc8b9213d0d6dda8d8a3d81c5bb76a3db3067019ee350"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/qwen_asr_runtime.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 9213,
+        "sha256": "cd643eeec82961c9ec724aefc70cd04b6c664da23123a9967ec90c7d3f0d23bc",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/resource_diagnostics.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 20557,
+        "sha256": "8055e71b023336fabff4fe2a7121f6cd8a38ec13e8018513442953100683fe49",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 19117,
+        "sha256": "4a965bdb0c78b7d1c2d291c989501148b02bcc901ca93939cc19a4801f544ff8"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/status.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5476,
+        "sha256": "ffb8811440cf0c48848538782e292550aaba718c7d4b304b6e8c9144409225c7",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4062,
+        "sha256": "e937d16354a05899cd4ee0d2a3031738ad1d60fb23e06c6868e1f097b52c780e"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "core/tensorrt_runner.py",
+      "action": "retired",
+      "reason": "TensorRT execution retired; CPU/NPU native runners retain explicit placement and failure propagation",
+      "replacement": "core/local_inference.py; tests/test_inference_backends.py",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 7830,
+        "sha256": "45ce870890c5f7f5a5a714fdbe1e400ab0160b842a5319f156f9b358d3408e3f"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "core/vad_pool.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 26269,
+        "sha256": "3f7c52d272690ddbce226823843c7d73b3d04fd7f90d47f3cac3cace7f1053ed",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 20060,
+        "sha256": "4e9a8a351a1f7dfe48c4a26fc1ca41a09d86a1d2732b70f4c215cecaa027ac62"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docker/Dockerfile",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2980,
+        "sha256": "095abaeda49cd422197c85626daff01005535892b36672f8bdd14630b58f6e0c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3667,
+        "sha256": "13b149cf081f79326cfa3756c7876e48c3e5991e309c3aa357ab8f1ff67cc2f5"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docker/Dockerfile.rtx3090",
+      "action": "retired",
+      "reason": "RTX-specific image profile retired; its original history remains in Git",
+      "replacement": "docker/Dockerfile; docker/docker-compose.yaml; docker/README.md",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3754,
+        "sha256": "e237b4192ba401a855afa6e482ffd1854d03d85c4897a43bdabc69ea2af6f16e"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "docker/Dockerfile.rtx4070tisuper",
+      "action": "retired",
+      "reason": "RTX-specific image profile retired; its original history remains in Git",
+      "replacement": "docker/Dockerfile; docker/docker-compose.yaml; docker/README.md",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3770,
+        "sha256": "e93a9c9b8ad212fb7d18c0b9a019a06edbe9fc89d839831693ef24d5b373094a"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "docker/Dockerfile.rtx4090",
+      "action": "retired",
+      "reason": "RTX-specific image profile retired; its original history remains in Git",
+      "replacement": "docker/Dockerfile; docker/docker-compose.yaml; docker/README.md",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3754,
+        "sha256": "ad5b41626519d442df930abed27001be0882798daa0b0609ce44ba79790d6994"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "docker/README.md",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 7372,
+        "sha256": "8dbb1fdd6220198def8cc62b1ed61736e0055a28ac598e5b8b1f7e5dbc086558",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 11468,
+        "sha256": "292ef42b8bf9c1cb667535b320e6d6fa27ffdfd434f81f475da32d2a16425ecc"
+      },
+      "audit_expectation_matches": true,
+      "final_default_note": "single Qwen replica, segment/request concurrency 1/1 after two complete eight-source trials; model mathematics unchanged"
+    },
+    {
+      "path": "docker/build.sh",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3866,
+        "sha256": "c45f4fdaa32a9751d0771ab7b6df5ebacdbce57e4bf29bb81f7467a5e3f772dd",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 5986,
+        "sha256": "0f730f1cfa1a1d403836e18f4ae04e1021007256bf0afd923fc71e622d7a18d1"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docker/config.toml",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5140,
+        "sha256": "a7a6e5e0ac323e06dec2bc6f9a6c6845203bbc8ad7c1e7a107b83d82a944b665",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4730,
+        "sha256": "c6117f1d79ae8f7397b1d89c7e0e2960740f5088e7c7f10c233c784922bbc48f"
+      },
+      "audit_expectation_matches": true,
+      "final_default_note": "single Qwen replica, segment/request concurrency 1/1 after two complete eight-source trials; model mathematics unchanged"
+    },
+    {
+      "path": "docker/docker-compose.yaml",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1126,
+        "sha256": "3d3c4e67d8e35a50e615b6bdcda2c6e1afcb1b39a6f4715427d40f4834ffda48",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 986,
+        "sha256": "a5fcb3597b3c9e28201c12a52ab284f5ab5bfa12d66451eaf5f18036232b5c3c"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docker/nginx.conf",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 945,
+        "sha256": "bcbd36cbb46093c5eb869f298f57890872f8d0dcd594a89392a0ec102544e691",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 941,
+        "sha256": "ce48980d2ff92847c0b0cd2a6bb6e6c1b7e542d491a3e324371f793464f03ccb"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docker/start.sh",
+      "action": "adapted",
+      "reason": "owned-process polling supervisor; complete PID registration, sticky INT, TERM graceful cleanup, all child exit statuses and unknown127 remain visible",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5434,
+        "sha256": "7c0b3f6dc4c09bf964332ffd98354adfd496691aee599df6c124ecb6c30b56f3",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2102,
+        "sha256": "dcefd9a9a23aa9fd5439d35c4b18fff50fce094a4673c14f39afc034793c11e8"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/CAM++与emotion2vec_TensorRT性能提升与显存节约价值评估.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 10451,
+        "sha256": "3caa13e63629ea237e2f15f04bf2aebc8a345d234e7183157741094f9375c490",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 10451,
+        "sha256": "3caa13e63629ea237e2f15f04bf2aebc8a345d234e7183157741094f9375c490"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/DEPLOYMENT.md",
+      "action": "updated_current",
+      "reason": "current NPU operation/validation entry",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 702,
+        "sha256": "14450cfefc0f3766ec12f7b7b40bfff70cd5c109fc530d0c23bf8ca8e7f73953",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 15290,
+        "sha256": "97a2ebc18cdd42cbb20fff52db2047042d745385b37258a671e0e44cd8eb4f2b"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/DOCKER_BUILD_LOG.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4105,
+        "sha256": "de508348dd4425ab68222d080f46f3f73cf6b4b571eb089615dd3ce250525e91",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3829,
+        "sha256": "40b73c68f2a361b446b4ff5885bdeb3d2aac9da4e13cccd1a3311d67a7c2cdb2"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/TENSORRT.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 8561,
+        "sha256": "a0a584c7fe279a3513ac93cdd3c38a0e22195e4e12d5eaddc8fd940e5eff76c8",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 8301,
+        "sha256": "3db3891a915fb8a6486f99c0d7431a1909ebb226e6ef106a7aebf98a2d075bdd"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-independent-concurrency-gates-6x2-cuda0-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3191,
+        "sha256": "2079b32ab7630175f02a8752ead0ca19584821e88369755627d2dc365c9e2018",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3191,
+        "sha256": "2079b32ab7630175f02a8752ead0ca19584821e88369755627d2dc365c9e2018"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-independent-pools-review-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3960,
+        "sha256": "96dc4f7a9a6cd0df88718819628a2b739b40f0677d18865e2a4881860a697637",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3960,
+        "sha256": "96dc4f7a9a6cd0df88718819628a2b739b40f0677d18865e2a4881860a697637"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-local-model-pool-4x-cuda0-test-report-20261026.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4101,
+        "sha256": "fb7afa9d6b231925594e08a591faadac66bc6ec17737ccfe3b3d877e88ca4869",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4101,
+        "sha256": "fb7afa9d6b231925594e08a591faadac66bc6ec17737ccfe3b3d877e88ca4869"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-local-model-pool-4x-cuda0-vad16-32-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3933,
+        "sha256": "2a20b0f3b731da6b9d04d0d4027fd9dddcb9740be057f523852bcec90f64c1d1",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3933,
+        "sha256": "2a20b0f3b731da6b9d04d0d4027fd9dddcb9740be057f523852bcec90f64c1d1"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-local-model-pool-8x8-cuda0-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2034,
+        "sha256": "8caa853e73a264d0a51ab322851560d890c9a6a94f3498c40a2f4322a461860a",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2034,
+        "sha256": "8caa853e73a264d0a51ab322851560d890c9a6a94f3498c40a2f4322a461860a"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-local-model-pool-8x8-cuda1-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1679,
+        "sha256": "0c061f0138b7afe4c5b399da8d21c2843899dd298bcb80da5efbdbb3264444c4",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1679,
+        "sha256": "0c061f0138b7afe4c5b399da8d21c2843899dd298bcb80da5efbdbb3264444c4"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-local-model-pool-fixed-vad16-c16-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2951,
+        "sha256": "7c6d0f5886a62f11a3f23cc22133d9b7a68266630d46a3f91238920467b3b697",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2951,
+        "sha256": "7c6d0f5886a62f11a3f23cc22133d9b7a68266630d46a3f91238920467b3b697"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-local-model-pool-fixed-vad4-c4-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2348,
+        "sha256": "256880cab011c1469b359854b4bacce00f9cf278f38137705cc67b351490e447",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2348,
+        "sha256": "256880cab011c1469b359854b4bacce00f9cf278f38137705cc67b351490e447"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-local-model-pool-fixed-vad8-c8-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2585,
+        "sha256": "cf4830fe4580bfd8c75537c6c86f1c2b5893e5fe0c1e7c90455790ccb686a0c0",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2585,
+        "sha256": "cf4830fe4580bfd8c75537c6c86f1c2b5893e5fe0c1e7c90455790ccb686a0c0"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-local-model-pool-test-report-20261026.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4219,
+        "sha256": "4c7eb66ba842463d24a19988dea797a3c565adffa78a96f61af3d5e0abbfbfea",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4219,
+        "sha256": "4c7eb66ba842463d24a19988dea797a3c565adffa78a96f61af3d5e0abbfbfea"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam-emo-tensorrt-backends-validation-20261102.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 24435,
+        "sha256": "4462a4285acaff252dabc54df6204a903ae181350f69366ba5f07d4dec0cd618",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 24435,
+        "sha256": "4462a4285acaff252dabc54df6204a903ae181350f69366ba5f07d4dec0cd618"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam4-emo2-cuda0-seg2-concurrency8-test-report-20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3097,
+        "sha256": "0b11df5f5cba5036225df9e90f1852445c0c020cc576498fcb617a9a7749c124",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3097,
+        "sha256": "0b11df5f5cba5036225df9e90f1852445c0c020cc576498fcb617a9a7749c124"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam8-emo4-segment-concurrency-8-16-32-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2274,
+        "sha256": "fb13ceb3fe1887654614be39cd47acfb4033b8eedf78193363378af4e719f983",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2274,
+        "sha256": "fb13ceb3fe1887654614be39cd47acfb4033b8eedf78193363378af4e719f983"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam8-emo8-cuda0-seg4-concurrency8-test-report-20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2526,
+        "sha256": "d06de6fc8559d2d36fd6e7b320dc28ba27797cd27b93276f00f43b8b0249175b",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2526,
+        "sha256": "d06de6fc8559d2d36fd6e7b320dc28ba27797cd27b93276f00f43b8b0249175b"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam8cuda0-emo8cuda0-fp16-segment32-concurrency4-test-report-20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2179,
+        "sha256": "d7e35d2d28b0ee27e03e92843a37aa89d883b3d5254832e343a4345ea144b2ec",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2179,
+        "sha256": "d7e35d2d28b0ee27e03e92843a37aa89d883b3d5254832e343a4345ea144b2ec"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam8cuda1-emo8cuda2-fp16-segment-concurrency-8-16-32-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2806,
+        "sha256": "643011c80bb834c69701d4f4311c6d337be013e337cd3e6287836cbac4f108d9",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2806,
+        "sha256": "643011c80bb834c69701d4f4311c6d337be013e337cd3e6287836cbac4f108d9"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/cam8fp16-emo4-segment-concurrency-8-16-32-test-report-20261027.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2786,
+        "sha256": "bedbe422f494f260773409c9785c3751a55b92ba89cb482de51419a883a92ad5",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2786,
+        "sha256": "bedbe422f494f260773409c9785c3751a55b92ba89cb482de51419a883a92ad5"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/fireredvad-vs-funasr-vad-test-report-20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6796,
+        "sha256": "bb65fb53849ea1b338c68862c5ea0bf5122fc36e79de3163b57c473c8b8dceb7",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 6796,
+        "sha256": "bb65fb53849ea1b338c68862c5ea0bf5122fc36e79de3163b57c473c8b8dceb7"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/fireredvad-vs-seaco-paraformer-segmentation-report-20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 9370,
+        "sha256": "725157d9b0697d6b57ceeb7d41e0295aef03dd59e069f81341250a9eca15de13",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 9370,
+        "sha256": "725157d9b0697d6b57ceeb7d41e0295aef03dd59e069f81341250a9eca15de13"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/mixed-16false-4true-cuda0-segment32-test-report-20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2092,
+        "sha256": "28f6be73eee76b0eec8f2022315283aff507bd6913db6e87ba0451063de0ffaf",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2092,
+        "sha256": "28f6be73eee76b0eec8f2022315283aff507bd6913db6e87ba0451063de0ffaf"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-feasibility-report.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 19448,
+        "sha256": "2a9b5822f9ca3f5e8d8a1f5b429e263f283ee38662dcb3c5ee9ab63fe17f4f3b",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 19172,
+        "sha256": "3b249008977bf960eb8de12bdab29cb42e2d1afa4a6fda9ebc17ee4b12008954"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/audio-manifest.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 59775,
+        "sha256": "e4606c85ebaf670edbb5d724b9b2e2e45dfd1d3a71cbaca94b1c95b24ee80af0",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/classroom-threshold-review.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 38719,
+        "sha256": "8af05d1d15d0864921685c77507950c25b439afb057875a63141d5a826e347da",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/compiled-cpu-parity.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 28989,
+        "sha256": "8f507d12b8cff98f35b20b2e9818df65e6c755dab606b75fc3e2d8deca1b3588",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/compiled-dtype-guard-30.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 893,
+        "sha256": "0efefa78c961dbe34690b47ebea0125e01eb11dbdc5d659b581de9d3f3db6ee9",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/compiled-final-g1-steady-evidence.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 55731,
+        "sha256": "82c9ad562bfa99839e4a1552b70b87fb5aa9f1e6ae5b0fa51dd7203bb76fc2aa",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/compiled-frontguard-cpu-validation.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1350,
+        "sha256": "1aa7aa08f2d91aa8a3391eff795a360bc4ee4eaa77abd02185c0319d2b5186e4",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/compiled-frontguard-cpu.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2581,
+        "sha256": "5b31e93246c75117641e41df374cf87eca8c74958b51364cef320245947ed820",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/compiled-stage-comment-refresh.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 582,
+        "sha256": "480bc0ecf4ff2976e051af40b1f7a496ede8b0cd1bb52eeb6ce7765df7dce9bf",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/container-negative-preflight.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2358,
+        "sha256": "ecf4c7261431c65c95d2f8f3104d47b2db6eced2d1dbdd74627d47b9f84c8c56",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/cpu-regression-final-g1-default.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3800,
+        "sha256": "16d8976b167e3970c494fa160643c83347a0755bb0a23c880bcbd9bf94db0c9f",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/cpu-regression-final-mainexit.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2125,
+        "sha256": "9242494326024ac4a53d1abfc7c13459858d82e8a8dd65735ef2a00e4143f26a",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/environment-imports.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 7177,
+        "sha256": "7e94ada182e63132f46380768b9c5c779e979a9036dca1b504374d7726b79cf3",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/environment-rebuild-clean-build.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4640,
+        "sha256": "19c7e1f79db2db9837307930e584b0d813eada747dfc35c66f163753cc7d6ffe",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/environment-rebuild-validation.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 119154,
+        "sha256": "cd6fbba1e082b5dfb65ce09ce8c40c007889facfaf344e48155e9c9fd711e9b2",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/environment-reference.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 7773,
+        "sha256": "a9747ba04400f2e7e091e0261d84ee2c5b7756dff072e0d80fa22b343b6318c0",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/evidence-retention.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1634,
+        "sha256": "e1a491334c45bc3b2a7e1148180485d16093380c3ded1d39e7cb98e7e18e0cfb",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/full-g1-final-evidence.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 19914,
+        "sha256": "738e8fe997b3def92d612287f5b02cd80e8d3c6d271152063a75f3f70d408644",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/full-pair-capacity-decision.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 16034,
+        "sha256": "e9a5574b8f63fed06cfe084ee3ab4e53097bf7b1e84271490ca71ee11e9f61e6",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/full-pair-final-evidence.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 39599,
+        "sha256": "8300649dcbae86730981355c7e762718d5c78653877032320839dca384738256",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/full-pair-output-comparison.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 15118,
+        "sha256": "1cd85cc86a38d87fd2d05f2be40bcb652eaded83009d03a0073bcdeb8213b6d7",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/full-source-provenance.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 8056,
+        "sha256": "413550ec1abc38bc677ef05a17d8171a49101f53e7d92adb1d4d195e62b202dc",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/g1-default-config-application.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4238,
+        "sha256": "7b24ae3afbfa89c451b1fb001dfd37406c72f987f23cdd090f5df377fcaae084",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/legacy-deployment-before-migration.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 15360,
+        "sha256": "bb158f42524e25b1f88da92c2373de961183ccdace8999db5787d0702ad2412f",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/local-model-comparison.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 21054,
+        "sha256": "eba0e8e0af26e82e76ca07758941f077211afbfd9420e40d726589235e459acb",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/main-shutdown-exit-validation.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3109,
+        "sha256": "9924a0b29d4dc5049e17a89010f07043b75d3ffb16267ab442a0735108b4fa59",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/model-assets.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2270,
+        "sha256": "dbc64d9db67d4d1f79c48f2c4f34e62e66abc1aba956d5b2a36ec94860b00352",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/mp3-full-decode.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 925,
+        "sha256": "bc4eda36820e0a7e361231b3008c50953ce878da53faabf7904a151623493c9e",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/numpy-scipy-payload-audit.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 14524,
+        "sha256": "c87bc4dc86297fa962147c70b418aa46ee4a3c0482858d71773308becb360385",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/numpy-scipy-payload-audit.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5102,
+        "sha256": "e27b9937838e610600598d37941283a6eb84066bad8b3e3d7c021dc43c8419ef",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/protected-build-final-g1-config.json",
+      "action": "adapted",
+      "reason": "final migration evidence, planning or source/configuration metadata; individually read without loading models or touching services",
+      "replacement": null,
+      "added_by_final_selected_refresh": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 12165,
+        "sha256": "30cff6534757e52eefefcc6a0c363e95be8d277672e6162812bb921cd5847d56",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/protected-build-validation-29.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 21696,
+        "sha256": "047d30ef57df7f6132e74fc6bc786bd7fc6954b9dc3af088bc352ac31ca83d59",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/protected-build-validation-30.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 12017,
+        "sha256": "5593cbfd4d80c20140fca18e916d50058b5f71ac25d9e6a0b408f624fae901db",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/protected-build-validation-frontguard-30.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 18315,
+        "sha256": "759bca85d6104c4efa56c9588d747b7237ba4a7bd8a35b5be59f89c4665b68e1",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/protected-build-validation.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 12017,
+        "sha256": "5593cbfd4d80c20140fca18e916d50058b5f71ac25d9e6a0b408f624fae901db",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/qwen-backend-selection.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 50506,
+        "sha256": "b17ac4e40d80a6fc98a3bd55f2dc65d682f591862f6a7e29d294e23ee9a2ca61",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/qwen-cleanbuild-cpu-parity.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 11694,
+        "sha256": "4d77cfee1d528044b41c7fd8bf8895432aa17d89f5a19d778941f92333ad5161",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/qwen-frontguard-cpu-parity.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 9410,
+        "sha256": "6cf3c832e9ab3caf12489433ef04e41a083341b76b49148d1ce4279a93f5c0e0",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-20261117/test-coverage.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 40056,
+        "sha256": "0b5520e944b127c315de9a0adada37795929e53b1b2f7e8a26112ce5424a166b",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/npu-910b-migration-validation-20261117.md",
+      "action": "updated_current",
+      "reason": "current NPU operation/validation entry",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 22845,
+        "sha256": "0eb73cf7094908d4f854276d28880abba66adbbeb609155ec6fa71ade3cb980c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/qwen-asr-v2-after-change-report.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6045,
+        "sha256": "01db7ae3b3eb4547b2579fabd2bd7a7d66e8a7dbaa0ab2cf89c772dc5d82da83",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 6045,
+        "sha256": "01db7ae3b3eb4547b2579fabd2bd7a7d66e8a7dbaa0ab2cf89c772dc5d82da83"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/qwen-asr-v2-test-report.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 29032,
+        "sha256": "a67f3862c0c86b1447b8905a1af6f08c1fe7166a505f7eef1bb590cb876c4c47",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 29032,
+        "sha256": "a67f3862c0c86b1447b8905a1af6f08c1fe7166a505f7eef1bb590cb876c4c47"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/qwen-asr-v2-throughput-benchmark-20261023.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 29894,
+        "sha256": "0db2c14d42e3eff630b3c694a6f4bc7f1e18c2fc54dbc7bf81fa7565d715dc9d",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 29894,
+        "sha256": "0db2c14d42e3eff630b3c694a6f4bc7f1e18c2fc54dbc7bf81fa7565d715dc9d"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/qwen-asr-v2-throughput-optimization.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 13321,
+        "sha256": "d7335c516bc65be836f7a3989ec19001268ca9166184aafef8cf53c871b32b1a",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 13045,
+        "sha256": "752790f26bcadeafe4e92123c6bb0e18af817e54359b41fcc053ea0d5f80a351"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/static-vad-device-pool-memory-qwen-clips-test-report-20261029.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2529,
+        "sha256": "38af4586fa764cff571d1ae22ee4464212b71f980faf90b97cd4060162362331",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2529,
+        "sha256": "38af4586fa764cff571d1ae22ee4464212b71f980faf90b97cd4060162362331"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/three-vad-baselines-segmentation-report-20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5842,
+        "sha256": "24f40187fe3159360e409bf0480e218578a8f6c50709ae2033e799e458b30532",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 5842,
+        "sha256": "24f40187fe3159360e409bf0480e218578a8f6c50709ae2033e799e458b30532"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/vad-cpu-process-pool-efficiency-report-20261026.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5388,
+        "sha256": "a6d701696e7dff9c077221870a13d9d439f4ae483df47362ceed2946a6fb478c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 5388,
+        "sha256": "a6d701696e7dff9c077221870a13d9d439f4ae483df47362ceed2946a6fb478c"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/vad-low-volume-calibration-report-20261026.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2101,
+        "sha256": "139044c5e7dda81b1b25c1bc96ae5681e31938ed1450c1192c7a148b66d8d1c4",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2101,
+        "sha256": "139044c5e7dda81b1b25c1bc96ae5681e31938ed1450c1192c7a148b66d8d1c4"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/vad-low-volume-calibration-response-summary.json",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1163,
+        "sha256": "e2a685aae4f181809590e9a6731ecccd754469bfd2553ac71b6324e1ceba55aa",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1163,
+        "sha256": "e2a685aae4f181809590e9a6731ecccd754469bfd2553ac71b6324e1ceba55aa"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/vad-low-volume-qwen-quality-validation-report-20261029.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5660,
+        "sha256": "c3f27c133e7d35495dc13ecaeab6829e3de29394a399b70a67bdc66d170fc726",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 5660,
+        "sha256": "c3f27c133e7d35495dc13ecaeab6829e3de29394a399b70a67bdc66d170fc726"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/vad-pool8-seg4-random8-test-report-20261029.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3077,
+        "sha256": "7d4925dd53b85e58de7d462b5202d2390fc738a56c61caf45f20b06fa005f675",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3077,
+        "sha256": "7d4925dd53b85e58de7d462b5202d2390fc738a56c61caf45f20b06fa005f675"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/vad-reference-test.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1255,
+        "sha256": "56a0d858773ac985991d5b4cd84ae92ae6ec1ff59ba5ff2a3854cfd6d89e0c05",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 979,
+        "sha256": "ae4cc9b8a286b5a31d732fa54e5cae992e15bbcbe480d683138f85a53d825936"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/vad-segment-filter-range-validation-20261105.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3182,
+        "sha256": "003cbbbb06c1672b02769fcbf94c9f92b56234a6b83029aa0eca9724132c0a26",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3182,
+        "sha256": "003cbbbb06c1672b02769fcbf94c9f92b56234a6b83029aa0eca9724132c0a26"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/三套VAD分段基线测试方法与结论_20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6345,
+        "sha256": "c1b2f03d0d65b39b2a5c7cc0eadaa56d6a6cf0f4705362050f2494bfbed6ed8b",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 6345,
+        "sha256": "c1b2f03d0d65b39b2a5c7cc0eadaa56d6a6cf0f4705362050f2494bfbed6ed8b"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/上游对接文档_SeaCraftASR_20261109.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 8875,
+        "sha256": "edc906195222308487f89159521506efd02192f4f41e34aa0ff924e87a69e164",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 8875,
+        "sha256": "edc906195222308487f89159521506efd02192f4f41e34aa0ff924e87a69e164"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/模型内存压力与Swap诊断测试报告_20261031.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6745,
+        "sha256": "501128db9d7c2bb49894cb12f9878d12131e1567af95caee28f79dcad23a2289",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 6745,
+        "sha256": "501128db9d7c2bb49894cb12f9878d12131e1567af95caee28f79dcad23a2289"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/模型内存压力诊断方法与安全测试说明_20261031.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4767,
+        "sha256": "fa513b532c7b8d5f8faa4b983c43290ee2b883f4675a63e837a9b9d077cf401b",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4491,
+        "sha256": "34a65f8060a65cb2ad87868b7ba4c3a220a1954e55190a298ba3a99cf1ee9b70"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/理论计算机科学导论_FireRedVAD细小声音阈值测试报告_20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5134,
+        "sha256": "4b8b02f785ba6db5bdaefb99483f0686a99b959306f68ca57fbdbdb32602c8db",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 5134,
+        "sha256": "4b8b02f785ba6db5bdaefb99483f0686a99b959306f68ca57fbdbdb32602c8db"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/理论计算机科学导论_FunASR与FireRedVAD分段对比报告_20261028.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5880,
+        "sha256": "1731ff3f833a956a9c381a51d67bdf0136fa7a33b7a3fcdbe97a9c81ed31701d",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 5880,
+        "sha256": "1731ff3f833a956a9c381a51d67bdf0136fa7a33b7a3fcdbe97a9c81ed31701d"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "docs/课堂录音VAD细小声音过滤与说话人统计优化方案.md",
+      "action": "preserved_historical",
+      "reason": "traceable prior calibration, deployment snapshot or research; no bulk deletion",
+      "replacement": "README.md; docker/README.md; docs/npu-910b-migration-validation-20261117.md",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 9238,
+        "sha256": "a7ed3907c289700de745859e4c916939371145153617f7de92507acf2b46a34c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 9238,
+        "sha256": "a7ed3907c289700de745859e4c916939371145153617f7de92507acf2b46a34c"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "entity/data.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2339,
+        "sha256": "4596ff74847397fdf2628433f79f3110c72c13219e7a7b49353bb3cdf65776ea",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2316,
+        "sha256": "566529c7ebecc374daee0dcf9915dea5acc805972faa333f1e8635fe20757556"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "kernel_meta/buildPidInfo.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 326,
+        "sha256": "cd58eeb15a1099772179a75ab363f5edd85524497739c5df4b77b719de352fa4",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "main.py",
+      "action": "adapted",
+      "reason": "unified application object and shutdown-failure exit propagation; normal TERM exits 0, shutdown failure exits nonzero; model inference mathematics unchanged",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4862,
+        "sha256": "7f596a1661c01ed3c2e5641a7224ed1d2ac39a84798a8d0126e7df74e2bb53c2",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4035,
+        "sha256": "5f7d8c802a9e5da2e262c3e1257357a9d94d31de00f295a5e444d78e528b1468"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "model_status_runtime.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1414,
+        "sha256": "5e1a7c044ee04973e8b42ba74d1b83bb20215f424a98a8221e6511cff1cd545a",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1314,
+        "sha256": "60e97d994e1e6d48a06a658c2c1712c39375eec7083a637acaa5e10302b247a1"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/.openspec.yaml",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 40,
+        "sha256": "b75d296d3b54880b00a14fd17257d690f593cd5d3db17201d597c19528a9f905",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/design.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 22254,
+        "sha256": "0faebca0020d6e84226808c23fd53869015daab8404add7eecfae0f4741773ce",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/migration-review.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 15243,
+        "sha256": "9f0bfd8b7727f8a5f4f730d79fcfa4d976db659b8c379b93aa507bd4096b718d",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/migration-tasks.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 7087,
+        "sha256": "60eb7d684202e38605691d500a2d1bce16cf7898a5f29f6493eacec736f1b772",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/proposal.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 10111,
+        "sha256": "2028aa7b25141eaa8b6fd58e8b88f7f3e979ac146c655234603ac27c6c37b5a5",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/container-model-packaging/spec.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 10697,
+        "sha256": "53949c257015fa910dbb46244d193ab6720d9d4a49feeee4b5e5c976d604b097",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/local-model-inference-backends/spec.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 10126,
+        "sha256": "1f3eb89158318a71ba0b19a6e1570776f5cbf6292e480a817922c04190227bd6",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/local-model-runtime/spec.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6620,
+        "sha256": "e08209f113df7bcec33c4c0dbfbad59a4f2c0d91cbbc1f531ed3eda72072737e",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/local-qwen-asr-inference/spec.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 8648,
+        "sha256": "c197ef5e29addb352e63eecda74a725eaff938cc1f24adf53b9211713b60133a",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/npu-910b-runtime/spec.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 7542,
+        "sha256": "ae9291e2ffa880be120cf0e2c1b5ac068bac3abdfca4c06c877777865a5a895e",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/offline-asr-service/spec.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2378,
+        "sha256": "f3cdb2fabd15eec1c871a8e60e54d232f350dcdbc5fb5df06f871dd5e18884b6",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/qwen-asr-v2-adapter/spec.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 34146,
+        "sha256": "ffdf62f1b14da23c38591bf618e54452496372bb9ae85e548e27d578e5e4e1d4",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/resource-pressure-diagnostics/spec.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6692,
+        "sha256": "27c060048abf7ce2fa23f55cd6c5872b29840f915235a25341d3ce88ea3674c1",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/service-operations/spec.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 16423,
+        "sha256": "0335139fd794b92f21d1740c07d1bceba75215f3658432e7b092190fc656873c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/tasks.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 23542,
+        "sha256": "8eb612c9b447c9a684ab13ce24267e86f889c39e8fc6ff887ba2ad33337c7dec",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/test-plan.md",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 11284,
+        "sha256": "f3ffaa23968fc16248e0211ae5cd698ef6bc430500e0fa72acb590e1f6ab6e88",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "requirements-build.txt",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 140,
+        "sha256": "6f66eee54fde1e7f37c2ec8b6c34c3f6cc9e5379ce796ec463dd74f6b26d6c97",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "requirements-conda-linux-aarch64.txt",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 19350,
+        "sha256": "16e41a31e5368ad8fe9d39d0dec1ad77bc96f583bf8bfcee98cbe7ccb3581cf3",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "requirements-dev.txt",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 102,
+        "sha256": "d65dc5792c3f1c4b5fe9f1e1a2e2a7695880a7beea2c23f816453362220f7fbe",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "requirements-lock-npu.txt",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1982,
+        "sha256": "c8ef2d1805442b4fecdcb605912dd5aee60e6bfe84f81bba519463370164a67b",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "requirements-npu.txt",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 410,
+        "sha256": "1d33baacbf24fa41b56ac195eb6afc6d226062127d4c61cc73137146362df45b",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "requirements-pip-extra.txt",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 142,
+        "sha256": "49f1435b6d753519b0bb2dc6cca5521b3789a3f7c56559c00c3625f3ecf3a2fb",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 355,
+        "sha256": "c841519427e5bf12dc42a9ca0a6db4d894070b1ba10e49dd37f8463c2a93fbb6"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "requirements-pip-runtime.txt",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 124,
+        "sha256": "fa1adc2d2821b71ba7735a032aa699d0549c4c370bb2461d352ce81947efc4a3",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 150,
+        "sha256": "ac9aaaee914ecfc057def157bae37902986c2365cdf478650ce26a56a6ef5955"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "requirements-pip.txt",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 361,
+        "sha256": "df85c8b940c271902c50d6ed17aa4e831a33705f0073b6b3bd31850048707e6f",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 296,
+        "sha256": "4cdeb52f30856a0426cba088b3f664934ba9e22e91df6841a2ee0e63a3856973"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "requirements-tensorrt-export.txt",
+      "action": "retired",
+      "reason": "retired ONNX/TensorRT export-only dependency set; no conversion in production path",
+      "replacement": "requirements-npu.txt; requirements-build.txt",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 102,
+        "sha256": "9d0451a05ba19821b5ef7e52fa4d856f8d3288d1e097e4162971da3dc6132036"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "requirements-tensorrt.txt",
+      "action": "retired",
+      "reason": "retired TensorRT inference dependency set",
+      "replacement": "requirements-npu.txt; requirements-lock-npu.txt",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 191,
+        "sha256": "5ad413c2bcfbee888bc07847395f552413cf7963ff7c59ed5b47594f2e2aa531"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "requirements.txt",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 284,
+        "sha256": "dcc089a8aec1ccd61973acda927a8b15f2dfa6eb47eeabb428d2620e1d0f4a26",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 853,
+        "sha256": "3460fc7096f05ac284041a50f19090a53d5efaa6eea71fb249ae26fd3f223841"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/bench_cam_emo_model_pool.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 9602,
+        "sha256": "c7d2948cb2dfbd70479ff2abae1999e2077cc314b03477985fceca4813215f94",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 9619,
+        "sha256": "43aaa0b755f6bce3ecef6ad49a80d2500737032d43223dd46a896145f53141d5"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/bench_local_model_latency.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6679,
+        "sha256": "e4f202eebf366d024a5da916fe918d5c4e7048776d6a02e7608242d9835804e5",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3609,
+        "sha256": "450fa13ac57a6c154b1f8b0664adca338d5cf0b7ddbd03762ff5f271ecda70e3"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/bench_tensorrt_backends.py",
+      "action": "retired",
+      "reason": "retired CUDA/TensorRT backend benchmark",
+      "replacement": "scripts/bench_local_model_latency.py; scripts/validate_npu_models.py",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 12261,
+        "sha256": "5a4894cae16e28a41748be499de80698494efc482b65293078b5e1871d7e73a4"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "scripts/bench_vad_cpu_vs_gpu.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4074,
+        "sha256": "3f6b585ebdb129b3d6abe24789c0a2313e55fc5011047ba7ff969c666b89f2d2",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3932,
+        "sha256": "d492c334020f4af1e05f0730817d683d07ac33c4933e51911a653f09edae6c21"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/bench_vad_pool_scaling.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2966,
+        "sha256": "3130d932f2311a1fa4ff35990f9712b5ddc5358971857b1b1d1e99b3d01de497",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2885,
+        "sha256": "9c6a9383191431ab8536c5a4448fefbfc9aa8c11233e63d310e41e3121e7955e"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/bench_vad_process.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3066,
+        "sha256": "bfbb28244e7d40b9270e287eb50d17f5eb5098524032d6deb1dff07883967d92",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4124,
+        "sha256": "45ea8782da61059a738844acf5967ac553853f7e2e94c4d5c02145f4e9142f4e"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/bench_vad_scaling.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3400,
+        "sha256": "4c10b0c122f8ac8af15c3e3a7a74f4eccf1efc650db1bfe2bce56e410611d819",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4810,
+        "sha256": "2228e272c60b35527a2a096a606f246959dbe75939d63fcc888d55088b533c2a"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/benchmark_qwen_candidates.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 24975,
+        "sha256": "b1a6f3cf42d9c110d406ff529ab73d8d5c3040b9bddf8400659c87bd874b571f",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/build_audio_manifest.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 9266,
+        "sha256": "1b7a382aaef6805e7a020921e16909b94c41c04ffcbaa14bf7e5d02a34e5ecea",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/build_cython.sh",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3070,
+        "sha256": "32972bf823b382d2e3a9f55fe65b8ee12333b8f0816747d1eff92841f9f962a2",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1973,
+        "sha256": "e17024ecf6ba9587f8ca4a1d765ce0ab7bbc35f205ac97275263925eeb6e929e"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/check_cam_cluster_boundary.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4237,
+        "sha256": "9c46ef8287d58c0bb9c50d9e62c3d570ee61c4b74504af0487ca95556597e7b9",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4461,
+        "sha256": "34b8354fff771e7c579111ce47fcc3d06a1550d9a90b73acf87bc85405ab4312"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/check_npu_environment.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3029,
+        "sha256": "db566cb53ec1819f9ff0a0b9af86fbbd02ba6bc4254db1690ab952666f1c49be",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/check_tensorrt_assets.py",
+      "action": "retired",
+      "reason": "retired engine-only asset checker",
+      "replacement": "scripts/check_npu_environment.py; core/deployment.py",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1812,
+        "sha256": "b1b1feae817d0a4c2b1e97d249bda2fa26a5430e71e04cf460a68841eadeaa46"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "scripts/export_local_tensorrt.py",
+      "action": "retired",
+      "reason": "retired CUDA/TensorRT engine exporter; original weights are retained",
+      "replacement": "core/local_inference.py; scripts/validate_npu_models.py",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 9058,
+        "sha256": "c61b9497ecab4b703652d713195e946a021a6eeabbacce6803f4bd4a4b55a634"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "scripts/model_memory_pressure_diagnostics.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 23036,
+        "sha256": "d37b0ca190b481ce84463c003ab982446e858b0f6104a0a26ba5da06d1340518",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 22035,
+        "sha256": "5d7dbcddec4f1da3d8f33d04af349cfd1ae82428fc96bbb55cbd2e2cfba43a5f"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/profile_role_emotion.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5649,
+        "sha256": "379dc3501f61fe1913f0019e6db7d812ff7fad1a0ed0cc6dcd5d9016b5913f66",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 10298,
+        "sha256": "32c257f51de2edfeeeaf09028bd41d23e8e9bb5ad8b5be142b528262ea7f7e95"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/rebuild_npu_env.sh",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5981,
+        "sha256": "1bda34afcbf06f97358c1eee5d9e7cc1863d388ddee06723517431fcb751ae55",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/speaker_threshold_sweep.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 10096,
+        "sha256": "df671696bbdd2a18e9c91ed6ded02db5a8195031376d039a0bf05c175523c3e6",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 8971,
+        "sha256": "899ef5e70a2974f506ae3bd04592d951fa1ecc80ae24e62af49e4a7e66b6acab"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/summarize_cam_emo_model_pool.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3860,
+        "sha256": "0fe0f740fbf3aa6efd88ddc890215e2dd51621213ed08ba35a86e10c3b68ed29",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3686,
+        "sha256": "fc8a1fa0f47258215d26e17343b3311593680c427c698b6e20bdbf8e1e714379"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/summarize_tensorrt_backends.py",
+      "action": "retired",
+      "reason": "retired TensorRT benchmark summarizer",
+      "replacement": "docs/npu-910b-migration-20261117/local-model-comparison.md",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 7552,
+        "sha256": "8a86190c44077ad7913676afb738cc193054814e2ff8574b04bb05ee705e1096"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "scripts/validate_backend_admission.py",
+      "action": "retired",
+      "reason": "legacy backend-specific admission probe retired; A/B capacity, timeout, grant/cancel and release assertions remain in focused CPU regressions",
+      "replacement": "tests/test_audio_admission.py; tests/test_v2_audio_admission_route.py; tests/test_audio_admission_lifecycle.py",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 7295,
+        "sha256": "1376efcc0b7ee44002414db837c69f4e5cc5ef287b1a6ea5f6b9a976dee98198"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "scripts/validate_backend_rollback.py",
+      "action": "retired",
+      "reason": "legacy CUDA/TensorRT rollback probe retired; NPU no-fallback, failed-instance ownership and aggregated close regressions replace it",
+      "replacement": "tests/test_inference_backends.py; tests/test_npu_lifecycle_faults.py; tests/test_vad_pool_static.py",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 7851,
+        "sha256": "4f4c3879ee2e43c57a066a00603fd7189f207ba04f1a757f15c48ec01f230d49"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "scripts/validate_local_tensorrt.py",
+      "action": "retired",
+      "reason": "retired TensorRT execution validator",
+      "replacement": "scripts/validate_npu_models.py; tests/test_inference_backends.py",
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 5980,
+        "sha256": "26d1057c0daabbbfce56237dfc703b640806231116d07da1fbdc1524a389eb95"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "scripts/validate_npu_models.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 27279,
+        "sha256": "3e4865daec0126a05b09f7c1b8e834a95169aebe769af8c0cecfc31d6894b058",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/validate_npu_service.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 31404,
+        "sha256": "d3144d13a21978092ee769e59293be59131f509145b3ca17f104e4e4f9553a69",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/validate_qwen_cancellation.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 16378,
+        "sha256": "5b8965872d7de19654ef626850cff690029cd0f0307f70a43bd7d2a05a030dfa",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "scripts/verify_vad_pool_regression.py",
+      "action": "adapted",
+      "reason": "NPU/native dependency or delivery contract",
+      "replacement": "core/local_inference.py; core/qwen_asr_runtime.py; tests/test_audio_admission.py; tests/test_local_qwen_runtime.py; NPU validation tools",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3920,
+        "sha256": "9dfddb152beae613e9a0136b355a764191116d7e7ea958561fb1357a14a207c1",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4220,
+        "sha256": "9568128300e053255535c9c88abd02d4461cb3b0a20a3184a9838c897d9e063e"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "setup_cython.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1550,
+        "sha256": "50a6c7d2ea160ff69815b118f8b429b8d3c2d9452214f563e85c85b5132a705e",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1467,
+        "sha256": "83052a0ab689dc9da4d09954ca2c4ba30844a79cfb2705a25273e5bcac3b2511"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "test/compare_firereds_vad_to_paraformer.py",
+      "action": "preserved_research",
+      "reason": "3 CPU interval/annotation analyzers + 1 isolated VAD backend research runner (default FunASR cpu), no production importer; reusable baseline tools, not NVIDIA-specific by name",
+      "limits": "historical fixture paths/FireRed optional dependencies; not part of selected production NPU backend or default pytest",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 8210,
+        "sha256": "43b6f3ca1afe00def8011f1b057388a1894550a70d45da31dd251e6e54f57051",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 8210,
+        "sha256": "43b6f3ca1afe00def8011f1b057388a1894550a70d45da31dd251e6e54f57051"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "test/compare_three_vad_baselines.py",
+      "action": "preserved_research",
+      "reason": "3 CPU interval/annotation analyzers + 1 isolated VAD backend research runner (default FunASR cpu), no production importer; reusable baseline tools, not NVIDIA-specific by name",
+      "limits": "historical fixture paths/FireRed optional dependencies; not part of selected production NPU backend or default pytest",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 7096,
+        "sha256": "feea4e89bf9ff7e0e0c8c578746e31362bc400e3c4280d361f131c7286d86336",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 7096,
+        "sha256": "feea4e89bf9ff7e0e0c8c578746e31362bc400e3c4280d361f131c7286d86336"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "test/evaluate_fireredvad_small_sounds.py",
+      "action": "preserved_research",
+      "reason": "3 CPU interval/annotation analyzers + 1 isolated VAD backend research runner (default FunASR cpu), no production importer; reusable baseline tools, not NVIDIA-specific by name",
+      "limits": "historical fixture paths/FireRed optional dependencies; not part of selected production NPU backend or default pytest",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3853,
+        "sha256": "20c9765062dda2225de1ba38c42b4c90981b1345553ad4bbd2fd09d9bfd082ac",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3853,
+        "sha256": "20c9765062dda2225de1ba38c42b4c90981b1345553ad4bbd2fd09d9bfd082ac"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "test/fireredvad_vad_compare.py",
+      "action": "preserved_research",
+      "reason": "3 CPU interval/annotation analyzers + 1 isolated VAD backend research runner (default FunASR cpu), no production importer; reusable baseline tools, not NVIDIA-specific by name",
+      "limits": "historical fixture paths/FireRed optional dependencies; not part of selected production NPU backend or default pytest",
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 7261,
+        "sha256": "da0c8b0d04e14405a9109e7d5a04932d0788d2ded618aceda58ff9e7082adf47",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 7261,
+        "sha256": "da0c8b0d04e14405a9109e7d5a04932d0788d2ded618aceda58ff9e7082adf47"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/fake_vad.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1965,
+        "sha256": "2a54e8d8039590c4922754ecdc672349087c3545a8535a52b38da7c63de87d4c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1550,
+        "sha256": "a03e8511079dfc68af7edc05ac9e25d52c6ad0c2445fbb00368e81d93e232989"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/fixtures/v3_contract.json",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2922,
+        "sha256": "44bdcec81fb756655497a3ee0b38ecc7d2303272ce48c35f095ec436398c1b0a",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_audio_admission.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5810,
+        "sha256": "7cd9c253f0369995a3bde036c0f5e26bf7a6c613a3f0d0ded54cd4d5db11b5d7",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 5818,
+        "sha256": "66ff55740d78e95599abf42eb7a5ec702deb9a3e30fa9feb0c6d78a345cb56d9"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_audio_manifest.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4101,
+        "sha256": "66e9cace217edfc41c10f45d55596f258b723f57b5af668b61339d0af233546b",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_audio_normalization.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1475,
+        "sha256": "2826f6d319dffe87d8951413f96eef234901b6374da9080d31337c7a3106e466",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_benchmark_qwen_candidates.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 17015,
+        "sha256": "e913a8b5c6d3a1efc4fad82e878ca6c5146c508842653e4c3d4168d494b5a09d",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_config_contract.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4917,
+        "sha256": "136ec3275c7a56d746cfdd69441c146651e4895a04815e011b9417bb3f85b642",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4639,
+        "sha256": "2c0d31cd62b71ad39b00696f7c281a61544a2a6381d8f1fb575de978c299c040"
+      },
+      "audit_expectation_matches": true,
+      "final_default_note": "single Qwen replica, segment/request concurrency 1/1 after two complete eight-source trials; model mathematics unchanged"
+    },
+    {
+      "path": "tests/test_docker_deployment.py",
+      "action": "adapted",
+      "reason": "CPU wrapper fixtures cover startup/signal/child-exit/timeout ownership windows and delivery preflight contracts",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 15968,
+        "sha256": "cf08805298c4de04b4700af9e5b7d18c826eac34e37288351693522493192b27",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2300,
+        "sha256": "4596c5e2bcaab47b1d38a10e3bd608e255fb391e02bee91195bff15f1ad2becb"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_docker_profile.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2517,
+        "sha256": "bf8508027ba1c9020ff163b182042a99ed477e8d1c9eef6e05966bdfbc6b61d4",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3132,
+        "sha256": "7aa882ec3063ac02013fd3bfa78b47ac79ee219b05a54739bee7141debd75e81"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_inference_backends.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 15779,
+        "sha256": "77dbee0f424985009d301cfcd719a2cb28dced5fd14cfe27d75c44ebda40d118",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 12396,
+        "sha256": "5393d2a32feee126c850e6c112e9449165d9734df02bf692f35aaaebff1f02f0"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_local_model_runtime.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 7823,
+        "sha256": "59acef2e2e232f70c24450d434eba09f02ad038a719308e8aa883c4af9a4385d",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 7542,
+        "sha256": "d1ca1772165011a88acb8a4609b21a1a34ccc383529dc9d544b424ab2a6c430e"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_local_qwen_runtime.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 17002,
+        "sha256": "a93491d9433773572c0139441acba4148c115d822f778eff9cb407b888165cfb",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_main_shutdown_exit.py",
+      "action": "adapted",
+      "reason": "CPU subprocess regressions for normal TERM, lifespan shutdown failure and aggregated shutdown cleanup; explicit exit/port ownership evidence",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4694,
+        "sha256": "c6fbeace83b834ac501fd3a39cd6c3ead3acc997896580ba507e4d8ec34bd7c7",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_memory_clip_pipeline.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2383,
+        "sha256": "c6a6f86383a911838570252e259ba8acda76857a6b12a3fdc2d3128e77507a39",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1771,
+        "sha256": "27101b1d237ef7189be0c3169d4ae2565866f70da75f532a481656f123110dbd"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_model_assets.py",
+      "action": "retired",
+      "reason": "retired TensorRT engine-only validator tests; native checkpoint/path/label and profile preflight contracts remain covered",
+      "replacement": "tests/test_docker_profile.py; tests/test_npu_environment.py; tests/test_inference_backends.py",
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3310,
+        "sha256": "603cdccd44dd8ff186bb7646c7e5efa6237f8cd49430164ee21e8d2d9e2129f6"
+      },
+      "audit_expectation_matches": true,
+      "removal_performed_by_this_audit": false
+    },
+    {
+      "path": "tests/test_model_loading.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 19062,
+        "sha256": "802178b01db204cd27aa3a8da906e7422cb55aa2b7a71195164bda39a7119bfb",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_model_memory_pressure_diagnostics.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4068,
+        "sha256": "4975e0e2360bfa4075eb7ef82b3c8984a977a7b12dae2bbc857f42c7dce8f485",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1811,
+        "sha256": "5e76c30dbc32027d1316be84dadb36f7dffb57f45f33378fb906f86465e7f0d8"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_model_pool.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6927,
+        "sha256": "760337222acfda0093e8a0afd43640c9a01ab1add877e778439ec624c52b9186",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 6923,
+        "sha256": "89c87b922147b8e29bc4bb46f2af2891f07d6d911778d5dcaa0144e76d9154c8"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_model_pool_route.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 3286,
+        "sha256": "77a402c812d82c5a6b990cdbe1eea221ceb9a5747d6b71341441c79951bbae25",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3337,
+        "sha256": "da80267c397b69ab04d9c6ae7f8f130236f93375a291a929a242732708d5e594"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_native_loading_dtype.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 14935,
+        "sha256": "8aeef16d6af346bd0318569666d18a1f383f636728776132b73de25fcfb3e996",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_npu_environment.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6747,
+        "sha256": "2b1b427ce0a5981749a56dec26ba80a3a65f24d85c8eed98af5c2de5ce8aab2b",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_npu_lifecycle_faults.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 8049,
+        "sha256": "dc3eb7ee534c9121234660a6fc3f49634254b702cb1e5ddb162a16fc92b9b889",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_npu_pooling.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 8022,
+        "sha256": "46265edb5cb1745778601d102d4a10704d9daff27fab0dfb483b7328d8d036ac",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_npu_resource_status.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5897,
+        "sha256": "8aa47f49ae7671d9eb4dfe3711f26ac10c3a0821c979013d77195ad6df63011c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_qwen_cancellation_tool.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 4940,
+        "sha256": "32ffd36bc76a6735beb62656d6123c2d98e5c401d1201a6b9393c6f26db0ebc5",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_qwen_v2.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 34253,
+        "sha256": "1618b698ab8dade0cf8c65a2aea311e7bc4c0382ae623fb2dc29e63aadde67fd",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 33791,
+        "sha256": "2ead3ce51f99ac3372144dc5fca6e069bfaff82eb84fa989b8946333fa369b37"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_resource_diagnostics.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 9223,
+        "sha256": "d19932b3a495f6e526afd6ddfed538b93e58c77b46f92cc405b19667d39d3294",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4861,
+        "sha256": "2ce5a29c0698fa7b2d34c2f687b4295f42294dd6c560104f28ff5fe08699f2de"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_status_sampling.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 6984,
+        "sha256": "10cafc1cb626cd259e5148221175466b59da018560511dc6e1a965591f1a5485",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_tensorrt_config.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 2909,
+        "sha256": "f205f474242dabaf68acb8244e0624f01a1e99b8d73451e7e134b3772581a431",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 3279,
+        "sha256": "5ca5d4c840b1fbd19322ef665cee8d46848e215bab57243b7554f126602f502d"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_v3_contract_snapshot.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 9245,
+        "sha256": "162e80a4f54ad7f89f84f934099d1ffcdc46826c543f58a8dd1aa9e9d81260b7",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_v3_route.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 1072,
+        "sha256": "b12bde08e0939e843c0c83fce20dfc52a91f8ba945d335ae73623d68c499638f",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 1080,
+        "sha256": "ed09bdae9af25b48a1c1a74325c510aca13fe23360e4802e15896991ca742d76"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_vad_pool.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 10695,
+        "sha256": "210450224c4940c30b3707057112000ed29b8f62a6ae03394611819bb6a6d316",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 10001,
+        "sha256": "2ab2123b244d1d4d558928f7193c113e32f20c8e58db4db20a13f649bde22e6c"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_vad_pool_static.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 9195,
+        "sha256": "b7f50a1fb29f5c2afe1fd6bca4448a26a7b3170912faa9f8f5a779729028c06c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 2232,
+        "sha256": "d748c59fa360d9540fd234f7a731b68c45cb790bc15bb6b2e9a8cf771ddf9ea9"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_vad_reference.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 7792,
+        "sha256": "b2ca4e2df93c5b21f87931494908a504015cb02c3ec41d417d3c5dd0aa289a0c",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 4899,
+        "sha256": "97287e271e471c24479f78a3ae22dd0f1c6077e6ef76cec011d0644f70ddee78"
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_validate_npu_models.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 5737,
+        "sha256": "fe7dbebddd4421da5d0baef4ccbcca6eddea3cbd31eb037a85c8798f6166b1ec",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "tests/test_validate_npu_service.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 18428,
+        "sha256": "d37f07da8105641788a1475315139e2b56c9e89f6ed11513a1b01f0848ed4e43",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": false
+      },
+      "audit_expectation_matches": true
+    },
+    {
+      "path": "utils/audio_utils.py",
+      "action": "adapted",
+      "reason": "current migration source/test/configuration/evidence change; individually verified against HEAD and current bytes",
+      "replacement": null,
+      "added_by_final_source_inventory": true,
+      "current": {
+        "exists": true,
+        "lexists": true,
+        "symlink": false,
+        "bytes": 10166,
+        "sha256": "0677a24eeefce08418a374e72e35e0a0649e85b227c40b7595b3bac66bbb3e6e",
+        "stable_read": true
+      },
+      "baseline_HEAD": {
+        "present_at_HEAD": true,
+        "bytes": 9719,
+        "sha256": "d79409099ef9b3306f2c78aabd7addb78ac8c5af1ff3b1a473e3d212ddd4c686"
+      },
+      "audit_expectation_matches": true
+    }
+  ],
+  "deleted_module_import_violations": [],
+  "preserved": "Preservation policy: original weights/audio/history/reports/images/caches/logs and pre-existing services are retained. This audit performs no asset removal and does not claim byte-level baseline equality for every protected asset; fusion_result.json disposition remains unknown.",
+  "retired_admission_test_replacement": "tests/test_audio_admission.py + tests/test_v2_audio_admission_route.py retain A/B capacity, priority, waiting timeout, cancellation/grant race and finally release assertions",
+  "final_audit": {
+    "performed_at_utc": "2026-11-17T15:59:04.998101+00:00",
+    "repository": "/home/zhangs/asr_nvidia",
+    "baseline_HEAD": "79c7c1bbc94ec1824281c8e06c26e4f2a3ae5ff9",
+    "previous_audit_sha256": "e6a8375d06a61de924c48b69484c263cbf35ed7b7e9624a459beac5e5386cf2a",
+    "audit_mode": "read-only source inventory and AST reference audit; only this JSON/report are written separately after review",
+    "action_counts": {
+      "adapted": 148,
+      "preserved_historical": 44,
+      "preserved_research": 4,
+      "retired": 15,
+      "updated_current": 2
+    },
+    "source_files_ast_scanned": 124,
+    "source_scan_roots": [
+      "core",
+      "api",
+      "utils",
+      "entity",
+      "scripts",
+      "tests",
+      "test/*.py"
+    ],
+    "source_parse_errors": [],
+    "expectation_mismatches": [],
+    "unstable_reads": [],
+    "source_assets_removed_by_this_audit": [],
+    "protected_asset_scope": "No original weights/audio/history/reports/logs/images/container images/build caches are removed. This source audit does not re-hash or claim byte-level baseline equality for all protected assets.",
+    "self_fingerprint_excluded": "asset-audit.json excludes its own SHA to avoid a self-hash cycle",
+    "hash_semantics": "Each current SHA is the byte snapshot at this audit time. Later documentary edits must be distinguished from source changes; this is not a claim that every report is immutable after audit.",
+    "generated_artifact_observations": {
+      "fusion_result.json": {
+        "exists": false,
+        "lexists": false,
+        "symlink": false,
+        "git_status_at_audit": "",
+        "prior_observation": "Earlier project git status at 13:53 reported untracked fusion_result.json; at 14:01 Path.exists was false, as reported in session; no date or original bytes independently captured by this audit",
+        "disposition": "unknown; no move/delete/create performed by this audit; no original SHA or destination can be inferred"
+      }
+    },
+    "expected_frozen_source_sha256": {
+      "core/config.py": "0da933f202100d56dea4668993058165af2563e9a63628a6f438929c6db75d2f",
+      "config.toml": "6b1540f4242241e1e673f078c993baf401eb3a8220b026e66d91f2da2d03f3ca",
+      "docker/config.toml": "a7a6e5e0ac323e06dec2bc6f9a6c6845203bbc8ad7c1e7a107b83d82a944b665",
+      "tests/test_config_contract.py": "136ec3275c7a56d746cfdd69441c146651e4895a04815e011b9417bb3f85b642",
+      "README.md": "c82975f4244bcf908c2060a85467577853c6bc0eb267040a820ec6d43104c948",
+      "AGENT.md": "ad2390253ee6940982e217a77a5aede087a0d36e6cf036b22e4acd87993a8f51",
+      "docker/README.md": "8dbb1fdd6220198def8cc62b1ed61736e0055a28ac598e5b8b1f7e5dbc086558",
+      "main.py": "7f596a1661c01ed3c2e5641a7224ed1d2ac39a84798a8d0126e7df74e2bb53c2",
+      "tests/test_main_shutdown_exit.py": "c6fbeace83b834ac501fd3a39cd6c3ead3acc997896580ba507e4d8ec34bd7c7",
+      "scripts/rebuild_npu_env.sh": "1bda34afcbf06f97358c1eee5d9e7cc1863d388ddee06723517431fcb751ae55",
+      "docker/start.sh": "7c0b3f6dc4c09bf964332ffd98354adfd496691aee599df6c124ecb6c30b56f3",
+      "tests/test_docker_deployment.py": "cf08805298c4de04b4700af9e5b7d18c826eac34e37288351693522493192b27"
+    },
+    "frozen_source_mismatches": [],
+    "documentation_refresh": {
+      "performed_at_utc": "2026-11-17T16:01:25.880981+00:00",
+      "paths": [
+        "README.md",
+        "AGENT.md",
+        "config.toml",
+        "docker/config.toml",
+        "docs/npu-910b-migration-20261117/compiled-stage-comment-refresh.json",
+        "docs/npu-910b-migration-20261117/classroom-threshold-review.md",
+        "main.py",
+        "tests/test_main_shutdown_exit.py",
+        "scripts/rebuild_npu_env.sh",
+        "docker/start.sh",
+        "docker/README.md",
+        "tests/test_docker_deployment.py"
+      ],
+      "scope": "selected entry byte reads only; no repeated AST/model/device/service execution",
+      "compiled_stage_comment_refresh_sha256": "480bc0ecf4ff2976e051af40b1f7a496ede8b0cd1bb52eeb6ce7765df7dce9bf"
+    },
+    "audit_script_sha256": "643cd278d816724f3add9954c45dc0a97da2ff491f38ca376f183824615a7d85",
+    "whitespace_only_refresh": {
+      "path": "tests/test_docker_deployment.py",
+      "old_sha256": "2aa06be6f75f215afb5ae671ecfa040775ad459565c0026cdbec842bb5c401f3",
+      "new_sha256": "cf08805298c4de04b4700af9e5b7d18c826eac34e37288351693522493192b27",
+      "old_bytes": 15985,
+      "new_bytes": 15968,
+      "old_ast_sha256": "49d237d370d10844058feba3de822d89684a066add52e8c55c8314fc0d7e3607",
+      "new_ast_sha256": "49d237d370d10844058feba3de822d89684a066add52e8c55c8314fc0d7e3607",
+      "ast_identical": true,
+      "line_count_unchanged": true,
+      "only_changed_lines": [
+        116
+      ],
+      "performed_at_utc": "2026-11-17T16:05:47.792113+00:00"
+    },
+    "final_selected_refresh": {
+      "performed_at_utc": "2026-11-17T17:10:00.581770+00:00",
+      "previous_audit_sha256": "9b1f916ae50fd9c24321e17004b057e94fb4484f1bc6f9cc2a46843c3bf83fbb",
+      "paths": [
+        ".gitignore",
+        "AGENT.md",
+        "README.md",
+        "config.toml",
+        "core/config.py",
+        "docker/README.md",
+        "docker/config.toml",
+        "docker/start.sh",
+        "docs/npu-910b-migration-20261117/audio-manifest.json",
+        "docs/npu-910b-migration-20261117/classroom-threshold-review.md",
+        "docs/npu-910b-migration-20261117/compiled-cpu-parity.json",
+        "docs/npu-910b-migration-20261117/compiled-dtype-guard-30.json",
+        "docs/npu-910b-migration-20261117/compiled-final-g1-steady-evidence.json",
+        "docs/npu-910b-migration-20261117/compiled-frontguard-cpu-validation.json",
+        "docs/npu-910b-migration-20261117/compiled-frontguard-cpu.json",
+        "docs/npu-910b-migration-20261117/compiled-stage-comment-refresh.json",
+        "docs/npu-910b-migration-20261117/container-negative-preflight.json",
+        "docs/npu-910b-migration-20261117/cpu-regression-final-g1-default.json",
+        "docs/npu-910b-migration-20261117/cpu-regression-final-mainexit.json",
+        "docs/npu-910b-migration-20261117/environment-imports.json",
+        "docs/npu-910b-migration-20261117/environment-rebuild-clean-build.json",
+        "docs/npu-910b-migration-20261117/environment-rebuild-validation.json",
+        "docs/npu-910b-migration-20261117/environment-reference.json",
+        "docs/npu-910b-migration-20261117/evidence-retention.json",
+        "docs/npu-910b-migration-20261117/full-g1-final-evidence.json",
+        "docs/npu-910b-migration-20261117/full-pair-capacity-decision.json",
+        "docs/npu-910b-migration-20261117/full-pair-final-evidence.json",
+        "docs/npu-910b-migration-20261117/full-pair-output-comparison.json",
+        "docs/npu-910b-migration-20261117/full-source-provenance.json",
+        "docs/npu-910b-migration-20261117/g1-default-config-application.json",
+        "docs/npu-910b-migration-20261117/legacy-deployment-before-migration.md",
+        "docs/npu-910b-migration-20261117/local-model-comparison.md",
+        "docs/npu-910b-migration-20261117/main-shutdown-exit-validation.json",
+        "docs/npu-910b-migration-20261117/model-assets.json",
+        "docs/npu-910b-migration-20261117/mp3-full-decode.json",
+        "docs/npu-910b-migration-20261117/numpy-scipy-payload-audit.json",
+        "docs/npu-910b-migration-20261117/numpy-scipy-payload-audit.md",
+        "docs/npu-910b-migration-20261117/protected-build-final-g1-config.json",
+        "docs/npu-910b-migration-20261117/protected-build-validation-29.json",
+        "docs/npu-910b-migration-20261117/protected-build-validation-30.json",
+        "docs/npu-910b-migration-20261117/protected-build-validation-frontguard-30.json",
+        "docs/npu-910b-migration-20261117/protected-build-validation.json",
+        "docs/npu-910b-migration-20261117/qwen-backend-selection.md",
+        "docs/npu-910b-migration-20261117/qwen-cleanbuild-cpu-parity.json",
+        "docs/npu-910b-migration-20261117/qwen-frontguard-cpu-parity.json",
+        "docs/npu-910b-migration-20261117/test-coverage.md",
+        "docs/npu-910b-migration-validation-20261117.md",
+        "main.py",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/.openspec.yaml",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/design.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/migration-review.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/migration-tasks.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/proposal.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/container-model-packaging/spec.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/local-model-inference-backends/spec.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/local-model-runtime/spec.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/local-qwen-asr-inference/spec.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/npu-910b-runtime/spec.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/offline-asr-service/spec.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/qwen-asr-v2-adapter/spec.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/resource-pressure-diagnostics/spec.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/service-operations/spec.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/tasks.md",
+        "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/test-plan.md",
+        "scripts/rebuild_npu_env.sh",
+        "tests/test_config_contract.py",
+        "tests/test_docker_deployment.py",
+        "tests/test_main_shutdown_exit.py"
+      ],
+      "scope": "selected final source/configuration and documentary metadata only; no repeat global AST pass, no audio/model hashing, no model construction, no NPU/port/test activity",
+      "prior_ast_scan_time_utc": "2026-11-17T15:59:04.998101+00:00",
+      "prior_ast_scan_scope_note": "The recorded 124-file AST scan is the earlier dated pass, not a fresh scan. Subsequent production Python change is core/config.py concurrency fallback 2->1; matching config-contract changes are covered by the final 449/146 CPU run. Original model math modules remain frozen.",
+      "final_cpu": {
+        "passed": 449,
+        "subtests_passed": 146,
+        "warnings": 2,
+        "elapsed_seconds": 85.18,
+        "log": "/tmp/asr-apply-20261117-a99trpfv/pytest-final-g1-default-20261118-b25uqnne.log",
+        "log_sha256": "093f20f359c0c9ff11d878d40f83be638e75b0e3c0dfb8fa6920c4ab0ae2c3b0",
+        "evidence": "docs/npu-910b-migration-20261117/cpu-regression-final-g1-default.json",
+        "evidence_sha256": "16d8976b167e3970c494fa160643c83347a0755bb0a23c880bcbd9bf94db0c9f"
+      },
+      "final_compiled_steady": {
+        "evidence": "docs/npu-910b-migration-20261117/compiled-final-g1-steady-evidence.json",
+        "sha256": "82c9ad562bfa99839e4a1552b70b87fb5aa9f1e6ae5b0fa51dd7203bb76fc2aa",
+        "stage": "/tmp/asr-cython-g1-default-20261118-nkmpk_2a",
+        "snapshot_sha256": "4050173f89303bc5477078a23dbe8ac3d4be84f95f95dba6eb0ccb75a427a992",
+        "status": "passed; 3 all-B warmup +16 timed; successful owned-process/port shutdown"
+      },
+      "evidence_retention": {
+        "manifest": "docs/npu-910b-migration-20261117/evidence-retention.json",
+        "manifest_sha256": "e1a491334c45bc3b2a7e1148180485d16093380c3ded1d39e7cb98e7e18e0cfb",
+        "note": "Retention manifest records ignored logs/validation-run.tar.gz plus retained B3 five-file reference; original files remain. Bundle hashes are those explicitly recorded in that manifest; this selected audit does not reread the full bundle or assert coverage of external temporary build prefixes."
+      },
+      "archive_boundary": "Implementation pre-archive snapshot. Subsequent separate archive commit may relocate change/spec files and update AGENT archive documentation; those documentary differences are not new inference changes.",
+      "source_assets_removed_by_this_refresh": []
+    }
+  }
+}

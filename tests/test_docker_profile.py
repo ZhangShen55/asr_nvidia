@@ -1,69 +1,63 @@
+"""NPU 预检的文件/配置/设备边界，用替身避免初始化真实设备。"""
 from pathlib import Path
-
+from types import SimpleNamespace
 import pytest
-
 from core.config import Settings
-from core.deployment import DeploymentPreflightError, validate_cuda_tensorrt_runtime
+from core import deployment
 
 
-ROOT = Path(__file__).resolve().parents[1]
+def config(tmp_path, device='cpu', qwen=False):
+    dirs = {}
+    for name, files in [('vad',['model.pt','config.yaml','am.mvn']),
+                        ('spk',['campplus_cn_en_common.pt','config.yaml']),
+                        ('emo',['model.pt','config.yaml','tokens.txt'])]:
+        d=tmp_path/name;d.mkdir()
+        for file in files:(d/file).write_bytes(b'asset')
+        dirs[name]=d
+    p=tmp_path/'config.toml'
+    p.write_text(f'''[model_paths]
+vad_model_dir="{dirs['vad']}"
+spk_model_dir="{dirs['spk']}"
+emotion_model_dir="{dirs['emo']}"
+[vad]
+vad_device=["{device}"]
+[qwen_asr]
+enabled={'true' if qwen else 'false'}
+local_device="npu:7"
+local_model_dir="{tmp_path}/qwen-missing"
+[model_device_pool]
+speech_campplus_devices=["{device}"]
+emotion2vec_devices=[]
+''')
+    return Settings(config_path=str(p))
 
 
-def test_docker_profile_is_strict_fp16_and_uses_image_models(monkeypatch):
-    monkeypatch.setenv("ASR_DEPLOYMENT_PROFILE", "cuda-tensorrt-fp16")
-    settings = Settings(config_path=str(ROOT / "docker" / "config.toml"))
-    settings.validate_model_backends()
-    assert settings.is_cuda_tensorrt_profile
-    assert settings.deployment_profile == "cuda-tensorrt-fp16"
-    assert settings.speech_campplus_use_tensorrt is True
-    assert settings.emotion2vec_use_tensorrt is True
-    assert settings.speech_campplus_tensorrt_precision == "fp16"
-    assert settings.emotion2vec_tensorrt_precision == "fp16"
-    assert settings.spk_model_dir == "/app/model/speech_campplus_sv_zh_en_16k-common_advanced"
-    assert settings.emotion_model_dir == "/app/model/emotion2vec_plus_large"
-    assert settings.qwen_audio_concurrency == 8
-    assert settings.qwen_audio_spk_emo_concurrency == 4
+def test_cpu_preflight_checks_files_without_importing_npu(tmp_path, monkeypatch):
+    cfg=config(tmp_path)
+    monkeypatch.setattr(deployment.importlib, 'import_module', lambda name: pytest.fail(name))
+    result=deployment.validate_npu_runtime(cfg)
+    assert result['checked'] and result['devices']==[]
+    assert result['models_loaded_by_preflight'] is False
 
 
-def test_cuda_profile_rejects_non_fp16_or_non_cuda_pool(monkeypatch):
-    monkeypatch.setenv("ASR_DEPLOYMENT_PROFILE", "cuda-tensorrt-fp16")
-    settings = Settings(config_path=str(ROOT / "docker" / "config.toml"))
-    settings._cfg["model_device_pool"]["emotion2vec_tensorrt_precision"] = "fp32"
-    with pytest.raises(ValueError, match="emotion2vec.*fp16"):
-        settings.validate_model_backends()
-
-    settings._cfg["model_device_pool"]["emotion2vec_tensorrt_precision"] = "fp16"
-    settings._cfg["model_device_pool"]["emotion2vec_devices"] = ["cpu"]
-    with pytest.raises(ValueError, match="emotion2vec_devices"):
-        settings.validate_model_backends()
+def test_asset_failure_precedes_readiness(tmp_path):
+    cfg=config(tmp_path);(Path(cfg.vad_model_dir)/'am.mvn').unlink()
+    with pytest.raises(deployment.DeploymentPreflightError,match='am.mvn'):
+        deployment.validate_npu_runtime(cfg)
 
 
-def test_cuda_profile_preflight_fails_without_visible_gpu(monkeypatch):
-    monkeypatch.setenv("ASR_DEPLOYMENT_PROFILE", "cuda-tensorrt-fp16")
-    settings = Settings(config_path=str(ROOT / "docker" / "config.toml"))
-    try:
-        validate_cuda_tensorrt_runtime(settings)
-    except DeploymentPreflightError as exc:
-        assert "GPU" in str(exc) or "TensorRT" in str(exc)
-    else:
-        # This assertion is only reached on a real CUDA host; the preflight
-        # still proves that it completed without silently selecting PyTorch.
-        assert settings.is_cuda_tensorrt_profile
+def test_npu_preflight_checks_visible_index_without_loading_qwen(tmp_path, monkeypatch):
+    cfg=config(tmp_path,'npu:7',True)
+    monkeypatch.setattr(deployment,'_runtime_versions',lambda:{'torch':'2.5.1'})
+    api=SimpleNamespace(is_available=lambda:True, device_count=lambda:8)
+    monkeypatch.setattr(deployment.importlib,'import_module',lambda name:SimpleNamespace(npu=api))
+    assert deployment.validate_npu_runtime(cfg)['devices']==['npu:7']
+    api.device_count=lambda:1
+    with pytest.raises(deployment.DeploymentPreflightError,match='npu:7.*不可见'):
+        deployment.validate_npu_runtime(cfg)
 
 
-def test_cuda_profile_preflight_validates_existing_fp16_assets(monkeypatch):
-    monkeypatch.setenv("ASR_DEPLOYMENT_PROFILE", "cuda-tensorrt-fp16")
-    import torch
-
-    if not torch.cuda.is_available():
-        pytest.skip("requires CUDA host")
-    source = (ROOT / "docker" / "config.toml").read_text()
-    config_path = ROOT / ".pytest_cuda_profile.toml"
-    config_path.write_text(source.replace("/app/model", str(ROOT / "model")))
-    try:
-        result = validate_cuda_tensorrt_runtime(Settings(config_path=str(config_path)))
-    finally:
-        config_path.unlink(missing_ok=True)
-    assert result["checked"] is True
-    assert {item["model"] for item in result["assets"]} == {"speech_campplus", "emotion2vec"}
-    assert all(item["compatible"] for item in result["assets"])
+def test_old_cuda_profile_fails_before_hardware(tmp_path,monkeypatch):
+    cfg=config(tmp_path);monkeypatch.setenv('ASR_DEPLOYMENT_PROFILE','cuda-tensorrt-fp16')
+    with pytest.raises(ValueError,match='迁移'):
+        cfg.validate_model_backends()

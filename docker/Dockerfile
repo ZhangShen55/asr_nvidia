@@ -1,58 +1,46 @@
 # syntax=docker/dockerfile:1.7
-ARG BASE_IMAGE=docker.1ms.run/nvidia/cuda:12.4.1-cudnn-runtime-ubuntu22.04
-
+# 本机已有 CANN 8.1.RC1/aarch64/Python3.10 底座；新环境隔离系统 site-packages。
+ARG BASE_IMAGE=jy-algorithm-app-asr-ascend_cann8.1.rc1-ub2204py310:v1.1.9_260709
 FROM ${BASE_IMAGE} AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      build-essential gcc g++ python3 python3-dev python3-venv python3-pip \
-      ffmpeg libsndfile1 libgomp1 ca-certificates curl \
-    && rm -rf /var/lib/apt/lists/*
-
+      build-essential gcc g++ libsndfile1 libgomp1 ffmpeg ca-certificates \
+    && apt-get clean
 WORKDIR /src
-RUN python3 -m venv /opt/venv
-ENV PATH=/opt/venv/bin:$PATH \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    PIP_NO_CACHE_DIR=1
-RUN pip install --upgrade pip setuptools wheel \
-    && pip install --prefer-binary --index-url https://download.pytorch.org/whl/cu124 \
-       --extra-index-url https://pypi.org/simple \
-       torch==2.6.0+cu124 torchaudio==2.6.0+cu124
-COPY requirements-pip.txt requirements-pip-runtime.txt requirements-pip-extra.txt requirements-tensorrt.txt /tmp/
-RUN pip install --prefer-binary --extra-index-url https://pypi.org/simple -r /tmp/requirements-pip.txt \
-    && pip install --prefer-binary --extra-index-url https://pypi.org/simple -r /tmp/requirements-pip-runtime.txt \
-    && pip install --prefer-binary --extra-index-url https://pypi.org/simple pynini \
-    && pip install --prefer-binary --extra-index-url https://pypi.org/simple --no-deps -r /tmp/requirements-pip-extra.txt \
-    && pip install --prefer-binary --extra-index-url https://pypi.org/simple -r /tmp/requirements-tensorrt.txt
+COPY asr-env.tar.gz /tmp/asr-env.tar.gz
+RUN mkdir -p /opt/asr && tar -xzf /tmp/asr-env.tar.gz -C /opt/asr \
+    && /opt/asr/bin/python /opt/asr/bin/conda-unpack
+ENV PATH=/opt/asr/bin:$PATH PYTHONNOUSERSITE=1 PYTHONPATH=""
 COPY . .
-RUN chmod +x scripts/build_cython.sh \
-    && ./scripts/build_cython.sh /src
-# 构建层路径映射到默认运行路径，允许无 GPU 的 manifest 完整性检查。
-RUN mkdir -p /app && ln -s /src/model /app/model \
-    && CONFIG_PATH=/src/config.toml python scripts/check_tensorrt_assets.py --config /src/config.toml
-RUN python - <<'PY'
+# 该构建入口只允许在临时 staging 内删除已编译源码。
+RUN touch .asr-build-stage && chmod +x scripts/build_cython.sh \
+    && PYTHON=/opt/asr/bin/python ./scripts/build_cython.sh /src
+# 无设备的构建层仅做导入闭包检查，不能充当 NPU 前向验收。
+RUN TORCH_DEVICE_BACKEND_AUTOLOAD=0 /opt/asr/bin/python - <<'PYCODE'
 import importlib
-for module in ("main", "api.routes.asr_v3", "core.deployment", "core.models", "utils.audio_utils", "entity.data"):
-    importlib.import_module(module)
-print("Cython runtime import smoke test: OK")
-PY
-# 导入 smoke test 只用于构建校验，不把解释器缓存带入运行层。
-RUN find /src/core /src/api /src/utils /src/entity -type d -name __pycache__ -prune -exec rm -rf {} +
+for name in ("main", "api.routes.asr_v3", "core.deployment", "core.models", "utils.audio_utils", "entity.data"):
+    importlib.import_module(name)
+print("protected runtime import smoke: OK (no hardware validation)")
+PYCODE
 
 FROM ${BASE_IMAGE} AS runtime
 ENV DEBIAN_FRONTEND=noninteractive \
-    PATH=/opt/venv/bin:$PATH \
+    PATH=/opt/asr/bin:$PATH \
+    PYTHONNOUSERSITE=1 \
     CONFIG_PATH=/config.toml \
-    ASR_DEPLOYMENT_PROFILE=cuda-tensorrt-fp16 \
+    ASR_DEPLOYMENT_PROFILE=npu-910b \
     ASR_RUNTIME_DIR=/tmp/asr-offline \
     ASR_STATS_PATH=/tmp/asr-offline/asr_stats.json \
     PYTHONDONTWRITEBYTECODE=1 \
-    PYTHONUNBUFFERED=1 \
-    PIP_NO_CACHE_DIR=1
+    PYTHONUNBUFFERED=1
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      python3 python3-venv ffmpeg libsndfile1 libgomp1 nginx curl ca-certificates \
-    && rm -rf /var/lib/apt/lists/*
+      ffmpeg libsndfile1 libgomp1 nginx curl ca-certificates util-linux procps \
+    && apt-get clean
 WORKDIR /app
-COPY --from=builder /opt/venv /opt/venv
+COPY --from=builder /opt/asr /opt/asr
+# 候选底座含历史应用；只清理镜像构建层 /app，避免旧代码/模型混入交付。
+RUN /opt/asr/bin/python -c "import shutil; shutil.rmtree('/app', ignore_errors=True)" \
+    && mkdir -p /app /etc/nginx/asr-conf.d
 COPY --from=builder /src/main.py /src/start.sh /app/
 COPY --from=builder /src/config.toml /config.toml
 COPY --from=builder /src/model_status_runtime.py /app/model_status_runtime.py
@@ -62,11 +50,10 @@ COPY --from=builder /src/api /app/api
 COPY --from=builder /src/utils /app/utils
 COPY --from=builder /src/entity /app/entity
 COPY --from=builder /src/model /app/model
+COPY --from=builder /src/cython-build.json /app/cython-build.json
+COPY --from=builder /src/scripts/check_npu_environment.py /app/scripts/check_npu_environment.py
 COPY nginx.conf /etc/nginx/nginx.conf
-RUN mkdir -p "$ASR_RUNTIME_DIR" \
-    && chmod +x /app/start.sh \
-    && /opt/venv/bin/python -m py_compile /app/main.py \
-    && find /app -type d -name __pycache__ -prune -exec rm -rf {} +
+RUN mkdir -p "$ASR_RUNTIME_DIR" && chmod +x /app/start.sh
 EXPOSE 9000
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \
   CMD curl --fail --silent http://127.0.0.1:9000/get_status >/dev/null || exit 1

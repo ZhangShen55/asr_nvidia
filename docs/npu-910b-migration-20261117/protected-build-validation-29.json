@@ -1,0 +1,450 @@
+{
+  "schema": 1,
+  "recorded_at": 1794908960.7333379,
+  "stage": "/tmp/asr-cython-safe-20261117-8kckdji2",
+  "build_prefix": "/tmp/asr-rebuild-20261117-build",
+  "source_fingerprint_sha256": "e496bbdf674100a03602d19c603af83e2c0e5cfb31d94075f5eeea36f4daad1d",
+  "source_sha256": {
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/async_utils.py": "bbf61919dc7a5b986450c9b00ffed7df0980c99e94c5f16c4f2dca1f35abe5c6",
+    "core/config.py": "ecd2e2d8d4ee768411b41fe98328e024cac1af248e2583ce15d04bf80d0a7d3b",
+    "core/deployment.py": "107b7c00dd0469c97acadcab34c32182a0321b67bd7e39ee740d1c89feb65966",
+    "core/local_inference.py": "5b38d9a51c820e4152ed3ff0b0d4dc6c25c3d597cc1eabbee0b0bbecbc3925d0",
+    "core/logging.py": "30e309f26c3e8ec5ccde044bbb53cf0d1a9084fca4fd8773ae9c2018ff0c64fa",
+    "core/models.py": "be91e4bdfecf10bfa35072c9f07060638cec53cbf3fb0434505d8d8333b94457",
+    "core/npu_resource_status.py": "1104457e36be78ff992689c18c0433169594cbf6a927c23da39986b981fcd2f1",
+    "core/progress.py": "8969e793015b8175e2990f5221b6e69e0b8c5072b64ccfa77e55b19e6a67bfb8",
+    "core/qwen_asr_client.py": "e3bb4fd4f399d5cee5b7238e692f7c527ba12b7313fe2a17933bfd3ea88f3767",
+    "core/qwen_asr_queue.py": "325b4e3f39c50ec0137261eca182b91ca0e7bf8557ffd15ccc5e2f3b764b4024",
+    "core/qwen_asr_runtime.py": "221c4b4072210a22facdaa92d84b92e87142ede7754e99d05637f41537394bb6",
+    "core/request_telemetry.py": "b36810bbc197ae77407a47d16457f96a1171f974b7807da391aa7061bf244ad0",
+    "core/resource_diagnostics.py": "8055e71b023336fabff4fe2a7121f6cd8a38ec13e8018513442953100683fe49",
+    "core/status.py": "ffb8811440cf0c48848538782e292550aaba718c7d4b304b6e8c9144409225c7",
+    "core/vad.py": "ebbc95b55780328e9dc84ff7fc48d890d4fd99c79261e4b8386b715f64d8982f",
+    "core/vad_pool.py": "3f7c52d272690ddbce226823843c7d73b3d04fd7f90d47f3cac3cace7f1053ed",
+    "core/vad_volume.py": "e97dfdf5cc4dc5a38fc5a5938dc3c20a70e81e09d6c2b50a2212295de624e6a4",
+    "api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/asr_common.py": "c0f753a105107daec0070e80b684dca25c2af3cb3306260ea3a4b46a586c10b9",
+    "api/routes/asr_qwen_common.py": "f3a33a0d5bc7f52e75aebd5de09f0a6e1120b3939856a976c8805f5fb5d0813b",
+    "api/routes/asr_v3.py": "e2023bd57ec970d6b313e0031f0543a8633cf4638b9b98191d9ba7a8b5eeab8c",
+    "api/routes/status.py": "a1de0faf6431129ef7107ba2efcc83c08697a1dafa4762fe4918587716c936a8",
+    "utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utils/asr_stats.py": "1d3c0cefe775978503e8074c05e5fba347c196e7259e394ec409833c72bce351",
+    "utils/audio_utils.py": "0677a24eeefce08418a374e72e35e0a0649e85b227c40b7595b3bac66bbb3e6e",
+    "utils/feature_utils.py": "8f0c1fafab3f2d60398e53c9bcaf7d6f93f69a1aad2b4cb603866d12e457bef7",
+    "utils/itn.py": "5005178357003f716d819739b85f81b4dbe67e4d2764c9a3133244470fa3d0c0",
+    "utils/qwen_response.py": "f48464ad4aa8648b4d7639a2d486cf9980a6a12866209fb9bd5893aed8a198fd",
+    "utils/repetition.py": "02be6e84270414d30be39f721876553577760c62c59aaa695bf0d9ef94c4f0ef",
+    "utils/text_postprocess.py": "3ee74af7164a2cda2f9ab56d06ee092159516c3dbbefdb99807d5e605e447530",
+    "entity/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entity/data.py": "4596ff74847397fdf2628433f79f3110c72c13219e7a7b49353bb3cdf65776ea",
+    "main.py": "4d5b4654b500fe1f6b26ee260612c10284399b2ebba88d79ad0cfa0453730116",
+    "model_status_runtime.py": "5e1a7c044ee04973e8b42ba74d1b83bb20215f424a98a8221e6511cff1cd545a",
+    "telemetry_runtime.py": "bd5d9a4eb4ec692753e30945e688da92544d4d510e55201c4df7ed1f18424043",
+    "config.toml": "005b0c213ef0e3411ae6e9b1ad0ac32fd51829c847448292ad0175b1404e408c",
+    "setup_cython.py": "50a6c7d2ea160ff69815b118f8b429b8d3c2d9452214f563e85c85b5132a705e",
+    "scripts/build_cython.sh": "32972bf823b382d2e3a9f55fe65b8ee12333b8f0816747d1eff92841f9f962a2"
+  },
+  "changed_sources_at_report": [],
+  "negative_index_warning_count": 0,
+  "build": {
+    "built_at": "2026-11-17T09:47:02.546957+00:00",
+    "python": "3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 22:53:30) [GCC 14.4.0]",
+    "architecture": "aarch64",
+    "soabi": "cpython-310-aarch64-linux-gnu",
+    "platform": "Linux-5.10.0-60.18.0.50.oe2203.aarch64-aarch64-with-glibc2.34",
+    "compiler": "GCC 14.4.0",
+    "packages": {
+      "Cython": "3.0.12",
+      "setuptools": "84.0.0",
+      "numpy": "1.26.4",
+      "torch": "2.5.1",
+      "torch-npu": "2.5.1",
+      "torchaudio": "2.5.1",
+      "transformers": "5.13.0",
+      "funasr": "1.2.6"
+    },
+    "compiler_directives": {
+      "boundscheck": true,
+      "wraparound": true,
+      "initializedcheck": true,
+      "cdivision": false
+    },
+    "cann_version_files": [
+      "/usr/local/Ascend/ascend-toolkit/latest/version.cfg"
+    ]
+  },
+  "extensions": {
+    "python": "3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 22:53:30) [GCC 14.4.0]",
+    "architecture": "aarch64",
+    "soabi": "cpython-310-aarch64-linux-gnu",
+    "imports": {
+      "api.routes.asr_common": "/tmp/asr-cython-safe-20261117-8kckdji2/api/routes/asr_common.cpython-310-aarch64-linux-gnu.so",
+      "api.routes.asr_qwen_common": "/tmp/asr-cython-safe-20261117-8kckdji2/api/routes/asr_qwen_common.cpython-310-aarch64-linux-gnu.so",
+      "api.routes.asr_v3": "/tmp/asr-cython-safe-20261117-8kckdji2/api/routes/asr_v3.cpython-310-aarch64-linux-gnu.so",
+      "api.routes.status": "/tmp/asr-cython-safe-20261117-8kckdji2/api/routes/status.cpython-310-aarch64-linux-gnu.so",
+      "core.async_utils": "/tmp/asr-cython-safe-20261117-8kckdji2/core/async_utils.cpython-310-aarch64-linux-gnu.so",
+      "core.config": "/tmp/asr-cython-safe-20261117-8kckdji2/core/config.cpython-310-aarch64-linux-gnu.so",
+      "core.deployment": "/tmp/asr-cython-safe-20261117-8kckdji2/core/deployment.cpython-310-aarch64-linux-gnu.so",
+      "core.local_inference": "/tmp/asr-cython-safe-20261117-8kckdji2/core/local_inference.cpython-310-aarch64-linux-gnu.so",
+      "core.logging": "/tmp/asr-cython-safe-20261117-8kckdji2/core/logging.cpython-310-aarch64-linux-gnu.so",
+      "core.models": "/tmp/asr-cython-safe-20261117-8kckdji2/core/models.cpython-310-aarch64-linux-gnu.so",
+      "core.npu_resource_status": "/tmp/asr-cython-safe-20261117-8kckdji2/core/npu_resource_status.cpython-310-aarch64-linux-gnu.so",
+      "core.progress": "/tmp/asr-cython-safe-20261117-8kckdji2/core/progress.cpython-310-aarch64-linux-gnu.so",
+      "core.qwen_asr_client": "/tmp/asr-cython-safe-20261117-8kckdji2/core/qwen_asr_client.cpython-310-aarch64-linux-gnu.so",
+      "core.qwen_asr_queue": "/tmp/asr-cython-safe-20261117-8kckdji2/core/qwen_asr_queue.cpython-310-aarch64-linux-gnu.so",
+      "core.qwen_asr_runtime": "/tmp/asr-cython-safe-20261117-8kckdji2/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+      "core.request_telemetry": "/tmp/asr-cython-safe-20261117-8kckdji2/core/request_telemetry.cpython-310-aarch64-linux-gnu.so",
+      "core.resource_diagnostics": "/tmp/asr-cython-safe-20261117-8kckdji2/core/resource_diagnostics.cpython-310-aarch64-linux-gnu.so",
+      "core.status": "/tmp/asr-cython-safe-20261117-8kckdji2/core/status.cpython-310-aarch64-linux-gnu.so",
+      "core.vad": "/tmp/asr-cython-safe-20261117-8kckdji2/core/vad.cpython-310-aarch64-linux-gnu.so",
+      "core.vad_pool": "/tmp/asr-cython-safe-20261117-8kckdji2/core/vad_pool.cpython-310-aarch64-linux-gnu.so",
+      "core.vad_volume": "/tmp/asr-cython-safe-20261117-8kckdji2/core/vad_volume.cpython-310-aarch64-linux-gnu.so",
+      "entity.data": "/tmp/asr-cython-safe-20261117-8kckdji2/entity/data.cpython-310-aarch64-linux-gnu.so",
+      "utils.asr_stats": "/tmp/asr-cython-safe-20261117-8kckdji2/utils/asr_stats.cpython-310-aarch64-linux-gnu.so",
+      "utils.audio_utils": "/tmp/asr-cython-safe-20261117-8kckdji2/utils/audio_utils.cpython-310-aarch64-linux-gnu.so",
+      "utils.feature_utils": "/tmp/asr-cython-safe-20261117-8kckdji2/utils/feature_utils.cpython-310-aarch64-linux-gnu.so",
+      "utils.itn": "/tmp/asr-cython-safe-20261117-8kckdji2/utils/itn.cpython-310-aarch64-linux-gnu.so",
+      "utils.qwen_response": "/tmp/asr-cython-safe-20261117-8kckdji2/utils/qwen_response.cpython-310-aarch64-linux-gnu.so",
+      "utils.repetition": "/tmp/asr-cython-safe-20261117-8kckdji2/utils/repetition.cpython-310-aarch64-linux-gnu.so",
+      "utils.text_postprocess": "/tmp/asr-cython-safe-20261117-8kckdji2/utils/text_postprocess.cpython-310-aarch64-linux-gnu.so"
+    },
+    "count": 29,
+    "main_imported": true,
+    "cann_compiler_imports": true,
+    "npu_forward_checked": false
+  },
+  "build_environment": {
+    "prefix": "/tmp/asr-rebuild-20261117-build",
+    "differences_vs_reference": {
+      "conda-pack": [
+        null,
+        "0.8.1"
+      ],
+      "cython": [
+        null,
+        "3.0.12"
+      ]
+    },
+    "numpy_import": "1.26.4",
+    "imports_ok": true,
+    "npu_initialized": false,
+    "npu_forward_checked": false,
+    "clone_repaired_with_force_reinstall_pip_lock": true
+  },
+  "commands": [
+    "source /usr/local/Ascend/ascend-toolkit/set_env.sh",
+    "python3 /tmp/asr_delivery_validate_cython.py",
+    "refresh main.py snapshot; reimport all protected extensions and run main.py --help (no server/NPU)",
+    "python3 /tmp/asr_delivery_validate_cython.py --stage /tmp/asr-cython-safe-20261117-8kckdji2 --only core/vad_pool.py"
+  ],
+  "logs": {
+    "full_build": "/tmp/asr-delivery-rebuild-20261117/cython-safe/before-vad-build.log",
+    "incremental_vad_build": "/tmp/asr-delivery-rebuild-20261117/cython-safe/build.log",
+    "imports": "/tmp/asr-delivery-rebuild-20261117/cython-safe/imports.log"
+  },
+  "limitations": [
+    "No container image build or conda-pack archive build is claimed.",
+    "Only staging sources copied into a marked temporary directory were stripped; project source/weights remain intact.",
+    "Actual NPU/API steady validation was executed by the root harness; the build agent only read/hash-verified the immutable results. It does not replace independent annotated quality or full-corpus acceptance."
+  ],
+  "entrypoint_update": {
+    "file": "main.py",
+    "sha256": "4d5b4654b500fe1f6b26ee260612c10284399b2ebba88d79ad0cfa0453730116",
+    "python_cli_help_exit": 0,
+    "extensions_recompiled": false,
+    "reason": "main.py is an uncompiled entrypoint; protected modules retain their verified hashes"
+  },
+  "incremental_build": {
+    "modules": [
+      "core.vad_pool"
+    ],
+    "reason": "per-worker shutdown audit and forced/nonzero cleanup failures are preserved",
+    "source_sha256": "3f7c52d272690ddbce226823843c7d73b3d04fd7f90d47f3cac3cace7f1053ed",
+    "exit_code": 0
+  },
+  "cpu_function_parity": {
+    "report": "compiled-cpu-parity.json",
+    "pooling_cases": 28,
+    "invalid_pooling_cases": 3,
+    "source_and_compiled_equal": true,
+    "qwen_input_dtype_parity_passed": true,
+    "npu_forward_checked": false
+  },
+  "actual_npu_api_validation": {
+    "scope": "Protected staging application on NPU7; fixed 12s input steady validation, 3 all-feature warmups then 16 alternating profiles; no claim of full 43h corpus decode or annotated quality acceptance.",
+    "result_directory": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady",
+    "mode": "steady",
+    "completed": true,
+    "warmup_protocol_passed": 3,
+    "measured_protocol_passed": 16,
+    "checks": {
+      "allocated_bytes": true,
+      "reserved_bytes": true,
+      "rss_bytes": true,
+      "threads": true,
+      "num_fds": true,
+      "vad_workers": true,
+      "cache_empty": true,
+      "model_leases_empty": true
+    },
+    "limits": {
+      "allocated_growth_bytes": 16777216,
+      "reserved_growth_bytes": 268435456,
+      "rss_growth_bytes": 268435456,
+      "thread_growth": 8,
+      "fd_growth": 4
+    },
+    "growth": {
+      "allocated_bytes": 0,
+      "reserved_bytes": 0,
+      "rss_bytes": 11829248,
+      "threads": 0,
+      "num_fds": 0
+    },
+    "resource_scope": "Parent service allocator/RSS/threads/FD growth; VAD worker count, final worker shutdown and leases/cache audited separately.",
+    "shutdown_summary": {
+      "exit_code": 0,
+      "failed": false,
+      "listening": false,
+      "remaining_children": [],
+      "observed_s": 5,
+      "shutdown_timeout": false,
+      "forced_child_cleanup": false,
+      "application_shutdown_failed": false,
+      "worker_shutdown_failed": false
+    },
+    "vad_shutdown_workers": [
+      {
+        "cleanup_complete": true,
+        "device": "cpu",
+        "exitcode": 0,
+        "forced": false,
+        "forced_actions": [],
+        "graceful_elapsed_s": 1.828554,
+        "graceful_timeout_s": 30.0,
+        "kill_elapsed_s": null,
+        "pid": 145969,
+        "reason": "pool_stop",
+        "terminate_elapsed_s": null,
+        "total_elapsed_s": 1.829639,
+        "worker_id": 0
+      },
+      {
+        "cleanup_complete": true,
+        "device": "cpu",
+        "exitcode": 0,
+        "forced": false,
+        "forced_actions": [],
+        "graceful_elapsed_s": 2.009057,
+        "graceful_timeout_s": 30.0,
+        "kill_elapsed_s": null,
+        "pid": 145997,
+        "reason": "pool_stop",
+        "terminate_elapsed_s": null,
+        "total_elapsed_s": 2.009704,
+        "worker_id": 1
+      },
+      {
+        "cleanup_complete": true,
+        "device": "npu:7",
+        "exitcode": 0,
+        "forced": false,
+        "forced_actions": [],
+        "graceful_elapsed_s": 7.317882,
+        "graceful_timeout_s": 30.0,
+        "kill_elapsed_s": null,
+        "pid": 146024,
+        "reason": "pool_stop",
+        "terminate_elapsed_s": null,
+        "total_elapsed_s": 7.318461,
+        "worker_id": 2
+      },
+      {
+        "cleanup_complete": true,
+        "device": "npu:7",
+        "exitcode": 0,
+        "forced": false,
+        "forced_actions": [],
+        "graceful_elapsed_s": 7.778409,
+        "graceful_timeout_s": 30.0,
+        "kill_elapsed_s": null,
+        "pid": 146051,
+        "reason": "pool_stop",
+        "terminate_elapsed_s": null,
+        "total_elapsed_s": 7.778969,
+        "worker_id": 3
+      }
+    ],
+    "evidence_files": [
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/application.log",
+        "size_bytes": 40604,
+        "sha256": "3da1f7ea7b729934e62401f3f053b427e1bd266f11989a6cc39ca1bfbd21830e"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/asr_stats.json",
+        "size_bytes": 132,
+        "sha256": "c75c808892a744363be9d9dda6cd9897cbc003218ed17383d113918a6fdf38b0"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/config.toml",
+        "size_bytes": 4424,
+        "sha256": "59ecea412dd1798f5735def5d720d783936deb226fe808ce102f5fdccab78133"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/ownership.json",
+        "size_bytes": 404,
+        "sha256": "92c5945248fb9f5c14e50dd64ad9e29ff501523ccd8a7eee12d1310148046ecf"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-0.json",
+        "size_bytes": 1490,
+        "sha256": "c352beee16be1ff970f18405cc1bb08aa1992778c8efb8724054968b4c9fd6eb"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-1.json",
+        "size_bytes": 1593,
+        "sha256": "81537a302cd603a9fc7ffa8c3a727bb24b8e71030f42d0e0aaf09401c8d5a924"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-10.json",
+        "size_bytes": 1492,
+        "sha256": "5947116e993c775a6df20c912de638bd07ea8cda3bf594d4a71dadecd573ad56"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-11.json",
+        "size_bytes": 1593,
+        "sha256": "723d4fed0da2d8962db716b01c3c6fa604ab563b21bb71f2f7bb84013ca2a4c2"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-12.json",
+        "size_bytes": 1491,
+        "sha256": "303c3c34dae23379d2d6394058052c1b9dc31d4afd2adb7e2ff2027c99bf267f"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-13.json",
+        "size_bytes": 1594,
+        "sha256": "4028e837e3aaf5f089e0080917e08e4dea9775f4897470a9ed3ba383a074fba1"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-14.json",
+        "size_bytes": 1491,
+        "sha256": "b70189c90d30629999c4c213fb0b66e054eed7d4d45299cab980a33ef372af16"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-15.json",
+        "size_bytes": 1592,
+        "sha256": "0fdab2d4bef96c30570730e93f7f41eeca6a0d6ff5f9d90e96307756d96ca1bf"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-2.json",
+        "size_bytes": 1490,
+        "sha256": "94bc05d739256059a3efe904207a9237ce1f136a08c50e0fb6e379ecef53b0b1"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-3.json",
+        "size_bytes": 1593,
+        "sha256": "d0a0755975f02216e0cb42f98c0eb0964cbfc67b749796d0658ab0cfd1a0bff5"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-4.json",
+        "size_bytes": 1489,
+        "sha256": "c907e98a24fd1d99c3a9d8b5dbf7c073b169b7456facf995d1f37e1694f454ee"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-5.json",
+        "size_bytes": 1592,
+        "sha256": "c6a31941a74e93c62cba57f0ca751224d989007d6221f6cbdf6cfde47c02d470"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-6.json",
+        "size_bytes": 1490,
+        "sha256": "6d2c9cb86bb8116a02803b9e815d1c7d77db93e5a062881b4dafe401de626ad9"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-7.json",
+        "size_bytes": 1592,
+        "sha256": "a598fc24027e60543daf4b18ceea06df08cec6c631337e0945e75b705ef6fe46"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-8.json",
+        "size_bytes": 1490,
+        "sha256": "cc1e7e5945cda71557fcd04b06cba4a56031ffd261e78ba76d7f60e8313764b4"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-steady-9.json",
+        "size_bytes": 1593,
+        "sha256": "f202b8d27fcb52688b73fadda504cc64c0c0d954724daa2ca5c7a7adf90ceeba"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-warmup-0.json",
+        "size_bytes": 1594,
+        "sha256": "6f614399e20a832ee31669df93bbd1dab8612a19d920754d5649a401bdde4e9c"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-warmup-1.json",
+        "size_bytes": 1593,
+        "sha256": "157274577b18bc692cb5e92189420167314a99fab4c949ce9094e5fb3eb223f2"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/request-warmup-2.json",
+        "size_bytes": 1593,
+        "sha256": "40f1aac0117bc9cf836d0ccdeb0a3d97c5ad804a27cb08dc87ef60460cf788c4"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/service.log",
+        "size_bytes": 66457,
+        "sha256": "ebdcfb76772e367376470b6b67d13e056a6653c456a74919a1a66a50c6187f1d"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/shutdown-after.json",
+        "size_bytes": 1861,
+        "sha256": "c6be7a1939b3b27b9f232ff04dbf71e40ea91e2001295fb5657f1e6175df5b77"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/shutdown-before.json",
+        "size_bytes": 2977,
+        "sha256": "9b4e644baae3781280f346fdabe1a9d7eb7c05f5d6a3764f587bb8b2ca354d52"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/status-drained.json",
+        "size_bytes": 19193,
+        "sha256": "3dec9e880af50d493bd086902b51b5fe61ad035e678dd035cbc275c8a99f377a"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/status-initial.json",
+        "size_bytes": 17941,
+        "sha256": "5892dee581e13605346f1967f1208efa6ad22571127b8b6112bd5c346fef4b48"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/status.jsonl",
+        "size_bytes": 93699,
+        "sha256": "799883d883a58ddb01c1d888ca62e6a6b9c353144749e1d1c22ad4ba83ed1045"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/steady-baseline.json",
+        "size_bytes": 8657,
+        "sha256": "36417a0cdf7e660ffac7311d5ff258ba011aa68bcf4db3155f68ec042d484560"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/steady-check.json",
+        "size_bytes": 19030,
+        "sha256": "18d5a0a4096c10097558c0d6174440c720007cbb4fdba077d1756f44f5bdcd30"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/steady-plan.json",
+        "size_bytes": 318,
+        "sha256": "33fc14bf3863df777301e014d046541d01a49e7bc3027800f0155d8a14a00319"
+      },
+      {
+        "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-steady/summary.json",
+        "size_bytes": 4194,
+        "sha256": "e8bd61608e634ba39bbd31a6d6ae5b6e2b7a11f0955c22e05863cb0b5fd43b46"
+      }
+    ],
+    "original_results_modified": false,
+    "reviewed_at": 1794910965.8873107
+  }
+}

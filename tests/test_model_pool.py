@@ -22,11 +22,11 @@ class ModelPoolTests(unittest.IsolatedAsyncioTestCase):
         ):
             cam = ModelPool(
                 "speech_campplus", "/model/cam",
-                devices_getter=lambda: ["cuda:0", "cuda:0", "cuda:0"],
+                devices_getter=lambda: ["cpu", "cpu", "cpu"],
             )
             emo = ModelPool(
                 "emotion2vec", "/model/emo",
-                devices_getter=lambda: ["cuda:0"],
+                devices_getter=lambda: ["cpu"],
             )
             await cam.ensure_loaded()
             await emo.ensure_loaded()
@@ -49,10 +49,10 @@ class ModelPoolTests(unittest.IsolatedAsyncioTestCase):
             await emo.close()
 
     async def test_waiters_are_fifo_and_cancellation_releases_waiting_count(self):
-        with patch("core.models._resolve_device", return_value="cuda:0"), patch(
+        with patch("core.models._resolve_device", return_value="cpu"), patch(
             "core.models.AutoModel", return_value=_FakeModel()
         ):
-            pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["cuda:0"])
+            pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["cpu"])
             await pool.ensure_loaded()
             order = []
 
@@ -76,10 +76,10 @@ class ModelPoolTests(unittest.IsolatedAsyncioTestCase):
             order.append(name)
 
     async def test_loads_configured_instances_and_leases_different_models(self):
-        with patch("core.models._resolve_device", return_value="cuda:0"), \
+        with patch("core.models._resolve_device", return_value="cpu"), \
                 patch("core.models.device_allocated_mb", return_value=100.0), \
                 patch("core.models.AutoModel", side_effect=lambda **kwargs: _FakeModel(**kwargs)):
-            pool = ModelPool("speech_campplus", "/model/cam", lambda: "cuda:0", lambda: 2)
+            pool = ModelPool("speech_campplus", "/model/cam", lambda: "cpu", lambda: 2)
             await pool.ensure_loaded()
             self.assertEqual(len(pool.models), 2)
             self.assertEqual(pool.configured_instances, 2)
@@ -102,10 +102,10 @@ class ModelPoolTests(unittest.IsolatedAsyncioTestCase):
                 raise RuntimeError("simulated OOM")
             return _FakeModel(**kwargs)
 
-        with patch("core.models._resolve_device", return_value="cuda:0"), \
+        with patch("core.models._resolve_device", return_value="cpu"), \
                 patch("core.models.device_allocated_mb", return_value=100.0), \
                 patch("core.models.AutoModel", side_effect=make_model):
-            pool = ModelPool("emotion2vec", "/model/emo", lambda: "cuda:0", lambda: 2, fp16=True)
+            pool = ModelPool("emotion2vec", "/model/emo", lambda: "cpu", lambda: 2, fp16=True)
             await pool.ensure_loaded()
             self.assertEqual(pool.models[0], None)
             self.assertIsNotNone(pool.models[1])
@@ -113,31 +113,29 @@ class ModelPoolTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(local_model_status["emotion2vec"]["failed_instances"], 1)
             async with pool.lease() as model:
                 self.assertIs(model, pool.models[1])
-                self.assertTrue(model.kwargs["fp16"])
+                self.assertNotIn("fp16", model.kwargs)
             await pool.close()
 
     async def test_device_array_is_used_for_each_instance(self):
+        def native(name, model_dir, device):
+            return _FakeModel(device=device)
         with patch("core.models._resolve_device", side_effect=lambda value: value), \
                 patch("core.models.device_allocated_mb", return_value=100.0), \
+                patch("core.models.TorchNpuRunner", side_effect=native), \
                 patch("core.models.AutoModel", side_effect=lambda **kwargs: _FakeModel(**kwargs)):
-            pool = ModelPool(
-                "speech_campplus", "/model/cam",
-                devices_getter=lambda: ["cuda:1", "cuda:2"],
-            )
+            pool = ModelPool("speech_campplus", "/model/cam", devices_getter=lambda: ["cpu", "npu:7"])
             await pool.ensure_loaded()
-            self.assertEqual([model.kwargs["device"] for model in pool.models], ["cuda:1", "cuda:2"])
-            async with pool.lease() as leased:
-                model, device = leased
-                self.assertEqual(device, "cuda:1")
+            self.assertEqual([model.kwargs["device"] for model in pool.models], ["cpu", "npu:7"])
+            async with pool.lease() as (model, device):
+                self.assertEqual(device, "cpu")
                 self.assertIs(model, pool.models[0])
-            pool.refresh_status()
-            self.assertEqual(local_model_status["speech_campplus"]["devices"], ["cuda:1", "cuda:2"])
+            self.assertEqual(local_model_status["speech_campplus"]["devices"], ["cpu", "npu:7"])
             await pool.close()
 
     async def test_all_failed_instances_fail_fast(self):
-        with patch("core.models._resolve_device", return_value="cuda:0"), \
+        with patch("core.models._resolve_device", return_value="cpu"), \
                 patch("core.models.AutoModel", side_effect=RuntimeError("simulated failure")):
-            pool = ModelPool("speech_campplus", "/model/cam", lambda: "cuda:0", lambda: 1)
+            pool = ModelPool("speech_campplus", "/model/cam", lambda: "cpu", lambda: 1)
             with self.assertRaisesRegex(RuntimeError, "没有可用副本"):
                 async with pool.lease():
                     pass

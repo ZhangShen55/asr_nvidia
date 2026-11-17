@@ -1,132 +1,112 @@
-"""VAD 的 CPU/GPU 等价性 + 每实例 CPU 核数消耗。
+"""FSMN-VAD CPU/NPU 等价性与每实例 CPU 核数；文件名保留以兼容旧命令。
 
-用法：
-    python scripts/bench_vad_cpu_vs_gpu.py --audio test/audio_file/储能学术英语实践.wav
+先 source CANN；宿主默认 npu:7，容器映射该卡时显式 --device npu:0。
+只比较原始 FP32 网络，不启动 HTTP 服务。音频请显式指定，支持 manifest path_hex 还原路径。
 """
-
 from __future__ import annotations
-
 import argparse
 import json
 import os
+from pathlib import Path
 import resource
-import subprocess
+import sys
 import tempfile
 import time
-from pathlib import Path
-from typing import Any, Dict, List, Tuple
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-MODEL_DIR = REPO_ROOT / "model" / "speech_fsmn_vad_zh-cn-16k-common-pytorch"
-
-
-def make_slice(src: str, seconds: int) -> str:
-    dst = tempfile.NamedTemporaryFile(delete=False, suffix=".wav").name
-    subprocess.run(
-        [
-            "ffmpeg", "-y", "-v", "error", "-i", src,
-            "-t", str(seconds), "-ar", "16000", "-ac", "1", dst,
-        ],
-        check=True,
-    )
-    return dst
+REPO_ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(REPO_ROOT))
+MODEL_DIR = REPO_ROOT / "model/speech_fsmn_vad_zh-cn-16k-common-pytorch"
 
 
-def build_model(device: str):
-    from funasr import AutoModel
-
-    return AutoModel(
-        model=str(MODEL_DIR),
-        device=device,
-        vad_kwargs={
-            "max_single_segment_time": 30000,
-            "max_end_silence_time": 800,
-        },
-        disable_update=True,
-        disable_pbar=True,
-    )
-
-
-def run_vad(model, path: str) -> List[Tuple[float, float]]:
-    result = model.generate(
-        input=path,
-        cache={},
-        vad_kwargs={
-            "max_single_segment_time": 30000,
-            "max_end_silence_time": 800,
-        },
-    )
-    payload = result[0]
-    if isinstance(payload, dict):
-        spans = payload.get("value") or []
-    elif isinstance(payload, list) and payload and isinstance(payload[0], list):
-        spans = payload[0]
-    else:
-        spans = []
-    return [(float(s[0]), float(s[1])) for s in spans if float(s[1]) > float(s[0])]
+def make_slice(src, seconds):
+    from scripts.bench_local_model_latency import read_audio
+    import numpy as np
+    import wave
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as handle:
+        dst = handle.name
+    try:
+        audio, rate = read_audio(src, max_seconds=seconds)
+        pcm = np.clip(np.rint(audio * 32768), -32768, 32767).astype("<i2")
+        with wave.open(dst, "wb") as output:
+            output.setparams((1, 2, rate, 0, "NONE", ""))
+            output.writeframes(pcm.tobytes())
+        return dst
+    except BaseException:
+        os.unlink(dst)
+        raise
 
 
-def cpu_time() -> float:
-    """本进程（含已回收子进程）的 CPU 时间，单位秒。"""
+def vad_kwargs():
+    from core.config import settings
+    return {"max_single_segment_time": settings.vad_max_single_segment_time_ms,
+            "max_end_silence_time": settings.vad_max_end_silence_time_ms,
+            "speech_noise_thres": settings.vad_speech_noise_thres,
+            "decibel_thres": settings.vad_decibel_thres, "snr_thres": settings.vad_snr_thres}
+
+
+def build_model(device):
+    from core.local_inference import NativeVadRunner
+    return NativeVadRunner(str(MODEL_DIR), device, vad_kwargs())
+
+
+def run_vad(model, path):
+    from core.vad import _parse_vad_result
+    result = model.generate(input=str(path), cache={}, vad_kwargs=vad_kwargs())
+    return [(segment.start_s, segment.end_s) for segment in _parse_vad_result(result)]
+
+
+def allocated_mb(device):
+    if device == "cpu":
+        return None
+    from core.local_inference import npu_api
+    api = npu_api()
+    api.set_device(device)
+    return float(api.memory_allocated(device)) / 1024 ** 2
+
+
+def cpu_time():
     me = resource.getrusage(resource.RUSAGE_SELF)
     kids = resource.getrusage(resource.RUSAGE_CHILDREN)
-    return (
-        me.ru_utime + me.ru_stime + kids.ru_utime + kids.ru_stime
-    )
+    return me.ru_utime + me.ru_stime + kids.ru_utime + kids.ru_stime
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--audio", default=str(REPO_ROOT / "test" / "audio_file" / "储能学术英语实践.wav")
-    )
-    parser.add_argument("--slice-s", type=int, default=0, help="0 表示用整个文件")
-    parser.add_argument("--threads", type=int, default=0, help="torch 线程数，0 表示不干预")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--audio", required=True)
+    parser.add_argument("--device", default="npu:7", help="NPU candidate; cpu enables CPU-only smoke")
+    parser.add_argument("--slice-s", type=int, default=0)
+    parser.add_argument("--threads", type=int, default=0)
     args = parser.parse_args()
-
+    from core.local_inference import backend_for_device
+    backend_for_device(args.device)
     if args.threads > 0:
         os.environ["OMP_NUM_THREADS"] = str(args.threads)
         os.environ["MKL_NUM_THREADS"] = str(args.threads)
-
-    audio = args.audio
+        import torch
+        torch.set_num_threads(args.threads)
     tmp = None
-    if args.slice_s > 0:
-        tmp = make_slice(audio, args.slice_s)
-        audio = tmp
-
-    print(f"音频：{audio}")
-    print(f"OMP_NUM_THREADS={os.environ.get('OMP_NUM_THREADS', '未设置')}")
-
-    results: Dict[str, Any] = {}
-    for device in ("cpu", "cuda:0"):
-        model = build_model(device)
-        run_vad(model, audio)  # 预热，不计入统计
-        c0 = cpu_time()
-        w0 = time.perf_counter()
-        spans = run_vad(model, audio)
-        wall = time.perf_counter() - w0
-        cpu_used = cpu_time() - c0
-        results[device] = {"spans": spans, "wall": wall, "cpu": cpu_used}
-        print(
-            f"[{device}] 段数 {len(spans)}  墙钟 {wall:.2f}s  "
-            f"CPU 时间 {cpu_used:.2f}s  折合 {cpu_used / max(wall, 1e-9):.2f} 核"
-        )
-
-    cpu_spans = results["cpu"]["spans"]
-    gpu_spans = results["cuda:0"]["spans"]
-    same = cpu_spans == gpu_spans
-    print(f"\nCPU/GPU 分段边界完全一致：{same}")
-    if not same:
-        print(f"  CPU 段数 {len(cpu_spans)}，GPU 段数 {len(gpu_spans)}")
-        diff = [
-            (i, a, b)
-            for i, (a, b) in enumerate(zip(cpu_spans, gpu_spans))
-            if a != b
-        ]
-        print(f"  前 10 处差异：{diff[:10]}")
-
-    if tmp:
-        os.unlink(tmp)
+    results = {}
+    try:
+        audio = args.audio
+        if args.slice_s > 0:
+            tmp = make_slice(audio, args.slice_s)
+            audio = tmp
+        for device in dict.fromkeys(("cpu", args.device)):
+            model = build_model(device)
+            try:
+                run_vad(model, audio)
+                c0, w0 = cpu_time(), time.perf_counter()
+                spans = run_vad(model, audio)
+                wall, cpu_used = time.perf_counter() - w0, cpu_time() - c0
+                results[device] = {"spans": spans, "wall_s": wall, "cpu_s": cpu_used,
+                                   "cpu_cores": cpu_used / max(wall, 1e-9), "precision": "fp32"}
+            finally:
+                model.close()
+        print(json.dumps({"results": results, "same_boundaries": results["cpu"]["spans"] == results[args.device]["spans"]},
+                         ensure_ascii=False, indent=2))
+    finally:
+        if tmp:
+            os.unlink(tmp)
 
 
 if __name__ == "__main__":

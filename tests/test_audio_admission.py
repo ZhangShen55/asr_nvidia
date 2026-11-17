@@ -100,8 +100,8 @@ class WaitingAdmissionTests(unittest.IsolatedAsyncioTestCase):
             self.assertEqual(manager.active_b, 1)
             raise asyncio.TimeoutError
 
-        # 精确模拟 wait_for 截止已触发，但管理器刚好完成授予的顺序。
-        with patch("core.qwen_asr_queue.asyncio.wait_for", side_effect=timeout_after_grant):
+        # 精确模拟等待截止已触发，但管理器刚好完成授予的顺序。
+        with patch("core.qwen_asr_queue.asyncio.wait", side_effect=timeout_after_grant):
             with self.assertRaises(QueueTimeoutError):
                 await manager.acquire("B")
         await manager.release(await manager.acquire("B"))

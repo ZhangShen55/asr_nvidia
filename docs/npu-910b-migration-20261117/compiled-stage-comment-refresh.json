@@ -1,0 +1,14 @@
+{
+  "at": 1794931085.4899883,
+  "stage": "/tmp/asr-cython-frontguard-20261117-nhxp0l35",
+  "toml_values_equal_before_after": true,
+  "changed_stage_files": [
+    "config.toml",
+    "source-snapshot.json"
+  ],
+  "python_and_extensions_changed": false,
+  "previous_snapshot_sha256": "9484a0beb4d89011d839368413a0b66c6cf33acaff91dd6b18d553c250f76bae",
+  "source_snapshot_sha256": "8cdd61bc1aa23cf3ad6ce3e2244105ea21f200dfe7dedd26bbd4c983ff983d69",
+  "source_changed": [],
+  "note": "VAD effective/declaration documentation only; no configuration values or runtime algorithms changed"
+}

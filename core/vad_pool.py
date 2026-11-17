@@ -8,7 +8,10 @@ VAD 的有效并发上限。
 from __future__ import annotations
 
 import asyncio
+import gc
+from contextlib import suppress
 import importlib
+import json
 import logging
 import multiprocessing as mp
 import os
@@ -21,6 +24,8 @@ from dataclasses import dataclass
 from typing import Any, Callable, Deque, Dict, Optional, Tuple
 
 from core.config import settings
+from core.async_utils import await_completion
+from core.local_inference import InstanceFailure
 
 logger = logging.getLogger(__name__)
 
@@ -62,6 +67,9 @@ def _import_target(spec: str) -> Callable:
 
 
 def build_vad_model(model_dir: str, device: str, vad_kwargs: dict):
+    from core.local_inference import NativeVadRunner, backend_for_device
+    if backend_for_device(device) == "torch_npu":
+        return NativeVadRunner(model_dir, device, vad_kwargs)
     from funasr import AutoModel
 
     return AutoModel(
@@ -97,15 +105,16 @@ def _write_warmup_wav() -> str:
     return path
 
 
-def _worker_memory_mb(device: str) -> float:
-    if not str(device).startswith("cuda"):
+def _worker_memory_mb(device: str) -> float | None:
+    if device == "cpu":
         return 0.0
     try:
-        import torch
-
-        return torch.cuda.memory_allocated(torch.device(device)) / (1024**2)
-    except Exception:  # noqa: BLE001
-        return 0.0
+        from core.local_inference import npu_api
+        api = npu_api()
+        api.set_device(device)
+        return float(api.memory_allocated(device)) / (1024**2)
+    except Exception:
+        return None
 
 
 def _worker_main(
@@ -138,23 +147,31 @@ def _worker_main(
         return
 
     result_queue.put((_MSG_IDLE, worker_id, worker_id, "ok", {"allocated_mb": allocated_mb}))
-    while not stop_event.is_set():
-        try:
-            message = task_queue.get(timeout=_STOP_POLL_INTERVAL_S)
-        except queue_stdlib.Empty:
-            continue
-        except (EOFError, OSError):
-            break
-        if message is None:
-            break
-        task_id, audio_path = message
-        result_queue.put((_MSG_STARTED, task_id, worker_id, "ok", None))
-        try:
-            payload = runner(model, audio_path, dict(vad_kwargs))
-            result_queue.put((_MSG_FINISHED, task_id, worker_id, "ok", payload))
-        except BaseException:  # noqa: BLE001
-            result_queue.put((_MSG_FINISHED, task_id, worker_id, "error", traceback.format_exc()))
-        result_queue.put((_MSG_IDLE, worker_id, worker_id, "ok", None))
+    try:
+        while not stop_event.is_set():
+            try:
+                message = task_queue.get(timeout=_STOP_POLL_INTERVAL_S)
+            except queue_stdlib.Empty:
+                continue
+            except (EOFError, OSError):
+                break
+            if message is None:
+                break
+            task_id, audio_path = message
+            result_queue.put((_MSG_STARTED, task_id, worker_id, "ok", None))
+            try:
+                payload = runner(model, audio_path, dict(vad_kwargs))
+                result_queue.put((_MSG_FINISHED, task_id, worker_id, "ok", payload))
+            except BaseException as exc:  # noqa: BLE001
+                result_queue.put((_MSG_FINISHED, task_id, worker_id, "error", traceback.format_exc()))
+                if isinstance(exc, InstanceFailure):
+                    # 异步设备资源已损坏，退出后由主进程按原设备补位。
+                    break
+            result_queue.put((_MSG_IDLE, worker_id, worker_id, "ok", None))
+    finally:
+        close = getattr(model, "close", None)
+        if callable(close):
+            close()
 
 
 @dataclass
@@ -168,7 +185,7 @@ class _Worker:
     failure: Optional[str] = None
     busy_task_id: Optional[int] = None
     last_finished_at: Optional[float] = None
-    allocated_mb: float = 0.0
+    allocated_mb: Optional[float] = 0.0
 
 
 @dataclass
@@ -230,11 +247,15 @@ class VadPool:
         self._loop: Optional[asyncio.AbstractEventLoop] = None
         self._result_queue = None
         self._reader_thread: Optional[threading.Thread] = None
+        self._reader_stop = threading.Event()
         self._monitor_task: Optional[asyncio.Task] = None
         self._start_lock = asyncio.Lock()
+        self._stop_lock = asyncio.Lock()
         self._state_lock = threading.RLock()
         self._started = False
         self._stopping = False
+        self._shutdown_evidence: list[dict] = []
+        self._shutdown_failures: list[str] = []
 
     async def start(self) -> None:
         if self._started:
@@ -247,17 +268,20 @@ class VadPool:
                 return
             self._loop = asyncio.get_running_loop()
             self._stopping = False
+            self._shutdown_evidence.clear()
+            self._shutdown_failures.clear()
+            self._reader_stop.clear()
             self._result_queue = self._ctx.Queue()
             self._reader_thread = threading.Thread(
                 target=self._reader_loop, name="vad-pool-reader", daemon=True
             )
             self._reader_thread.start()
             logger.info("[VAD 池] 启动固定 worker：设备=%s，配置实例=%d", self._devices, len(self._devices))
-            for configured_device in self._devices:
-                self._spawn_worker(configured_device)
             try:
+                for configured_device in self._devices:
+                    self._spawn_worker(configured_device)
                 await self._wait_core_ready()
-            except Exception:
+            except BaseException:
                 await self.stop()
                 raise
             self._monitor_task = asyncio.create_task(self._monitor_loop())
@@ -265,19 +289,47 @@ class VadPool:
             self._refresh_vad_status()
 
     async def stop(self, timeout_s: float = 30.0) -> None:
+        # Repeated task cancellation must not return while owned spawn workers
+        # or queue feeders still hold resources.
+        await await_completion(self._stop(timeout_s))
+
+    async def _stop(self, timeout_s: float) -> None:
+        async with self._stop_lock:
+            await self._stop_owned(timeout_s)
+
+    async def _stop_owned(self, timeout_s: float) -> None:
         self._stopping = True
-        if self._monitor_task is not None:
-            self._monitor_task.cancel()
-            self._monitor_task = None
+        monitor, self._monitor_task = self._monitor_task, None
+        if monitor is not None:
+            monitor.cancel()
+            with suppress(asyncio.CancelledError):
+                await monitor
+        failures = list(self._shutdown_failures)
         for worker in list(self._workers.values()):
-            self._stop_worker(worker, timeout_s=timeout_s)
-        self._workers.clear()
-        if self._result_queue is not None:
-            self._result_queue.close()
-            self._result_queue = None
-        if self._reader_thread is not None:
-            self._reader_thread.join(timeout=timeout_s)
-            self._reader_thread = None
+            try:
+                self._stop_worker(worker, timeout_s=timeout_s)
+            except Exception as exc:
+                failures.append(f"worker#{worker.worker_id} {worker.device}: {type(exc).__name__}: {exc}")
+                logger.exception("[VAD 池] worker 关闭失败，继续回收其它自有 worker")
+        # The reader must keep draining until all child queue feeders finished;
+        # using _stopping here could strand a large final result in the pipe.
+        if not self._workers:
+            self._reader_stop.set()
+            if self._reader_thread is not None:
+                self._reader_thread.join(timeout=timeout_s)
+                if self._reader_thread.is_alive():
+                    failures.append("VAD result reader 未在关闭期限内退出")
+                else:
+                    self._reader_thread = None
+            if self._reader_thread is None and self._result_queue is not None:
+                try:
+                    self._result_queue.close()
+                    self._result_queue.join_thread()
+                    self._result_queue = None
+                except Exception as exc:
+                    failures.append(f"result queue close: {type(exc).__name__}: {exc}")
+        else:
+            failures.append("仍有未完成关闭的 worker；保留 reader/queue 所有权")
         for pending in self._tasks.values():
             pending.started.set()
             if not pending.finished.done():
@@ -285,7 +337,13 @@ class VadPool:
         self._tasks.clear()
         self._queue.clear()
         self._started = False
+        # Uvicorn can re-raise SIGTERM after lifespan, bypassing Python atexit.
+        # Release queue/Event finalizers now, before handing control back.
+        gc.collect()
+        self._shutdown_failures = list(dict.fromkeys(failures))
         self._refresh_vad_status()
+        if self._shutdown_failures:
+            raise VadPoolError("VAD 关闭失败: " + "; ".join(self._shutdown_failures))
 
     async def detect(self, audio_path: str) -> Any:
         await self.start()
@@ -319,7 +377,9 @@ class VadPool:
             "configured_instances": len(self._devices),
             "loaded_instances": ready,
             "available_instances": max(0, ready - busy),
-            "allocated_mb": round(sum(worker.allocated_mb for worker in workers), 2),
+            "allocated_mb": (round(sum(worker.allocated_mb for worker in workers), 2)
+                             if all(worker.allocated_mb is not None for worker in workers) else None),
+            "allocated_mb_scope": "VAD worker PyTorch NPU allocator; excludes runtime/other processes",
             "failed_instances": len(failed),
             "failures": failed,
             "busy": busy,
@@ -368,6 +428,8 @@ class VadPool:
         return min(idle, key=lambda worker: worker.worker_id) if idle else None
 
     def _dispatch(self) -> None:
+        if self._stopping:
+            return
         while self._queue:
             worker = self._pick_idle_worker()
             if worker is None:
@@ -380,18 +442,61 @@ class VadPool:
             worker.busy_task_id = task_id
             worker.task_queue.put((task_id, audio_path))
 
-    def _stop_worker(self, worker: _Worker, timeout_s: float = 30.0) -> None:
-        self._workers.pop(worker.worker_id, None)
+    def _stop_worker(self, worker: _Worker, timeout_s: float = 30.0, *, reason="pool_stop") -> None:
+        process = worker.process
+        evidence = {"worker_id": worker.worker_id, "pid": process.pid, "device": worker.device,
+                    "reason": reason, "graceful_timeout_s": timeout_s, "graceful_elapsed_s": 0.0,
+                    "terminate_elapsed_s": None, "kill_elapsed_s": None, "forced": False,
+                    "forced_actions": [], "exitcode": None, "cleanup_complete": False}
+        started = time.monotonic()
         try:
             worker.stop_event.set()
+            if process.pid is not None:
+                phase = time.monotonic()
+                process.join(timeout=timeout_s)
+                evidence["graceful_elapsed_s"] = round(time.monotonic() - phase, 6)
+                if process.is_alive():
+                    evidence["forced"] = True
+                    evidence["forced_actions"].append("terminate")
+                    phase = time.monotonic()
+                    process.terminate()
+                    process.join(timeout=5)
+                    evidence["terminate_elapsed_s"] = round(time.monotonic() - phase, 6)
+                if process.is_alive():
+                    evidence["forced_actions"].append("kill")
+                    phase = time.monotonic()
+                    process.kill()
+                    process.join(timeout=5)
+                    evidence["kill_elapsed_s"] = round(time.monotonic() - phase, 6)
+                if process.is_alive():
+                    raise VadPoolError(f"VAD worker#{worker.worker_id} 未在关闭期限内退出")
+            evidence["exitcode"] = process.exitcode
+            # Parent is the task_queue producer. A crashed/terminated receiver
+            # cannot consume pending messages; discard its feeder on that path.
+            if process.exitcode not in (None, 0):
+                worker.task_queue.cancel_join_thread()
             worker.task_queue.close()
-        except Exception:  # noqa: BLE001
-            pass
-        if worker.process.is_alive():
-            worker.process.join(timeout=timeout_s)
-        if worker.process.is_alive():
-            worker.process.terminate()
-            worker.process.join(timeout=5)
+            worker.task_queue.join_thread()
+            process.close()
+            # No public Event.close exists: release its SemLocks even if a
+            # diagnostic caller still holds the _Worker object.
+            worker.task_queue = None
+            worker.stop_event = None
+            self._workers.pop(worker.worker_id, None)
+            evidence["cleanup_complete"] = True
+        except BaseException as exc:
+            evidence["error"] = f"{type(exc).__name__}: {exc}"
+            raise
+        finally:
+            evidence["total_elapsed_s"] = round(time.monotonic() - started, 6)
+            self._shutdown_evidence.append(evidence)
+            logger.info("VAD_WORKER_SHUTDOWN %s", json.dumps(evidence, ensure_ascii=True, sort_keys=True))
+        if evidence["forced"]:
+            # Forced cleanup releases ownership but never turns a graceful
+            # shutdown timeout into a successful acceptance result.
+            raise VadPoolError("VAD worker 关闭超时后被强制回收: " + json.dumps(evidence, sort_keys=True))
+        if reason == "pool_stop" and evidence["exitcode"] not in (None, 0):
+            raise VadPoolError("VAD worker 关闭时非零退出: " + json.dumps(evidence, sort_keys=True))
 
     def _reap_crashed(self) -> None:
         crashed = [
@@ -407,6 +512,7 @@ class VadPool:
                 if not pending.finished.done():
                     pending.finished.set_exception(VadPoolError("VAD worker 异常退出，请重试"))
             logger.error("[VAD 池] worker#%d 异常退出（exitcode=%s），按原设备补位", worker.worker_id, worker.process.exitcode)
+            self._stop_worker(worker, timeout_s=0, reason="reap_crashed")
             if not self._stopping:
                 self._spawn_worker(worker.device)
         if crashed:
@@ -415,11 +521,12 @@ class VadPool:
 
     def _reader_loop(self) -> None:
         loop = self._loop
+        result_queue = self._result_queue
         while True:
             try:
-                message = self._result_queue.get(timeout=0.2)
+                message = result_queue.get(timeout=0.2)
             except queue_stdlib.Empty:
-                if self._stopping:
+                if self._reader_stop.is_set():
                     break
                 continue
             except (EOFError, OSError):
@@ -441,7 +548,8 @@ class VadPool:
                 return
             worker.ready = True
             if payload:
-                worker.allocated_mb = float(payload.get("allocated_mb", 0.0))
+                value = payload.get("allocated_mb")
+                worker.allocated_mb = float(value) if value is not None else None
             self._refresh_vad_status()
             self._dispatch()
             return
@@ -511,7 +619,8 @@ class VadPool:
                 device=self._devices,
                 instances=sum(worker.ready for worker in workers),
                 loaded=any(worker.ready for worker in workers),
-                allocated_mb=sum(worker.allocated_mb for worker in workers),
+                allocated_mb=(sum(worker.allocated_mb for worker in workers)
+                              if all(worker.allocated_mb is not None for worker in workers) else None),
                 configured_instances=len(self._devices),
                 successful_instances=sum(worker.ready for worker in workers),
                 failed_instances=sum(bool(worker.failure) for worker in workers),

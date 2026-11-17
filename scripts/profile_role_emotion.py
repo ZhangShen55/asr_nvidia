@@ -1,266 +1,113 @@
-"""剖析 v2 链路本地 role / emotion 阶段的耗时构成与并发扩展性。
+"""剖析 v3 本地 CAM++/emotion2vec FP32 运行器与独占模型池扩展性。
 
-用法示例：
-
-    /root/anaconda3/envs/asr/bin/python scripts/profile_role_emotion.py \
-        --segments-dir /tmp/asr_run/segs --limit 40 --device cuda:2
-
-输出内容：
-
-1. 各变体（说话人 / 情绪 × 文件路径 / numpy 输入）的单次调用耗时；
-2. 情绪阶段内部「音频加载」与「模型前向」的拆分；
-3. 线程并发下的墙钟时间与加速比，用于判断是否被 GIL 串行化。
+先 source CANN；默认 CPU，宿主显式 --device npu:7，容器映射该卡时 npu:0。
+不启动 HTTP 服务。原始网络串行统计与生产 ModelPool 统计分开报告。
 """
-
 from __future__ import annotations
-
 import argparse
+import asyncio
 import json
-import statistics
-import time
-from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
+import statistics
+import sys
+import time
 
-import numpy as np
-import torch
-from funasr import AutoModel
-
-
-def load_segments(segments_dir: str, limit: int) -> list:
-    paths = sorted(Path(segments_dir).glob("*.wav"))
-    if limit:
-        paths = paths[:limit]
-    return paths
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
-def read_wav(path: Path) -> tuple:
-    import torchaudio
+def summarize(name, latencies):
+    values = sorted(latencies)
+    return {"name": name, "calls": len(values), "mean_ms": statistics.mean(values),
+            "p50_ms": statistics.median(values), "p90_ms": values[min(len(values) - 1, int(len(values) * .9))],
+            "total_s": sum(values) / 1000}
 
-    wav, sr = torchaudio.load(str(path))
-    return wav.mean(0).numpy(), sr
 
-
-def time_calls(fn, items) -> list:
+def time_calls(fn, items):
     latencies = []
     for item in items:
-        start = time.perf_counter()
+        started = time.perf_counter()
         fn(item)
-        latencies.append((time.perf_counter() - start) * 1000)
+        latencies.append((time.perf_counter() - started) * 1000)
     return latencies
 
 
-def summarize(name: str, latencies: list) -> dict:
-    return {
-        "name": name,
-        "calls": len(latencies),
-        "mean_ms": round(statistics.mean(latencies), 1),
-        "p50_ms": round(statistics.median(latencies), 1),
-        "p90_ms": round(sorted(latencies)[int(len(latencies) * 0.9)], 1),
-        "total_s": round(sum(latencies) / 1000, 2),
-    }
+async def profile_pool(name, model_dir, device, arrays, count):
+    from core.models import ModelPool
+    from core.local_inference import generate_local
+    pool = ModelPool(name, str(model_dir), devices_getter=lambda: [device] * count)
+    try:
+        await pool.ensure_loaded()
+        async def call(item):
+            async with pool.lease() as (model, actual_device):
+                return await asyncio.to_thread(generate_local, model, actual_device, input=item[0], fs=item[1],
+                                               granularity="utterance", extract_embedding=False)
+        # 预热所有实例，不计入墙钟；生产 CPU 池保持 FunASR 兼容路径。
+        await asyncio.gather(*(call(arrays[0]) for _ in range(count)))
+        started = time.perf_counter()
+        await asyncio.gather(*(call(item) for item in arrays))
+        wall = time.perf_counter() - started
+        return {"wall_s": wall, "instances": count, "calls": len(arrays),
+                "per_call_effective_ms": wall * 1000 / len(arrays),
+                "backend": "pytorch_cpu_funasr" if device == "cpu" else "torch_npu", "precision": "fp32"}
+    finally:
+        await pool.close()
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--segments-dir", default="/tmp/asr_run/segs")
     parser.add_argument("--limit", type=int, default=30)
-    parser.add_argument("--device", default="cuda:2")
+    parser.add_argument("--device", default="cpu")
     parser.add_argument("--spk-model", default="model/speech_campplus_sv_zh_en_16k-common_advanced")
     parser.add_argument("--emotion-model", default="model/emotion2vec_plus_large")
-    parser.add_argument("--threads", type=int, nargs="+", default=[1, 2, 4, 8])
+    parser.add_argument("--threads", type=int, nargs="+", default=[1, 2, 4, 8], help="exclusive model-pool replicas/tasks")
     parser.add_argument("--output", default="")
     args = parser.parse_args()
-
-    paths = load_segments(args.segments_dir, args.limit)
+    from core.local_inference import backend_for_device
+    from scripts.bench_local_model_latency import REPO_ROOT, build_runner, read_audio
+    backend_for_device(args.device)
+    if min(args.threads) < 1 or args.limit < 0:
+        parser.error("positive --threads and nonnegative --limit required")
+    paths = sorted(Path(args.segments_dir).glob("*.wav"))
+    paths = paths[:args.limit] if args.limit else paths
     if not paths:
-        raise SystemExit(f"{args.segments_dir} 下没有 wav 片段")
-    print(f"[片段] {len(paths)} 个，示例：{paths[0].name}")
-
-    report = {"segments": len(paths), "device": args.device, "variants": {}, "scaling": {}}
-
-    # ---------------- CAM++（说话人嵌入）----------------
-    print("[加载] CAM++ ...")
-    spk_model = AutoModel(
-        model=args.spk_model,
-        device=args.device,
-        disable_update=True,
-        disable_pbar=True,
-    )
-
-    arrays = [read_wav(p) for p in paths]
-
-    def spk_numpy(item):
-        audio, sr = item
-        return spk_model.generate(input=audio, fs=sr)
-
-    lat = time_calls(spk_numpy, arrays)
-    report["variants"]["spk_numpy"] = summarize("CAM++ / numpy 输入", lat)
-    print(f"  CAM++ numpy：{report['variants']['spk_numpy']}")
-
-    # ---------------- emotion2vec（情绪）----------------
-    print("[加载] emotion2vec (fp16) ...")
-    emo_model = AutoModel(
-        model=args.emotion_model,
-        device=args.device,
-        fp16=True,
-        disable_update=True,
-        disable_pbar=True,
-    )
-
-    def emo_file(item):
-        path, _ = item
-        with torch.cuda.amp.autocast(enabled=True, dtype=torch.float16):
-            return emo_model.generate(
-                input=str(path), granularity="utterance", extract_embedding=False
-            )
-
-    lat = time_calls(emo_file, [(p, None) for p in paths])
-    report["variants"]["emotion_file"] = summarize("emotion2vec / 文件路径", lat)
-    print(f"  emotion2vec 文件路径：{report['variants']['emotion_file']}")
-
-    # 与生产实现一致：autocast 负责 fp16 前向，输入仍用 float32 numpy
-    def emo_numpy_fp16(item):
-        audio, _ = item
-        with torch.cuda.amp.autocast(enabled=True, dtype=torch.float16):
-            return emo_model.generate(
-                input=audio,
-                fs=16000,
-                granularity="utterance",
-                extract_embedding=False,
-            )
-
-    try:
-        lat = time_calls(emo_numpy_fp16, arrays)
-        report["variants"]["emotion_numpy_fp16"] = summarize("emotion2vec / float16 numpy", lat)
-        print(f"  emotion2vec float16 numpy：{report['variants']['emotion_numpy_fp16']}")
-    except Exception as exc:  # noqa: BLE001
-        report["variants"]["emotion_numpy_fp16"] = {"error": repr(exc)}
-        print(f"  emotion2vec float16 numpy 失败：{exc!r}")
-
-    # ---------------- 情绪阶段内部拆分 ----------------
-    from funasr.utils.load_utils import load_audio_text_image_video
-
-    load_lat = []
-    for path in paths:
-        start = time.perf_counter()
-        load_audio_text_image_video(str(path), fs=16000, audio_fs=16000, data_type="sound")
-        load_lat.append((time.perf_counter() - start) * 1000)
-    report["variants"]["emotion_audio_load"] = summarize("情绪阶段：仅音频加载", load_lat)
-    print(f"  仅音频加载：{report['variants']['emotion_audio_load']}")
-
-    # ---------------- 固定开销 vs 音频时长 ----------------
-    # 用同一条音频的裁剪版本测不同长度，判断单次耗时是固定开销还是随音频变长
-    base_audio, base_sr = arrays[0]
-    fixed = []
-    for seconds in (0.2, 1.0, 3.0, 10.0):
-        piece = base_audio[: int(seconds * base_sr)]
-        if piece.size == 0:
-            continue
-        start = time.perf_counter()
-        spk_model.generate(input=piece, fs=base_sr)
-        fixed.append((seconds, round((time.perf_counter() - start) * 1000, 1)))
-    report["variants"]["spk_fixed_overhead"] = fixed
-    print(f"  CAM++ 固定开销（按时长）：{fixed}")
-
-    # ---------------- 批量推理 ----------------
-    # 注意：CAM++ 的批量推理只是性能参考，不能直接用于生产。
-    # batch 内长度不一的音频会被零填充，污染 StatsPool 池化，
-    # 实测 16 段批量与单段的嵌入余弦相似度中位仅 0.857、最低 0.143。
-    def spk_batch(item):
-        batch, sr = item
-        return spk_model.generate(input=list(batch), fs=sr, batch_size=len(batch))
-
-    def _batch_embedding(result) -> np.ndarray:
-        payload = result[0] if isinstance(result, list) else result
-        embedding = payload["spk_embedding"]
-        if isinstance(embedding, torch.Tensor):
-            embedding = embedding.detach().float().cpu().numpy()
-        return np.asarray(embedding).reshape(len(embedding), -1)
-
-    for batch_size in (8, 16):
-        sample_rate = arrays[0][1]
-        batches = [
-            ([arr for arr, _ in arrays[i : i + batch_size]], sample_rate)
-            for i in range(0, len(arrays), batch_size)
-        ]
-        cosines = []
-        start = time.perf_counter()
-        for batch, sr in batches:
-            result = spk_batch((batch, sr))
-            embedded = _batch_embedding(result)
-            for offset, audio in enumerate(batch):
-                single = spk_model.generate(input=audio, fs=sr)
-                single_vec = _batch_embedding(single)[0]
-                batch_vec = embedded[offset]
-                cosines.append(
-                    float(
-                        np.dot(
-                            single_vec / (np.linalg.norm(single_vec) + 1e-12),
-                            batch_vec / (np.linalg.norm(batch_vec) + 1e-12),
-                        )
-                    )
-                )
-        wall = time.perf_counter() - start
-        report["variants"][f"spk_batch{batch_size}"] = {
-            "total_s": round(wall, 2),
-            "per_call_effective_ms": round(wall * 1000 / len(arrays), 1),
-            "batch_vs_single_cosine": {
-                "min": round(min(cosines), 4),
-                "median": round(statistics.median(cosines), 4),
-            },
-        }
-        print(
-            f"  CAM++ 批量 {batch_size}：墙钟 {wall:.2f}s，单段等效 {wall * 1000 / len(arrays):.1f}ms，"
-            f"批量 vs 单段余弦中位 {statistics.median(cosines):.4f}（<1 说明结果不等价，不可用于生产）"
-        )
-
-    def emo_batch(item):
-        batch = item
-        with torch.cuda.amp.autocast(enabled=True, dtype=torch.float16):
-            return emo_model.generate(
-                input=list(batch),
-                fs=16000,
-                granularity="utterance",
-                extract_embedding=False,
-                batch_size=len(batch),
-            )
-
-    for batch_size in (8, 16):
-        batches = [
-            [arr for arr, _ in arrays[i : i + batch_size]] for i in range(0, len(arrays), batch_size)
-        ]
-        start = time.perf_counter()
-        for batch in batches:
-            emo_batch(batch)
-        wall = time.perf_counter() - start
-        report["variants"][f"emo_batch{batch_size}"] = {
-            "total_s": round(wall, 2),
-            "per_call_effective_ms": round(wall * 1000 / len(arrays), 1),
-        }
-        print(f"  情绪批量 {batch_size}：墙钟 {wall:.2f}s，单段等效 {wall * 1000 / len(arrays):.1f}ms")
-
-    # ---------------- 线程扩展性 ----------------
-    for threads in args.threads:
-        items = [(p, None) for p in paths]
-        start = time.perf_counter()
-        with ThreadPoolExecutor(max_workers=threads) as pool:
-            list(pool.map(emo_file, items))
-        wall = time.perf_counter() - start
-        sequential = report["variants"]["emotion_file"]["total_s"]
-        report["scaling"][f"emotion_file_{threads}t"] = {
-            "wall_s": round(wall, 2),
-            "speedup": round(sequential / wall, 2),
-            "per_call_effective_ms": round(wall * 1000 / len(items), 1),
-        }
-        print(
-            f"  情绪阶段 {threads} 线程：墙钟 {wall:.2f}s，"
-            f"加速比 {sequential / wall:.2f}x，单段等效 {wall * 1000 / len(items):.1f}ms"
-        )
-
+        parser.error("segments directory has no wav files")
+    arrays = [read_audio(path) for path in paths]
+    report = {"segments": len(paths), "device": args.device, "precision": "fp32", "variants": {}, "scaling": {},
+              "batch_policy": "Only single-utterance inputs; padded batch semantics are not equivalent and are excluded."}
+    for name, directory, prefix in (("speech_campplus", args.spk_model, "spk"), ("emotion2vec", args.emotion_model, "emotion")):
+        model_dir = Path(directory)
+        model_dir = model_dir if model_dir.is_absolute() else REPO_ROOT / model_dir
+        runner = build_runner(name, model_dir, args.device)
+        try:
+            def numpy_call(item):
+                return runner.generate(input=item[0], fs=item[1], granularity="utterance", extract_embedding=False)
+            def file_call(path):
+                return numpy_call(read_audio(path))
+            numpy_call(arrays[0])
+            report["variants"][f"{prefix}_numpy"] = summarize("raw checkpoint / numpy", time_calls(numpy_call, arrays))
+            report["variants"][f"{prefix}_file"] = summarize("decode + raw checkpoint", time_calls(file_call, paths))
+            report["variants"][f"{prefix}_audio_load"] = summarize("decode only", time_calls(read_audio, paths))
+            fixed = []
+            for seconds in (.2, 1., 3., 10.):
+                piece = arrays[0][0][:int(seconds * 16000)]
+                if not piece.size:
+                    continue
+                lat = time_calls(numpy_call, [(piece, 16000)])[0]
+                fixed.append({"requested_s": seconds, "actual_s": len(piece) / 16000, "elapsed_ms": lat})
+            report["variants"][f"{prefix}_fixed_overhead"] = fixed
+        finally:
+            runner.close()
+        for count in args.threads:
+            entry = asyncio.run(profile_pool(name, model_dir, args.device, arrays, count))
+            report["scaling"][f"{prefix}_{count}t"] = entry
+        one = report["scaling"].get(f"{prefix}_1t")
+        for count in args.threads:
+            entry = report["scaling"][f"{prefix}_{count}t"]
+            entry["speedup_vs_pool_1"] = one["wall_s"] / entry["wall_s"] if one else None
     print(json.dumps(report, ensure_ascii=False, indent=2))
     if args.output:
-        with open(args.output, "w", encoding="utf-8") as handle:
-            json.dump(report, handle, ensure_ascii=False, indent=2)
+        Path(args.output).write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
 
 
 if __name__ == "__main__":

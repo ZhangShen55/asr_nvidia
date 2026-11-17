@@ -1,0 +1,37 @@
+{
+  "archive": "/home/zhangs/asr_nvidia/logs/npu-migration-20261118/validation-run.tar.gz",
+  "sha256": "87acd9a0ef1b7b64c629fd20f502cdfe09340995a032cea3d043a2aaffd3c164",
+  "bytes": 3607483,
+  "regular_files": 888,
+  "source": "/tmp/asr-apply-20261117-a99trpfv",
+  "retention": "original source untouched; duplicate evidence bundle retained under ignored project logs, not committed binary; original reports reference original paths/SHA",
+  "includes_failed_runs": true,
+  "includes_cross_midnight_rotated_logs": true,
+  "not_complete_for_external_temp_prefixes": "individual build/environment/CPU-reference paths outside run root remain at original locations and referenced by separate evidence JSON",
+  "additional_retained_reference": {
+    "original": "/tmp/asr-b3-cpu-reference-3j24mrb9",
+    "retained": "/home/zhangs/asr_nvidia/logs/npu-migration-20261118/b3-cpu-reference",
+    "files": {
+      "configuration-provenance.json": {
+        "sha256": "f7adeae9e66b242bb1fc171d3fff0ad87a68f3da6412c87d9ae2f5c86ecef830",
+        "bytes": 26633
+      },
+      "reference.json": {
+        "sha256": "6b3a5326d828b53de8831f39eb9d8fd2411762d713012a2056977e0ca1c72af2",
+        "bytes": 70782
+      },
+      "ownership.json": {
+        "sha256": "4e8b788cbd493817223318bd03eecb5dd1f1c587d6c27e8412db36bf3341fad5",
+        "bytes": 395
+      },
+      "cpu.log": {
+        "sha256": "c8c8fa7f34765e327d68003f4183522bc848fb01beb7d13441d5cec322a0e8d2",
+        "bytes": 901
+      },
+      "cpu_reference.py": {
+        "sha256": "282020ba2ff6020cb43c3348904131d4cce6694946d5955e0e274f403271f175",
+        "bytes": 7805
+      }
+    }
+  }
+}

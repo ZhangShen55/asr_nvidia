@@ -34,11 +34,18 @@ def run_vad_task(model, audio_path: str, vad_kwargs: dict):
     command = os.path.basename(audio_path)
     if command == "crash":
         os._exit(17)
+    if command == "devicefail":
+        from core.local_inference import InstanceFailure
+        raise InstanceFailure("模拟设备上下文失败")
     if command == "error":
         raise RuntimeError("模拟 VAD 任务失败")
     if command == "procname":
         return [{"key": _process_title(), "value": [[0.0, 1000.0]]}]
 
+    if command.startswith("large:"):
+        time.sleep(float(command.split(":", 1)[1]))
+        # Exceeds a pipe buffer so worker exit needs the parent reader draining.
+        return [{"key": "large", "value": [[0.0, 1000.0]], "diagnostic": "x" * (1024 * 1024)}]
     if command.startswith("sleep:"):
         time.sleep(float(command.split(":", 1)[1]))
     return [

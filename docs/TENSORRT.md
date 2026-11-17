@@ -1,3 +1,5 @@
+> 历史方案，2026-11-17 已退役。当前不提供 TensorRT 后端或以下脚本/依赖入口；原始数据及结论保留追溯。当前操作见 [NPU 迁移报告](npu-910b-migration-validation-20261117.md) 和 [部署说明](../docker/README.md)。
+
 # CAM++ / emotion2vec 推理后端
 
 四项参数与实例设备数组一起放在正式的 `[model_device_pool]` 表，修改后重启生效：

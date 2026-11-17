@@ -1,26 +1,25 @@
 #!/usr/bin/env python3
-"""受安全闸门保护的模型内存/Swap 诊断与分阶段压测工具。
+"""连接明确测试实例的 NPU 内存诊断和分阶段请求工具。
 
-默认只采集和压测 SeaCraftASR 8085，不会停止或重启 Qwen 8806。出现红色条件
-时停止提交后续请求并保存现场；只有显式传入 ``--stop-backend-on-red`` 才会向
-诊断期间由用户指定的后端 PID 发送 SIGTERM。
+必须提供 --backend-pid，且 /get_status 中的 PID 必须与之相符；仅对物理卡 7
+执行 HBM 安全闸门。红色条件停止提交后续请求，绝不向共享服务器进程发信号。
+测试实例由启动它的测试流程在 finally 中关闭；本工具只附加采集，不拥有服务。
+Qwen-ASR 嵌入后端，不访问单独的 /v1/models 服务。
 
-示例（先确认 8085 已由运维命令启动）：
-    conda run -n asr python scripts/model_memory_pressure_diagnostics.py \
-      --base-url http://127.0.0.1:8085 --audio-dir test/audio_file/音频文件 \
-      --out-dir /tmp/seacraft-memory-diagnostics --cooldown-s 60
-
-只生成可复算的阶段计划而不连接后端：
-    ... --plan-only
+示例：
+    python scripts/model_memory_pressure_diagnostics.py --backend-pid <测试后端PID> \
+      --base-url http://127.0.0.1:18085 --audio-dir test --cooldown-s 10
+仅生成计划：
+    python scripts/model_memory_pressure_diagnostics.py --plan-only
 """
 
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import random
-import signal
 import subprocess
 import sys
 import threading
@@ -47,7 +46,7 @@ from core.resource_diagnostics import (
 )
 
 
-DEFAULT_AUDIO_DIR = ROOT / "test" / "audio_file" / "音频文件"
+DEFAULT_AUDIO_DIR = ROOT / "test"
 
 
 def utc_now() -> str:
@@ -86,12 +85,31 @@ def load_config(path: Path) -> dict[str, Any]:
 def get_json(url: str, timeout: float = 3.0) -> tuple[dict[str, Any] | None, str | None]:
     try:
         response = requests.get(url, timeout=timeout)
+        response.raise_for_status()
         payload = response.json()
         if not isinstance(payload, dict):
             return None, f"响应不是对象: HTTP {response.status_code}"
         return payload, None
     except Exception as exc:  # noqa: BLE001 - 诊断必须保留失败原因
         return None, f"{type(exc).__name__}: {exc}"
+
+
+def display_name(path: Path) -> str:
+    """Linux 遗留 GBK 文件名可展示，multipart 始终使用 ASCII 样本 ID。"""
+    raw = os.fsencode(path.name)
+    for encoding in ("utf-8", "gb18030"):
+        try:
+            return raw.decode(encoding)
+        except UnicodeDecodeError:
+            continue
+    return raw.decode("utf-8", errors="replace")
+
+
+def target_error(status: dict[str, Any], backend_pid: int) -> str | None:
+    reported = (status.get("resourceDiagnostics") or {}).get("backend", {}).get("pid")
+    if reported != backend_pid:
+        return f"状态接口 PID={reported!r} 与 --backend-pid={backend_pid} 不符，未提交音频"
+    return None
 
 
 def post_audio(
@@ -110,7 +128,7 @@ def post_audio(
         with path.open("rb") as handle:
             response = requests.post(
                 f"{base_url.rstrip('/')}/v3/seacraft_asr",
-                files={"audioFile": (path.name, handle, "application/octet-stream")},
+                files={"audioFile": (f"audio-{hashlib.sha256(os.fsencode(path)).hexdigest()[:12]}.wav", handle, "application/octet-stream")},
                 data={
                     "showSpk": "true" if show_spk else "false",
                     "showEmotion": "true" if show_emotion else "false",
@@ -127,14 +145,14 @@ def post_audio(
         error = f"{type(exc).__name__}: {exc}"
     elapsed_ms = (time.perf_counter() - started) * 1000
     return {
-        "file": path.name,
+        "file": display_name(path),
         "elapsed_ms": round(elapsed_ms, 3),
         "http_status": http_status,
         "code": payload.get("code"),
         "msg": payload.get("msg"),
         "segments": len(payload.get("segments") or []) if isinstance(payload, dict) else None,
         "error": error,
-        "ok": error is None and payload.get("code") in (None, 0),
+        "ok": error is None and http_status is not None and 200 <= http_status < 300 and payload.get("code") in (None, 0),
     }
 
 
@@ -149,10 +167,9 @@ def _service_summary(snapshot: dict[str, Any]) -> dict[str, Any]:
 class Sampler:
     """后台 1 秒采样器；触发红色条件后只设置 stop_event，不杀进程。"""
 
-    def __init__(self, *, backend_pid: int | None, base_url: str, qwen_url: str, cache_dir: Path, out_file: Path, policy: SafetyPolicy):
+    def __init__(self, *, backend_pid: int, base_url: str, cache_dir: Path, out_file: Path, policy: SafetyPolicy):
         self.backend_pid = backend_pid
         self.base_url = base_url.rstrip("/")
-        self.qwen_url = qwen_url.rstrip("/")
         self.cache_dir = cache_dir
         self.out_file = out_file
         self.policy = policy
@@ -175,15 +192,23 @@ class Sampler:
                 self.expected_vad_workers = configured
         initial = collect_snapshot(
             backend_pid=self.backend_pid,
-            # /get_status 会同步采集 GPU 和进程树，模型加载时可能超过 2 秒；
+            # 状态接口还要读取 npu-smi，模型加载时可能超过 2 秒；
             # 用轻量 openapi 端点作为健康检查，状态快照仍单独读取 /get_status。
             backend_url=f"{self.base_url}/openapi.json",
-            qwen_url=f"{self.qwen_url}/v1/models",
             cache_dir=self.cache_dir,
             service_status=get_json(f"{self.base_url}/get_status")[0],
         )
         self.baseline = SafetyBaseline.from_snapshot(initial)
-        self._record(initial, "baseline")
+        decision = self._record(initial, "baseline")
+        rows = {row.get("index"): row for row in initial.get("npu", {}).get("npus", [])}
+        missing = [index for index in self.policy.npu_indices if not rows.get(index, {}).get("available")]
+        if missing or not initial.get("host", {}).get("available"):
+            decision.level = "red"
+            decision.reasons.append(f"基线资源指标不完整，未提交请求；缺失 NPU HBM: {missing}")
+        if decision.should_stop:
+            self.red_events.append({"timestamp": initial.get("timestamp"), "decision": decision.__dict__})
+            self.stop_event.set()
+            return
         self.thread = threading.Thread(target=self._run, name="memory-pressure-sampler", daemon=True)
         self.thread.start()
 
@@ -194,7 +219,6 @@ class Sampler:
                 snapshot = collect_snapshot(
                     backend_pid=self.backend_pid,
                     backend_url=f"{self.base_url}/openapi.json",
-                    qwen_url=f"{self.qwen_url}/v1/models",
                     cache_dir=self.cache_dir,
                     service_status=get_json(f"{self.base_url}/get_status")[0],
                 )
@@ -221,7 +245,7 @@ class Sampler:
             else:
                 self.swap_samples = 0
         health = snapshot.get("health", {})
-        if not (health.get("backend", {}).get("ok") and health.get("qwen", {}).get("ok")):
+        if not health.get("backend", {}).get("ok"):
             self.health_failures += 1
         else:
             self.health_failures = 0
@@ -238,7 +262,7 @@ class Sampler:
     def stop(self) -> None:
         self.stop_event.set()
         if self.thread:
-            self.thread.join(timeout=5)
+            self.thread.join(timeout=10)
 
 
 def _stage_plan(configured_segment_concurrency: int | None = None) -> list[dict[str, Any]]:
@@ -254,8 +278,8 @@ def _stage_plan(configured_segment_concurrency: int | None = None) -> list[dict[
     ]
 
 
-def resource_analysis(snapshots: list[dict[str, Any]]) -> dict[str, Any]:
-    """从时间序列计算增长斜率、缓存差值和 GPU/模型池联合证据。"""
+def resource_analysis(snapshots: list[dict[str, Any]], npu_indices: tuple[int, ...] = (7,)) -> dict[str, Any]:
+    """从时间序列计算增长斜率、缓存差值和 NPU/模型池联合证据。"""
     if not snapshots:
         return {"available": False, "reason": "没有采样"}
 
@@ -281,8 +305,9 @@ def resource_analysis(snapshots: list[dict[str, Any]]) -> dict[str, Any]:
 
     first_cache = snapshots[0].get("cache", {})
     last_cache = snapshots[-1].get("cache", {})
-    gpu_rows = [row for sample in snapshots for row in (sample.get("gpu", {}).get("gpus", []) or [])]
-    gpu_util = [row.get("utilization_gpu") for row in gpu_rows if isinstance(row.get("utilization_gpu"), int)]
+    npu_rows = [row for sample in snapshots for row in (sample.get("npu", {}).get("npus", []) or []) if row.get("index") in npu_indices]
+    npu_util = [row.get("utilization_aicore") for row in npu_rows if isinstance(row.get("utilization_aicore"), int)]
+    hbm_used = [row.get("hbm_used_mb") for row in npu_rows if isinstance(row.get("hbm_used_mb"), int)]
     model_status = snapshots[-1].get("status") or {}
     models = model_status.get("localModels") or {}
     return {
@@ -293,9 +318,12 @@ def resource_analysis(snapshots: list[dict[str, Any]]) -> dict[str, Any]:
             "files": (last_cache.get("files") - first_cache.get("files")) if isinstance(last_cache.get("files"), int) and isinstance(first_cache.get("files"), int) else None,
             "bytes": (last_cache.get("bytes") - first_cache.get("bytes")) if isinstance(last_cache.get("bytes"), int) and isinstance(first_cache.get("bytes"), int) else None,
         },
-        "gpu": {
-            "utilization_max_percent": max(gpu_util, default=None),
-            "utilization_mean_percent": round(sum(gpu_util) / len(gpu_util), 3) if gpu_util else None,
+        "npu": {
+            "indices": list(npu_indices),
+            "utilization_aicore_max_percent": max(npu_util, default=None),
+            "utilization_aicore_mean_percent": round(sum(npu_util) / len(npu_util), 3) if npu_util else None,
+            "hbm_used_max_mb": max(hbm_used, default=None),
+            "memory_scope": "device aggregate including other processes",
         },
         "model_pool_waiting": {
             name: {"waiting": entry.get("waiting"), "wait_total_ms": entry.get("wait_total_ms"), "inference_total_ms": entry.get("inference_total_ms")}
@@ -303,7 +331,7 @@ def resource_analysis(snapshots: list[dict[str, Any]]) -> dict[str, Any]:
         },
         "interpretation": (
             "PSS 持续上升且缓存回到基线附近，优先检查请求对象引用；"
-            "GPU 利用率高且模型池等待增加时，优先检查同卡算力争用。"
+            "目标 NPU AICore 利用率高且模型池等待增加时，优先检查同卡算力争用。"
         ),
     }
 
@@ -335,17 +363,9 @@ def stage_summary(stage: dict[str, Any], results: list[dict[str, Any]], snapshot
     }
 
 
-def graceful_stop(pid: int) -> dict[str, Any]:
-    try:
-        os.kill(pid, signal.SIGTERM)
-        return {"pid": pid, "signal": "SIGTERM", "sent": True}
-    except ProcessLookupError:
-        return {"pid": pid, "signal": "SIGTERM", "sent": False, "reason": "进程已退出"}
-    except OSError as exc:
-        return {"pid": pid, "signal": "SIGTERM", "sent": False, "reason": str(exc)}
-
-
 def run(args: argparse.Namespace) -> int:
+    if not args.plan_only and (not isinstance(args.backend_pid, int) or args.backend_pid <= 0):
+        raise SystemExit("连接测试实例必须显式提供正整数 --backend-pid")
     out_dir = args.out_dir.resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
     run_id = f"memory-{datetime.now().strftime('%Y%m%d-%H%M%S')}-{uuid.uuid4().hex[:8]}"
@@ -358,9 +378,10 @@ def run(args: argparse.Namespace) -> int:
         "created_at": utc_now(),
         "git_commit": git_commit(),
         "base_url": args.base_url,
-        "qwen_url": args.qwen_url,
         "backend_pid": args.backend_pid,
-        "qwen_must_remain_running": True,
+        "qwen_execution": "embedded_in_backend",
+        "service_ownership": "attached observer; owning test harness must stop its service in finally",
+        "safety_npu_indices": [7],
         "skip_a_vad_only": True,
         "config_path": str(args.config.resolve()),
         "config": config,
@@ -376,14 +397,12 @@ def run(args: argparse.Namespace) -> int:
         return 0
 
     backend, backend_error = get_json(f"{args.base_url.rstrip('/')}/get_status")
-    qwen, qwen_error = get_json(f"{args.qwen_url.rstrip('/')}/v1/models")
-    if backend is None or qwen is None:
+    mismatch = target_error(backend, args.backend_pid) if backend is not None else None
+    if backend is None or mismatch:
         report = {
-            "run_id": run_id,
-            "status": "blocked_before_requests",
-            "backend": {"ok": backend is not None, "error": backend_error},
-            "qwen": {"ok": qwen is not None, "error": qwen_error},
-            "reason": "8085 或 8806 健康检查失败，未提交任何音频请求",
+            "run_id": run_id, "status": "blocked_before_requests",
+            "backend": {"ok": backend is not None and mismatch is None, "error": backend_error or mismatch},
+            "reason": "测试实例健康或 PID 校验失败，未提交任何音频请求",
         }
         (out_dir / "run-summary.json").write_text(json.dumps(report, ensure_ascii=False, indent=2), encoding="utf-8")
         print(json.dumps(report, ensure_ascii=False, indent=2))
@@ -398,7 +417,6 @@ def run(args: argparse.Namespace) -> int:
     sampler = Sampler(
         backend_pid=args.backend_pid,
         base_url=args.base_url,
-        qwen_url=args.qwen_url,
         cache_dir=args.cache_dir,
         out_file=out_dir / "snapshots.jsonl",
         policy=SafetyPolicy(),
@@ -453,13 +471,9 @@ def run(args: argparse.Namespace) -> int:
     final_snapshot = collect_snapshot(
         backend_pid=args.backend_pid,
         backend_url=f"{args.base_url.rstrip('/')}/openapi.json",
-        qwen_url=f"{args.qwen_url.rstrip('/')}/v1/models",
         cache_dir=args.cache_dir,
         service_status=get_json(f"{args.base_url.rstrip('/')}/get_status")[0],
     )
-    stop_action = None
-    if sampler.red_events and args.stop_backend_on_red and args.backend_pid:
-        stop_action = graceful_stop(args.backend_pid)
     summary = {
         "run_id": run_id,
         "status": run_status,
@@ -468,10 +482,8 @@ def run(args: argparse.Namespace) -> int:
         "sample_count": len(sampler.samples),
         "final_snapshot": final_snapshot,
         "resource_analysis": resource_analysis(sampler.samples),
-        "qwen_health_after": final_snapshot.get("health", {}).get("qwen"),
-        "backend_stop_action": stop_action,
-        "qwen_stop_action": None,
-        "qwen_was_not_stopped": True,
+        "backend_stop_action": None,
+        "service_ownership": "observer; no process signals sent",
     }
     (out_dir / "run-summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
     print(json.dumps({"run_id": run_id, "status": run_status, "stages": len(stage_reports), "red": len(sampler.red_events)}, ensure_ascii=False))
@@ -481,7 +493,6 @@ def run(args: argparse.Namespace) -> int:
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base-url", default="http://127.0.0.1:8085")
-    parser.add_argument("--qwen-url", default="http://127.0.0.1:8806")
     parser.add_argument("--audio-dir", type=Path, default=DEFAULT_AUDIO_DIR)
     parser.add_argument("--audio-count", type=int, default=8)
     parser.add_argument("--seed", type=int, default=20261031)
@@ -491,7 +502,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--backend-pid", type=int, default=None)
     parser.add_argument("--request-timeout-s", type=float, default=7200)
     parser.add_argument("--cooldown-s", type=float, default=60)
-    parser.add_argument("--stop-backend-on-red", action="store_true")
     parser.add_argument("--plan-only", action="store_true")
     return parser.parse_args()
 

@@ -24,18 +24,21 @@ class Settings:
 
     @property
     def deployment_profile(self) -> str:
-        """返回部署 profile；CUDA 镜像通过内部环境变量固定启用。"""
+        """NPU 部署标识；设备实际选择仍由各模型配置决定。"""
         value = os.getenv("ASR_DEPLOYMENT_PROFILE")
         if value is None:
             # 兼容旧的外部配置，但新模板不再要求用户填写该内部标记。
-            value = self._cfg.get("deployment_profile", "")
+            value = self._cfg.get("deployment_profile", "npu-910b")
         if not isinstance(value, str):
             raise ValueError("ASR_DEPLOYMENT_PROFILE 必须是字符串")
-        return value.strip().lower()
+        value = value.strip().lower()
+        if value and value != "npu-910b":
+            raise ValueError("ASR_DEPLOYMENT_PROFILE 只支持 npu-910b；旧 CUDA/TensorRT profile 请迁移")
+        return value
 
     @property
-    def is_cuda_tensorrt_profile(self) -> bool:
-        return self.deployment_profile == "cuda-tensorrt-fp16"
+    def is_npu_profile(self) -> bool:
+        return self.deployment_profile == "npu-910b"
 
     # 日志配置
     @property
@@ -75,18 +78,18 @@ class Settings:
     @property
     def vad_model_dir(self) -> str:
         model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("vad_model_dir", "/model/speech_fsmn_vad_zh-cn-16k-common-pytorch")
+        return model_paths.get("vad_model_dir", "./model/speech_fsmn_vad_zh-cn-16k-common-pytorch")
 
     @property
     def spk_model_dir(self) -> Optional[str]:
         model_paths = self._cfg.get("model_paths", {})
-        return model_paths.get("spk_model_dir", "/model/speech_campplus_sv_zh_en_16k-common_advanced")
+        return model_paths.get("spk_model_dir", "./model/speech_campplus_sv_zh_en_16k-common_advanced")
 
     @property
     def emotion_model_dir(self) -> str:
         model_paths = self._cfg.get("model_paths", {})
         # 注意：原 JSON 中 key 为 emotion_modek_dir（拼写错误），这里修正为 emotion_model_dir
-        return model_paths.get("emotion_model_dir", "/model/emotion2vec_plus_seed")
+        return model_paths.get("emotion_model_dir", "./model/emotion2vec_plus_large")
 
     # 语速计算配置 - 从嵌套的 [speech_rate] 部分读取
     @property
@@ -150,22 +153,55 @@ class Settings:
 
     @property
     def qwen_base_url(self) -> str:
-        return str(self._cfg.get("qwen_asr", {}).get("base_url", "http://127.0.0.1:8806")).rstrip("/")
+        return str(self._cfg.get("qwen_asr", {}).get("base_url", "")).rstrip("/")
 
     @property
     def qwen_model(self) -> str:
-        # 留空表示从 /v1/models 自动发现
+        # 可选本地模型显示名称；留空按模型目录标识，不发起 HTTP 发现
         return str(self._cfg.get("qwen_asr", {}).get("model", "")).strip()
+
+    def _qwen_positive_int(self, key: str, default: int) -> int:
+        value = self._cfg.get("qwen_asr", {}).get(key, default)
+        if type(value) is not int or value < 1:
+            raise ValueError(f"[qwen_asr].{key} 必须是正整数")
+        return value
+
+    @property
+    def qwen_local_model_dir(self) -> str:
+        value = self._cfg.get("qwen_asr", {}).get("local_model_dir", "/home/model/Qwen3-ASR-1.7B-hf")
+        if not isinstance(value, str) or not value.strip():
+            raise ValueError("[qwen_asr].local_model_dir 必须是非空路径")
+        return value.strip()
+
+    @property
+    def qwen_local_device(self) -> str:
+        value = self._cfg.get("qwen_asr", {}).get("local_device", "npu:7")
+        return self._validate_device_spec(value, "[qwen_asr].local_device", allow_cpu=False)
+
+    @property
+    def qwen_local_dtype(self) -> str:
+        value = self._cfg.get("qwen_asr", {}).get("local_dtype", "bfloat16")
+        if not isinstance(value, str) or value not in {"bfloat16", "float16", "float32"}:
+            raise ValueError("[qwen_asr].local_dtype 必须是 bfloat16、float16 或 float32")
+        return value
+
+    @property
+    def qwen_local_instance_count(self) -> int:
+        return self._qwen_positive_int("local_instance_count", 1)
+
+    @property
+    def qwen_max_new_tokens(self) -> int:
+        return self._qwen_positive_int("max_new_tokens", 256)
 
     @property
     def qwen_segment_concurrency(self) -> int:
-        """单个音频内同时发往 Qwen 的 VAD 段请求数。"""
-        return max(1, int(self._cfg.get("qwen_asr", {}).get("segment_concurrency", 16)))
+        """单音频在途段数；完整课堂对照选择1，模型仍为单实例。"""
+        return max(1, int(self._cfg.get("qwen_asr", {}).get("segment_concurrency", 1)))
 
     @property
     def qwen_request_concurrency(self) -> int:
-        """所有音频合计发往 Qwen 的请求数上限（全局共享）。"""
-        return max(1, int(self._cfg.get("qwen_asr", {}).get("request_concurrency", 128)))
+        """全局在途本地转写数；与模型实例执行容量分别计数。"""
+        return max(1, int(self._cfg.get("qwen_asr", {}).get("request_concurrency", 1)))
 
     @property
     def qwen_audio_concurrency(self) -> int:
@@ -310,7 +346,7 @@ class Settings:
 
     @property
     def vad_snr_thres(self) -> float:
-        return self._validated_vad_float(self._vad_section(), "vad_snr_thres", -18.0, -100.0, 100.0)
+        return self._validated_vad_float(self._vad_section(), "vad_snr_thres", 18.0, -100.0, 100.0)
 
     @property
     def vad_low_volume_rms_dbfs_thres(self) -> float:
@@ -379,26 +415,11 @@ class Settings:
         每个元素对应一个独立 FSMN-VAD 进程；数组长度就是完整音频的
         VAD 有效并发。旧的 `[qwen_asr]` 配置不会作为回退来源。
         """
-        section = self._vad_section()
-        raw = section.get(
-            "vad_device",
-            ["cpu", "cpu", "cpu", "cpu", "cuda:0", "cuda:0", "cuda:0", "cuda:0"],
-        )
-        if isinstance(raw, str):
-            raise ValueError("[vad].vad_device 必须是 cpu/cuda:N 设备数组")
+        raw = self._vad_section().get("vad_device", ["cpu", "cpu", "npu:7", "npu:7"])
         if not isinstance(raw, list):
-            raise ValueError("[vad].vad_device 必须是 cpu/cuda:N 设备数组")
-        devices: list[str] = []
-        for index, value in enumerate(raw):
-            if not isinstance(value, str):
-                raise ValueError(f"[vad].vad_device[{index}] 必须是 cpu 或 cuda:N")
-            spec = value.strip().lower()
-            if spec == "cuda":
-                spec = "cuda:0"
-            if spec != "cpu" and not (spec.startswith("cuda:") and spec.split(":", 1)[1].isdigit()):
-                raise ValueError(f"[vad].vad_device[{index}] 必须是 cpu 或 cuda:N")
-            devices.append(spec)
-        return devices
+            raise ValueError("[vad].vad_device 必须是 cpu/npu:N 设备数组")
+        return [self._validate_device_spec(value, f"[vad].vad_device[{i}]")
+                for i, value in enumerate(raw)]
 
     @property
     def qwen_speaker_similarity_threshold(self) -> float:
@@ -442,60 +463,32 @@ class Settings:
         """判定为循环所需的最小连续重复次数。"""
         return int(self._cfg.get("qwen_asr", {}).get("repetition_min_times", 3))
 
-    # v3 链路模型落卡 - 从顶级 [model_device_pool] 部分读取
-    def _model_backend_option(self, name: str, option: str):
-        pool = self._cfg.get("model_device_pool", {})
-        if not isinstance(pool, dict):
-            raise ValueError("[model_device_pool] 必须是表")
-        key = f"{name}_{option}"
-        value = pool.get(key, False if option == "use_tensorrt" else "fp16")
-        if option == "use_tensorrt":
-            if type(value) is not bool:
-                raise ValueError(f"[model_device_pool].{key} 必须是 TOML 布尔值 true 或 false")
-        elif not isinstance(value, str) or value not in {"fp16", "fp32"}:
-            raise ValueError(f"[model_device_pool].{key} 必须是 fp16 或 fp32")
-        return value
-
-    @property
-    def speech_campplus_use_tensorrt(self) -> bool:
-        return self._model_backend_option("speech_campplus", "use_tensorrt")
-
-    @property
-    def speech_campplus_tensorrt_precision(self) -> str:
-        return self._model_backend_option("speech_campplus", "tensorrt_precision")
-
-    @property
-    def emotion2vec_use_tensorrt(self) -> bool:
-        return self._model_backend_option("emotion2vec", "use_tensorrt")
-
-    @property
-    def emotion2vec_tensorrt_precision(self) -> str:
-        return self._model_backend_option("emotion2vec", "tensorrt_precision")
-
     def validate_model_backends(self) -> None:
-        """就绪前校验配置；不导入后端、不接触设备或加载权重。"""
+        """只校验配置，硬件及文件检查由启动预检处理，懒加载不会被触发。"""
+        _ = self.deployment_profile
+        _ = self.vad_device
         for name in ("speech_campplus", "emotion2vec"):
-            use_tensorrt = self._model_backend_option(name, "use_tensorrt")
-            precision = self._model_backend_option(name, "tensorrt_precision")
-            devices = self._model_pool_devices(name)
-            if self.is_cuda_tensorrt_profile:
-                if not use_tensorrt or precision != "fp16":
-                    raise ValueError(
-                        f"CUDA TensorRT profile 要求 {name}_use_tensorrt=true 且 "
-                        f"{name}_tensorrt_precision=fp16"
-                    )
-                if not devices or not all(device.startswith("cuda:") for device in devices):
-                    raise ValueError(
-                        f"CUDA TensorRT profile 要求 {name}_devices 全部为 cuda:N"
-                    )
+            self._model_pool_devices(name)
+        pool = self._cfg.get("model_device_pool", {})
+        obsolete = [key for key in pool if key.endswith(("_use_tensorrt", "_tensorrt_precision"))]
+        if obsolete and not getattr(self, "_trt_warning_emitted", False):
+            logger.warning("[配置迁移] 已忽略废弃 TensorRT 参数: %s", ", ".join(sorted(obsolete)))
+            self._trt_warning_emitted = True
+        if self.qwen_asr_enabled:
+            _ = (self.qwen_local_model_dir, self.qwen_local_device, self.qwen_local_dtype,
+                 self.qwen_local_instance_count, self.qwen_max_new_tokens)
+        legacy = self._cfg.get("qwen_asr", {})
+        if any(legacy.get(k) for k in ("base_url", "connect_timeout_s")) and not getattr(self, "_qwen_http_warning", False):
+            logger.warning("[配置迁移] 本地 Qwen 不再使用 base_url/connect_timeout_s")
+            self._qwen_http_warning = True
 
     @property
     def model_device_emotion2vec(self) -> str:
-        return self.model_device_emotion2vec_devices[0] if self.model_device_emotion2vec_devices else "cuda:0"
+        return self.model_device_emotion2vec_devices[0] if self.model_device_emotion2vec_devices else "cpu"
 
     @property
     def model_device_speech_campplus(self) -> str:
-        return self.model_device_speech_campplus_devices[0] if self.model_device_speech_campplus_devices else "cuda:0"
+        return self.model_device_speech_campplus_devices[0] if self.model_device_speech_campplus_devices else "cpu"
 
     @property
     def model_device_emotion2vec_devices(self) -> list[str]:
@@ -546,25 +539,29 @@ class Settings:
         for index, item in enumerate(value):
             field_name = f"{array_key}[{index}]"
             if not isinstance(item, str):
-                raise ValueError(f"[model_device_pool].{field_name} 必须是 cpu、cuda:N 或 npu:N")
+                raise ValueError(f"[model_device_pool].{field_name} 必须是 cpu 或 npu:N")
             devices.append(self._validate_model_device(item, field_name))
         if "model_device" in self._cfg:
             logger.warning("[配置迁移] 已忽略旧 [model_device]，请迁移到 [model_device_pool]")
         return devices
 
     @staticmethod
-    def _validate_model_device(value, field_name: str) -> str:
-        if isinstance(value, bool):
-            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu、cuda:N 或 npu:N 格式")
-        text = str(value).strip().lower()
-        if text == "cpu":
+    def _validate_device_spec(value, field_path: str, *, allow_cpu: bool = True) -> str:
+        allowed = "cpu 或 npu:N" if allow_cpu else "npu:N"
+        if not isinstance(value, str):
+            raise ValueError(f"{field_path} 必须使用 {allowed} 格式")
+        text = value.strip().lower()
+        if allow_cpu and text == "cpu":
             return text
-        if not text.startswith(("cuda:", "npu:")):
-            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu、cuda:N 或 npu:N 格式")
-        suffix = text.split(":", 1)[1]
-        if not suffix.isdigit():
-            raise ValueError(f"[model_device_pool].{field_name} 必须使用 cpu、cuda:N 或 npu:N 格式")
-        return f"{text.split(':', 1)[0]}:{int(suffix)}"
+        if text.startswith("cuda"):
+            raise ValueError(f"{field_path} 不再支持 CUDA，请迁移为 {allowed}")
+        if not text.startswith("npu:") or not text.split(":", 1)[1].isdigit():
+            raise ValueError(f"{field_path} 必须使用 {allowed} 格式")
+        return f"npu:{int(text.split(':', 1)[1])}"
+
+    @staticmethod
+    def _validate_model_device(value, field_name: str) -> str:
+        return Settings._validate_device_spec(value, f"[model_device_pool].{field_name}")
 
 
 settings = Settings()

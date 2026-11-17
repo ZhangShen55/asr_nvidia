@@ -4,9 +4,9 @@
     conda run -n asr python scripts/bench_cam_emo_model_pool.py --dry-run
     conda run -n asr python scripts/bench_cam_emo_model_pool.py \
         --base-url http://127.0.0.1:8084 --concurrency 2,4,8,16,32 \
-        --audio 'test/audio_file/教师1.aac' --out-dir /tmp/cam_emo_pool
+        --audio 'test/音频文件/教师1.wav' --out-dir /tmp/cam_emo_pool
 
-脚本只操作本次指定的 HTTP 服务，不会停止或重启 qwen-asr 服务。
+脚本仅调用已经启动的 v3 服务，不创建服务。启动该服务的测试入口必须 finally 关闭本次进程并验证端口释放。
 """
 
 from __future__ import annotations
@@ -23,11 +23,10 @@ import math
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-import requests
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_AUDIO = REPO_ROOT / "test/audio_file/教师1.aac"
+DEFAULT_AUDIO = None
 V3_PHASE_RE = re.compile(
     r"Qwen 等待 ([\d.]+)ms/调用 ([\d.]+)ms/(\d+)次, "
     r"说话人等待 ([\d.]+)ms/推理 ([\d.]+)ms/(\d+)次, "
@@ -35,25 +34,18 @@ V3_PHASE_RE = re.compile(
 )
 
 
-def gpu_sample() -> dict:
+def npu_sample() -> dict:
+    """只读 npu-smi 快照；不 import/初始化 torch，也不影响其他卡。"""
     try:
-        result = subprocess.run(
-            ["nvidia-smi", "--query-gpu=index,utilization.gpu,memory.used,memory.total",
-             "--format=csv,noheader,nounits"],
-            capture_output=True, text=True, check=False, timeout=5,
-        )
-        rows = []
-        for line in result.stdout.splitlines():
-            fields = [value.strip() for value in line.split(",")]
-            if len(fields) >= 4:
-                rows.append({"index": int(fields[0]), "utilization_gpu": float(fields[1]),
-                             "memory_used_mb": float(fields[2]), "memory_total_mb": float(fields[3])})
-        return {"gpus": rows}
-    except Exception as exc:  # noqa: BLE001
-        return {"error": str(exc), "gpus": []}
+        result = subprocess.run(["npu-smi", "info"], capture_output=True, text=True, check=False, timeout=5)
+        return {"command": ["npu-smi", "info"], "returncode": result.returncode,
+                "raw": result.stdout, "stderr": result.stderr, "interpretation": "system inventory, not exclusive process memory"}
+    except Exception as exc:
+        return {"error": str(exc)}
 
 
 def status(base_url: str) -> dict:
+    import requests
     try:
         response = requests.get(f"{base_url.rstrip('/')}/get_status", timeout=15)
         response.raise_for_status()
@@ -63,12 +55,14 @@ def status(base_url: str) -> dict:
 
 
 def one_request(base_url: str, audio: Path, timeout: float) -> dict:
+    import requests
+    import mimetypes
     started = time.perf_counter()
     try:
         with audio.open("rb") as handle:
             response = requests.post(
                 f"{base_url.rstrip('/')}/v3/seacraft_asr",
-                files={"audioFile": (audio.name, handle, "audio/aac")},
+                files={"audioFile": ("pool-sample" + audio.suffix.lower(), handle, mimetypes.guess_type(str(audio))[0] or "application/octet-stream")},
                 data={"showSpk": "true", "showEmotion": "true"},
                 timeout=timeout,
             )
@@ -95,7 +89,7 @@ def run_level(
     timeout: float,
     log_path: Path = REPO_ROOT / "asr_service.log",
 ) -> dict:
-    before = {"status": status(base_url), "gpu": gpu_sample()}
+    before = {"status": status(base_url), "npu": npu_sample()}
     try:
         log_offset = log_path.stat().st_size
     except OSError:
@@ -110,7 +104,7 @@ def run_level(
                 status_samples.append({
                     "time": time.time(),
                     "localModels": snapshot["localModels"],
-                    "gpu": gpu_sample(),
+                    "npu": npu_sample(),
                 })
             stop_sampling.wait(1.0)
 
@@ -123,9 +117,9 @@ def run_level(
             results = [future.result() for future in futures]
     finally:
         stop_sampling.set()
-        sampler.join(timeout=5)
+        sampler.join(timeout=25)
     elapsed = time.perf_counter() - started
-    after = {"status": status(base_url), "gpu": gpu_sample()}
+    after = {"status": status(base_url), "npu": npu_sample()}
     times = [item["elapsed_s"] for item in results]
     successes = [item for item in results if item.get("ok")]
     audio_duration_s = None
@@ -197,14 +191,16 @@ def run_level(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--base-url", default="http://127.0.0.1:8084")
-    parser.add_argument("--audio", type=Path, default=DEFAULT_AUDIO)
-    parser.add_argument("--concurrency", default="2,4,8,16,32")
+    parser.add_argument("--audio", type=Path, required=True)
+    parser.add_argument("--concurrency", default="1,2")
     parser.add_argument("--timeout", type=float, default=7200)
     parser.add_argument("--out-dir", type=Path, default=Path("/tmp/cam_emo_pool"))
     parser.add_argument("--log-path", type=Path, default=REPO_ROOT / "asr_service.log")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
     levels = [int(value) for value in args.concurrency.split(",")]
+    if not levels or min(levels) < 1:
+        parser.error("--concurrency values must be positive")
     config = {"base_url": args.base_url, "audio": str(args.audio), "concurrency": levels,
               "showSpk": True, "showEmotion": True, "port": args.base_url.rsplit(":", 1)[-1]}
     if args.dry_run:

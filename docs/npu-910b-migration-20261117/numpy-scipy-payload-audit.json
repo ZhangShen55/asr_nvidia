@@ -1,0 +1,297 @@
+[
+  {
+    "name": "build",
+    "result": {
+      "python": "/tmp/asr-rebuild-20261117-build/bin/python",
+      "prefix": "/tmp/asr-rebuild-20261117-build",
+      "numpy_version": "1.26.4",
+      "numpy_metadata": "1.26.4",
+      "numpy_file": "/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/numpy/__init__.py",
+      "numpy_ufunc_type_id": 281473552127616,
+      "numpy_add_type_id": 281473552127616,
+      "numpy_add_is_numpy_ufunc": true,
+      "scipy_metadata": "1.15.3",
+      "scipy_import_ok": false,
+      "scipy_error": {
+        "type": "ValueError",
+        "message": "All ufuncs must have type `numpy.ufunc`. Received (<ufunc 'sph_legendre_p'>, <ufunc 'sph_legendre_p'>, <ufunc 'sph_legendre_p'>)",
+        "traceback": "Traceback (most recent call last):\n  File \"<stdin>\", line 8, in <module>\n  File \"/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/scipy/special/__init__.py\", line 826, in <module>\n    from . import _basic\n  File \"/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/scipy/special/_basic.py\", line 22, in <module>\n    from ._multiufuncs import (assoc_legendre_p_all,\n  File \"/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/scipy/special/_multiufuncs.py\", line 142, in <module>\n    sph_legendre_p = MultiUFunc(\n  File \"/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/scipy/special/_multiufuncs.py\", line 41, in __init__\n    raise ValueError(\"All ufuncs must have type `numpy.ufunc`.\"\nValueError: All ufuncs must have type `numpy.ufunc`. Received (<ufunc 'sph_legendre_p'>, <ufunc 'sph_legendre_p'>, <ufunc 'sph_legendre_p'>)\n"
+      },
+      "loaded_modules": {
+        "numpy.core._multiarray_umath": {
+          "file": "/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/numpy/core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so",
+          "add_type_id": 281473552127616,
+          "add_type_is_numpy_ufunc": true,
+          "add_type_repr": "<class 'numpy.ufunc'>"
+        },
+        "numpy.core": {
+          "file": "/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/numpy/core/__init__.py",
+          "add_type_id": 281473552127616,
+          "add_type_is_numpy_ufunc": true,
+          "add_type_repr": "<class 'numpy.ufunc'>"
+        },
+        "numpy._core": {
+          "file": "/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/numpy/_core/__init__.py"
+        },
+        "numpy._core._multiarray_umath": {
+          "file": "/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/numpy/_core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so",
+          "add_type_id": 281468153754840,
+          "add_type_is_numpy_ufunc": false,
+          "add_type_repr": "<class 'numpy.ufunc'>"
+        },
+        "scipy.special._special_ufuncs": {
+          "file": "/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/scipy/special/_special_ufuncs.cpython-310-aarch64-linux-gnu.so",
+          "sph_legendre_p": [
+            {
+              "type_id": 281468153754840,
+              "type_repr": "<class 'numpy.ufunc'>",
+              "is_numpy_ufunc": false,
+              "repr": "<ufunc 'sph_legendre_p'>"
+            },
+            {
+              "type_id": 281468153754840,
+              "type_repr": "<class 'numpy.ufunc'>",
+              "is_numpy_ufunc": false,
+              "repr": "<ufunc 'sph_legendre_p'>"
+            },
+            {
+              "type_id": 281468153754840,
+              "type_repr": "<class 'numpy.ufunc'>",
+              "is_numpy_ufunc": false,
+              "repr": "<ufunc 'sph_legendre_p'>"
+            }
+          ]
+        },
+        "scipy.special._ufuncs": {
+          "file": "/tmp/asr-rebuild-20261117-build/lib/python3.10/site-packages/scipy/special/_ufuncs.cpython-310-aarch64-linux-gnu.so"
+        }
+      },
+      "multiarray_files": {
+        "numpy/core/_multiarray_tests.cpython-310-aarch64-linux-gnu.so": {
+          "bytes": 226880,
+          "sha256": "214d54f78ea56e553e04bbaebb2e91ff083c883a057c3dd43d42c84f3f60add3",
+          "in_numpy_record": true
+        },
+        "numpy/core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so": {
+          "bytes": 4597857,
+          "sha256": "63dc32deab0dc4e20aad0eed4e5c9963ddc9b1a9b56a8346bdca22944c73318b",
+          "in_numpy_record": true
+        },
+        "numpy/core/_multiarray_umath.py": {
+          "bytes": 2096,
+          "sha256": "61bd0739179cff070457744d354e116679404d84d442d8c01cc6262f8a6f34bb",
+          "in_numpy_record": false
+        },
+        "numpy/core/multiarray.py": {
+          "bytes": 56097,
+          "sha256": "cd76967ff0d29051168d442a55108679ebf0b08ea48d0df1ebf314c00d58f1f9",
+          "in_numpy_record": true
+        },
+        "numpy/core/multiarray.pyi": {
+          "bytes": 24768,
+          "sha256": "ff45f85bdd14e5988ab769fef4eb1c2bea5c43257aa062bef23c06cb9935ab10",
+          "in_numpy_record": true
+        },
+        "numpy/_core/_multiarray_tests.cpython-310-aarch64-linux-gnu.so": {
+          "bytes": 158544,
+          "sha256": "cf01c85e03c6dab966e9d8c4f3a7bea31419685f7b3c2ebe21b5793c5f5f1cb3",
+          "in_numpy_record": false
+        },
+        "numpy/_core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so": {
+          "bytes": 4672864,
+          "sha256": "75d48ca05dee60aa68fb07e9c00fdd1492c5857ceb97efc69abbddc0c8cd22c3",
+          "in_numpy_record": false
+        },
+        "numpy/_core/_multiarray_umath.py": {
+          "bytes": 159,
+          "sha256": "54fb684f6b879f2537aca2f41b6ec28263660755911ccd26b5ced8f4bf390b75",
+          "in_numpy_record": true
+        },
+        "numpy/_core/multiarray.py": {
+          "bytes": 138,
+          "sha256": "919c42ffb3f7270cf5440a73414d901a6a92ab830012f2a66891189c0b1b48eb",
+          "in_numpy_record": true
+        },
+        "numpy/_core/multiarray.pyi": {
+          "bytes": 33396,
+          "sha256": "33366df8adb1d81ac379b6e2aef476b28e536e2a70deed7cf5556c0e39007729",
+          "in_numpy_record": false
+        }
+      },
+      "conda_numpy_records": [
+        {
+          "name": "numpy",
+          "version": "2.2.6",
+          "build": "py310h6e5608f_0",
+          "url": "https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/linux-aarch64/numpy-2.2.6-py310h6e5608f_0.conda",
+          "sha256": "d7234b9c45e4863c7d4c5221c1e91d69b0e0009464bf361c3fea47e64dc4adc2",
+          "md5": "9e9f1f279eb02c41bda162a42861adc0",
+          "link": {
+            "source": "/data/anaconda3/pkgs/numpy-2.2.6-py310h6e5608f_0",
+            "type": 1
+          },
+          "metadata_path": "/tmp/asr-rebuild-20261117-build/conda-meta/numpy-2.2.6-py310h6e5608f_0.json",
+          "multiarray_artifacts": {
+            "lib/python3.10/site-packages/numpy/_core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so": {
+              "exists": true,
+              "cache_path": "/data/anaconda3/pkgs/numpy-2.2.6-py310h6e5608f_0/lib/python3.10/site-packages/numpy/_core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so",
+              "cache_exists": true,
+              "sha256": "75d48ca05dee60aa68fb07e9c00fdd1492c5857ceb97efc69abbddc0c8cd22c3",
+              "cache_sha256": "75d48ca05dee60aa68fb07e9c00fdd1492c5857ceb97efc69abbddc0c8cd22c3"
+            },
+            "lib/python3.10/site-packages/numpy/core/__pycache__/_multiarray_umath.cpython-310.pyc": {
+              "exists": true,
+              "cache_path": "/data/anaconda3/pkgs/numpy-2.2.6-py310h6e5608f_0/lib/python3.10/site-packages/numpy/core/__pycache__/_multiarray_umath.cpython-310.pyc",
+              "cache_exists": true,
+              "sha256": "5714641c19960cf14ce36186ebeadeaa6445972635ab94a7d3eadd3977e734a8",
+              "cache_sha256": "5714641c19960cf14ce36186ebeadeaa6445972635ab94a7d3eadd3977e734a8"
+            },
+            "lib/python3.10/site-packages/numpy/core/_multiarray_umath.py": {
+              "exists": true,
+              "cache_path": "/data/anaconda3/pkgs/numpy-2.2.6-py310h6e5608f_0/lib/python3.10/site-packages/numpy/core/_multiarray_umath.py",
+              "cache_exists": true,
+              "sha256": "61bd0739179cff070457744d354e116679404d84d442d8c01cc6262f8a6f34bb",
+              "cache_sha256": "61bd0739179cff070457744d354e116679404d84d442d8c01cc6262f8a6f34bb"
+            }
+          }
+        }
+      ],
+      "torch_imported": false,
+      "torch_npu_imported": false
+    }
+  },
+  {
+    "name": "asr",
+    "result": {
+      "python": "/home/zhangs/conda-envs/asr/bin/python",
+      "prefix": "/home/zhangs/conda-envs/asr",
+      "numpy_version": "1.26.4",
+      "numpy_metadata": "1.26.4",
+      "numpy_file": "/home/zhangs/conda-envs/asr/lib/python3.10/site-packages/numpy/__init__.py",
+      "numpy_ufunc_type_id": 281472842487424,
+      "numpy_add_type_id": 281472842487424,
+      "numpy_add_is_numpy_ufunc": true,
+      "scipy_metadata": "1.15.3",
+      "scipy_import_ok": true,
+      "scipy_special_file": "/home/zhangs/conda-envs/asr/lib/python3.10/site-packages/scipy/special/__init__.py",
+      "loaded_modules": {
+        "numpy.core._multiarray_umath": {
+          "file": "/home/zhangs/conda-envs/asr/lib/python3.10/site-packages/numpy/core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so",
+          "add_type_id": 281472842487424,
+          "add_type_is_numpy_ufunc": true,
+          "add_type_repr": "<class 'numpy.ufunc'>"
+        },
+        "numpy.core": {
+          "file": "/home/zhangs/conda-envs/asr/lib/python3.10/site-packages/numpy/core/__init__.py",
+          "add_type_id": 281472842487424,
+          "add_type_is_numpy_ufunc": true,
+          "add_type_repr": "<class 'numpy.ufunc'>"
+        },
+        "numpy._core": {
+          "file": "/home/zhangs/conda-envs/asr/lib/python3.10/site-packages/numpy/_core/__init__.py"
+        },
+        "numpy._core._multiarray_umath": {
+          "file": "/home/zhangs/conda-envs/asr/lib/python3.10/site-packages/numpy/core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so",
+          "add_type_id": 281472842487424,
+          "add_type_is_numpy_ufunc": true,
+          "add_type_repr": "<class 'numpy.ufunc'>"
+        },
+        "scipy.special._special_ufuncs": {
+          "file": "/home/zhangs/conda-envs/asr/lib/python3.10/site-packages/scipy/special/_special_ufuncs.cpython-310-aarch64-linux-gnu.so",
+          "sph_legendre_p": [
+            {
+              "type_id": 281472842487424,
+              "type_repr": "<class 'numpy.ufunc'>",
+              "is_numpy_ufunc": true,
+              "repr": "<ufunc 'sph_legendre_p'>"
+            },
+            {
+              "type_id": 281472842487424,
+              "type_repr": "<class 'numpy.ufunc'>",
+              "is_numpy_ufunc": true,
+              "repr": "<ufunc 'sph_legendre_p'>"
+            },
+            {
+              "type_id": 281472842487424,
+              "type_repr": "<class 'numpy.ufunc'>",
+              "is_numpy_ufunc": true,
+              "repr": "<ufunc 'sph_legendre_p'>"
+            }
+          ]
+        },
+        "scipy.special._ufuncs": {
+          "file": "/home/zhangs/conda-envs/asr/lib/python3.10/site-packages/scipy/special/_ufuncs.cpython-310-aarch64-linux-gnu.so"
+        }
+      },
+      "multiarray_files": {
+        "numpy/core/_multiarray_tests.cpython-310-aarch64-linux-gnu.so": {
+          "bytes": 226880,
+          "sha256": "214d54f78ea56e553e04bbaebb2e91ff083c883a057c3dd43d42c84f3f60add3",
+          "in_numpy_record": true
+        },
+        "numpy/core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so": {
+          "bytes": 4597857,
+          "sha256": "63dc32deab0dc4e20aad0eed4e5c9963ddc9b1a9b56a8346bdca22944c73318b",
+          "in_numpy_record": true
+        },
+        "numpy/core/multiarray.py": {
+          "bytes": 56097,
+          "sha256": "cd76967ff0d29051168d442a55108679ebf0b08ea48d0df1ebf314c00d58f1f9",
+          "in_numpy_record": true
+        },
+        "numpy/core/multiarray.pyi": {
+          "bytes": 24768,
+          "sha256": "ff45f85bdd14e5988ab769fef4eb1c2bea5c43257aa062bef23c06cb9935ab10",
+          "in_numpy_record": true
+        },
+        "numpy/_core/_multiarray_umath.py": {
+          "bytes": 159,
+          "sha256": "54fb684f6b879f2537aca2f41b6ec28263660755911ccd26b5ced8f4bf390b75",
+          "in_numpy_record": true
+        },
+        "numpy/_core/multiarray.py": {
+          "bytes": 138,
+          "sha256": "919c42ffb3f7270cf5440a73414d901a6a92ab830012f2a66891189c0b1b48eb",
+          "in_numpy_record": true
+        }
+      },
+      "conda_numpy_records": [
+        {
+          "name": "numpy",
+          "version": "2.2.6",
+          "build": "py310h6e5608f_0",
+          "url": "https://mirrors.tuna.tsinghua.edu.cn/anaconda/cloud/conda-forge/linux-aarch64/numpy-2.2.6-py310h6e5608f_0.conda",
+          "sha256": "d7234b9c45e4863c7d4c5221c1e91d69b0e0009464bf361c3fea47e64dc4adc2",
+          "md5": "9e9f1f279eb02c41bda162a42861adc0",
+          "link": {
+            "source": "/data/anaconda3/pkgs/numpy-2.2.6-py310h6e5608f_0",
+            "type": 1
+          },
+          "metadata_path": "/home/zhangs/conda-envs/asr/conda-meta/numpy-2.2.6-py310h6e5608f_0.json",
+          "multiarray_artifacts": {
+            "lib/python3.10/site-packages/numpy/_core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so": {
+              "exists": false,
+              "cache_path": "/data/anaconda3/pkgs/numpy-2.2.6-py310h6e5608f_0/lib/python3.10/site-packages/numpy/_core/_multiarray_umath.cpython-310-aarch64-linux-gnu.so",
+              "cache_exists": true,
+              "cache_sha256": "75d48ca05dee60aa68fb07e9c00fdd1492c5857ceb97efc69abbddc0c8cd22c3"
+            },
+            "lib/python3.10/site-packages/numpy/core/__pycache__/_multiarray_umath.cpython-310.pyc": {
+              "exists": false,
+              "cache_path": "/data/anaconda3/pkgs/numpy-2.2.6-py310h6e5608f_0/lib/python3.10/site-packages/numpy/core/__pycache__/_multiarray_umath.cpython-310.pyc",
+              "cache_exists": true,
+              "cache_sha256": "5714641c19960cf14ce36186ebeadeaa6445972635ab94a7d3eadd3977e734a8"
+            },
+            "lib/python3.10/site-packages/numpy/core/_multiarray_umath.py": {
+              "exists": false,
+              "cache_path": "/data/anaconda3/pkgs/numpy-2.2.6-py310h6e5608f_0/lib/python3.10/site-packages/numpy/core/_multiarray_umath.py",
+              "cache_exists": true,
+              "cache_sha256": "61bd0739179cff070457744d354e116679404d84d442d8c01cc6262f8a6f34bb"
+            }
+          }
+        }
+      ],
+      "torch_imported": false,
+      "torch_npu_imported": false
+    }
+  }
+]

@@ -1,0 +1,115 @@
+{
+  "prefix": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu",
+  "reportdir": "/tmp/asr-clean-build-environment-20261117-06wq9sii",
+  "exit_code": 0,
+  "seconds": 134.99965357780457,
+  "log_sha256": "df62b4cb281d8585da0b3d3126ad705466aa4fb0d6675aba8e72bbee79a33f54",
+  "script_sha256": "1bda34afcbf06f97358c1eee5d9e7cc1863d388ddee06723517431fcb751ae55",
+  "used_conda_clone": false,
+  "source_asr_modified": false,
+  "npu_forward_checked": false,
+  "pip-list.json": {
+    "path": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/asr-env-manifest/pip-list.json",
+    "sha256": "3307afdee23d2924bec8f34723025acf70fb21a9cb9c547913e6a693bba92f37"
+  },
+  "conda-explicit.txt": {
+    "path": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/asr-env-manifest/conda-explicit.txt",
+    "sha256": "16e41a31e5368ad8fe9d39d0dec1ad77bc96f583bf8bfcee98cbe7ccb3581cf3"
+  },
+  "package-comparison.json": {
+    "path": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/asr-env-manifest/package-comparison.json",
+    "sha256": "18fb45206c1b6cfd6691ac488fab159d29747943c29a34782c7c142eb4d6c11f"
+  },
+  "imports.json": {
+    "path": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/asr-env-manifest/imports.json",
+    "sha256": "3b3e0e77a4cf0f36719265d708c29067409f79299eaaab16e4443b4921dfe23e"
+  },
+  "preflight-metadata.json": {
+    "path": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/asr-env-manifest/preflight-metadata.json",
+    "sha256": "dd250619d875de2df948472c3d9845998d1a4e44485ec4ec722897e0e50fda87"
+  },
+  "schema": 2,
+  "command": "ASR_CONDA_EXE=/data/anaconda3/bin/conda ASR_WITH_BUILD_TOOLS=1 bash scripts/rebuild_npu_env.sh /tmp/asr-rebuild-clean-build-20261117-qr9yhpvu",
+  "raw_result": {
+    "path": "/tmp/asr-clean-build-environment-20261117-06wq9sii/result.json",
+    "sha256": "bfc24eb64aa6d7d745e6cc42a39a81a700c1ad13990d53359f4be73e27c6db52"
+  },
+  "package_comparison": {
+    "missing_or_different": {},
+    "unexpected": {},
+    "build_tools_allowed": [
+      "conda-pack",
+      "cython"
+    ],
+    "matches_reference": true
+  },
+  "imports": {
+    "imports_ok": true,
+    "torch": "2.5.1",
+    "av": "14.2.0",
+    "numpy": "1.26.4",
+    "numpy_file": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/lib/python3.10/site-packages/numpy/__init__.py",
+    "scipy": "1.15.3",
+    "scipy_file": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/lib/python3.10/site-packages/scipy/__init__.py",
+    "numpy_untracked_binaries": [],
+    "scipy_cpu_expit": [
+      0.2689414213699951,
+      0.5,
+      0.7310585786300049
+    ],
+    "scipy_cpu_brentq": 1.4142135623731364,
+    "npu_initialized": false,
+    "npu_forward_checked": false
+  },
+  "pip_list_count": 115,
+  "metadata_preflight": {
+    "evidence": "metadata",
+    "python": "/tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/bin/python",
+    "python_version": "3.10.22",
+    "architecture": "aarch64",
+    "packages": {
+      "torch": "2.5.1",
+      "torch-npu": "2.5.1",
+      "torchaudio": "2.5.1",
+      "torchvision": "0.20.1",
+      "transformers": "5.13.0",
+      "numpy": "1.26.4",
+      "funasr": "1.2.6",
+      "av": "14.2.0",
+      "attrs": "26.1.0",
+      "WeTextProcessing": "1.2.0",
+      "pynini": "2.1.7"
+    },
+    "errors": [],
+    "runtime_checked": false
+  },
+  "old_clone_prefix": "/tmp/asr-rebuild-20261117-build",
+  "old_clone_health": "不用于运行/打包；NumPy2残留导致SciPy真实import失败，原件保留。详见numpy-scipy-payload-audit.md/json。",
+  "production_asr_modified": false,
+  "stage_recompiled": false,
+  "container_or_conda_pack_built": false,
+  "clean_prefix_cpu_semantic_parity": {
+    "report": "qwen-cleanbuild-cpu-parity.json",
+    "raw_path": "/tmp/asr-qwen-cleanbuild-cpu-20261117-zm7_kl8a/parity.json",
+    "sha256": "4d77cfee1d528044b41c7fd8bf8895432aa17d89f5a19d778941f92333ad5161",
+    "source_passed": 10,
+    "source_seconds": 6.04,
+    "compiled_passed": 10,
+    "compiled_seconds": 5.83,
+    "move_inputs_equal": true,
+    "note": "同一10case跨环境重复，不能当新增独立覆盖；无NPU初始化/大模型/服务，未重编stage。"
+  },
+  "post_script_cpu_regression": {
+    "command": "TORCH_DEVICE_BACKEND_AUTOLOAD=0 /home/zhangs/conda-envs/asr/bin/python -m pytest tests/test_npu_environment.py -q",
+    "passed": 11,
+    "seconds": 2.65,
+    "log": "/tmp/asr-clean-build-environment-20261117-06wq9sii/source-entrypoint-tests.log",
+    "sha256": "6c494fbb1af377c5c4b317f0ce6e8a8ea1a268d73b734b626785385a57698fdd"
+  },
+  "production_asr_final_metadata": {
+    "package_count": 113,
+    "matches_reference": true,
+    "differences": {},
+    "npu_or_torch_imported_for_this_metadata_comparison": false
+  }
+}

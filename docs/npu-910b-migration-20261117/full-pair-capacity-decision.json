@@ -1,0 +1,445 @@
+{
+  "selected_segment_concurrency": 1,
+  "selected_request_concurrency": 1,
+  "qwen_instances": 1,
+  "basis": "same eight full unique WAVs, 4B+4A, shared physical npu:7; observed g1 lower P50/P95; conservative classroom default, not proof of global optimum or strict isolated causal speedup",
+  "quantile_method": "numpy.percentile default linear, n=8; exact per-request elapsed_s retained",
+  "timing_scope": "client upload through complete response; VAD startup/prewarm excluded, first Qwen loading included; separate request start/end and exact batch wall time not recorded",
+  "quality_reference": "no human annotation and no CUDA golden; source/compiled and numerical checks are separate evidence",
+  "phases": {
+    "1": {
+      "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-full-g1-final",
+      "summary": {
+        "mode": "full",
+        "measurements": [
+          {
+            "request_id": "full-0",
+            "elapsed_s": 3628.947267189622,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true"
+            },
+            "sample_id": "audio-bbdf7c1a76f88262e22a",
+            "sha256": "25782e0ad459d6be270188951da7343a6951a78126bd549e9ee5c69a476a2f0e",
+            "audio_seconds": 2615.808,
+            "rtf": 1.387314079316839
+          },
+          {
+            "request_id": "full-1",
+            "elapsed_s": 3944.004416840151,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true"
+            },
+            "sample_id": "audio-ff1d4cae9950cf37211f",
+            "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+            "audio_seconds": 2702.016,
+            "rtf": 1.4596525027387517
+          },
+          {
+            "request_id": "full-2",
+            "elapsed_s": 4264.671982050873,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true"
+            },
+            "sample_id": "audio-6fbfabcc5926e1583dab",
+            "sha256": "2e42db093a4149752ddeb1dd5d0c05efe7bec18a5f3147fe4e7cd947e3c8b6a1",
+            "audio_seconds": 2820.736,
+            "rtf": 1.5119004338055293
+          },
+          {
+            "request_id": "full-3",
+            "elapsed_s": 2108.6810314394534,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true"
+            },
+            "sample_id": "audio-61d3d13113dbcf87833e",
+            "sha256": "5ae4039dea035b36b64c4dd4a0f1f774190a2080ec95d67aca91dceccf9db82a",
+            "audio_seconds": 2821.056,
+            "rtf": 0.7474793238558375
+          },
+          {
+            "request_id": "full-4",
+            "elapsed_s": 3873.0730867702514,
+            "fields": {},
+            "sample_id": "audio-28a0c66565d3814b32af",
+            "sha256": "5c663ae9217e2ec58d86459f115e11136d015671928b5cfceffe226d96b29a2e",
+            "audio_seconds": 2821.12,
+            "rtf": 1.3728849133571956
+          },
+          {
+            "request_id": "full-5",
+            "elapsed_s": 4755.155560440384,
+            "fields": {},
+            "sample_id": "audio-b0b2abaab027fbd04b81",
+            "sha256": "0e9f4df99a73f4e5ea9b7415a9cac4db3a710dabe0beda5b722e7236ad36985e",
+            "audio_seconds": 2822.56,
+            "rtf": 1.6846960066182415
+          },
+          {
+            "request_id": "full-6",
+            "elapsed_s": 4795.935395309702,
+            "fields": {},
+            "sample_id": "audio-36029767f173c95244c6",
+            "sha256": "f466ac0e160fb591b982e72a9f3e0faa99657abf5a807d4af2fcac7aa6526ffe",
+            "audio_seconds": 2823.04,
+            "rtf": 1.6988549206917725
+          },
+          {
+            "request_id": "full-7",
+            "elapsed_s": 4685.418327339925,
+            "fields": {},
+            "sample_id": "audio-5d5328ae33020b071a83",
+            "sha256": "0d23b47226d120d621ac5c0a66ae71a03fe365964873ac304bc84ccb72b67212",
+            "audio_seconds": 2827.072,
+            "rtf": 1.6573395822037518
+          }
+        ],
+        "latency": {
+          "count": 8,
+          "p50_s": 4104.338199445512,
+          "p95_s": 4781.66245310544
+        },
+        "b_peak": 4,
+        "total_peak": 8,
+        "shared_card": true,
+        "manual_reference": null
+      },
+      "shutdown": {
+        "exit_code": 0,
+        "listening": false,
+        "remaining_children": [],
+        "observed_s": 5,
+        "original_failure": null,
+        "shutdown_timeout": false,
+        "forced_child_cleanup": false,
+        "cleanup_errors": [],
+        "parent_exit_failed": false,
+        "failed": false,
+        "application_shutdown_failed": false,
+        "worker_shutdown_failed": false,
+        "worker_shutdown": [
+          {
+            "cleanup_complete": true,
+            "device": "cpu",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 2.408285,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 3852891,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 2.409756,
+            "worker_id": 0
+          },
+          {
+            "cleanup_complete": true,
+            "device": "cpu",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 1.76856,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 3852916,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 1.769526,
+            "worker_id": 1
+          },
+          {
+            "cleanup_complete": true,
+            "device": "npu:7",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 6.863598,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 3852943,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 6.864658,
+            "worker_id": 2
+          },
+          {
+            "cleanup_complete": true,
+            "device": "npu:7",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 6.296091,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 3852971,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 6.297045,
+            "worker_id": 3
+          }
+        ]
+      },
+      "samples": [
+        {
+          "sample_id": "audio-bbdf7c1a76f88262e22a",
+          "sha256": "25782e0ad459d6be270188951da7343a6951a78126bd549e9ee5c69a476a2f0e"
+        },
+        {
+          "sample_id": "audio-ff1d4cae9950cf37211f",
+          "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be"
+        },
+        {
+          "sample_id": "audio-6fbfabcc5926e1583dab",
+          "sha256": "2e42db093a4149752ddeb1dd5d0c05efe7bec18a5f3147fe4e7cd947e3c8b6a1"
+        },
+        {
+          "sample_id": "audio-61d3d13113dbcf87833e",
+          "sha256": "5ae4039dea035b36b64c4dd4a0f1f774190a2080ec95d67aca91dceccf9db82a"
+        },
+        {
+          "sample_id": "audio-28a0c66565d3814b32af",
+          "sha256": "5c663ae9217e2ec58d86459f115e11136d015671928b5cfceffe226d96b29a2e"
+        },
+        {
+          "sample_id": "audio-b0b2abaab027fbd04b81",
+          "sha256": "0e9f4df99a73f4e5ea9b7415a9cac4db3a710dabe0beda5b722e7236ad36985e"
+        },
+        {
+          "sample_id": "audio-36029767f173c95244c6",
+          "sha256": "f466ac0e160fb591b982e72a9f3e0faa99657abf5a807d4af2fcac7aa6526ffe"
+        },
+        {
+          "sample_id": "audio-5d5328ae33020b071a83",
+          "sha256": "0d23b47226d120d621ac5c0a66ae71a03fe365964873ac304bc84ccb72b67212"
+        }
+      ],
+      "source_files_sha256": {
+        "summary.json": "55cef5b4652a7393e048e033e75bf78b6d1eecbe072bc9d8a68410d06d85e685",
+        "shutdown-after.json": "d69e3d878c76b9e4524154492a6d2593d2c612df54b92b9704927624d95a2708",
+        "full-samples.json": "8c87f1280c9c30c443bef4f107ff51d0eb3d5aa90e2f50e5a0b82476a4bd40c8",
+        "ownership.json": "a3c73e8032157f0270f4aae38be2edc9d0f732b24d3c9a07c9b86b3df58ab42f"
+      }
+    },
+    "2": {
+      "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-full-g2-final",
+      "summary": {
+        "mode": "full",
+        "measurements": [
+          {
+            "request_id": "full-0",
+            "elapsed_s": 3795.9473653696477,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true"
+            },
+            "sample_id": "audio-bbdf7c1a76f88262e22a",
+            "sha256": "25782e0ad459d6be270188951da7343a6951a78126bd549e9ee5c69a476a2f0e",
+            "audio_seconds": 2615.808,
+            "rtf": 1.4511567230353482
+          },
+          {
+            "request_id": "full-1",
+            "elapsed_s": 4130.308728579432,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true"
+            },
+            "sample_id": "audio-ff1d4cae9950cf37211f",
+            "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+            "audio_seconds": 2702.016,
+            "rtf": 1.5286026169272986
+          },
+          {
+            "request_id": "full-2",
+            "elapsed_s": 4478.003024900332,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true"
+            },
+            "sample_id": "audio-6fbfabcc5926e1583dab",
+            "sha256": "2e42db093a4149752ddeb1dd5d0c05efe7bec18a5f3147fe4e7cd947e3c8b6a1",
+            "audio_seconds": 2820.736,
+            "rtf": 1.587530000999857
+          },
+          {
+            "request_id": "full-3",
+            "elapsed_s": 2230.408656959422,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true"
+            },
+            "sample_id": "audio-61d3d13113dbcf87833e",
+            "sha256": "5ae4039dea035b36b64c4dd4a0f1f774190a2080ec95d67aca91dceccf9db82a",
+            "audio_seconds": 2821.056,
+            "rtf": 0.790628990335329
+          },
+          {
+            "request_id": "full-4",
+            "elapsed_s": 4085.840343750082,
+            "fields": {},
+            "sample_id": "audio-28a0c66565d3814b32af",
+            "sha256": "5c663ae9217e2ec58d86459f115e11136d015671928b5cfceffe226d96b29a2e",
+            "audio_seconds": 2821.12,
+            "rtf": 1.4483043414495242
+          },
+          {
+            "request_id": "full-5",
+            "elapsed_s": 4972.15601527039,
+            "fields": {},
+            "sample_id": "audio-b0b2abaab027fbd04b81",
+            "sha256": "0e9f4df99a73f4e5ea9b7415a9cac4db3a710dabe0beda5b722e7236ad36985e",
+            "audio_seconds": 2822.56,
+            "rtf": 1.7615767300855925
+          },
+          {
+            "request_id": "full-6",
+            "elapsed_s": 5018.234334020875,
+            "fields": {},
+            "sample_id": "audio-36029767f173c95244c6",
+            "sha256": "f466ac0e160fb591b982e72a9f3e0faa99657abf5a807d4af2fcac7aa6526ffe",
+            "audio_seconds": 2823.04,
+            "rtf": 1.7775994438693308
+          },
+          {
+            "request_id": "full-7",
+            "elapsed_s": 4895.311655309983,
+            "fields": {},
+            "sample_id": "audio-5d5328ae33020b071a83",
+            "sha256": "0d23b47226d120d621ac5c0a66ae71a03fe365964873ac304bc84ccb72b67212",
+            "audio_seconds": 2827.072,
+            "rtf": 1.731583650968204
+          }
+        ],
+        "latency": {
+          "count": 8,
+          "p50_s": 4304.155876739882,
+          "p95_s": 5002.106922458205
+        },
+        "b_peak": 4,
+        "total_peak": 8,
+        "shared_card": true,
+        "manual_reference": null
+      },
+      "shutdown": {
+        "exit_code": 0,
+        "listening": false,
+        "remaining_children": [],
+        "observed_s": 5,
+        "original_failure": null,
+        "shutdown_timeout": false,
+        "forced_child_cleanup": false,
+        "cleanup_errors": [],
+        "parent_exit_failed": false,
+        "failed": false,
+        "application_shutdown_failed": false,
+        "worker_shutdown_failed": false,
+        "worker_shutdown": [
+          {
+            "cleanup_complete": true,
+            "device": "cpu",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 1.741474,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 497921,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 1.743056,
+            "worker_id": 0
+          },
+          {
+            "cleanup_complete": true,
+            "device": "cpu",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 1.845426,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 497946,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 1.846271,
+            "worker_id": 1
+          },
+          {
+            "cleanup_complete": true,
+            "device": "npu:7",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 7.242167,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 497985,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 7.243333,
+            "worker_id": 2
+          },
+          {
+            "cleanup_complete": true,
+            "device": "npu:7",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 7.431468,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 498018,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 7.43271,
+            "worker_id": 3
+          }
+        ]
+      },
+      "samples": [
+        {
+          "sample_id": "audio-bbdf7c1a76f88262e22a",
+          "sha256": "25782e0ad459d6be270188951da7343a6951a78126bd549e9ee5c69a476a2f0e"
+        },
+        {
+          "sample_id": "audio-ff1d4cae9950cf37211f",
+          "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be"
+        },
+        {
+          "sample_id": "audio-6fbfabcc5926e1583dab",
+          "sha256": "2e42db093a4149752ddeb1dd5d0c05efe7bec18a5f3147fe4e7cd947e3c8b6a1"
+        },
+        {
+          "sample_id": "audio-61d3d13113dbcf87833e",
+          "sha256": "5ae4039dea035b36b64c4dd4a0f1f774190a2080ec95d67aca91dceccf9db82a"
+        },
+        {
+          "sample_id": "audio-28a0c66565d3814b32af",
+          "sha256": "5c663ae9217e2ec58d86459f115e11136d015671928b5cfceffe226d96b29a2e"
+        },
+        {
+          "sample_id": "audio-b0b2abaab027fbd04b81",
+          "sha256": "0e9f4df99a73f4e5ea9b7415a9cac4db3a710dabe0beda5b722e7236ad36985e"
+        },
+        {
+          "sample_id": "audio-36029767f173c95244c6",
+          "sha256": "f466ac0e160fb591b982e72a9f3e0faa99657abf5a807d4af2fcac7aa6526ffe"
+        },
+        {
+          "sample_id": "audio-5d5328ae33020b071a83",
+          "sha256": "0d23b47226d120d621ac5c0a66ae71a03fe365964873ac304bc84ccb72b67212"
+        }
+      ],
+      "source_files_sha256": {
+        "summary.json": "d597cf5c04a07e6ebd668681ebc861c8d45fe461465d37e79d29e55dc4602d21",
+        "shutdown-after.json": "dcb8f7a71a6523efcd5b9a2a43075bec7fe41ad5fdd14b9e3c75ecd0b3859bc5",
+        "full-samples.json": "8c87f1280c9c30c443bef4f107ff51d0eb3d5aa90e2f50e5a0b82476a4bd40c8",
+        "ownership.json": "b13bd634f01f76163f3c10bd079fbcbd80492bc34e600d2134d02e3f814fae47"
+      }
+    }
+  }
+}

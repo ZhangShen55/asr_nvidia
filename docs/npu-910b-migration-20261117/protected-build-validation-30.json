@@ -1,0 +1,195 @@
+{
+  "schema": 2,
+  "recorded_at": 1794912476.733282,
+  "evidence_level": "compiled_import_and_cpu_loading_guard",
+  "stage": "/tmp/asr-cython-dtype-20261117-yanuedv6",
+  "build_prefix": "/tmp/asr-rebuild-20261117-build",
+  "source_fingerprint_sha256": "c44ddfa7d64a495f9c57765b71b3f1ccf748e1e32f619c5e2a2a0a4627a68a7f",
+  "source_sha256": {
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/async_utils.py": "bbf61919dc7a5b986450c9b00ffed7df0980c99e94c5f16c4f2dca1f35abe5c6",
+    "core/config.py": "9763731aeffaa1e0f39f326ffd2b7e1bf1eb201e7fa29f28841bc12a94c8c631",
+    "core/deployment.py": "107b7c00dd0469c97acadcab34c32182a0321b67bd7e39ee740d1c89feb65966",
+    "core/local_inference.py": "5cc7fff21985b0ba6ebf501c48cdd2a10e6bcfdd0ca61e936a3a0f5de5f16582",
+    "core/logging.py": "30e309f26c3e8ec5ccde044bbb53cf0d1a9084fca4fd8773ae9c2018ff0c64fa",
+    "core/model_loading.py": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c",
+    "core/models.py": "3b660fe0ec43ab6dc8fdf3fed056be9a569d4309238c31e3a7d8876946943299",
+    "core/npu_resource_status.py": "38dce7800a4e1bbc0fc11a7f4a50a545be3df9aa2e150359b36cb3a6ccc34bb6",
+    "core/progress.py": "8969e793015b8175e2990f5221b6e69e0b8c5072b64ccfa77e55b19e6a67bfb8",
+    "core/qwen_asr_client.py": "e3bb4fd4f399d5cee5b7238e692f7c527ba12b7313fe2a17933bfd3ea88f3767",
+    "core/qwen_asr_queue.py": "325b4e3f39c50ec0137261eca182b91ca0e7bf8557ffd15ccc5e2f3b764b4024",
+    "core/qwen_asr_runtime.py": "bd0c73e9700657bc9bb3bc0665f389c10d42504914c1e696748c42c78e96a485",
+    "core/request_telemetry.py": "b36810bbc197ae77407a47d16457f96a1171f974b7807da391aa7061bf244ad0",
+    "core/resource_diagnostics.py": "8055e71b023336fabff4fe2a7121f6cd8a38ec13e8018513442953100683fe49",
+    "core/status.py": "ffb8811440cf0c48848538782e292550aaba718c7d4b304b6e8c9144409225c7",
+    "core/vad.py": "ebbc95b55780328e9dc84ff7fc48d890d4fd99c79261e4b8386b715f64d8982f",
+    "core/vad_pool.py": "3f7c52d272690ddbce226823843c7d73b3d04fd7f90d47f3cac3cace7f1053ed",
+    "core/vad_volume.py": "e97dfdf5cc4dc5a38fc5a5938dc3c20a70e81e09d6c2b50a2212295de624e6a4",
+    "api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/asr_common.py": "c0f753a105107daec0070e80b684dca25c2af3cb3306260ea3a4b46a586c10b9",
+    "api/routes/asr_qwen_common.py": "f3a33a0d5bc7f52e75aebd5de09f0a6e1120b3939856a976c8805f5fb5d0813b",
+    "api/routes/asr_v3.py": "e2023bd57ec970d6b313e0031f0543a8633cf4638b9b98191d9ba7a8b5eeab8c",
+    "api/routes/status.py": "a1de0faf6431129ef7107ba2efcc83c08697a1dafa4762fe4918587716c936a8",
+    "utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utils/asr_stats.py": "1d3c0cefe775978503e8074c05e5fba347c196e7259e394ec409833c72bce351",
+    "utils/audio_utils.py": "0677a24eeefce08418a374e72e35e0a0649e85b227c40b7595b3bac66bbb3e6e",
+    "utils/feature_utils.py": "8f0c1fafab3f2d60398e53c9bcaf7d6f93f69a1aad2b4cb603866d12e457bef7",
+    "utils/itn.py": "5005178357003f716d819739b85f81b4dbe67e4d2764c9a3133244470fa3d0c0",
+    "utils/qwen_response.py": "f48464ad4aa8648b4d7639a2d486cf9980a6a12866209fb9bd5893aed8a198fd",
+    "utils/repetition.py": "02be6e84270414d30be39f721876553577760c62c59aaa695bf0d9ef94c4f0ef",
+    "utils/text_postprocess.py": "3ee74af7164a2cda2f9ab56d06ee092159516c3dbbefdb99807d5e605e447530",
+    "entity/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entity/data.py": "4596ff74847397fdf2628433f79f3110c72c13219e7a7b49353bb3cdf65776ea",
+    "main.py": "4d5b4654b500fe1f6b26ee260612c10284399b2ebba88d79ad0cfa0453730116",
+    "model_status_runtime.py": "5e1a7c044ee04973e8b42ba74d1b83bb20215f424a98a8221e6511cff1cd545a",
+    "telemetry_runtime.py": "bd5d9a4eb4ec692753e30945e688da92544d4d510e55201c4df7ed1f18424043",
+    "config.toml": "f566fa91b9729f1e55cb68e565b0911e0b167e9c5ecea6a11b4dd9ee13d707a7",
+    "setup_cython.py": "50a6c7d2ea160ff69815b118f8b429b8d3c2d9452214f563e85c85b5132a705e",
+    "scripts/build_cython.sh": "32972bf823b382d2e3a9f55fe65b8ee12333b8f0816747d1eff92841f9f962a2"
+  },
+  "changed_sources_at_report": [],
+  "negative_index_warning_count": 0,
+  "build": {
+    "built_at": "2026-11-17T10:43:24.644775+00:00",
+    "python": "3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 22:53:30) [GCC 14.4.0]",
+    "architecture": "aarch64",
+    "soabi": "cpython-310-aarch64-linux-gnu",
+    "platform": "Linux-5.10.0-60.18.0.50.oe2203.aarch64-aarch64-with-glibc2.34",
+    "compiler": "GCC 14.4.0",
+    "packages": {
+      "Cython": "3.0.12",
+      "setuptools": "84.0.0",
+      "numpy": "1.26.4",
+      "torch": "2.5.1",
+      "torch-npu": "2.5.1",
+      "torchaudio": "2.5.1",
+      "transformers": "5.13.0",
+      "funasr": "1.2.6"
+    },
+    "compiler_directives": {
+      "boundscheck": true,
+      "wraparound": true,
+      "initializedcheck": true,
+      "cdivision": false
+    },
+    "cann_version_files": [
+      "/usr/local/Ascend/ascend-toolkit/latest/version.cfg"
+    ]
+  },
+  "extensions": {
+    "python": "3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 22:53:30) [GCC 14.4.0]",
+    "architecture": "aarch64",
+    "soabi": "cpython-310-aarch64-linux-gnu",
+    "imports": {
+      "api.routes.asr_common": "/tmp/asr-cython-dtype-20261117-yanuedv6/api/routes/asr_common.cpython-310-aarch64-linux-gnu.so",
+      "api.routes.asr_qwen_common": "/tmp/asr-cython-dtype-20261117-yanuedv6/api/routes/asr_qwen_common.cpython-310-aarch64-linux-gnu.so",
+      "api.routes.asr_v3": "/tmp/asr-cython-dtype-20261117-yanuedv6/api/routes/asr_v3.cpython-310-aarch64-linux-gnu.so",
+      "api.routes.status": "/tmp/asr-cython-dtype-20261117-yanuedv6/api/routes/status.cpython-310-aarch64-linux-gnu.so",
+      "core.async_utils": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/async_utils.cpython-310-aarch64-linux-gnu.so",
+      "core.config": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/config.cpython-310-aarch64-linux-gnu.so",
+      "core.deployment": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/deployment.cpython-310-aarch64-linux-gnu.so",
+      "core.local_inference": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/local_inference.cpython-310-aarch64-linux-gnu.so",
+      "core.logging": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/logging.cpython-310-aarch64-linux-gnu.so",
+      "core.model_loading": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/model_loading.cpython-310-aarch64-linux-gnu.so",
+      "core.models": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/models.cpython-310-aarch64-linux-gnu.so",
+      "core.npu_resource_status": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/npu_resource_status.cpython-310-aarch64-linux-gnu.so",
+      "core.progress": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/progress.cpython-310-aarch64-linux-gnu.so",
+      "core.qwen_asr_client": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/qwen_asr_client.cpython-310-aarch64-linux-gnu.so",
+      "core.qwen_asr_queue": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/qwen_asr_queue.cpython-310-aarch64-linux-gnu.so",
+      "core.qwen_asr_runtime": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+      "core.request_telemetry": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/request_telemetry.cpython-310-aarch64-linux-gnu.so",
+      "core.resource_diagnostics": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/resource_diagnostics.cpython-310-aarch64-linux-gnu.so",
+      "core.status": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/status.cpython-310-aarch64-linux-gnu.so",
+      "core.vad": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/vad.cpython-310-aarch64-linux-gnu.so",
+      "core.vad_pool": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/vad_pool.cpython-310-aarch64-linux-gnu.so",
+      "core.vad_volume": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/vad_volume.cpython-310-aarch64-linux-gnu.so",
+      "entity.data": "/tmp/asr-cython-dtype-20261117-yanuedv6/entity/data.cpython-310-aarch64-linux-gnu.so",
+      "utils.asr_stats": "/tmp/asr-cython-dtype-20261117-yanuedv6/utils/asr_stats.cpython-310-aarch64-linux-gnu.so",
+      "utils.audio_utils": "/tmp/asr-cython-dtype-20261117-yanuedv6/utils/audio_utils.cpython-310-aarch64-linux-gnu.so",
+      "utils.feature_utils": "/tmp/asr-cython-dtype-20261117-yanuedv6/utils/feature_utils.cpython-310-aarch64-linux-gnu.so",
+      "utils.itn": "/tmp/asr-cython-dtype-20261117-yanuedv6/utils/itn.cpython-310-aarch64-linux-gnu.so",
+      "utils.qwen_response": "/tmp/asr-cython-dtype-20261117-yanuedv6/utils/qwen_response.cpython-310-aarch64-linux-gnu.so",
+      "utils.repetition": "/tmp/asr-cython-dtype-20261117-yanuedv6/utils/repetition.cpython-310-aarch64-linux-gnu.so",
+      "utils.text_postprocess": "/tmp/asr-cython-dtype-20261117-yanuedv6/utils/text_postprocess.cpython-310-aarch64-linux-gnu.so"
+    },
+    "count": 30,
+    "main_imported": true,
+    "cann_compiler_imports": true,
+    "npu_forward_checked": false
+  },
+  "build_environment": {
+    "prefix": "/tmp/asr-rebuild-20261117-build",
+    "differences_vs_reference": {
+      "conda-pack": [
+        null,
+        "0.8.1"
+      ],
+      "cython": [
+        null,
+        "3.0.12"
+      ]
+    },
+    "numpy_import": "1.26.4",
+    "imports_ok": true,
+    "npu_initialized": false,
+    "npu_forward_checked": false,
+    "clone_repaired_with_force_reinstall_pip_lock": true
+  },
+  "cpu_dtype_loading_guard": {
+    "report": "compiled-dtype-guard-30.json",
+    "result": {
+      "module_origin": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/model_loading.cpython-310-aarch64-linux-gnu.so",
+      "cpu_only": true,
+      "torch_npu_imported": false,
+      "models_from_disk_loaded": false,
+      "service_started": false,
+      "concurrency": {
+        "native_blocked_during_hf": true,
+        "hf_dtype_before_exit": "torch.bfloat16",
+        "native_tensor_dtype": "torch.float32",
+        "after_concurrent_loads": "torch.float32"
+      },
+      "nested_exception_restoration": true,
+      "parameter_validation": {
+        "expected_dtype": "torch.bfloat16",
+        "floating_parameter_dtype_counts": {
+          "torch.bfloat16": 2
+        },
+        "nonfloating_parameter_count": 0,
+        "buffers_cast_or_checked": false
+      },
+      "fp32_buffer_preserved": true,
+      "wrong_dtype_rejected": true,
+      "empty_model_rejected": true,
+      "original_dtype_restored": "torch.float32",
+      "probe_path": "/tmp/asr_compiled_dtype_guard_probe.py"
+    }
+  },
+  "actual_npu_api_validation": {
+    "completed": false,
+    "scope": "This 30-module stage has not inherited any NPU/API result from the historical 29-module stage."
+  },
+  "historical_validation": {
+    "report": "protected-build-validation-29.json",
+    "sha256": "047d30ef57df7f6132e74fc6bc786bd7fc6954b9dc3af088bc352ac31ca83d59",
+    "stage": "/tmp/asr-cython-safe-20261117-8kckdji2",
+    "source_fingerprint_sha256": "e496bbdf674100a03602d19c603af83e2c0e5cfb31d94075f5eeea36f4daad1d",
+    "actual_npu_api_completed": true,
+    "deployment_status": "superseded by shared dtype loading guard fix; retained as immutable historical evidence"
+  },
+  "commands": [
+    "source /usr/local/Ascend/ascend-toolkit/set_env.sh",
+    "python3 /tmp/asr_delivery_validate_cython_30.py",
+    "TORCH_DEVICE_BACKEND_AUTOLOAD=0 /tmp/asr-rebuild-20261117-build/bin/python /tmp/asr_compiled_dtype_guard_probe.py"
+  ],
+  "logs": {
+    "build": "/tmp/asr-delivery-rebuild-20261117/cython-dtype-safe/build.log",
+    "imports": "/tmp/asr-delivery-rebuild-20261117/cython-dtype-safe/imports.log"
+  },
+  "limitations": [
+    "No NPU model forward or HTTP service was started by this build validation.",
+    "No container image build or conda-pack archive build is claimed.",
+    "Only copied source files inside a marked new staging directory were stripped; the historical 29-module stage and project sources were not modified."
+  ]
+}

@@ -12,14 +12,14 @@
 
 | 项目      | 值                                                                     |
 | ------- | --------------------------------------------------------------------- |
-| 代码位置    | 不在本机，在远程开发机的 `~/workspace/asr_nvidia/`（SSH 别名见本机 `~/.ssh/config`）   |
+| 代码位置    | `xjtu910b7:/home/zhangs/asr_nvidia`   |
 | 服务端口    | `8083`（容器内 `9000`，compose 映射 `${ASR_PORT:-9000}`）                     |
-| 进程名     | `asr-offline-model`（`nvidia-smi` 里据此定位显存）                             |
-| 启动      | `conda activate asr && python main.py`，或 `docs/DEPLOYMENT.md` 的后台启动方式 |
+| 进程名     | 主服务 `asr-offline-model`，VAD 独立 `asr-offline-vad`                             |
+| 启动      | 先 source CANN set_env.sh，再用 `/home/zhangs/conda-envs/asr/bin/python` |
 | 单测      | `pytest tests/`                                                       |
 | 规格目录    | `openspec/specs/`（当前基线）、`openspec/changes/archive/`（演进历史）             |
-| 镜像构建    | `docker/build.sh` + `GPU_PROFILE`，三个 GPU 版本                           |
-| Qwen 依赖 | 外部独立容器，地址在 `config.toml` 的 `[qwen_asr].base_url`                      |
+| 镜像构建    | `docker/build.sh`，单昇腾模板；镜像构建/上线后置                           |
+| Qwen 依赖 | 本地原始权重，`[qwen_asr].local_model_dir` + `local_device`                      |
 
 > 注意 `test/`（单数）是**实验与压测脚本**，`tests/`（复数）才是 pytest 单元测试。两者不要混。
 
@@ -30,8 +30,8 @@
 **SeaCraftASR**：面向课堂录音的离线语音转写服务（FastAPI）。
 
 - 当前**只有 v3 一条链路**：`POST /v3/seacraft_asr`。v1.1.8（SeACo-Paraformer + PUNC + Whisper）和 v2 路由已下线，代码与模型均已清理，不要"顺手恢复"。
-- 三个本地小模型（FSMN-VAD / CAM++ / emotion2vec）**跑在本进程内**，通过模型池调度。
-- **Qwen3-ASR 是外部服务**（独立容器，vLLM 起），本仓库只做适配与调用，不训练、不部署它。
+- FSMN-VAD 是固定 spawn 进程池；CAM++ / emotion2vec 是主进程内的懒加载模型池。
+- **Qwen3-ASR 是本地懒加载原始权重**，BF16 / npu:7，单实例串行执行；正式后端选择以实测报告为准。
 - 对外只有三个接口：`POST /v3/seacraft_asr`、`GET /get_status`、`DELETE /clear_tasks_list`。
 
 ### 业务目标（容易理解错，先看这段）
@@ -57,7 +57,7 @@
 
 ```
 上传音频
-  ↓ 整段读入内存（不落临时文件）
+  ↓ 整段解码并使用服务专属缓存供VAD进程读取
 VAD 固定进程池（vad_device 数组，每元素一个进程）
   ↓ FSMN-VAD 切分 → min_segment_duration_s 短段丢弃
   ↓ 过滤窗口判定：只有落在开头 after_start / 结尾 before_end 分钟内的段才进三重过滤，
@@ -67,7 +67,7 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
       ② vad_snr_thres                      段级 SNR
       ③ vad_low_volume_rms_dbfs_thres      段级 RMS dBFS
   ↓
-每段 1 个 Qwen 请求（内存 WAV 字节，segment_concurrency 控制单音频内并发）
+每段 1 个 Qwen 本地任务（内存 WAV 字节，segment_concurrency 控制单音频内并发）
   ├─ 并行：CAM++ 声纹 → 全音频层次聚类（阈值 speaker_similarity_threshold）→ teacher / studentN
   └─ 并行：emotion2vec 情绪（1~10s 之外记"平淡"）
   ↓
@@ -77,9 +77,9 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 **核心不变量**（改代码时最容易踩坏的地方）：
 
 1. **1 个 VAD 段 = 1 个 Qwen 请求 = 1 个响应分段**。绝不合并相邻段，`bg` / `ed` 直接取 VAD 边界。
-2. **音频全程在内存里流转**，不写临时 WAV（早期实现写盘，已被移除）。
+2. **分段音频在内存流转**，不新增段级临时 WAV；整段上传沿用服务专属缓存供VAD worker读取，请求finally清理。
 3. **VAD 池是静态的**：启动时一次性预热，任务 FIFO 分派，运行期不扩缩容。数组长度就是并发上限。
-4. **CUDA TensorRT profile 下不允许静默回退 PyTorch**。预检失败直接启动失败，这是刻意设计。
+4. **NPU 加载失败禁止静默走 CPU**；预检/加载错误必须按阶段暴露。
 
 ---
 
@@ -89,7 +89,7 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 
 | 文件                                                 | 职责                                   | 改动前必读                    |
 | -------------------------------------------------- | ------------------------------------ | ------------------------ |
-| `main.py`                                          | FastAPI 装配、lifespan、进程命名、TensorRT 预检 | `core/deployment.py`     |
+| `main.py`                                          | FastAPI 装配、lifespan、进程命名、NPU 环境/资产预检 | `core/deployment.py`     |
 | `config.toml`                                      | 本地运行配置（唯一配置源）                        | `core/config.py` 的字段定义   |
 | `core/config.py`                                   | 配置加载、校验、派生属性                         | 570 行，改字段要同步 README 配置章节 |
 | `model_status_runtime.py` / `telemetry_runtime.py` | 运行时轻量封装                              | —                        |
@@ -112,12 +112,10 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 | `core/vad_pool.py`             | 固定设备数组的 FSMN-VAD 进程池（564 行）                                    |
 | `core/vad_volume.py`           | 段级声音特征（RMS / SNR / dBFS）与低音量过滤，**运行时与标定脚本共用同一套口径**             |
 | `core/qwen_asr_queue.py`       | 三层并发闸门：音频准入分类 + 段级/全局请求信号量                                     |
-| `core/qwen_asr_client.py`      | Qwen 异步客户端：模型发现、转写、重试                                          |
-| `core/models.py`               | CAM++ / emotion2vec 懒加载、模型池调度、显存登记                             |
-| `core/local_inference.py`      | 设备 → 后端映射（`pytorch_cpu` / `pytorch_cuda` / `tensorrt` / `npu`） |
-| `core/tensorrt_runner.py`      | TensorRT 执行器，每实例独立 context / stream / buffer                   |
-| `core/model_assets.py`         | TensorRT manifest 契约校验（输入输出 shape、精度策略）                        |
-| `core/deployment.py`           | CUDA Docker profile 启动前环境与资产校验                                 |
+| `core/qwen_asr_client.py`      | Qwen 异步客户端：本地推理、串行实例、重试                                          |
+| `core/models.py`               | CAM++ / emotion2vec 懒加载、模型池调度、HBM 分配估计登记                             |
+| `core/local_inference.py`      | 设备 → 后端映射（`pytorch_cpu` / `torch_npu`） |
+| `core/deployment.py`           | 昇腾 profile 启动前环境与资产校验                                 |
 | `core/status.py`               | 状态接口响应组装                                                       |
 | `core/logging.py`              | 日志按天 + 按大小双轮转                                                  |
 | `core/request_telemetry.py`    | 有界请求级阶段遥测（只存统计，不存音频与正文）                                        |
@@ -147,7 +145,7 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 | `scripts/`                           | 压测 / 标定 / 导出 / 校验脚本（`bench_*`、`validate_*`、`export_*`） | 是                            |
 | `tests/`                             | pytest 单元与集成测试                                         | 是                            |
 | `test/`                              | 实验脚本与样本音频                                              | 脚本入库，`test/*/` 产物忽略          |
-| `docker/`                            | Dockerfile ×4、`build.sh`、compose、部署说明                  | 是                            |
+| `docker/`                            | 单昇腾 Dockerfile、`build.sh`、compose、部署说明                  | 是                            |
 | `model/`                             | 三个模型权重                                                 | **否**（`.gitignore`，但会进构建上下文） |
 | `.agents/skills/`                    | openspec 工作流 skill 定义                                  | 是                            |
 | `asr_service.log` / `asr_stats.json` | 运行产物                                                   | **否**                        |
@@ -159,10 +157,10 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 | 层       | 参数                                                | 语义                            | 当前值                 |
 | ------- | ------------------------------------------------- | ----------------------------- | ------------------- |
 | 整音频准入   | `audio_concurrency` / `audio_spk_emo_concurrency` | A（纯转写）+ B（要说话人/情绪）总数 / B 子集上限 | 8 / 4               |
-| Qwen 请求 | `segment_concurrency` / `request_concurrency`     | 单音频内段并发 / 全局段并发               | 16 / 128            |
-| 本地模型池   | `speech_campplus_devices` / `emotion2vec_devices` | 数组长度 = 实例数 = 段级推理并发           | 3×cuda:0 / 1×cuda:0 |
+| Qwen 请求 | `segment_concurrency` / `request_concurrency`     | 单音频内段并发 / 全局段并发               | 1 / 1（完整课堂对照；单Qwen实例）            |
+| 本地模型池   | `speech_campplus_devices` / `emotion2vec_devices` | 数组长度 = 实例数 = 段级推理并发           | 3×npu:7 / 1×npu:7 |
 
-这三个数字是**乘法关系**，调一个必须重算另外两个。压测结论见 `docs/cam*`、`docs/vad-pool*`。
+音频准入、段任务闸门与模型实例容量分别限流；增加等待任务不会增加单实例执行并发。压测结论见 `docs/cam*`、`docs/vad-pool*`。
 
 **错误码契约不可随意改号**（客户端已按此判断）：完整定义分散在  
 `core/qwen_asr_queue.py`、`core/qwen_asr_client.py`、`core/models.py`、`core/vad_pool.py` 的异常类 `code` 属性；  
@@ -179,36 +177,21 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 - 唯一源：`config.toml`（容器内通过 `CONFIG_PATH=/config.toml` 挂载覆盖，镜像内另有模板）
 - 加载器：`core/config.py`，字段名与 TOML 键一一对应
 - **配置错误必须在模型预热和对外就绪之前抛出**（`main.py` lifespan 第一段就是这个目的），不要改成懒校验
-- 部分参数改动**需要重启生效**（`vad_speech_noise_thres`、TensorRT 开关等），改完必须在注释里标明
+- 部分参数改动**需要重启生效**（设备数组、本地目录、`vad_speech_noise_thres` 等），改完必须在注释里标明
 
 ---
 
 ## 6. 构建与部署
 
-三个 GPU profile，**Dockerfile 内容几乎相同，真正的差异是打进镜像的 TensorRT engine**：
+交付入口是 `docker/build.sh` 与单份昇腾 Dockerfile，详见 `docker/README.md`。
+基础镜像使用经核对的本地候选，环境通过独立 conda-pack 包或已核验前缀提供；不能依赖候选镜像里未知的 Python 包。运行、NPU、开发、构建依赖分开锁定。
+`build_cython.sh` 只在有 `.asr-build-stage` 标记的 staging 中剥离源码；不要在真实仓库执行源码剥离。
+镜像 tag 仍为 `v3_<YYYYMMDDHHMMSS>`。实际镜像构建与上线后置，不能把静态交付测试当作已部署。
 
-| GPU_PROFILE           | Dockerfile                  | 默认镜像名                                | 算力     | engine 来源                            |
-| --------------------- | --------------------------- | ------------------------------------ | ------ | ------------------------------------ |
-| `rtx3090-sm86`        | `Dockerfile.rtx3090`        | `asr_offline-rtx3090:v3_<ts>`        | SM 8.6 | `tensorrt/rtx3090-sm86/fp16/`        |
-| `rtx4070tisuper-sm89` | `Dockerfile.rtx4070tisuper` | `asr_offline-rtx4070tisuper:v3_<ts>` | SM 8.9 | `tensorrt/rtx4070tisuper-sm89/fp16/` |
-| `rtx4090-sm89`（默认）    | `Dockerfile.rtx4090`        | `asr_offline-rtx4090:v3_<ts>`        | SM 8.9 | `tensorrt/fp16/`（顶层历史目录）             |
-
-```bash
-cd docker
-GPU_PROFILE=rtx3090-sm86 \
-ASR_IMAGE=asr_offline-rtx3090:v3_$(date +%Y%m%d%H%M%S) \
-DOCKERFILE=Dockerfile.rtx3090 ./build.sh
-```
-
-`build.sh` 的行为（改它之前必须理解）：
-
-- 建临时 staging 上下文，只复制应用 + 三个模型 + **选中 profile 的 fp16 engine 及其 sources**
-- `tensorrt/` 整体被排除，只把选中 profile 的 `engine.plan` / `manifest.json` 落到镜像内 `tensorrt/fp16/`
-- 校验 `precision_policy == "fp16"`，且 manifest 声明的所有 sources 都存在，否则直接退出
-- 基础镜像 `--pull=false`，要求构建机本地已有
-- **镜像 tag 必须符合 `v3_<YYYYMMDDHHMMSS>`**，`tests/test_docker_deployment.py` 会校验
-
----
+宿主仅使用物理 `npu:7`，不调度其他卡。`ASCEND_VISIBLE_DEVICES` 指定宿主物理卡号，容器内设备编号从 0 重新映射；仅映射物理 7 时模板使用逻辑 `npu:0`。
+NPU runtime/设备/IPC 参数放 Compose/宿主入口，`docker/start.sh` 只管理容器内环境、预检与进程。
+`instance_count=1`；增加进程或 Qwen 实例意味着复制权重，重新标定后才调整。
+测试启动的服务、代理、候选引擎、worker 必须 finally 关闭，核对 PID 树退出和端口释放，保存证据；保留卡 7 既有服务。
 
 ## 7. openspec 工作流
 
@@ -242,7 +225,7 @@ openspec/changes/archive/<change>/       历史上的每次变更（proposal / d
 
 不要从"打开文件开始改"起步，按这个顺序走：
 
-1. **先同步**。`git status` / `git pull --rebase` 把本地拉到最新，确认在 `refactor/adapt-qwen-asr` 分支上、没有别人刚推的改动。**不基于过期代码开工。**
+1. **先同步**。`git status` / `git pull --rebase` 把本地拉到最新，确认在 `refactor/adapt-qwen-asr-2huawei910b` 分支上、没有别人刚推的改动。**不基于过期代码开工。**
 2. **再规划**。业务改动先开 openspec change（propose）；纯文档/typo 可跳过。
 3. **改代码**，同步改配置与文档（见 8.2）。
 4. **验证**：`pytest tests/` + 相关压测，结论写进报告。
@@ -255,7 +238,7 @@ openspec/changes/archive/<change>/       历史上的每次变更（proposal / d
 ### 8.1 绝对红线
 
 1. **不碰 `model/` 下的权重文件**。它们不进 Git，重新获取成本极高。需要换模型/换 engine 时只改路径与配置。
-2. **不执行 `docker builder prune` / `docker system prune`**。构建缓存是这套三镜像流程能跑通的前提，清掉等于每次全量重建。
+2. **不执行 `docker builder prune` / `docker system prune`**。构建缓存是这套交付流程能跑通的前提，清掉等于每次全量重建。
 3. **不擅自重启或 kill 正在跑的服务**。当前有真实请求在跑，`kill` 会丢任务；需要重启时先确认空闲或按 `docs/DEPLOYMENT.md` 走。
 4. **不删除任何镜像 / 日志 / 报告**，除非明确授权。删除前先列出清单并确认无容器引用。
 5. **不改错误码数值**，不改接口字段名。这些是对外契约。
@@ -272,7 +255,7 @@ openspec/changes/archive/<change>/       历史上的每次变更（proposal / d
    改这些值，必须附上新的统计依据。
 3. **改配置项就要同步三处**：`core/config.py` 字段、`config.toml` 默认值与注释、`README.md` 配置章节。少一处就算没改完。
 4. **保持 1 段 = 1 请求 = 1 响应分段**，不要为了"效率"合并相邻段。
-5. **新增可选依赖必须延迟导入**（`importlib` 或函数内 import）。CPU 环境、无 TensorRT 环境都要能启动。
+5. **新增可选依赖必须延迟导入**（`importlib` 或函数内 import）。CPU 环境、无 NPU 依赖的 CPU 测试环境都要能启动。
 6. **注释写"为什么"，不写"做了什么"**。现有代码的注释密度偏高，是刻意的，保持一致。
 7. **关键逻辑处必须有中文注释**：阈值来源、单位、边界条件、为什么这样取舍（尤其是踩过坑的地方）。新增过滤/判定/并发逻辑时，注释要能让下一个人不看 commit 就看懂意图。
 8. **可解耦的配置值一律释放到 `config.toml`**，不要硬编码在代码里。判断标准：这个值调大会变、不同机器/场景可能不同、或者需要在不改代码的情况下试。释放时配套三件事：
@@ -288,7 +271,7 @@ openspec/changes/archive/<change>/       历史上的每次变更（proposal / d
 2. **性能与阈值类改动必须出报告**，放 `docs/`，文件名带日期（参考现有 40+ 份报告的命名）。
 3. **上线门槛**：有效对话召回 ≥ 98%。低于此值的方案不予采纳，写进报告结论。
 4. **不做"只保留老师声音"这类规则**。会误删学生发言，与业务目标直接冲突。
-5. 报告要写清：测试条件（GPU、并发、样本量）、结论、以及**不适用的场景**。
+5. 报告要写清：测试条件（NPU、共享占用、并发、样本量）、结论、以及**不适用的场景**。
 
 ### 8.4 提交与留档
 
@@ -318,9 +301,9 @@ openspec/changes/archive/<change>/       历史上的每次变更（proposal / d
 9. **发现规格与实现不一致时，先报告，不擅自"修正"**。这类偏差往往是有意的上线调参，写清楚差异让用户判断。
 10. **输出用中文**，结论先行，给出可核对的证据（文件路径、行号、命令输出），不要只说"已完成"。
 11. **能并行就并行，但要知道什么不能并行**。任务可拆成互不依赖的子任务时，用多智能体并行推进，不要串成一条长链：
-    - **适合并行**：多个 `openspec/specs/` 条目的交叉比对、多份 `docs/` 报告的检索与归纳、互不相干的独立文件编写、分配到不同 GPU 的独立压测
+    - **适合并行**：多个 `openspec/specs/` 条目的交叉比对、多份 `docs/` 报告的检索与归纳、互不相干的独立文件编写、互不争抢同卡的独立评审
     - **不该并行**：同一文件的改动（写冲突）、三份镜像构建（共享 build cache 与磁盘 IO，实测并行反而更慢）、需要前一步结论才能决定的验证
-    - **并行前先划分资源**：GPU 卡、端口、临时目录、输出文件都要明确归属，不能两个 agent 抢同一张卡或同一个 `asr_service.log`
+    - **并行前先划分资源**：NPU 卡、端口、临时目录、输出文件都要明确归属，不能两个 agent 抢同一张卡或同一个 `asr_service.log`
     - **汇总由主 agent 负责**：子 agent 的结论必须自己核对过（读文件、看命令输出）才能写进最终答复，不做纯转述
 
 ---
@@ -330,16 +313,20 @@ openspec/changes/archive/<change>/       历史上的每次变更（proposal / d
 
 | 坑 | 说明 |
 |---|---|
-| **Dockerfile 第 1 行必须是 `# syntax=...`** | 三个 profile Dockerfile 曾把中文注释放在首行，把 directive 挤到第 2 行，被当作普通注释静默忽略，回退到内置 frontend。**验证方法**：`docker build --progress=plain` 日志里出现 `resolve image config for docker-image://docker.io/docker/dockerfile:1.7` 才算生效；没有这一行就是失效。 |
-| 别把构建慢归因于 `# syntax` | `# syntax` **只影响 Dockerfile 解析器版本，与 inline cache 无关**。inline cache 由 `--build-arg BUILDKIT_INLINE_CACHE=1` 控制（见 `docker/build.sh`）。三份镜像各 8~9 分钟是结构性的：每份都要 COPY 5.2GB 模型并导出 16GB 层，profile 不同导致 COPY 层不共享。 |
+| CANN 环境脚本 | `set_env.sh` 部分变量未定义；在 `set +u` 下 source，随后显式使用 asr 解释器。 |
+| CANN 编译器依赖 attrs | 包名是 `attrs`，导入模块是 `attr`；预检缺失必须明确报错。 |
+| 容器内设备编号从 0 重新映射 | `ASCEND_VISIBLE_DEVICES=7` 是宿主物理 7，单卡容器内配置逻辑 `npu:0`。 |
+| FP32不等于默认内部精度 | 原生FP32进程一次禁用conv/matmul HF32；参数dtype为FP32本身不足以保证数值参考一致。 |
+| NPU context 默认卡 | 工作线程先 set_device 目标卡，再构造 device context，避免初始化/恢复到卡 0。 |
+| VAD声明不等于实际选项 | nested传入值未覆盖当前权重model_conf；FSMN实际8000/800ms、noise0.6、global decibel/snr均-100。服务段级SNR18/-40独立生效；见课堂阈值评审，不借迁移改参数绑定。 |
 | `test/` vs `tests/` | 前者是实验脚本，后者才是 pytest。 |
 | `config.toml` 与文档默认值不一致 | 上线后经过实测调参，历史文档里留下的默认值（如 `after_start/before_end` 写过 3/3、6/6、0/0）都是调参过程的快照。**以 `config.toml` 为准**，同时记得回写 README。 |
 | `vad_snr_thres` 的定位 | 当前取 `18.0`，**它是段级过滤的主要承担者**（历史统计里 665 次丢弃中 614 次是 snr 命中）。不要因为早期报告说"SNR 不承担主要过滤"就把它调回去。 |
 | `after_start` / `before_end` 是**过滤窗口**，不是"处理范围" | 默认 **3/3** 的含义是：只有开头 3 分钟、结尾 3 分钟内的段才做三重过滤，**中间的段一律不过滤、直接保留**（`core/vad.py::_in_filter_scope`）。极易被误读成"只处理前 3 分钟"。出现过 6/6、0/0 都是试参数的过程，不是新基线；改动需重启生效。 |
-| Qwen 地址可能不是本机 | `[qwen_asr].base_url` 指向 `.11:8806`，而本机 8806 也在监听。改之前确认部署形态。 |
+| Qwen 原始输出 | 保留 `language X<asr_text>` 给既有解析器；浮点输入转模型 dtype，整数索引保持原 dtype。 |
 | dBFS ≠ FunASR 的 log 能量 | `vad_decibel_thres` 是 FunASR 帧级 log 能量，不是 dBFS；段级 RMS 才是 dBFS。单位混淆会导致阈值差 40 个数量级。 |
-| 显存是"实例数 × 权重" | `speech_campplus_devices` 数组每多一个元素就多一份显存。`instance_count` 同理。 |
-| GPU 被其他任务占用 | 机器上可能同时跑 vLLM / sglang，构建 16GB 镜像层时会抢 IO，构建变慢是正常现象。 |
+| HBM 与实例数相关 | `speech_campplus_devices` 数组每多一个元素就多一份权重。`instance_count` 同理。 |
+| 共享卡测量 | 卡 7 有既有 uvicorn；分开记录本项目进程 HBM 与设备聚合占用，不把既有服务计为本项目。 |
 
 ---
 

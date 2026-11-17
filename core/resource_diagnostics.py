@@ -240,62 +240,67 @@ def _process_listing() -> list[dict[str, Any]]:
     return rows
 
 
-def _parse_csv_line(line: str, fields: tuple[str, ...]) -> dict[str, Any]:
-    parts = [part.strip() for part in line.split(",")]
-    row: dict[str, Any] = {}
-    for field, value in zip(fields, parts):
-        if value in {"N/A", "[Not Supported]", ""}:
-            row[field] = None
-        elif field in {"index", "memory_total_mb", "memory_used_mb", "memory_free_mb", "utilization_gpu"}:
-            try:
-                row[field] = int(float(value))
-            except ValueError:
-                row[field] = None
-        else:
-            row[field] = value
-    return row
+def parse_npu_smi(output: str) -> dict[str, Any]:
+    """解析 Ascend ``npu-smi info``，HBM 使用量取 MB 原始值而非百分比估算。
 
-
-def gpu_snapshot() -> dict[str, Any]:
-    fields = ("index", "name", "memory_total_mb", "memory_used_mb", "memory_free_mb", "utilization_gpu")
-    command = [
-        "nvidia-smi",
-        "--query-gpu=index,name,memory.total,memory.used,memory.free,utilization.gpu",
-        "--format=csv,noheader,nounits",
-    ]
-    try:
-        result = subprocess.run(command, capture_output=True, text=True, timeout=2, check=False)
-    except (FileNotFoundError, OSError, subprocess.TimeoutExpired) as exc:
-        return {"available": False, "reason": f"nvidia-smi 不可用: {exc}"}
-    if result.returncode != 0:
-        return {"available": False, "reason": result.stderr.strip() or f"exit={result.returncode}"}
-    gpus = [_parse_csv_line(line, fields) for line in result.stdout.splitlines() if line.strip()]
-    if not gpus:
-        return {"available": False, "reason": "nvidia-smi 未返回 GPU"}
-    apps_command = [
-        "nvidia-smi",
-        "--query-compute-apps=gpu_uuid,pid,process_name,used_memory",
-        "--format=csv,noheader,nounits",
-    ]
+    设备表由两行组成，第三列同时包含 AICore、普通内存和 HBM；进程表另
+    列设备、Chip、PID 和 HBM。遇到未知格式保留不可用状态，绝不填充零。
+    """
+    npus: list[dict[str, Any]] = []
     apps: list[dict[str, Any]] = []
+    pending: dict[str, Any] | None = None
+    for line in output.splitlines():
+        if not line.lstrip().startswith("|"):
+            continue
+        cells = [cell.strip() for cell in line.strip().strip("|").split("|")]
+        if len(cells) >= 4:
+            identity = re.fullmatch(r"(\d+)\s+(\d+)", cells[0])
+            if identity and cells[1].isdigit():
+                apps.append({
+                    "index": int(identity[1]), "chip": int(identity[2]),
+                    "pid": int(cells[1]), "process_name": cells[2],
+                    "memory_mb": int(cells[3]) if cells[3].isdigit() else None,
+                })
+            continue
+        if len(cells) != 3:
+            continue
+        identity = re.fullmatch(r"(\d+)\s+(\S+)", cells[0])
+        if identity and not identity[2].isdigit():
+            pending = {"index": int(identity[1]), "name": identity[2], "health": cells[1]}
+            continue
+        if pending is None or not cells[0].isdigit() or not re.fullmatch(r"[0-9A-Fa-f:.]+", cells[1]):
+            continue
+        metrics = cells[2].split()
+        utilization = int(metrics[0]) if metrics and metrics[0].isdigit() else None
+        pairs = re.findall(r"(\d+)\s*/\s*(\d+)", cells[2])
+        used, total = (int(value) for value in pairs[-1]) if len(pairs) >= 2 else (None, None)
+        pending.update({
+            "chip": int(cells[0]), "bus_id": cells[1],
+            "available": used is not None and total is not None and total > 0,
+            "hbm_used_mb": used, "hbm_total_mb": total,
+            "hbm_free_mb": max(0, total - used) if total is not None and used is not None else None,
+            "utilization_aicore": utilization,
+        })
+        npus.append(pending)
+        pending = None
+    available = any(row["available"] for row in npus)
+    result: dict[str, Any] = {
+        "available": available, "npus": npus, "compute_apps": apps,
+        "memory_scope": "npu-smi device HBM aggregate; includes other processes and runtime allocations",
+    }
+    if not available:
+        result["reason"] = "npu-smi 未返回可解析的 HBM 使用量"
+    return result
+
+
+def npu_snapshot() -> dict[str, Any]:
     try:
-        apps_result = subprocess.run(apps_command, capture_output=True, text=True, timeout=2, check=False)
-        if apps_result.returncode == 0:
-            for line in apps_result.stdout.splitlines():
-                parts = [part.strip() for part in line.split(",")]
-                if len(parts) >= 4:
-                    try:
-                        pid = int(parts[1])
-                    except ValueError:
-                        pid = None
-                    try:
-                        memory_mb = int(float(parts[3]))
-                    except ValueError:
-                        memory_mb = None
-                    apps.append({"gpu_uuid": parts[0], "pid": pid, "process_name": parts[2], "memory_mb": memory_mb})
-    except (OSError, subprocess.TimeoutExpired):
-        pass
-    return {"available": True, "gpus": gpus, "compute_apps": apps}
+        result = subprocess.run(["npu-smi", "info"], capture_output=True, text=True, timeout=2, check=False)
+    except (FileNotFoundError, OSError, subprocess.TimeoutExpired) as exc:
+        return {"available": False, "npus": [], "compute_apps": [], "reason": f"npu-smi 不可用: {exc}"}
+    if result.returncode != 0:
+        return {"available": False, "npus": [], "compute_apps": [], "reason": result.stderr.strip() or f"exit={result.returncode}"}
+    return parse_npu_smi(result.stdout)
 
 
 def cache_snapshot(cache_dir: str | os.PathLike[str] = DEFAULT_CACHE_DIR) -> dict[str, Any]:
@@ -346,44 +351,54 @@ def endpoint_health(url: str, timeout_s: float = 2.0) -> dict[str, Any]:
         }
 
 
-def service_processes() -> dict[str, Any]:
-    backend = find_processes(("asr-offline-model", "uvicorn"))
-    vad = find_processes(("asr-offline-vad",))
-    qwen = find_processes(("qwen-asr-serve", "vllm"))
-    return {"backend": backend, "vad": vad, "qwen": qwen}
+def service_processes(backend_pid: int | None) -> dict[str, Any]:
+    """仅归属明确后端 PID 及其后代，避免把共享卡上的 uvicorn/vLLM 当成本服务。"""
+    if backend_pid is None:
+        return {"backend": [], "vad": []}
+    rows = _process_listing()
+    selected = {backend_pid}
+    changed = True
+    while changed:
+        changed = False
+        for row in rows:
+            if row["pid"] not in selected and row.get("ppid") in selected:
+                selected.add(row["pid"])
+                changed = True
+    return {
+        "backend": [row for row in rows if row["pid"] == backend_pid],
+        "vad": [row for row in rows if row["pid"] in selected and row["pid"] != backend_pid
+                and "asr-offline-vad" in f"{row.get('name', '')} {row.get('cmdline', '')}"],
+    }
 
 
 def collect_snapshot(
     *,
     backend_pid: int | None = None,
-    backend_url: str = "http://127.0.0.1:8085/get_status",
-    qwen_url: str = "http://127.0.0.1:8806/v1/models",
+    backend_url: str = "http://127.0.0.1:8085/openapi.json",
     cache_dir: str | os.PathLike[str] = DEFAULT_CACHE_DIR,
     service_status: dict[str, Any] | None = None,
     include_health: bool = True,
     include_process_tree: bool = True,
 ) -> dict[str, Any]:
-    if backend_pid is None:
-        candidates = find_processes(("asr-offline-model",))
-        backend_pid = candidates[0]["pid"] if candidates else None
-    backend = process_snapshot(backend_pid) if backend_pid else {"available": False, "reason": "未找到后端 PID"}
+    # 独立工具必须提供 PID；没有 PID 时不会猜测共享服务器上的 uvicorn。
+    backend = process_snapshot(backend_pid) if backend_pid else {"available": False, "reason": "未提供后端 PID"}
     tree = process_tree(backend_pid) if backend_pid and include_process_tree else []
+    services = service_processes(backend_pid)
+    owned_pids = {row["pid"] for rows in services.values() for row in rows}
+    owned_pids.update(row["pid"] for row in tree)
+    npu = npu_snapshot()
+    apps = npu.get("compute_apps", [])
+    npu["service_compute_apps"] = [row for row in apps if row.get("pid") in owned_pids]
+    npu["other_compute_apps"] = [row for row in apps if row.get("pid") not in owned_pids]
     result = {
         "timestamp": utc_timestamp(),
-        "host": host_memory_snapshot(),
-        "vmstat": vmstat_snapshot(),
-        "backend": backend,
-        "process_tree": tree,
-        "services": service_processes(),
-        "gpu": gpu_snapshot(),
-        "cache": cache_snapshot(cache_dir),
-        "status": service_status,
+        "host": host_memory_snapshot(), "vmstat": vmstat_snapshot(),
+        "backend": backend, "process_tree": tree, "services": services,
+        "qwen_execution": "embedded_in_backend", "npu": npu,
+        "cache": cache_snapshot(cache_dir), "status": service_status,
     }
     if include_health:
-        result["health"] = {
-            "backend": endpoint_health(backend_url),
-            "qwen": endpoint_health(qwen_url),
-        }
+        result["health"] = {"backend": endpoint_health(backend_url)}
     else:
         result["health"] = {"available": False, "reason": "状态接口采样跳过自调用健康检查"}
     return result
@@ -394,16 +409,10 @@ def status_snapshot(
     backend_pid: int | None = None,
     cache_dir: str | os.PathLike[str] = DEFAULT_CACHE_DIR,
 ) -> dict[str, Any]:
-    """生成供 ``/get_status`` 使用的非阻塞资源快照。
-
-    这里不访问 8085 自身，避免状态接口为了报告健康状态而递归调用自己；
-    Qwen 健康检查和完整端点检查由独立诊断脚本负责。
-    """
+    """供 /get_status 使用；默认归属当前进程，跳过递归 HTTP 和完整进程内存扫描。"""
     return collect_snapshot(
-        backend_pid=backend_pid,
-        cache_dir=cache_dir,
-        include_health=False,
-        include_process_tree=False,
+        backend_pid=os.getpid() if backend_pid is None else backend_pid,
+        cache_dir=cache_dir, include_health=False, include_process_tree=False,
     )
 
 
@@ -414,8 +423,9 @@ class SafetyPolicy:
     min_available_bytes: int = 8 * BYTES_PER_GIB
     min_available_ratio: float = 0.20
     max_swap_delta_bytes: int = 256 * BYTES_PER_MIB
-    max_gpu_used_ratio: float = 0.90
-    warn_gpu_used_ratio: float = 0.80
+    npu_indices: tuple[int, ...] = (7,)
+    max_npu_used_ratio: float = 0.90
+    warn_npu_used_ratio: float = 0.80
     max_disk_used_ratio: float = 0.90
     consecutive_swap_samples: int = 3
     consecutive_health_failures: int = 2
@@ -425,7 +435,7 @@ class SafetyPolicy:
 class SafetyBaseline:
     memory: dict[str, Any]
     vmstat: dict[str, Any]
-    gpu: dict[str, Any]
+    npu: dict[str, Any]
     cache: dict[str, Any]
 
     @classmethod
@@ -433,7 +443,7 @@ class SafetyBaseline:
         return cls(
             memory=snapshot.get("host", {}),
             vmstat=snapshot.get("vmstat", {}),
-            gpu=snapshot.get("gpu", {}),
+            npu=snapshot.get("npu", {}),
             cache=snapshot.get("cache", {}),
         )
 
@@ -481,18 +491,20 @@ def evaluate_safety(
     if vm.get("available") and base_vm.get("available") and swap_samples >= policy.consecutive_swap_samples:
         if vm.get("swap_in_pages", 0) > base_vm.get("swap_in_pages", 0) or vm.get("swap_out_pages", 0) > base_vm.get("swap_out_pages", 0):
             decision.reasons.append("连续采样检测到 Swap I/O")
-    gpu = snapshot.get("gpu", {})
-    if gpu.get("available"):
-        for row in gpu.get("gpus", []):
-            total = row.get("memory_total_mb")
-            used = row.get("memory_used_mb")
-            if not isinstance(total, int) or not isinstance(used, int) or total <= 0:
-                continue
-            ratio = used / total
-            if ratio >= policy.max_gpu_used_ratio:
-                decision.reasons.append(f"GPU {row.get('index')} 显存使用率达到 {ratio:.1%}")
-            elif ratio >= policy.warn_gpu_used_ratio:
-                decision.warnings.append(f"GPU {row.get('index')} 显存使用率达到 {ratio:.1%}")
+    npu = snapshot.get("npu", {})
+    selected = {row.get("index"): row for row in npu.get("npus", []) if row.get("index") in policy.npu_indices}
+    for index in policy.npu_indices:
+        row = selected.get(index, {})
+        total = row.get("hbm_total_mb")
+        used = row.get("hbm_used_mb")
+        if not npu.get("available") or not isinstance(total, int) or not isinstance(used, int) or total <= 0:
+            decision.warnings.append(f"NPU {index} HBM 指标不可用，无法判定安全水位")
+            continue
+        ratio = used / total
+        if ratio >= policy.max_npu_used_ratio:
+            decision.reasons.append(f"NPU {index} HBM 使用率达到 {ratio:.1%}")
+        elif ratio >= policy.warn_npu_used_ratio:
+            decision.warnings.append(f"NPU {index} HBM 使用率达到 {ratio:.1%}")
     cache = snapshot.get("cache", {})
     if cache.get("available") and cache.get("disk_total_bytes"):
         used_ratio = 1 - cache.get("disk_free_ratio", 1)
@@ -529,7 +541,8 @@ __all__ = [
     "endpoint_health",
     "evaluate_safety",
     "find_processes",
-    "gpu_snapshot",
+    "npu_snapshot",
+    "parse_npu_smi",
     "host_memory_snapshot",
     "process_snapshot",
     "process_tree",

@@ -1,0 +1,1335 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-11-17T08:47:25.162317+00:00",
+  "root_path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f74657374",
+  "root_display_path": "/home/zhangs/asr_nvidia/test",
+  "evidence": "file_hash_and_header_or_container_probe",
+  "full_decode_checked": false,
+  "labels_inferred_from_filename": false,
+  "summary": {
+    "sample_count": 54,
+    "extension_counts": {
+      ".wav": 52,
+      ".mp3": 2
+    },
+    "total_bytes": 5144064354,
+    "wav_header_duration_seconds": 157175.09337499997,
+    "error_count": 0,
+    "skipped_count": 0
+  },
+  "duplicates": [
+    {
+      "sha256": "44d6e78dbc4dffe2079e79ff9d6df96e3abf5fce98caa2f3290d3b104754ca19",
+      "sample_ids": [
+        "audio-d7c3b73c59ddfd5d0948",
+        "audio-3fa6103a6e81dfd24993"
+      ]
+    },
+    {
+      "sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+      "sample_ids": [
+        "audio-38718ae5e214bdc30134",
+        "audio-acd528a61c72de5ed53d"
+      ]
+    }
+  ],
+  "duplicate_scope": "exact_file_hash_only; different encodings may contain the same recording",
+  "samples": [
+    {
+      "sample_id": "audio-6156a4b38b576557c2be",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d32322d35372e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d32322d35372e776176",
+      "display_path": "音频文件/多模态机器学习/课堂实录 -  - 2026-10-16 09-22-57.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 95385678,
+      "sha256": "00190f95f88dd6ecc8dde1af62c338a6c8753b9f5832e044fa9d23d57a6dd801",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 47692800,
+        "duration_seconds": 2980.8,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-96862e257ed1629907b8",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d32332d30392e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d32332d30392e776176",
+      "display_path": "音频文件/多模态机器学习/课堂实录 -  - 2026-10-16 09-23-09.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105019470,
+      "sha256": "26700c75b989fcb8623e5858daa2c24d23452ae1a15b283ef9c0e2e7e87b56ac",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52509696,
+        "duration_seconds": 3281.856,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-a233bc95ede584017f23",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d32342d31382e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d32342d31382e776176",
+      "display_path": "音频文件/多模态机器学习/课堂实录 -  - 2026-10-16 09-24-18.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105816142,
+      "sha256": "97e745320b0ab6992bfd9e96baee8d44d127b8b776fa72d89e587d65a489f0f5",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52908032,
+        "duration_seconds": 3306.752,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-54da350ddb85b11ba0f0",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d32352d30332e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d32352d30332e776176",
+      "display_path": "音频文件/多模态机器学习/课堂实录 -  - 2026-10-16 09-25-03.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105019470,
+      "sha256": "b02f4dd863735efb1c3b620870a15182b0cc33ddb6fdf24d06ccf9283b950dd6",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52509696,
+        "duration_seconds": 3281.856,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-63687d59465349cd4a0f",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc2e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb6e0c4a3ccacbbfac6f7d1a7cfb02fbfceccc3cab5c2bc2e776176",
+      "display_path": "音频文件/多模态机器学习/课堂实录.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105824334,
+      "sha256": "0510efc2067f70eff7566fdc49ea5e8206f07f0b23a44dfc369b052d5baedd80",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52912128,
+        "duration_seconds": 3307.008,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-4b897698e079522a81b8",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb7b4b3a3bbfdb7d6d3ebbcb6cafd28d6d0b7a8bfceb3cc292fbfceccc3cab5c2bc2e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb7b4b3a3bbfdb7d6d3ebbcb6cafd28d6d0b7a8bfceb3cc292fbfceccc3cab5c2bc2e776176",
+      "display_path": "音频文件/反常积分与级数(中法课程)/课堂实录.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105805902,
+      "sha256": "f5adfe2b880e2064e4990ac87d8144bdd159faacb0deb4ee3829fdf45f553b4e",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52902912,
+        "duration_seconds": 3306.432,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-adf277e7325a585254db",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d34382d35352e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d34382d35352e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 09-48-55.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105240654,
+      "sha256": "f45459fffc282ac6db8600af01b045000f18373c0edaa8ff5fdafd8e36e9b0fc",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52620288,
+        "duration_seconds": 3288.768,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-fd2c0f6a158c8950d543",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35302d33322e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35302d33322e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 09-50-32.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105162830,
+      "sha256": "958ba0ba319480441dc7c767826bfc2858fcf5512fbdbcdeed09875081e13c63",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52581376,
+        "duration_seconds": 3286.336,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-27c554454bb101b384be",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35302d35302e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35302d35302e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 09-50-50.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105828430,
+      "sha256": "c8feba64847a064a37fef29cf7fa573f11f539da2700fe45654a54df37a08073",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52914176,
+        "duration_seconds": 3307.136,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-02fb018113f1eb322d55",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35302d35312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35302d35312e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 09-50-51.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105834574,
+      "sha256": "fe57d8726453e510b4b4318eefe08a41e6af0376b6c6b95ada7a0c0539a479b9",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52917248,
+        "duration_seconds": 3307.328,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-50e95d0d4e8694440b2d",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35332d32302e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35332d32302e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 09-53-20.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105158734,
+      "sha256": "9b440ab8efb403525c25c37bf6a10a7fcf626d3bef7d9d2af132f093d55cb480",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52579328,
+        "duration_seconds": 3286.208,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-6ba7060f86c779f771ba",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35392d35302e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362030392d35392d35302e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 09-59-50.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105877582,
+      "sha256": "373be9a3fed93bd30939485e50a045354e7e3f4fbdcaeb6324f82a563ac59fed",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52938752,
+        "duration_seconds": 3308.672,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-4fd7fe3075203edd71a7",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362031302d35302d30392e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362031302d35302d30392e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 10-50-09.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105871438,
+      "sha256": "e17184e0562149b96d69974ad32027009975e1af5c42b3b5737aeaf335855de6",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52935680,
+        "duration_seconds": 3308.48,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-a868f7b41e579d4ec956",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362031302d35322d35312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362031302d35322d35312e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 10-52-51.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105820238,
+      "sha256": "ef64ec1c10d610209b0bfa2ba374563376d1c482c11254088b27d912ed638dfe",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52910080,
+        "duration_seconds": 3306.88,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-d7c3b73c59ddfd5d0948",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362031302d35382d32362e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362031302d35382d32362e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 10-58-26.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105865294,
+      "sha256": "44d6e78dbc4dffe2079e79ff9d6df96e3abf5fce98caa2f3290d3b104754ca19",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52932608,
+        "duration_seconds": 3308.288,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-3fa6103a6e81dfd24993",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362031312d30342d33342e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc202d20202d20323032362d31302d31362031312d30342d33342e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录 -  - 2026-10-16 11-04-34.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105865294,
+      "sha256": "44d6e78dbc4dffe2079e79ff9d6df96e3abf5fce98caa2f3290d3b104754ca19",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52932608,
+        "duration_seconds": 3308.288,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-d2424348115c813d182d",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc2e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8b4abc8c8d1a7a3a8d1d0a3a92dcdf5d5d9b9e22fbfceccc3cab5c2bc2e776176",
+      "display_path": "音频文件/高等传热学（研）-王召光/课堂实录.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105863246,
+      "sha256": "929aae58ffe8a17168260e82b2613a5eea73588c7156fb66d699bae1905ffc31",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52931584,
+        "duration_seconds": 3308.224,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-bbdf7c1a76f88262e22a",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fb8dfb5c8cafdd1a72fb5dac1f9bddab8fad7d92e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fb8dfb5c8cafdd1a72fb5dac1f9bddab8fad7d92e776176",
+      "display_path": "音频文件/高等数学/第六节跟踪.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 83705934,
+      "sha256": "25782e0ad459d6be270188951da7343a6951a78126bd549e9ee5c69a476a2f0e",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 41852928,
+        "duration_seconds": 2615.808,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-7f778b321990a4f22fd4",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbbf9b4a1b6edd3ef2fbbf9b4a1b6edd3ef31a3a8b6edd3efa3a92e6d7033",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbbf9b4a1b6edd3ef2fbbf9b4a1b6edd3ef31a3a8b6edd3efa3a92e6d7033",
+      "display_path": "音频文件/基础俄语/基础俄语1（俄语）.mp3",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".mp3",
+      "labels": null,
+      "errors": [],
+      "bytes": 66006895,
+      "sha256": "99eab197312279a5d60843855bd3b731a2e0077a401a088132155ef045fafe85",
+      "media": {
+        "evidence": "container_probe",
+        "codec": "mp3",
+        "sample_rate": 16000,
+        "channels": 1,
+        "duration_seconds": 3300.3,
+        "full_decode_checked": false,
+        "tool": "/home/zhangs/conda-envs/asr/bin/ffprobe"
+      }
+    },
+    {
+      "sample_id": "audio-4d389f50c447a4d9d916",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbbf9b4a1b6edd3ef2fbbf9b4a1b6edd3ef31a3a8b6edd3efa3a92e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbbf9b4a1b6edd3ef2fbbf9b4a1b6edd3ef31a3a8b6edd3efa3a92e776176",
+      "display_path": "音频文件/基础俄语/基础俄语1（俄语）.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105607246,
+      "sha256": "eccf9249245ee86ef0299de774670d72eeb7e2347802d1c98306c1b28acf0d4e",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52803584,
+        "duration_seconds": 3300.224,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-37a1c322625a308c612b",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbdf0d8d1d6d0d2bd2fbdf0d8d1d6d0d2bda3a8d6d0cec4a3a92e6d7033",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbdf0d8d1d6d0d2bd2fbdf0d8d1d6d0d2bda3a8d6d0cec4a3a92e6d7033",
+      "display_path": "音频文件/金匮中医/金匮中医（中文）.mp3",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".mp3",
+      "labels": null,
+      "errors": [],
+      "bytes": 48450415,
+      "sha256": "706d93e891b352d330b55cc7e55bf9f12c2673d59d5e26d73ff1d1316d17a894",
+      "media": {
+        "evidence": "container_probe",
+        "codec": "mp3",
+        "sample_rate": 16000,
+        "channels": 1,
+        "duration_seconds": 2422.476,
+        "full_decode_checked": false,
+        "tool": "/home/zhangs/conda-envs/asr/bin/ffprobe"
+      }
+    },
+    {
+      "sample_id": "audio-cee89c0a4814d7e72f15",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbdf0d8d1d6d0d2bd2fbdf0d8d1d6d0d2bda3a8d6d0cec4a3a92e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbdf0d8d1d6d0d2bd2fbdf0d8d1d6d0d2bda3a8d6d0cec4a3a92e776176",
+      "display_path": "音频文件/金匮中医/金匮中医（中文）.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 77516878,
+      "sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 38758400,
+        "duration_seconds": 2422.4,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-3e0f5931f366cf923485",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbfc6d1a7b5c4c0fab3cc5f323032353230323633434f524531303035313630315fd6a3e9aa5f32303236c4ea37d4c238bac53136cab13430b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbfc6d1a7b5c4c0fab3cc5f323032353230323633434f524531303035313630315fd6a3e9aa5f32303236c4ea37d4c238bac53136cab13430b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/科学的历程_202520263CORE10051601_郑楠_2026年7月8号16时40分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 99835982,
+      "sha256": "c08d49f898b68a43be76f7af7594138c20920f20e850e7b3dcf51014caa1dcce",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 49917952,
+        "duration_seconds": 3119.872,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-9374939a5df5987a6634",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbfceb3cc2fb4a2c4dcd1a7caf5d3a2d3ef2db6e0c8cba3a8d6d0d3a2a3a92e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbfceb3cc2fb4a2c4dcd1a7caf5d3a2d3ef2db6e0c8cba3a8d6d0d3a2a3a92e776176",
+      "display_path": "音频文件/课程/储能学术英语-多人（中英）.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 99754062,
+      "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 49876992,
+        "duration_seconds": 3117.312,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-5dfa86b47999bb4c21f1",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbfceb3cc2fb6e0c4a3ccacbbfac6f7d1a7cfb031a3a8d6d0d3a2a3a92e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbfceb3cc2fb6e0c4a3ccacbbfac6f7d1a7cfb031a3a8d6d0d3a2a3a92e776176",
+      "display_path": "音频文件/课程/多模态机器学习1（中英）.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105793614,
+      "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52896768,
+        "duration_seconds": 3306.048,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-2591ca774b91f7d82898",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbfceb3cc2fb6e0c4a3ccacbbfac6f7d1a7cfb03228d6d0d3a2292e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbfceb3cc2fb6e0c4a3ccacbbfac6f7d1a7cfb03228d6d0d3a2292e776176",
+      "display_path": "音频文件/课程/多模态机器学习2(中英).wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105101390,
+      "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52550656,
+        "duration_seconds": 3284.416,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-15f8165827a30a66fae6",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbfceb3cc2fb6e0c4a3ccacbbfac6f7d1a7cfb033a3a8d6d0d3a2a3a92e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbfceb3cc2fb6e0c4a3ccacbbfac6f7d1a7cfb033a3a8d6d0d3a2a3a92e776176",
+      "display_path": "音频文件/课程/多模态机器学习3（中英）.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 95395918,
+      "sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 47697920,
+        "duration_seconds": 2981.12,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-b94fd0786f2bb1c697de",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbfceb3cc2fb7b4b3a3bbfdb7d6d3ebbcb6cafda3a8d6d0b7a8a3a92e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbfceb3cc2fb7b4b3a3bbfdb7d6d3ebbcb6cafda3a8d6d0b7a8a3a92e776176",
+      "display_path": "音频文件/课程/反常积分与级数（中法）.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 105193550,
+      "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 52596736,
+        "duration_seconds": 3287.296,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-ff1d4cae9950cf37211f",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbfceb3cc2fb8dfb5c8cafdd1a7a3a8d6d0cec4a3a92e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbfceb3cc2fb8dfb5c8cafdd1a7a3a8d6d0cec4a3a92e776176",
+      "display_path": "音频文件/课程/高等数学（中文）.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 86464590,
+      "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 43232256,
+        "duration_seconds": 2702.016,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-38718ae5e214bdc30134",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fbfceb3cc2fcfdfd0d4b4facafdd3ebbde2cef6bcb8bacea3a8d6d0cec4a3a92e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fbfceb3cc2fcfdfd0d4b4facafdd3ebbde2cef6bcb8bacea3a8d6d0cec4a3a92e776176",
+      "display_path": "音频文件/课程/线性代数与解析几何（中文）.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 99876260,
+      "sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 49938091,
+        "duration_seconds": 3121.1306875,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-36029767f173c95244c6",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fb9abb9b2b9dcc0edd1a75fb9abb9b2b9dcc0edd1a75f484a485f32303236c4ea35d4c23237bac53130cab13435b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fb9abb9b2b9dcc0edd1a75fb9abb9b2b9dcc0edd1a75f484a485f32303236c4ea35d4c23237bac53130cab13435b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/苏州大学课程/公共管理学_公共管理学_HJH_2026年5月27号10时45分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90337358,
+      "sha256": "f466ac0e160fb591b982e72a9f3e0faa99657abf5a807d4af2fcac7aa6526ffe",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45168640,
+        "duration_seconds": 2823.04,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-6fbfabcc5926e1583dab",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fb9abb9b2b9dcc0edd1a75fb9abb9b2b9dcc0edd1a75f484a485f32303236c4ea35d4c23237bac53131cab13335b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fb9abb9b2b9dcc0edd1a75fb9abb9b2b9dcc0edd1a75f484a485f32303236c4ea35d4c23237bac53131cab13335b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/苏州大学课程/公共管理学_公共管理学_HJH_2026年5月27号11时35分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90263630,
+      "sha256": "2e42db093a4149752ddeb1dd5d0c05efe7bec18a5f3147fe4e7cd947e3c8b6a1",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45131776,
+        "duration_seconds": 2820.736,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-b0b2abaab027fbd04b81",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fb9abb9b2b9dcc0edd1a75fb9abb9b2b9dcc0edd1a75f484a485f32303236c4ea35d4c23237bac539cab13535b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fb9abb9b2b9dcc0edd1a75fb9abb9b2b9dcc0edd1a75f484a485f32303236c4ea35d4c23237bac539cab13535b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/苏州大学课程/公共管理学_公共管理学_HJH_2026年5月27号9时55分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90321998,
+      "sha256": "0e9f4df99a73f4e5ea9b7415a9cac4db3a710dabe0beda5b722e7236ad36985e",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45160960,
+        "duration_seconds": 2822.56,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-61d3d13113dbcf87833e",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fcda8d3c3d1a7caf5d3a2d3efa2f25fcda8d3c3d1a7caf5d3a2d3efa2f25f4359485f32303236c4ea36d4c232bac538cab130b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fcda8d3c3d1a7caf5d3a2d3efa2f25fcda8d3c3d1a7caf5d3a2d3efa2f25f4359485f32303236c4ea36d4c232bac538cab130b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/苏州大学课程/通用学术英语Ⅱ_通用学术英语Ⅱ_CYH_2026年6月2号8时0分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90273870,
+      "sha256": "5ae4039dea035b36b64c4dd4a0f1f774190a2080ec95d67aca91dceccf9db82a",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45136896,
+        "duration_seconds": 2821.056,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-28a0c66565d3814b32af",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fcda8d3c3d1a7caf5d3a2d3efa2f25fcda8d3c3d1a7caf5d3a2d3efa2f25f4359485f32303236c4ea36d4c232bac538cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fcbd5d6ddb4f3d1a7bfceb3cc2fcda8d3c3d1a7caf5d3a2d3efa2f25fcda8d3c3d1a7caf5d3a2d3efa2f25f4359485f32303236c4ea36d4c232bac538cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/苏州大学课程/通用学术英语Ⅱ_通用学术英语Ⅱ_CYH_2026年6月2号8时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90275918,
+      "sha256": "5c663ae9217e2ec58d86459f115e11136d015671928b5cfceffe226d96b29a2e",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45137920,
+        "duration_seconds": 2821.12,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-acd528a61c72de5ed53d",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fcfdfd0d4b4facafdd3ebbde2cef6bcb8bace49495f3230323532303236334d41544832393832303730315fc0eebbbbc7d95f32303236c4ea37d4c238bac53134cab13330b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fcfdfd0d4b4facafdd3ebbde2cef6bcb8bace49495f3230323532303236334d41544832393832303730315fc0eebbbbc7d95f32303236c4ea37d4c238bac53134cab13330b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/线性代数与解析几何II_202520263MATH29820701_李换琴_2026年7月8号14时30分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 99876260,
+      "sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 49938091,
+        "duration_seconds": 3121.1306875,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-321ee103b603a7fbdfef",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5f32303236c4ea34d4c232bac538cab130b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5f32303236c4ea34d4c232bac538cab130b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_2026年4月2号8时0分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90482766,
+      "sha256": "c35a71ba94515a9a2ac28f9a038315200e607132169af04c4df0abff8ed35d58",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45241344,
+        "duration_seconds": 2827.584,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-5d5328ae33020b071a83",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5f32303236c4ea34d4c232bac538cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5f32303236c4ea34d4c232bac538cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_2026年4月2号8时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90466382,
+      "sha256": "0d23b47226d120d621ac5c0a66ae71a03fe365964873ac304bc84ccb72b67212",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45233152,
+        "duration_seconds": 2827.072,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-cfd54c0e4cb69e10e76e",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23130bac53130cab13430b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23130bac53130cab13430b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月10号10时40分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90490958,
+      "sha256": "478158935cde0208e034c832d27fb9944ca82065372dc5390dc4f6d90f7a75fc",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45245440,
+        "duration_seconds": 2827.84,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-2f489e5f2f4bcd7b1184",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23130bac539cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23130bac539cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月10号9时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90488910,
+      "sha256": "aa9b7a64a7c7451ffb60d34e4e0b67c0def8f65766b592f838e00e55cc75926f",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45244416,
+        "duration_seconds": 2827.776,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-4a3a657562f53f7dd1ed",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23132bac538cab130b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23132bac538cab130b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月12号8时0分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90493006,
+      "sha256": "b2963ed19ed45ddf22f4565151e455fed874269595a0eeb5a892a22986e7dc9b",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45246464,
+        "duration_seconds": 2827.904,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-bd075f5642a4c44ca793",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23132bac538cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23132bac538cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月12号8时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90484814,
+      "sha256": "ceb68b3f1bf3d1fcc06f6b7ceb08dbced4ebab0674db2bc23d6da8297f8c2eab",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45242368,
+        "duration_seconds": 2827.648,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-2ed53aed54aae9b1a2a5",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23137bac53130cab13430b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23137bac53130cab13430b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月17号10时40分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90495054,
+      "sha256": "a727743e8be03dc062c6c9b8997de855741c7fe47e7650577749553ed227dab4",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45247488,
+        "duration_seconds": 2827.968,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-dac89672d23d71c199e7",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23137bac539cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23137bac539cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月17号9时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90499150,
+      "sha256": "9b5ce5115b0091e7cb0c02ef063f82205ea499004ec21ded256fa8daad12d33a",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45249536,
+        "duration_seconds": 2828.096,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-58f019c942a977c40b64",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23139bac538cab130b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23139bac538cab130b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月19号8时0分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90493006,
+      "sha256": "70e71f2d2952e3b08827a9f67473bf664df8c085c2c6e9bf63be11ade31a33d3",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45246464,
+        "duration_seconds": 2827.904,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-ea14dd9cad1bd49e4d2a",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23139bac538cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23139bac538cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月19号8时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90490958,
+      "sha256": "37fb96c50573e5fc2099d7c98b26f04d8a51dcbb71628a39e4d9c8cb6b0b3205",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45245440,
+        "duration_seconds": 2827.84,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-cc7823b6efc2e70ab6db",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23234bac53130cab13430b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23234bac53130cab13430b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月24号10时40分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90480718,
+      "sha256": "fccfc00fed555ff054412a73810f1b31281eea787fb2c06e2867271db418aaed",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45240320,
+        "duration_seconds": 2827.52,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-347b004883c6084cf25a",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23234bac539cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23234bac539cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月24号9时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90480718,
+      "sha256": "3b7704f776c7e7eb03f715bad3aea29d17fd20544082a515b2f7adc6203f1f7f",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45240320,
+        "duration_seconds": 2827.52,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-32519c055bed097d0ef4",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23331bac53130cab13430b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23331bac53130cab13430b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月31号10时40分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90482766,
+      "sha256": "060d0cd4c16ec792b3890cb9ea898f24d07a1afd8fb0c54205fe4249ca9857f0",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45241344,
+        "duration_seconds": 2827.584,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-ae189e6d4dda18eaea80",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23331bac539cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c23331bac539cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月31号9时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90476622,
+      "sha256": "e6d491eda69323937b4af98018800edf810a631101b3113c0765edcdb002d872",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45238272,
+        "duration_seconds": 2827.392,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-9e086fc817da9ad74710",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c233bac53130cab13430b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c233bac53130cab13430b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月3号10时40分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90490958,
+      "sha256": "19ed596b000ab45e539c69011916b414caad53ac4d2682ebfb6a0d2a6e0187c5",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45245440,
+        "duration_seconds": 2827.84,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-7ce75bf35712f2b24d77",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c233bac539cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c233bac539cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月3号9时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90495054,
+      "sha256": "2eef3c2e6630c1c5540a0b872caa94cb37249f8de32426086054e178e7e93756",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45247488,
+        "duration_seconds": 2827.968,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-99421c34fe3d6853b61a",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c235bac538cab130b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c235bac538cab130b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月5号8时0分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90482766,
+      "sha256": "bf06da6af40ba59374cd3e68b44fa91e9335cf05ea7b5c2a44704126cc494bd7",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45241344,
+        "duration_seconds": 2827.584,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    },
+    {
+      "sample_id": "audio-63bf5a9921158c35ee7c",
+      "path_hex": "2f686f6d652f7a68616e67732f6173725f6e76696469612f746573742fd2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c235bac538cab13530b7d62fbdcccaa6312e776176",
+      "relative_path_hex": "d2f4c6b5cec4bcfe2fd7dbbacfd1d2caafd1a72fd7dbbacfd1d2caafd1a75f32303236b4ba2d53523131323130372d315fb9a8d0a1eacf5fb3c2d1debae75f5f5f32303236c4ea33d4c235bac538cab13530b7d62fbdcccaa6312e776176",
+      "display_path": "音频文件/综合岩石学/综合岩石学_2026春-SR112107-1_龚小晗_陈艳虹___2026年3月5号8时50分/教师1.wav",
+      "display_encodings": [
+        "gb18030"
+      ],
+      "extension": ".wav",
+      "labels": null,
+      "errors": [],
+      "bytes": 90478670,
+      "sha256": "cf4875ec5e876f1f6a3b99c7b0604470a2991bfbc99d93b81a7dd10b00816509",
+      "media": {
+        "evidence": "wav_header",
+        "sample_rate": 16000,
+        "channels": 1,
+        "sample_width_bytes": 2,
+        "frames": 45239296,
+        "duration_seconds": 2827.456,
+        "compression": "NONE",
+        "full_decode_checked": false
+      }
+    }
+  ],
+  "errors": [],
+  "skipped": []
+}

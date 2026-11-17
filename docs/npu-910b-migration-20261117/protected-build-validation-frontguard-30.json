@@ -1,0 +1,273 @@
+{
+  "schema": 3,
+  "stage": "/tmp/asr-cython-frontguard-20261117-nhxp0l35",
+  "recorded_at": 1794928169.4564495,
+  "source_sha256": {
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/async_utils.py": "bbf61919dc7a5b986450c9b00ffed7df0980c99e94c5f16c4f2dca1f35abe5c6",
+    "core/config.py": "9763731aeffaa1e0f39f326ffd2b7e1bf1eb201e7fa29f28841bc12a94c8c631",
+    "core/deployment.py": "107b7c00dd0469c97acadcab34c32182a0321b67bd7e39ee740d1c89feb65966",
+    "core/local_inference.py": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01",
+    "core/logging.py": "30e309f26c3e8ec5ccde044bbb53cf0d1a9084fca4fd8773ae9c2018ff0c64fa",
+    "core/model_loading.py": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c",
+    "core/models.py": "19edd7f9c567f9c34b953607ef667f9a50515f14b192e45e83a64ede9ce9541d",
+    "core/npu_resource_status.py": "38dce7800a4e1bbc0fc11a7f4a50a545be3df9aa2e150359b36cb3a6ccc34bb6",
+    "core/progress.py": "8969e793015b8175e2990f5221b6e69e0b8c5072b64ccfa77e55b19e6a67bfb8",
+    "core/qwen_asr_client.py": "e3bb4fd4f399d5cee5b7238e692f7c527ba12b7313fe2a17933bfd3ea88f3767",
+    "core/qwen_asr_queue.py": "325b4e3f39c50ec0137261eca182b91ca0e7bf8557ffd15ccc5e2f3b764b4024",
+    "core/qwen_asr_runtime.py": "cd643eeec82961c9ec724aefc70cd04b6c664da23123a9967ec90c7d3f0d23bc",
+    "core/request_telemetry.py": "b36810bbc197ae77407a47d16457f96a1171f974b7807da391aa7061bf244ad0",
+    "core/resource_diagnostics.py": "8055e71b023336fabff4fe2a7121f6cd8a38ec13e8018513442953100683fe49",
+    "core/status.py": "ffb8811440cf0c48848538782e292550aaba718c7d4b304b6e8c9144409225c7",
+    "core/vad.py": "ebbc95b55780328e9dc84ff7fc48d890d4fd99c79261e4b8386b715f64d8982f",
+    "core/vad_pool.py": "3f7c52d272690ddbce226823843c7d73b3d04fd7f90d47f3cac3cace7f1053ed",
+    "core/vad_volume.py": "e97dfdf5cc4dc5a38fc5a5938dc3c20a70e81e09d6c2b50a2212295de624e6a4",
+    "api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/asr_common.py": "c0f753a105107daec0070e80b684dca25c2af3cb3306260ea3a4b46a586c10b9",
+    "api/routes/asr_qwen_common.py": "f3a33a0d5bc7f52e75aebd5de09f0a6e1120b3939856a976c8805f5fb5d0813b",
+    "api/routes/asr_v3.py": "e2023bd57ec970d6b313e0031f0543a8633cf4638b9b98191d9ba7a8b5eeab8c",
+    "api/routes/status.py": "a1de0faf6431129ef7107ba2efcc83c08697a1dafa4762fe4918587716c936a8",
+    "utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utils/asr_stats.py": "1d3c0cefe775978503e8074c05e5fba347c196e7259e394ec409833c72bce351",
+    "utils/audio_utils.py": "0677a24eeefce08418a374e72e35e0a0649e85b227c40b7595b3bac66bbb3e6e",
+    "utils/feature_utils.py": "8f0c1fafab3f2d60398e53c9bcaf7d6f93f69a1aad2b4cb603866d12e457bef7",
+    "utils/itn.py": "5005178357003f716d819739b85f81b4dbe67e4d2764c9a3133244470fa3d0c0",
+    "utils/qwen_response.py": "f48464ad4aa8648b4d7639a2d486cf9980a6a12866209fb9bd5893aed8a198fd",
+    "utils/repetition.py": "02be6e84270414d30be39f721876553577760c62c59aaa695bf0d9ef94c4f0ef",
+    "utils/text_postprocess.py": "3ee74af7164a2cda2f9ab56d06ee092159516c3dbbefdb99807d5e605e447530",
+    "entity/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entity/data.py": "4596ff74847397fdf2628433f79f3110c72c13219e7a7b49353bb3cdf65776ea",
+    "main.py": "7f596a1661c01ed3c2e5641a7224ed1d2ac39a84798a8d0126e7df74e2bb53c2",
+    "model_status_runtime.py": "5e1a7c044ee04973e8b42ba74d1b83bb20215f424a98a8221e6511cff1cd545a",
+    "telemetry_runtime.py": "bd5d9a4eb4ec692753e30945e688da92544d4d510e55201c4df7ed1f18424043",
+    "config.toml": "f566fa91b9729f1e55cb68e565b0911e0b167e9c5ecea6a11b4dd9ee13d707a7",
+    "setup_cython.py": "50a6c7d2ea160ff69815b118f8b429b8d3c2d9452214f563e85c85b5132a705e",
+    "scripts/build_cython.sh": "32972bf823b382d2e3a9f55fe65b8ee12333b8f0816747d1eff92841f9f962a2"
+  },
+  "source_snapshot_path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/source-snapshot.json",
+  "source_snapshot_sha256": "9484a0beb4d89011d839368413a0b66c6cf33acaff91dd6b18d553c250f76bae",
+  "source_fingerprint_sha256": "5035c64f72416102d874cf679ef025d4de0396c1d545785038746c4821250eaf",
+  "source_changed": [],
+  "previous_snapshot": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/source-snapshot.before-main-shutdown-exit.json",
+  "previous_snapshot_sha256": "3221de119a56d0d6bd7a24051b205759aea4ede7a09929740186f340988bd37a",
+  "main_refresh_only": true,
+  "extension_files_unchanged": true,
+  "extensions_sha256": {
+    "core/async_utils.cpython-310-aarch64-linux-gnu.so": "835b6774ab48a85d83019bea3c31f60bcc9abced166d23003ce49bfc8385211a",
+    "core/config.cpython-310-aarch64-linux-gnu.so": "34f3207a2a50aba970217695f21eafc6bd20df3b724f7a2977c2ede6ede4078b",
+    "core/deployment.cpython-310-aarch64-linux-gnu.so": "b0079a4bdc375f20cdf4b704ead7516dee585cca00032f660a9a01d48ed45000",
+    "core/local_inference.cpython-310-aarch64-linux-gnu.so": "815b177efe5592ab3a8576f2c8561d79446f4a4338188e7da97f50a961b62bf8",
+    "core/logging.cpython-310-aarch64-linux-gnu.so": "37fa48ee1c88c28b2e97c02ca30e235857e5bdb14cc3e02da4de2ac0b393f9c7",
+    "core/model_loading.cpython-310-aarch64-linux-gnu.so": "943ecb56e1b21cb7aa6bf847223a478e8ed6f1c08d1addbd0d31526924b36f6b",
+    "core/models.cpython-310-aarch64-linux-gnu.so": "9817c6a79c3d03e6dc54db6850095732a03c3ddae3c714dbd0d0ac143d6c4909",
+    "core/npu_resource_status.cpython-310-aarch64-linux-gnu.so": "5ebf132182f91c46e3e43412ce6b8d781dd23f8713a814848708887c03f2561e",
+    "core/progress.cpython-310-aarch64-linux-gnu.so": "43d9c6cd2d2efeb49af691c6e0640625a1a40bbf1dcfbfd7d81ce975f9e959a1",
+    "core/qwen_asr_client.cpython-310-aarch64-linux-gnu.so": "3cba9191531fda2469e8b9d8f6ab5442990e8706a0e78ccccda45cf69ce055c0",
+    "core/qwen_asr_queue.cpython-310-aarch64-linux-gnu.so": "6d0b9ad2f447bed469831af9305a2c7f37cd3e153445b7f203641eb155d37720",
+    "core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so": "2d05481a63ef18487de24b0fb061c9010eb1b92e91489e6a30dcb520f7eb4302",
+    "core/request_telemetry.cpython-310-aarch64-linux-gnu.so": "adde767db228aeaa676c7fb0260c65b4254b69c9c1968e8fd627f7d1fd6d093e",
+    "core/resource_diagnostics.cpython-310-aarch64-linux-gnu.so": "b669ae8ae39c3e97985619d5e14bf7c9b4eac499e9ab98b6533543e7351daa02",
+    "core/status.cpython-310-aarch64-linux-gnu.so": "f530c60b642c1a7cba48b56cce54bdd383e9ec781882b2a1ffd07d33298e79d3",
+    "core/vad.cpython-310-aarch64-linux-gnu.so": "cfca9bdd29202da21e18675c51d246c2279668fb4b24721b1ad6139881761bc3",
+    "core/vad_pool.cpython-310-aarch64-linux-gnu.so": "ca73f721d329e641f12a609bbbcd6931b1b6a77388a8b67965a2b1bbf6c8702c",
+    "core/vad_volume.cpython-310-aarch64-linux-gnu.so": "7ad4ba945b4e76eab2e64882f4c6ac096bf6244b9873d0b13652ce29b1ef0cab",
+    "api/routes/asr_common.cpython-310-aarch64-linux-gnu.so": "0531b2f3f983206c4db6e8a0ea81eff41bb7b03de22ec6b50b91cd02f9741ef5",
+    "api/routes/asr_qwen_common.cpython-310-aarch64-linux-gnu.so": "079edfae22c547ca2624aa8633d7d582e5116940de3bcba95d3c15147d5eb643",
+    "api/routes/asr_v3.cpython-310-aarch64-linux-gnu.so": "bfaafc938b47dc515dd0e5ce8f456113a4f7f321dd837766f7d1e7199cdebd97",
+    "api/routes/status.cpython-310-aarch64-linux-gnu.so": "d83f869e9df8439dd89c3284128dcfdaa4ffcd5a74b69b6e7c50121c4dc059c8",
+    "utils/asr_stats.cpython-310-aarch64-linux-gnu.so": "67889b211acddd332a63a35da47de4093f223413904b35d63faf5c14ccf3041e",
+    "utils/audio_utils.cpython-310-aarch64-linux-gnu.so": "7fbc61ff909c3cb9affb3c7615d42f7dad032f5ba7dc9428de677409ddb9a5b3",
+    "utils/feature_utils.cpython-310-aarch64-linux-gnu.so": "8ff15612957ff8b40d7d9c4abcd96396ee6b2008c37338d5d80ffd6860d22416",
+    "utils/itn.cpython-310-aarch64-linux-gnu.so": "fdd5cfa47edb5ca19cb9425de62b555275af64389414edec613080d3e3c5de67",
+    "utils/qwen_response.cpython-310-aarch64-linux-gnu.so": "83181acb9d7201898e8d1b372cc4eb0ae16247e4fbf90343a79fd3fe73eed995",
+    "utils/repetition.cpython-310-aarch64-linux-gnu.so": "cf5f9fc500c390bea6f47388e88dc5d708ca14bac09ada75d3038a0dbe402e68",
+    "utils/text_postprocess.cpython-310-aarch64-linux-gnu.so": "05c54e06e88d2f5ff4770643e14f1aec4b3bc08b76c90a19b5b015dc3eafdd47",
+    "entity/data.cpython-310-aarch64-linux-gnu.so": "d129c0f715acbacabd47fb9e5d039946ea72310abac7abf8ad2dd842cbd33ee4"
+  },
+  "extensions": {
+    "python": "3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 22:53:30) [GCC 14.4.0]",
+    "architecture": "aarch64",
+    "soabi": "cpython-310-aarch64-linux-gnu",
+    "count": 30,
+    "imports": {
+      "api.routes.asr_common": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/api/routes/asr_common.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "0531b2f3f983206c4db6e8a0ea81eff41bb7b03de22ec6b50b91cd02f9741ef5"
+      },
+      "api.routes.asr_qwen_common": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/api/routes/asr_qwen_common.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "079edfae22c547ca2624aa8633d7d582e5116940de3bcba95d3c15147d5eb643"
+      },
+      "api.routes.asr_v3": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/api/routes/asr_v3.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "bfaafc938b47dc515dd0e5ce8f456113a4f7f321dd837766f7d1e7199cdebd97"
+      },
+      "api.routes.status": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/api/routes/status.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "d83f869e9df8439dd89c3284128dcfdaa4ffcd5a74b69b6e7c50121c4dc059c8"
+      },
+      "core.async_utils": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/async_utils.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "835b6774ab48a85d83019bea3c31f60bcc9abced166d23003ce49bfc8385211a"
+      },
+      "core.config": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/config.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "34f3207a2a50aba970217695f21eafc6bd20df3b724f7a2977c2ede6ede4078b"
+      },
+      "core.deployment": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/deployment.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "b0079a4bdc375f20cdf4b704ead7516dee585cca00032f660a9a01d48ed45000"
+      },
+      "core.local_inference": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/local_inference.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "815b177efe5592ab3a8576f2c8561d79446f4a4338188e7da97f50a961b62bf8"
+      },
+      "core.logging": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/logging.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "37fa48ee1c88c28b2e97c02ca30e235857e5bdb14cc3e02da4de2ac0b393f9c7"
+      },
+      "core.model_loading": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/model_loading.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "943ecb56e1b21cb7aa6bf847223a478e8ed6f1c08d1addbd0d31526924b36f6b"
+      },
+      "core.models": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/models.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "9817c6a79c3d03e6dc54db6850095732a03c3ddae3c714dbd0d0ac143d6c4909"
+      },
+      "core.npu_resource_status": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/npu_resource_status.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "5ebf132182f91c46e3e43412ce6b8d781dd23f8713a814848708887c03f2561e"
+      },
+      "core.progress": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/progress.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "43d9c6cd2d2efeb49af691c6e0640625a1a40bbf1dcfbfd7d81ce975f9e959a1"
+      },
+      "core.qwen_asr_client": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/qwen_asr_client.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "3cba9191531fda2469e8b9d8f6ab5442990e8706a0e78ccccda45cf69ce055c0"
+      },
+      "core.qwen_asr_queue": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/qwen_asr_queue.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "6d0b9ad2f447bed469831af9305a2c7f37cd3e153445b7f203641eb155d37720"
+      },
+      "core.qwen_asr_runtime": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "2d05481a63ef18487de24b0fb061c9010eb1b92e91489e6a30dcb520f7eb4302"
+      },
+      "core.request_telemetry": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/request_telemetry.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "adde767db228aeaa676c7fb0260c65b4254b69c9c1968e8fd627f7d1fd6d093e"
+      },
+      "core.resource_diagnostics": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/resource_diagnostics.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "b669ae8ae39c3e97985619d5e14bf7c9b4eac499e9ab98b6533543e7351daa02"
+      },
+      "core.status": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/status.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "f530c60b642c1a7cba48b56cce54bdd383e9ec781882b2a1ffd07d33298e79d3"
+      },
+      "core.vad": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/vad.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "cfca9bdd29202da21e18675c51d246c2279668fb4b24721b1ad6139881761bc3"
+      },
+      "core.vad_pool": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/vad_pool.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "ca73f721d329e641f12a609bbbcd6931b1b6a77388a8b67965a2b1bbf6c8702c"
+      },
+      "core.vad_volume": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/core/vad_volume.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "7ad4ba945b4e76eab2e64882f4c6ac096bf6244b9873d0b13652ce29b1ef0cab"
+      },
+      "entity.data": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/entity/data.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "d129c0f715acbacabd47fb9e5d039946ea72310abac7abf8ad2dd842cbd33ee4"
+      },
+      "utils.asr_stats": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/utils/asr_stats.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "67889b211acddd332a63a35da47de4093f223413904b35d63faf5c14ccf3041e"
+      },
+      "utils.audio_utils": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/utils/audio_utils.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "7fbc61ff909c3cb9affb3c7615d42f7dad032f5ba7dc9428de677409ddb9a5b3"
+      },
+      "utils.feature_utils": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/utils/feature_utils.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "8ff15612957ff8b40d7d9c4abcd96396ee6b2008c37338d5d80ffd6860d22416"
+      },
+      "utils.itn": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/utils/itn.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "fdd5cfa47edb5ca19cb9425de62b555275af64389414edec613080d3e3c5de67"
+      },
+      "utils.qwen_response": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/utils/qwen_response.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "83181acb9d7201898e8d1b372cc4eb0ae16247e4fbf90343a79fd3fe73eed995"
+      },
+      "utils.repetition": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/utils/repetition.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "cf5f9fc500c390bea6f47388e88dc5d708ca14bac09ada75d3038a0dbe402e68"
+      },
+      "utils.text_postprocess": {
+        "path": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/utils/text_postprocess.cpython-310-aarch64-linux-gnu.so",
+        "sha256": "05c54e06e88d2f5ff4770643e14f1aec4b3bc08b76c90a19b5b015dc3eafdd47"
+      }
+    },
+    "main_imported": "/tmp/asr-cython-frontguard-20261117-nhxp0l35/main.py",
+    "cann_compiler_imports": true,
+    "npu_initialized": false,
+    "npu_forward_checked": false
+  },
+  "npu_api_validation": {
+    "completed": false,
+    "note": "Historical 29-module API evidence is not inherited. Final 30-module NPU/API verification is owned by root."
+  },
+  "artifact_sha256": {
+    "cython-build.json": "018d8c4ce42e30ae9cc5c3648b7f07397b766e998dfd15ffebe24fb874c3ce33",
+    "extension-imports.json": "9f597fd8905cdd7f3f18472a4fd4a0a8d1cfd4faf4a21dfd05493e43921805d8",
+    "source-snapshot.json": "9484a0beb4d89011d839368413a0b66c6cf33acaff91dd6b18d553c250f76bae"
+  },
+  "report_directory": "/tmp/asr-frontguard-mainexit-validation-20261117-2r1zylw2",
+  "build": {
+    "built_at": "2026-11-17T11:56:17.997490+00:00",
+    "python": "3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 22:53:30) [GCC 14.4.0]",
+    "architecture": "aarch64",
+    "soabi": "cpython-310-aarch64-linux-gnu",
+    "platform": "Linux-5.10.0-60.18.0.50.oe2203.aarch64-aarch64-with-glibc2.34",
+    "compiler": "GCC 14.4.0",
+    "packages": {
+      "Cython": "3.0.12",
+      "setuptools": "84.0.0",
+      "numpy": "1.26.4",
+      "torch": "2.5.1",
+      "torch-npu": "2.5.1",
+      "torchaudio": "2.5.1",
+      "transformers": "5.13.0",
+      "funasr": "1.2.6"
+    },
+    "compiler_directives": {
+      "boundscheck": true,
+      "wraparound": true,
+      "initializedcheck": true,
+      "cdivision": false
+    },
+    "cann_version_files": [
+      "/usr/local/Ascend/ascend-toolkit/latest/version.cfg"
+    ]
+  },
+  "evidence_level": "compiled_import_and_CPU_semantic_parity",
+  "raw_result": {
+    "path": "/tmp/asr-frontguard-mainexit-validation-20261117-2r1zylw2/result.json",
+    "sha256": "11cb12fda5ceac376e318b4fad44971dcebf37a51b4d8198ff4dedb4f919d864"
+  },
+  "limitations": [
+    "30个纯Python生成扩展使用既有Cython3.0.12构建，未重编；编译器前缀后来发现SciPy残留问题，未用其科学计算作为通过依据。",
+    "正式asr重新导入30扩展并完成CPU语义验证，扩展字节未变。main.py仅同步关闭失败退出码，不属扩展编译对象。",
+    "本报告没有最终30扩展NPU/API实机验收；原29模块证据不继承。",
+    "旧29和中间30目录及原始日志保留；无镜像或conda-pack归档构建。"
+  ],
+  "cpu_parity_reports": [
+    "compiled-frontguard-cpu-validation.json",
+    "main-shutdown-exit-validation.json",
+    "cpu-regression-final-mainexit.json"
+  ]
+}

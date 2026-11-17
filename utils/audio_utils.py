@@ -54,14 +54,22 @@ def standardize_audio(audio_bytes: bytes, suffix: str, force_resample: bool = Fa
         return audio_bytes
 
     logger.info(f"[音频检查] 转换前参数：{info}，开始重采样")
-    from pydub import AudioSegment
+    # 目标环境锁定PyAV，不依赖宿主PATH中的ffmpeg二进制；全程内存解码。
+    import av
+    import wave
 
-    audio = AudioSegment.from_file(BytesIO(audio_bytes), format=suffix)
-    audio = audio.set_frame_rate(16000).set_channels(1).set_sample_width(2)
-
-    # 导出成 WAV 容器，不能是 raw_data
+    pcm = BytesIO()
+    with av.open(BytesIO(audio_bytes)) as container:
+        resampler = av.AudioResampler(format="s16", layout="mono", rate=16000)
+        for frame in container.decode(audio=0):
+            for converted in resampler.resample(frame):
+                pcm.write(converted.to_ndarray().astype("<i2", copy=False).tobytes())
+        for converted in resampler.resample(None):
+            pcm.write(converted.to_ndarray().astype("<i2", copy=False).tobytes())
     buf = BytesIO()
-    audio.export(buf, format="wav")          # 默认 PCM_16
+    with wave.open(buf, "wb") as output:
+        output.setparams((1, 2, 16000, 0, "NONE", ""))
+        output.writeframes(pcm.getvalue())
     return buf.getvalue()
 
 async def preprocess_audio(audio_bytes: bytes, suffix: str, force_resample: bool = False) -> bytes:

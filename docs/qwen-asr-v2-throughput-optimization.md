@@ -1,3 +1,5 @@
+> 迁移前历史记录；其中旧环境/端口/脚本参数不作为当前操作入口。保留原数据和推导供追溯。当前使用 [NPU迁移报告](npu-910b-migration-validation-20261117.md)、[README](../README.md) 与 [昇腾交付说明](../docker/README.md)。
+
 # Qwen3-ASR 吞吐优化方案（单卡多前端 / 多实例扩容）
 
 本文记录 2026-10-23 对 `/v2/seacraft_asr` 链路的吞吐瓶颈定位与扩容方案讨论。

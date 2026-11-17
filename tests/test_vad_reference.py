@@ -1,5 +1,10 @@
 import unittest
 import asyncio
+import tempfile
+import wave
+from pathlib import Path
+
+import numpy as np
 
 from core.vad import VadSegment
 from scripts.vad_reference import (
@@ -18,10 +23,59 @@ from scripts.vad_reference import (
 
 
 class VadReferenceTests(unittest.TestCase):
-    def test_reference_fixture_has_expected_markers(self):
-        segments = parse_reference_annotations()
-        self.assertEqual(len(segments), 658)
-        self.assertEqual(sum(item["small_noise"] for item in segments), 46)
+    def setUp(self):
+        # 可追溯的合成样本：4 秒、16 kHz、单声道 PCM16 的确定性 220Hz 正弦。
+        # 4 段中 2 段音量低；这里的手工标记只验证工具解析，并非真实课堂标注。
+        directory = tempfile.TemporaryDirectory(prefix="vad-synthetic-")
+        self.addCleanup(directory.cleanup)
+        self.audio_path = Path(directory.name) / "synthetic-tones.wav"
+        self.annotation_path = Path(directory.name) / "synthetic-annotations.json"
+        audio = np.zeros(4 * 16000, dtype=np.float64)
+        for start, end, amplitude in ((0.0, 0.5, 0.3), (1.0, 1.2, 0.003), (2.0, 2.5, 0.2), (3.0, 3.2, 0.005)):
+            indices = np.arange(round(start * 16000), round(end * 16000))
+            audio[indices] = amplitude * np.sin(2 * np.pi * 220 * indices / 16000)
+        with wave.open(str(self.audio_path), "wb") as stream:
+            stream.setnchannels(1)
+            stream.setsampwidth(2)
+            stream.setframerate(16000)
+            stream.writeframes(np.round(audio * 32767).astype("<i2").tobytes())
+        # 包含人工文档支持的独立“细小声音”标记、说明行与缺失逗号修复。
+        self.annotation_path.write_text("""{
+    "source": "synthetic deterministic PCM fixture; no real speech labels",
+    "segments": [
+        {
+            "segment_text": "synthetic loud A",
+            "bg": 0.0,
+            "ed": 0.5
+        },
+        {
+细小声音
+            "segment_text": "synthetic quiet A"
+            "bg": 1.0,
+            "ed": 1.2
+        },
+        {
+转写错误应该是 synthetic note: not a speech ground truth
+            "segment_text": "synthetic loud B",
+            "bg": 2.0,
+            "ed": 2.5
+        },
+        {
+细小声音
+            "segment_text": "synthetic quiet B",
+            "bg": 3.0,
+            "ed": 3.2
+        }
+    ]
+}
+""", encoding="utf-8")
+
+    def test_synthetic_reference_has_explicit_manual_markers(self):
+        segments = parse_reference_annotations(self.annotation_path)
+        self.assertEqual(len(segments), 4)
+        self.assertEqual([item["small_noise"] for item in segments], [False, True, False, True])
+        self.assertEqual(segments[1]["segment_text"], "synthetic quiet A")
+        self.assertEqual((segments[1]["bg"], segments[1]["ed"]), (1.0, 1.2))
 
     def test_interval_hit_uses_fifty_percent_marked_overlap(self):
         marked = (10.0, 12.0)
@@ -36,18 +90,22 @@ class VadReferenceTests(unittest.TestCase):
                 self.threshold = vad_kwargs["speech_noise_thres"]
 
             async def detect(self, _path):
-                return [{"value": [[9.81 * 1000, 10.42 * 1000]]}]
+                return [{"value": [[0, 500], [2000, 2500]]}]
 
             async def stop(self):
                 return None
 
         report = asyncio.run(
             scan_thresholds(
+                audio_path=self.audio_path,
+                annotation_path=self.annotation_path,
                 thresholds=(0.3, 0.6, 0.8),
                 pool_factory=FakePool,
             )
         )
-        self.assertEqual(report["annotation_count"], 46)
+        self.assertEqual(report["annotation_count"], 2)
+        self.assertEqual(report["diagnostics"]["marked_count"], 2)
+        self.assertEqual(report["diagnostics"]["unmarked_count"], 2)
         self.assertEqual([item["threshold"] for item in report["thresholds"]], [0.3, 0.6, 0.8])
         for item in report["thresholds"]:
             self.assertIn("marked_suppression_rate", item)
@@ -55,17 +113,25 @@ class VadReferenceTests(unittest.TestCase):
             self.assertIn("filtered_segment_count", item)
             self.assertIn("qwen_request_count", item)
             self.assertIn("elapsed_s", item)
+            self.assertEqual(item["filtered_segment_count"], 2)
+            self.assertEqual(item["qwen_request_count"], 2)
+            self.assertEqual(item["marked_suppression_rate"], 1.0)
+            self.assertEqual(item["unmarked_retention_rate"], 1.0)
 
     def test_audio_diagnostics_has_marked_details_and_percentiles(self):
         report = _audio_diagnostics(
-            __import__("pathlib").Path("test/audio_file/理论计算机科学导论_时间am9.55_191803.wav"),
-            parse_reference_annotations(),
+            self.audio_path,
+            parse_reference_annotations(self.annotation_path),
         )
-        self.assertEqual(report["marked_count"], 46)
-        self.assertEqual(len(report["marked_intervals"]), 46)
+        self.assertEqual(report["marked_count"], 2)
+        self.assertEqual(len(report["marked_intervals"]), 2)
         self.assertEqual(set(report["marked_rms_dbfs"]), {"p10", "p50", "p90", "p99"})
-        self.assertGreater(report["audio_duration_s"], 3000)
-        self.assertIn("context", report["marked_intervals"][0])
+        self.assertEqual(report["audio_duration_s"], 4.0)
+        self.assertEqual(report["sample_rate"], 16000)
+        self.assertLess(report["marked_rms_dbfs"]["p90"], report["unmarked_rms_dbfs"]["p10"])
+        marked = report["marked_intervals"][0]
+        self.assertAlmostEqual(marked["duration_s"], 0.2)
+        self.assertEqual(marked["context"], {"previous_bg": 0.0, "previous_ed": 0.5, "next_bg": 2.0, "next_ed": 2.5})
 
     def test_frame_mapping_and_candidate_search(self):
         mapped = assign_frame_segments(

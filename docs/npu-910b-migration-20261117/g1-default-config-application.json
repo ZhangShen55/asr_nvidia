@@ -1,0 +1,85 @@
+{
+  "schema": 1,
+  "status": "applied_and_CPU_verified_after_root_final_g1_decision",
+  "decision_report": {
+    "path": "/home/zhangs/asr_nvidia/docs/npu-910b-migration-20261117/full-pair-capacity-decision.json",
+    "sha256": "e9a5574b8f63fed06cfe084ee3ab4e53097bf7b1e84271490ca71ee11e9f61e6"
+  },
+  "full_pair_evidence": {
+    "path": "/home/zhangs/asr_nvidia/docs/npu-910b-migration-20261117/full-pair-final-evidence.json",
+    "sha256": "8300649dcbae86730981355c7e762718d5c78653877032320839dca384738256"
+  },
+  "source_backup": "/tmp/asr-apply-source-backup-n5iqqjz1",
+  "source_files": {
+    "core/config.py": {
+      "before_sha256": "9763731aeffaa1e0f39f326ffd2b7e1bf1eb201e7fa29f28841bc12a94c8c631",
+      "proposed_sha256": "0da933f202100d56dea4668993058165af2563e9a63628a6f438929c6db75d2f",
+      "replacement_count": 3
+    },
+    "config.toml": {
+      "before_sha256": "7dfc2396cf34c7bcf8a633a5aa15619619d75f2c20da827b83fa81b42bda88b8",
+      "proposed_sha256": "6b1540f4242241e1e673f078c993baf401eb3a8220b026e66d91f2da2d03f3ca",
+      "replacement_count": 2
+    },
+    "docker/config.toml": {
+      "before_sha256": "d4db7ac5e870ce01e1326dd9d0aed6bd3c64c6e71a3ad02eb2a782d476e2e6c3",
+      "proposed_sha256": "a7a6e5e0ac323e06dec2bc6f9a6c6845203bbc8ad7c1e7a107b83d82a944b665",
+      "replacement_count": 2
+    },
+    "tests/test_config_contract.py": {
+      "before_sha256": "ecd8cf428e5e884b94bac706706bcc872a149251bf81741efdce85e4615bb3d2",
+      "proposed_sha256": "136ec3275c7a56d746cfdd69441c146651e4895a04815e011b9417bb3f85b642",
+      "replacement_count": 2
+    },
+    "README.md": {
+      "before_sha256": "573297eed300f847cb7180c067dd103c5c310d10f97af9015c3c5b710f5a95e1",
+      "proposed_sha256": "c82975f4244bcf908c2060a85467577853c6bc0eb267040a820ec6d43104c948",
+      "replacement_count": 4
+    },
+    "AGENT.md": {
+      "before_sha256": "6991086b8b9ccdb6e4fb85db908e99b387e817fad1f647f4e2c611a3056ca4f9",
+      "proposed_sha256": "ad2390253ee6940982e217a77a5aede087a0d36e6cf036b22e4acd87993a8f51",
+      "replacement_count": 1
+    },
+    "docker/README.md": {
+      "before_sha256": "0a373442fca68c9f0b507f2778fd1e82277edd5015c548cee23af10fc2c5fb34",
+      "proposed_sha256": "8dbb1fdd6220198def8cc62b1ed61736e0055a28ac598e5b8b1f7e5dbc086558",
+      "replacement_count": 2
+    }
+  },
+  "inference_math_changed": false,
+  "only_python_configuration_defaults_changed": [
+    "qwen_segment_concurrency:2->1",
+    "qwen_request_concurrency:2->1"
+  ],
+  "qwen_copies": 1,
+  "audio_admission_capacity_unchanged": 8,
+  "enhanced_audio_admission_capacity_unchanged": 4,
+  "host_physical_device": "npu:7",
+  "container_logical_device": "npu:0",
+  "stage": "/tmp/asr-cython-g1-default-20261118-nkmpk_2a",
+  "baseline_stage": "/tmp/asr-cython-frontguard-20261117-nhxp0l35",
+  "baseline_snapshot_sha256": "8cdd61bc1aa23cf3ad6ce3e2244105ea21f200dfe7dedd26bbd4c983ff983d69",
+  "new_snapshot_sha256": "4050173f89303bc5477078a23dbe8ac3d4be84f95f95dba6eb0ccb75a427a992",
+  "new_source_fingerprint_sha256": "8ee9574b395dbfafd0a62954d4f5bf304c86d6044717bbf90e9a1a7a13f19534",
+  "source_changed": [],
+  "compiled_modules": [
+    "core.config"
+  ],
+  "preserved_other_extensions": 29,
+  "main_unchanged_sha256": "7f596a1661c01ed3c2e5641a7224ed1d2ac39a84798a8d0126e7df74e2bb53c2",
+  "extension_import_provenance": {
+    "current_standard_file": "/tmp/asr-cython-g1-default-20261118-nkmpk_2a/extension-imports.json",
+    "sha256": "67d4817a68fa0a26f84ac00c89be6f378065583687d3f6683a2ff5a6a58637e1",
+    "baseline_retained": "/tmp/asr-cython-g1-default-20261118-nkmpk_2a/extension-imports.baseline-nhxp-8cdd61.json",
+    "build_metadata_current_config_only": "/tmp/asr-cython-g1-default-20261118-nkmpk_2a/cython-build.json",
+    "current_config_only_metadata_sha256": "1a578a8799aac5546fdb0963f2db78ca11cd0a688b5f7508e264f93524b97e43",
+    "original_30_metadata_retained": "/tmp/asr-cython-g1-default-20261118-nkmpk_2a/cython-build.original-30.json"
+  },
+  "script": {
+    "path": "/tmp/prepare_g1_config_stage.py",
+    "sha256": "bed0516b11afadf46828a2b45da311d649f7428b1fd011ee22d3a5abd1479ee6"
+  },
+  "npu_api_validation_completed_by_this_agent": false,
+  "npu_validation_owner": "root; final steady report recorded separately"
+}

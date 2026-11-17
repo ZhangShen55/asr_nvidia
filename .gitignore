@@ -21,3 +21,6 @@ asr_stats.json
 *.log.*
 .docker-cache/
 logs/
+
+# 昇腾运行时生成的编译状态与诊断缓存，保留原件但不提交。
+/kernel_meta/

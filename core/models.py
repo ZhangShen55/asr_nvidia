@@ -72,18 +72,18 @@ local_model_status: Dict[str, Dict[str, Any]] = {
 }
 
 
-def device_allocated_mb(device: str) -> float:
-    """取指定设备上 torch 已分配的显存（MB）；不可用时返回 0。"""
-    if not str(device).startswith("cuda:"):
+def device_allocated_mb(device: str) -> float | None:
+    """只采样本进程 PyTorch 分配器；失败为未知，不能假报资源为零。"""
+    if device == "cpu":
         return 0.0
     try:
-        index = int(str(device).split(":")[1])
-    except (AttributeError, IndexError, ValueError):
-        return 0.0
-    try:
-        return torch.cuda.memory_allocated(index) / (1024 ** 2)
-    except Exception:  # noqa: BLE001
-        return 0.0
+        if backend_for_device(device) != "torch_npu":
+            return None
+        api = npu_api()
+        api.set_device(device)
+        return float(api.memory_allocated(device)) / (1024 ** 2)
+    except Exception:
+        return None
 
 
 def record_model_memory(name: str, device: str, allocated_mb: float) -> None:
@@ -133,30 +133,17 @@ def get_local_model_status() -> Dict[str, Dict[str, Any]]:
 
 
 def _resolve_device(index: int | str) -> str:
-    if isinstance(index, str) and index.strip().lower() == "cpu":
-        return "cpu"
-    if isinstance(index, str) and index.startswith("npu:"):
-        api = npu_api()
-        number = int(index.split(":", 1)[1])
-        if not api.is_available() or number >= api.device_count():
-            raise RuntimeError(f"NPU 设备不可用: {index}")
-        return index
-    if not torch.cuda.is_available():
-        raise RuntimeError("v3 链路要求使用 GPU，但 CUDA 不可用")
     if isinstance(index, str):
         spec = index.strip().lower()
-        if spec == "cuda":
-            index = 0
-        elif spec.startswith("cuda:") and spec.split(":", 1)[1].isdigit():
-            index = int(spec.split(":", 1)[1])
-        else:
-            raise RuntimeError(f"本地模型设备 {index!r} 不支持，必须使用 cuda:N")
-    if not isinstance(index, int) or index < 0:
-        raise RuntimeError(f"本地模型设备 {index!r} 不支持，必须使用 cuda:N")
-    visible = torch.cuda.device_count()
-    if index >= visible:
-        raise RuntimeError(f"GPU 索引 {index} 越界，可见 CUDA 设备数量为 {visible}")
-    return f"cuda:{index}"
+        if spec == "cpu":
+            return spec
+        if spec.startswith("npu:") and spec[4:].isdigit():
+            api = npu_api()
+            number = int(spec[4:])
+            if not api.is_available() or number >= api.device_count():
+                raise RuntimeError(f"NPU 设备不可用: {spec}")
+            return spec
+    raise RuntimeError(f"本地模型设备 {index!r} 不支持；请将旧 CUDA 配置迁移为 cpu 或 npu:N")
 
 
 def resolve_vad_device() -> str:
@@ -170,8 +157,7 @@ class ModelPool:
     """按设备数组加载模型副本；每个句柄同一时刻只服务一个任务。"""
 
     def __init__(self, name: str, model_dir: str, device_getter=None, count_getter=None,
-                 *, devices_getter=None, fp16=False, enabled_getter=None,
-                 tensorrt_getter=None, precision_getter=None):
+                 *, devices_getter=None, fp16=False, enabled_getter=None):
         self.name = name
         self.model_dir = model_dir
         self.device_getter = device_getter
@@ -180,19 +166,19 @@ class ModelPool:
         self._return_device = devices_getter is not None
         self.fp16 = fp16
         self.enabled_getter = enabled_getter
-        self.tensorrt_getter = tensorrt_getter or (lambda: False)
-        self.precision_getter = precision_getter or (lambda: "fp16")
         self._closing = False
         self.models: list[Any] = []
         self.devices: list[str | None] = []
         self.locks: list[asyncio.Lock] = []
         self.failures: list[str | None] = []
+        self._unclosed_instances: dict[int, Any] = {}
         self._load_lock = asyncio.Lock()
         self._condition = asyncio.Condition()
         self._waiters = deque()
         self._next_instance = 0
         self.waiting = 0
         self.total_allocated_mb = 0.0
+        self.memory_complete = True
         self.wait_total_ms = 0.0
         self.inference_total_ms = 0.0
         self.calls = 0
@@ -229,27 +215,22 @@ class ModelPool:
 
     def _build_instance(self, configured_device):
         device = _resolve_device(configured_device)
-        backend = backend_for_device(device, self.tensorrt_getter())
+        backend = backend_for_device(device)
         before = device_allocated_mb(device)
-        if backend == "tensorrt":
-            from core.tensorrt_runner import TensorRTRunner
-
-            model = TensorRTRunner(self.name, self.model_dir, device, self.precision_getter())
-        elif backend == "torch_npu":
+        if backend == "torch_npu":
             model = TorchNpuRunner(self.name, self.model_dir, device)
         else:
             global AutoModel
-            if AutoModel is None:
-                from funasr import AutoModel as FunasrAutoModel
-
-                AutoModel = FunasrAutoModel
-            half = self.fp16 and device.startswith("cuda:")
-            kwargs = {"model": self.model_dir, "device": device,
-                      "disable_update": True, "disable_pbar": True}
-            if half:
-                kwargs["fp16"] = True
-            model = TorchRunner(AutoModel(**kwargs), device, fp16=half)
-        allocated = max(0.0, device_allocated_mb(device) - before)
+            import torch
+            from core.model_loading import model_loading_guard
+            with model_loading_guard(dtype=torch.float32):
+                if AutoModel is None:
+                    from funasr import AutoModel as FunasrAutoModel
+                    AutoModel = FunasrAutoModel
+                model = TorchRunner(AutoModel(model=self.model_dir, device=device,
+                                    disable_update=True, disable_pbar=True), device)
+        after = device_allocated_mb(device)
+        allocated = max(0.0, after - before) if before is not None and after is not None else None
         return model, device, allocated
 
     async def _load_instances(self):
@@ -266,7 +247,8 @@ class ModelPool:
             self.devices.append(device)
             self.locks.append(asyncio.Lock())
             self.failures.append(failure)
-            self.total_allocated_mb += allocated
+            self.memory_complete = self.memory_complete and allocated is not None
+            self.total_allocated_mb += allocated or 0.0
             self.refresh_status()
 
     def refresh_status(self) -> None:
@@ -279,32 +261,33 @@ class ModelPool:
         for index, device in enumerate(configured_devices):
             model = self.models[index] if index < len(self.models) else None
             attempted = index < len(self.models)
-            backend = backend_for_device(device, self.tensorrt_getter())
+            backend = backend_for_device(device)
             details.append({
                 "configured_device": device, "configured_backend": backend,
                 "effective_backend": getattr(model, "effective_backend", None),
-                "configured_engine_precision": self.precision_getter(),
                 "actual_precision": getattr(model, "actual_precision", None),
-                "tensorrt_ignored": not device.startswith("cuda:"),
-                "engine": getattr(model, "engine_info", None),
-                "health": "healthy" if model is not None else ("failed" if attempted else "not_loaded"),
+                "math_mode": getattr(model, "math_mode", None),
+                "operator_adaptations": getattr(model, "operator_adaptations", None),
+                "health": (("close_failed" if self.failures[index] else "closed") if self._closing and attempted
+                           else ("healthy" if model is not None else ("failed" if attempted else "not_loaded"))),
                 "failure": self.failures[index] if attempted else None,
                 "memory": getattr(model, "memory", None),
             })
-        native_memory = any(d["effective_backend"] == "tensorrt" for d in details)
         entry.update({
             "loaded": bool(loaded),
             "device": next((device for model, device in zip(self.models, self.devices)
                              if model is not None), None),
             "devices": list(self.devices) if self.models else configured_devices,
-            "allocated_mb": None if native_memory else round(self.total_allocated_mb, 2),
-            "torch_allocated_mb": round(self.total_allocated_mb, 2),
-            "allocated_mb_scope": ("TensorRT native allocations are not fully tracked; see instance_details.memory"
-                                   if native_memory else "PyTorch allocator delta at load"),
+            "allocated_mb": round(self.total_allocated_mb, 2) if self.memory_complete else None,
+            "torch_allocated_mb": round(self.total_allocated_mb, 2) if self.memory_complete else None,
+            "runtime_hbm_mb": None if any(d.startswith("npu:") for d in configured_devices) else 0.0,
+            "allocated_mb_scope": "PyTorch allocator delta at load; excludes runtime/non-PyTorch HBM and other processes",
             "instance_details": details,
             "instances": len(loaded),
             "configured_instances": self.configured_instances,
-            "available_instances": max(0, len(loaded) - busy),
+            "available_instances": 0 if self._closing else max(0, len(loaded) - busy),
+            "closing": self._closing,
+            "pending_close_instances": len(loaded) + len(self._unclosed_instances) if self._closing else len(self._unclosed_instances),
             "failed_instances": len(failed),
             "busy": busy,
             "waiting": self.waiting,
@@ -396,7 +379,12 @@ class ModelPool:
                 if close is not None:
                     try:
                         await run_in_thread(close)
-                    except Exception:
+                    except Exception as close_error:
+                        # Quarantine it from leasing, but retain ownership for
+                        # an explicit close retry and visible failure reporting.
+                        self._unclosed_instances[index] = model
+                        self.failures[index] = f"{exc}; close failed: {close_error}"
+                        self.memory_complete = False
                         logger.exception("[模型池] 故障实例清理失败: %s", self.name)
                 raise
             finally:
@@ -444,18 +432,36 @@ class ModelPool:
             async with self._condition:
                 await self._dispatch_waiters()
                 await self._condition.wait_for(lambda: not any(lock.locked() for lock in self.locks))
-            for model in self.models:
+            errors = []
+            owned = [(index, model) for index, model in enumerate(self.models) if model is not None]
+            owned += list(self._unclosed_instances.items())
+            for index, model in owned:
                 close = getattr(model, "close", None)
-                if close is not None:
-                    try:
+                try:
+                    if close is not None:
                         await run_in_thread(close)
-                    except Exception:
-                        logger.exception("[模型池] 关闭实例失败: %s", self.name)
+                except Exception as exc:
+                    self.failures[index] = f"close failed: {type(exc).__name__}: {exc}"
+                    errors.append((index, exc))
+                    logger.exception("[模型池] 关闭实例失败: %s#%d", self.name, index)
+                else:
+                    self.models[index] = None
+                    self._unclosed_instances.pop(index, None)
+                    self.failures[index] = None
+            if errors:
+                # Keep failed resources and indices owned, reject all future
+                # leases, and permit close() to retry only the remaining ones.
+                self.memory_complete = False
+                self.refresh_status()
+                details = "; ".join(f"instance#{index}: {type(exc).__name__}: {exc}" for index, exc in errors)
+                raise RuntimeError(f"模型池 {self.name} 关闭失败: {details}") from errors[0][1]
             self.models.clear()
             self.devices.clear()
             self.locks.clear()
             self.failures.clear()
+            self._unclosed_instances.clear()
             self.total_allocated_mb = 0.0
+            self.memory_complete = True
             self.waiting = 0
             self.wait_total_ms = 0.0
             self.inference_total_ms = 0.0
@@ -475,16 +481,12 @@ _MODEL_POOLS = {
         devices_getter=lambda: settings.model_device_speech_campplus_devices,
         enabled_getter=lambda: settings.open_v2_role,
         fp16=True,
-        tensorrt_getter=lambda: settings.speech_campplus_use_tensorrt,
-        precision_getter=lambda: settings.speech_campplus_tensorrt_precision,
     ),
     "emotion2vec": ModelPool(
         "emotion2vec", settings.emotion_model_dir,
         devices_getter=lambda: settings.model_device_emotion2vec_devices,
         enabled_getter=lambda: settings.open_v2_emotion,
         fp16=True,
-        tensorrt_getter=lambda: settings.emotion2vec_use_tensorrt,
-        precision_getter=lambda: settings.emotion2vec_tensorrt_precision,
     ),
 }
 
@@ -519,7 +521,15 @@ def get_emotion_v3_model():
 
 
 async def close_v3_model_pools() -> None:
-    await asyncio.gather(*[pool.close() for pool in _MODEL_POOLS.values()])
-    global _model_spk_v3, _model_emotion_v3
-    _model_spk_v3 = None
-    _model_emotion_v3 = None
+    async def close_all():
+        results = await asyncio.gather(*[pool.close() for pool in _MODEL_POOLS.values()], return_exceptions=True)
+        global _model_spk_v3, _model_emotion_v3
+        if not isinstance(results[0], BaseException):
+            _model_spk_v3 = None
+        if not isinstance(results[1], BaseException):
+            _model_emotion_v3 = None
+        failures = [(name, result) for name, result in zip(_MODEL_POOLS, results) if isinstance(result, BaseException)]
+        if failures:
+            raise RuntimeError("本地模型池关闭失败: " + "; ".join(f"{name}: {error}" for name, error in failures)) from failures[0][1]
+
+    await await_completion(close_all())

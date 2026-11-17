@@ -1,0 +1,1690 @@
+{
+  "run_root": "/tmp/asr-apply-20261117-a99trpfv",
+  "description": "Numeric summaries only. Original transcripts/audio/embeddings remain in remote test evidence; hashes permit verification.",
+  "quality_reference": "no human annotation, no CUDA golden; output statistics do not prove recognition, diarization or emotion accuracy",
+  "phases": {
+    "e2e-compiled-final-g1-steady": {
+      "path": "/tmp/asr-apply-20261117-a99trpfv/e2e-compiled-final-g1-steady",
+      "passed": true,
+      "summary": {
+        "mode": "steady",
+        "measurements": [
+          {
+            "request_id": "steady-0",
+            "elapsed_s": 3.3872657800093293,
+            "fields": {},
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-1",
+            "elapsed_s": 2.9700578302145004,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true",
+              "showRoleIdentify": "true"
+            },
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-2",
+            "elapsed_s": 3.14052551984787,
+            "fields": {},
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-3",
+            "elapsed_s": 2.962174809537828,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true",
+              "showRoleIdentify": "true"
+            },
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-4",
+            "elapsed_s": 2.756233610212803,
+            "fields": {},
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-5",
+            "elapsed_s": 3.4866136703640223,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true",
+              "showRoleIdentify": "true"
+            },
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-6",
+            "elapsed_s": 2.8650270998477936,
+            "fields": {},
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-7",
+            "elapsed_s": 3.5383383203297853,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true",
+              "showRoleIdentify": "true"
+            },
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-8",
+            "elapsed_s": 2.7146704997867346,
+            "fields": {},
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-9",
+            "elapsed_s": 3.376872460357845,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true",
+              "showRoleIdentify": "true"
+            },
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-10",
+            "elapsed_s": 2.766986720263958,
+            "fields": {},
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-11",
+            "elapsed_s": 2.9268422396853566,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true",
+              "showRoleIdentify": "true"
+            },
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-12",
+            "elapsed_s": 3.2774367602542043,
+            "fields": {},
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-13",
+            "elapsed_s": 2.898299530148506,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true",
+              "showRoleIdentify": "true"
+            },
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-14",
+            "elapsed_s": 3.3165368298068643,
+            "fields": {},
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          },
+          {
+            "request_id": "steady-15",
+            "elapsed_s": 2.888334699906409,
+            "fields": {
+              "showSpk": "true",
+              "showEmotion": "true",
+              "showRoleIdentify": "true"
+            },
+            "sample_id": null,
+            "sha256": null,
+            "audio_seconds": null,
+            "rtf": null
+          }
+        ],
+        "latency": {
+          "count": 16,
+          "p50_s": 2.966116319876164,
+          "p95_s": 3.499544832855463
+        },
+        "b_peak": 1,
+        "total_peak": 1,
+        "shared_card": true,
+        "manual_reference": null
+      },
+      "shutdown": {
+        "exit_code": 0,
+        "listening": false,
+        "remaining_children": [],
+        "observed_s": 5,
+        "original_failure": null,
+        "shutdown_timeout": false,
+        "forced_child_cleanup": false,
+        "cleanup_errors": [],
+        "parent_exit_failed": false,
+        "failed": false,
+        "application_shutdown_failed": false,
+        "worker_shutdown_failed": false,
+        "worker_shutdown": [
+          {
+            "cleanup_complete": true,
+            "device": "cpu",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 2.205682,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 3719714,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 2.206919,
+            "worker_id": 0
+          },
+          {
+            "cleanup_complete": true,
+            "device": "cpu",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 2.116456,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 3719715,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 2.11712,
+            "worker_id": 1
+          },
+          {
+            "cleanup_complete": true,
+            "device": "npu:7",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 6.637935,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 3719716,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 6.638597,
+            "worker_id": 2
+          },
+          {
+            "cleanup_complete": true,
+            "device": "npu:7",
+            "exitcode": 0,
+            "forced": false,
+            "forced_actions": [],
+            "graceful_elapsed_s": 7.327737,
+            "graceful_timeout_s": 30.0,
+            "kill_elapsed_s": null,
+            "pid": 3719718,
+            "reason": "pool_stop",
+            "terminate_elapsed_s": null,
+            "total_elapsed_s": 7.328345,
+            "worker_id": 3
+          }
+        ]
+      },
+      "failure": null,
+      "ownership": {
+        "run_id": "e2e-compiled-final-g1-steady",
+        "app_root": "/tmp/asr-cython-g1-default-20261118-nkmpk_2a",
+        "cwd": "/tmp/asr-cython-g1-default-20261118-nkmpk_2a",
+        "source_snapshot_sha256": "4050173f89303bc5477078a23dbe8ac3d4be84f95f95dba6eb0ccb75a427a992",
+        "config_sha256": "2e00631e8b55fc233a8cbc43f1ebd37c8c35cae6e0eabb44d4fedb3480873f59",
+        "python": "/home/zhangs/conda-envs/asr/bin/python",
+        "harness_pid": 3672743,
+        "harness_create_time": 1794934435.15,
+        "pid": 3681279,
+        "create_time": 1794934436.24,
+        "pgid": 3681279,
+        "port": 18083,
+        "command": [
+          "/home/zhangs/conda-envs/asr/bin/python",
+          "main.py",
+          "--host",
+          "127.0.0.1",
+          "--port",
+          "18083",
+          "--workers",
+          "1",
+          "--timeout-graceful-shutdown",
+          "180"
+        ],
+        "started_at": 1794934436.8957672,
+        "concurrency": 1,
+        "instances": 1
+      },
+      "status_samples": 14,
+      "observed_metrics": {
+        "scope": "5s sampling; maxima may miss transient peaks; shared card/host, not exclusive capacity",
+        "main_rss_bytes": {
+          "min": 1049448448,
+          "max": 3084546048
+        },
+        "main_threads": {
+          "min": 17,
+          "max": 246
+        },
+        "main_fds": {
+          "min": 50,
+          "max": 132
+        },
+        "torch_allocated_bytes": {
+          "min": 28135936,
+          "max": 4849897472
+        },
+        "torch_reserved_bytes": {
+          "min": 46137344,
+          "max": 5603590144
+        },
+        "torch_peak_allocated_bytes": {
+          "min": 28135936,
+          "max": 4990718464
+        },
+        "torch_peak_reserved_bytes": {
+          "min": 46137344,
+          "max": 5603590144
+        },
+        "host_available_bytes": {
+          "min": 1899344068608,
+          "max": 1906009952256
+        },
+        "host_swap_used_bytes": {
+          "min": 0,
+          "max": 0
+        },
+        "cache_files": {
+          "min": 0,
+          "max": 1
+        },
+        "cache_bytes": {
+          "min": 0,
+          "max": 384044
+        },
+        "card7_device_hbm_mb": {
+          "min": 15567,
+          "max": 21137
+        },
+        "card7_aicore_percent": {
+          "min": 0,
+          "max": 13
+        },
+        "owned_process_tree_smi_hbm_mb": {
+          "min": 359,
+          "max": 5927
+        },
+        "other_process_hbm_mb": {
+          "1601397": {
+            "min": 11875,
+            "max": 11875
+          }
+        },
+        "main_cpu_percent_one_core_100": {
+          "mean_over_window": 119.93619580149372,
+          "peak_sample_interval": 172.59764076570988,
+          "scope": "main service process only; excludes VAD workers and shared processes"
+        }
+      },
+      "request_output_statistics": [
+        {
+          "file": "request-steady-0.json",
+          "elapsed_s": 3.3872657800093293,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {},
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "None": 2
+          },
+          "emotions": {
+            "None": 2
+          },
+          "output_payload_sha256": "a700ed403bbcc740763c77c166794696f4e23ab114ea6e254f6227b9d06d6c93"
+        },
+        {
+          "file": "request-steady-1.json",
+          "elapsed_s": 2.9700578302145004,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "f8251458baa9e2d1d834976891da6769aa9029546cc47481ee27415b1338155c"
+        },
+        {
+          "file": "request-steady-10.json",
+          "elapsed_s": 2.766986720263958,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {},
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "None": 2
+          },
+          "emotions": {
+            "None": 2
+          },
+          "output_payload_sha256": "13d867f0fd025fd4dd4d43be90239ed81e03299b440b37e665ce81b55ebfed89"
+        },
+        {
+          "file": "request-steady-11.json",
+          "elapsed_s": 2.9268422396853566,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "71a85ca2d4f95c826e8f995125299c662f037f439f8dc204ad57af5f6ac6ac06"
+        },
+        {
+          "file": "request-steady-12.json",
+          "elapsed_s": 3.2774367602542043,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {},
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "None": 2
+          },
+          "emotions": {
+            "None": 2
+          },
+          "output_payload_sha256": "5fbbd11b11a962d5e62d4eb922c75509088ff115c03ebfda158792e90f98851b"
+        },
+        {
+          "file": "request-steady-13.json",
+          "elapsed_s": 2.898299530148506,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "98a610a0295ace18891bb883f6564d4ad49db0c8e62fc35e6b37c585ecd00a62"
+        },
+        {
+          "file": "request-steady-14.json",
+          "elapsed_s": 3.3165368298068643,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {},
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "None": 2
+          },
+          "emotions": {
+            "None": 2
+          },
+          "output_payload_sha256": "a8284e54dd4b40ae31684c305cf63432c46e8c3fa5aab2a785acd2ee60cd6c59"
+        },
+        {
+          "file": "request-steady-15.json",
+          "elapsed_s": 2.888334699906409,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "a7431385ecc0591952365644d6178b9f4ccacc09ce2fd5092d1e412befbad3ee"
+        },
+        {
+          "file": "request-steady-2.json",
+          "elapsed_s": 3.14052551984787,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {},
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "None": 2
+          },
+          "emotions": {
+            "None": 2
+          },
+          "output_payload_sha256": "7fb4494742d5615ebde93f41ffe4335a6bbbafff830ad4ccb68732dcd967a9c2"
+        },
+        {
+          "file": "request-steady-3.json",
+          "elapsed_s": 2.962174809537828,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "d55f21be12e9196718985a5b5896c2e6e104d20e126e04ac5f87c8378bee7c5f"
+        },
+        {
+          "file": "request-steady-4.json",
+          "elapsed_s": 2.756233610212803,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {},
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "None": 2
+          },
+          "emotions": {
+            "None": 2
+          },
+          "output_payload_sha256": "9ade7139fb57fbd684816aebee499b3141ed1c0341f0347b275c10a087eb10c5"
+        },
+        {
+          "file": "request-steady-5.json",
+          "elapsed_s": 3.4866136703640223,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "edd257f53af6430f1f5d512dd7f0be0f76bf9a78780a12935e79252501725b6a"
+        },
+        {
+          "file": "request-steady-6.json",
+          "elapsed_s": 2.8650270998477936,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {},
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "None": 2
+          },
+          "emotions": {
+            "None": 2
+          },
+          "output_payload_sha256": "ea186c0a67451818fd8c7ab8fadc96e3e36bdda3714e67133ffbd79a647d0006"
+        },
+        {
+          "file": "request-steady-7.json",
+          "elapsed_s": 3.5383383203297853,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "11213c138c8fe5461baddb7b5efff0265a1419710c696517a668ab05a21b4db4"
+        },
+        {
+          "file": "request-steady-8.json",
+          "elapsed_s": 2.7146704997867346,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {},
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "None": 2
+          },
+          "emotions": {
+            "None": 2
+          },
+          "output_payload_sha256": "d4dcecaf3886a34fd2c0709c9f1bfce437c73504030d228b4d00d3f8208f12bb"
+        },
+        {
+          "file": "request-steady-9.json",
+          "elapsed_s": 3.376872460357845,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "f0b7a79b14e1f3b9267054db881ced9e0a3b6f33c2e590fa322fd718c110692d"
+        },
+        {
+          "file": "request-warmup-0.json",
+          "elapsed_s": 31.89824965968728,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "4cd928152be4d55a741bbe4f7d2a1463919fa15f6536f0eebec3527223f20134"
+        },
+        {
+          "file": "request-warmup-1.json",
+          "elapsed_s": 2.988462820649147,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "ab002c3eb96ed85efd8a135df6d68c01511a5044023fc8c62445d7fdb8c732c7"
+        },
+        {
+          "file": "request-warmup-2.json",
+          "elapsed_s": 3.4352922402322292,
+          "sample_id": null,
+          "sha256": null,
+          "fields": {
+            "showSpk": "true",
+            "showEmotion": "true",
+            "showRoleIdentify": "true"
+          },
+          "code": null,
+          "language": "Chinese",
+          "language_ratio": {
+            "zh": 100.0
+          },
+          "segments": 2,
+          "text_chars": 57,
+          "max_output_chars_per_second": 4.7440699126092385,
+          "postprocessed_segments_over_repetition_length_gate": [],
+          "roles": {
+            "teacher": 2
+          },
+          "emotions": {
+            "平淡": 2
+          },
+          "output_payload_sha256": "3c9d10581585b415931d06ec020e629d50e11fb207df00e1e55b090a19770f0f"
+        }
+      ],
+      "steady_check": {
+        "baseline": {
+          "audioConcurrency": {
+            "configured_total": 8,
+            "active_total": 0,
+            "waiting_total": 0
+          },
+          "spkEmoConcurrency": {
+            "configured": 4,
+            "active": 0,
+            "waiting": 0
+          },
+          "localModels": {
+            "speech_campplus": {
+              "loaded": true,
+              "device": "npu:7",
+              "allocated_mb": 80.5,
+              "instances": 3,
+              "configured_instances": 3,
+              "devices": [
+                "npu:7",
+                "npu:7",
+                "npu:7"
+              ],
+              "available_instances": 3,
+              "failed_instances": 0,
+              "busy": 0,
+              "waiting": 0,
+              "failure": null,
+              "wait_total_ms": 0.0,
+              "inference_total_ms": 10046.19,
+              "calls": 6,
+              "last_wait_ms": 0.28,
+              "waiting_summary": {
+                "current": 0,
+                "total_ms": 0.0,
+                "average_ms": 0.0
+              },
+              "torch_allocated_mb": 80.5,
+              "runtime_hbm_mb": null,
+              "allocated_mb_scope": "PyTorch allocator delta at load; excludes runtime/non-PyTorch HBM and other processes",
+              "instance_details": [
+                {
+                  "configured_device": "npu:7",
+                  "configured_backend": "torch_npu",
+                  "effective_backend": "torch_npu",
+                  "actual_precision": "fp32",
+                  "math_mode": "fp32_ops_hf32_disabled",
+                  "operator_adaptations": {
+                    "campplus_segment_pooling": true,
+                    "emotion2vec_exact_gelu_modules": 0,
+                    "emotion2vec_fp32_bias_factories": 0
+                  },
+                  "health": "healthy",
+                  "failure": null,
+                  "memory": null
+                },
+                {
+                  "configured_device": "npu:7",
+                  "configured_backend": "torch_npu",
+                  "effective_backend": "torch_npu",
+                  "actual_precision": "fp32",
+                  "math_mode": "fp32_ops_hf32_disabled",
+                  "operator_adaptations": {
+                    "campplus_segment_pooling": true,
+                    "emotion2vec_exact_gelu_modules": 0,
+                    "emotion2vec_fp32_bias_factories": 0
+                  },
+                  "health": "healthy",
+                  "failure": null,
+                  "memory": null
+                },
+                {
+                  "configured_device": "npu:7",
+                  "configured_backend": "torch_npu",
+                  "effective_backend": "torch_npu",
+                  "actual_precision": "fp32",
+                  "math_mode": "fp32_ops_hf32_disabled",
+                  "operator_adaptations": {
+                    "campplus_segment_pooling": true,
+                    "emotion2vec_exact_gelu_modules": 0,
+                    "emotion2vec_fp32_bias_factories": 0
+                  },
+                  "health": "healthy",
+                  "failure": null,
+                  "memory": null
+                }
+              ],
+              "closing": false,
+              "pending_close_instances": 0
+            },
+            "emotion2vec": {
+              "loaded": true,
+              "device": "npu:7",
+              "allocated_mb": 627.82,
+              "instances": 1,
+              "configured_instances": 1,
+              "devices": [
+                "npu:7"
+              ],
+              "available_instances": 1,
+              "failed_instances": 0,
+              "busy": 0,
+              "waiting": 0,
+              "failure": null,
+              "wait_total_ms": 0.0,
+              "inference_total_ms": 9681.3,
+              "calls": 6,
+              "last_wait_ms": 0.12,
+              "waiting_summary": {
+                "current": 0,
+                "total_ms": 0.0,
+                "average_ms": 0.0
+              },
+              "torch_allocated_mb": 627.82,
+              "runtime_hbm_mb": null,
+              "allocated_mb_scope": "PyTorch allocator delta at load; excludes runtime/non-PyTorch HBM and other processes",
+              "instance_details": [
+                {
+                  "configured_device": "npu:7",
+                  "configured_backend": "torch_npu",
+                  "effective_backend": "torch_npu",
+                  "actual_precision": "fp32",
+                  "math_mode": "fp32_ops_hf32_disabled",
+                  "operator_adaptations": {
+                    "campplus_segment_pooling": false,
+                    "emotion2vec_exact_gelu_modules": 28,
+                    "emotion2vec_fp32_bias_factories": 1
+                  },
+                  "health": "healthy",
+                  "failure": null,
+                  "memory": null
+                }
+              ],
+              "closing": false,
+              "pending_close_instances": 0
+            }
+          },
+          "qwenModel": {
+            "backend": "transformers_torch_npu",
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "device": "npu:7",
+            "dtype": "bfloat16",
+            "loaded": true,
+            "loading": false,
+            "configured_instances": 1,
+            "capacity": 1,
+            "busy": 0,
+            "waiting": 0,
+            "failed_instances": 0,
+            "execution_failures": 0,
+            "closing": false,
+            "memory_allocated_mb": 3900.33203125,
+            "memory_reserved_mb": 4268.0,
+            "memory_source": "pytorch_load_delta_estimate",
+            "instances": [
+              {
+                "device": "npu:7",
+                "dtype": "bfloat16",
+                "loaded": true,
+                "loading": false,
+                "failure": null,
+                "precision_policy": {
+                  "mode": "fp32_ops_hf32_disabled",
+                  "conv_allow_hf32": false,
+                  "matmul_allow_hf32": false
+                },
+                "parameter_dtype_check": {
+                  "expected_dtype": "torch.bfloat16",
+                  "floating_parameter_dtype_counts": {
+                    "torch.bfloat16": 707
+                  },
+                  "nonfloating_parameter_count": 0,
+                  "buffers_cast_or_checked": false
+                },
+                "memory_allocated_mb": 3900.33203125,
+                "memory_reserved_mb": 4268.0,
+                "memory_source": "pytorch_load_delta_estimate",
+                "index": 0,
+                "busy": false
+              }
+            ]
+          },
+          "vadPool": {
+            "loaded": true,
+            "device": "cpu",
+            "devices": [
+              "cpu",
+              "cpu",
+              "npu:7",
+              "npu:7"
+            ],
+            "configured_instances": 4,
+            "loaded_instances": 4,
+            "available_instances": 4,
+            "allocated_mb": 3.29,
+            "allocated_mb_scope": "VAD worker PyTorch NPU allocator; excludes runtime/other processes",
+            "failed_instances": 0,
+            "failures": [],
+            "busy": 0,
+            "waiting": 0
+          },
+          "sampled_at": 1794934506.9116905,
+          "resourceDiagnostics": {
+            "host": {
+              "available": true,
+              "total_bytes": 2158585421824,
+              "available_bytes": 1899908198400,
+              "available_ratio": 0.8801635456217348,
+              "swap_used_bytes": 0
+            },
+            "backend": {
+              "available": true,
+              "pid": 3681279,
+              "state": "S (sleeping)",
+              "name": "asr-offline-mod",
+              "ppid": 3672743,
+              "rss_bytes": 3078844416,
+              "swap_bytes": 0,
+              "threads": 246,
+              "alive": true,
+              "memory": {
+                "available": true,
+                "rss_bytes": 3084365824,
+                "pss_bytes": 2206256128,
+                "private_clean_bytes": 58519552,
+                "private_dirty_bytes": 1670877184,
+                "swap_bytes": 0
+              },
+              "fd_count": 133,
+              "npu_allocator": {
+                "available": true,
+                "device": "npu:7",
+                "pid": 3681279,
+                "timestamp": "2026-11-17T16:55:06.901237+00:00",
+                "initialized": true,
+                "torch_default_dtype": "torch.float32",
+                "scope": "current_service_process_configured_device_pytorch_allocator",
+                "excludes": "runtime/non-PyTorch HBM, other processes; not per-model attribution",
+                "peak_scope": "process/device allocator peak since initialization or external peak reset",
+                "sampling": "sequential counters; concurrent inference may change values between reads",
+                "allocated_bytes": 4832519168,
+                "reserved_bytes": 5603590144,
+                "peak_allocated_bytes": 4990718464,
+                "peak_reserved_bytes": 5603590144,
+                "allocated_mb": 4608.6494140625,
+                "reserved_mb": 5344.0,
+                "peak_allocated_mb": 4759.52001953125,
+                "peak_reserved_mb": 5344.0
+              }
+            },
+            "cache": {
+              "available": true,
+              "files": 0,
+              "bytes": 0,
+              "disk_free_bytes": 1067538313216,
+              "disk_total_bytes": 1079292710912,
+              "disk_free_ratio": 0.9891091660518418
+            },
+            "processes": {
+              "backend": {
+                "count": 1,
+                "pids": [
+                  3681279
+                ]
+              },
+              "vad": {
+                "count": 4,
+                "pids": [
+                  3719714,
+                  3719715,
+                  3719716,
+                  3719718
+                ]
+              }
+            },
+            "npu": {
+              "available": true,
+              "reason": null,
+              "memory_scope": "npu-smi device HBM aggregate; includes other processes and runtime allocations",
+              "npus": [
+                {
+                  "index": 7,
+                  "name": "910B3",
+                  "health": "OK",
+                  "chip": 0,
+                  "bus_id": "0000:42:00.0",
+                  "available": true,
+                  "hbm_used_mb": 21137,
+                  "hbm_total_mb": 65536,
+                  "hbm_free_mb": 44399,
+                  "utilization_aicore": 0
+                }
+              ],
+              "service_compute_apps": [
+                {
+                  "index": 7,
+                  "chip": 0,
+                  "pid": 3719716,
+                  "process_name": "asr-offline-vad",
+                  "memory_mb": 125
+                },
+                {
+                  "index": 7,
+                  "chip": 0,
+                  "pid": 3719718,
+                  "process_name": "asr-offline-vad",
+                  "memory_mb": 125
+                },
+                {
+                  "index": 7,
+                  "chip": 0,
+                  "pid": 3681279,
+                  "process_name": "asr-offline-mod",
+                  "memory_mb": 5677
+                }
+              ],
+              "other_compute_apps": [
+                {
+                  "index": 7,
+                  "chip": 0,
+                  "pid": 1601397,
+                  "process_name": "uvicorn",
+                  "memory_mb": 11875
+                }
+              ]
+            }
+          },
+          "owned_process": {
+            "available": true,
+            "pid": 3681279,
+            "rss_bytes": 3078844416,
+            "threads": 246,
+            "num_fds": 132,
+            "cpu_user_s": 45.89,
+            "cpu_system_s": 11.97,
+            "cpu_scope": "main_service_process_excludes_workers_and_shared_processes"
+          }
+        },
+        "after": {
+          "audioConcurrency": {
+            "configured_total": 8,
+            "active_total": 0,
+            "waiting_total": 0
+          },
+          "spkEmoConcurrency": {
+            "configured": 4,
+            "active": 0,
+            "waiting": 0
+          },
+          "localModels": {
+            "speech_campplus": {
+              "loaded": true,
+              "device": "npu:7",
+              "allocated_mb": 80.5,
+              "instances": 3,
+              "configured_instances": 3,
+              "devices": [
+                "npu:7",
+                "npu:7",
+                "npu:7"
+              ],
+              "available_instances": 3,
+              "failed_instances": 0,
+              "busy": 0,
+              "waiting": 0,
+              "failure": null,
+              "wait_total_ms": 0.0,
+              "inference_total_ms": 12418.29,
+              "calls": 22,
+              "last_wait_ms": 0.29,
+              "waiting_summary": {
+                "current": 0,
+                "total_ms": 0.0,
+                "average_ms": 0.0
+              },
+              "torch_allocated_mb": 80.5,
+              "runtime_hbm_mb": null,
+              "allocated_mb_scope": "PyTorch allocator delta at load; excludes runtime/non-PyTorch HBM and other processes",
+              "instance_details": [
+                {
+                  "configured_device": "npu:7",
+                  "configured_backend": "torch_npu",
+                  "effective_backend": "torch_npu",
+                  "actual_precision": "fp32",
+                  "math_mode": "fp32_ops_hf32_disabled",
+                  "operator_adaptations": {
+                    "campplus_segment_pooling": true,
+                    "emotion2vec_exact_gelu_modules": 0,
+                    "emotion2vec_fp32_bias_factories": 0
+                  },
+                  "health": "healthy",
+                  "failure": null,
+                  "memory": null
+                },
+                {
+                  "configured_device": "npu:7",
+                  "configured_backend": "torch_npu",
+                  "effective_backend": "torch_npu",
+                  "actual_precision": "fp32",
+                  "math_mode": "fp32_ops_hf32_disabled",
+                  "operator_adaptations": {
+                    "campplus_segment_pooling": true,
+                    "emotion2vec_exact_gelu_modules": 0,
+                    "emotion2vec_fp32_bias_factories": 0
+                  },
+                  "health": "healthy",
+                  "failure": null,
+                  "memory": null
+                },
+                {
+                  "configured_device": "npu:7",
+                  "configured_backend": "torch_npu",
+                  "effective_backend": "torch_npu",
+                  "actual_precision": "fp32",
+                  "math_mode": "fp32_ops_hf32_disabled",
+                  "operator_adaptations": {
+                    "campplus_segment_pooling": true,
+                    "emotion2vec_exact_gelu_modules": 0,
+                    "emotion2vec_fp32_bias_factories": 0
+                  },
+                  "health": "healthy",
+                  "failure": null,
+                  "memory": null
+                }
+              ],
+              "closing": false,
+              "pending_close_instances": 0
+            },
+            "emotion2vec": {
+              "loaded": true,
+              "device": "npu:7",
+              "allocated_mb": 627.82,
+              "instances": 1,
+              "configured_instances": 1,
+              "devices": [
+                "npu:7"
+              ],
+              "available_instances": 1,
+              "failed_instances": 0,
+              "busy": 0,
+              "waiting": 0,
+              "failure": null,
+              "wait_total_ms": 0.0,
+              "inference_total_ms": 10917.67,
+              "calls": 22,
+              "last_wait_ms": 0.14,
+              "waiting_summary": {
+                "current": 0,
+                "total_ms": 0.0,
+                "average_ms": 0.0
+              },
+              "torch_allocated_mb": 627.82,
+              "runtime_hbm_mb": null,
+              "allocated_mb_scope": "PyTorch allocator delta at load; excludes runtime/non-PyTorch HBM and other processes",
+              "instance_details": [
+                {
+                  "configured_device": "npu:7",
+                  "configured_backend": "torch_npu",
+                  "effective_backend": "torch_npu",
+                  "actual_precision": "fp32",
+                  "math_mode": "fp32_ops_hf32_disabled",
+                  "operator_adaptations": {
+                    "campplus_segment_pooling": false,
+                    "emotion2vec_exact_gelu_modules": 28,
+                    "emotion2vec_fp32_bias_factories": 1
+                  },
+                  "health": "healthy",
+                  "failure": null,
+                  "memory": null
+                }
+              ],
+              "closing": false,
+              "pending_close_instances": 0
+            }
+          },
+          "qwenModel": {
+            "backend": "transformers_torch_npu",
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "device": "npu:7",
+            "dtype": "bfloat16",
+            "loaded": true,
+            "loading": false,
+            "configured_instances": 1,
+            "capacity": 1,
+            "busy": 0,
+            "waiting": 0,
+            "failed_instances": 0,
+            "execution_failures": 0,
+            "closing": false,
+            "memory_allocated_mb": 3900.33203125,
+            "memory_reserved_mb": 4268.0,
+            "memory_source": "pytorch_load_delta_estimate",
+            "instances": [
+              {
+                "device": "npu:7",
+                "dtype": "bfloat16",
+                "loaded": true,
+                "loading": false,
+                "failure": null,
+                "precision_policy": {
+                  "mode": "fp32_ops_hf32_disabled",
+                  "conv_allow_hf32": false,
+                  "matmul_allow_hf32": false
+                },
+                "parameter_dtype_check": {
+                  "expected_dtype": "torch.bfloat16",
+                  "floating_parameter_dtype_counts": {
+                    "torch.bfloat16": 707
+                  },
+                  "nonfloating_parameter_count": 0,
+                  "buffers_cast_or_checked": false
+                },
+                "memory_allocated_mb": 3900.33203125,
+                "memory_reserved_mb": 4268.0,
+                "memory_source": "pytorch_load_delta_estimate",
+                "index": 0,
+                "busy": false
+              }
+            ]
+          },
+          "vadPool": {
+            "loaded": true,
+            "device": "cpu",
+            "devices": [
+              "cpu",
+              "cpu",
+              "npu:7",
+              "npu:7"
+            ],
+            "configured_instances": 4,
+            "loaded_instances": 4,
+            "available_instances": 4,
+            "allocated_mb": 3.29,
+            "allocated_mb_scope": "VAD worker PyTorch NPU allocator; excludes runtime/other processes",
+            "failed_instances": 0,
+            "failures": [],
+            "busy": 0,
+            "waiting": 0
+          },
+          "sampled_at": 1794934567.9298105,
+          "resourceDiagnostics": {
+            "host": {
+              "available": true,
+              "total_bytes": 2158585421824,
+              "available_bytes": 1900859379712,
+              "available_ratio": 0.8806041959209462,
+              "swap_used_bytes": 0
+            },
+            "backend": {
+              "available": true,
+              "pid": 3681279,
+              "state": "S (sleeping)",
+              "name": "asr-offline-mod",
+              "ppid": 3672743,
+              "rss_bytes": 3084546048,
+              "swap_bytes": 0,
+              "threads": 246,
+              "alive": true,
+              "memory": {
+                "available": true,
+                "rss_bytes": 3089625088,
+                "pss_bytes": 2211579904,
+                "private_clean_bytes": 58519552,
+                "private_dirty_bytes": 1676267520,
+                "swap_bytes": 0
+              },
+              "fd_count": 135,
+              "npu_allocator": {
+                "available": true,
+                "device": "npu:7",
+                "pid": 3681279,
+                "timestamp": "2026-11-17T16:56:07.917295+00:00",
+                "initialized": true,
+                "torch_default_dtype": "torch.float32",
+                "scope": "current_service_process_configured_device_pytorch_allocator",
+                "excludes": "runtime/non-PyTorch HBM, other processes; not per-model attribution",
+                "peak_scope": "process/device allocator peak since initialization or external peak reset",
+                "sampling": "sequential counters; concurrent inference may change values between reads",
+                "allocated_bytes": 4832519168,
+                "reserved_bytes": 5603590144,
+                "peak_allocated_bytes": 4990718464,
+                "peak_reserved_bytes": 5603590144,
+                "allocated_mb": 4608.6494140625,
+                "reserved_mb": 5344.0,
+                "peak_allocated_mb": 4759.52001953125,
+                "peak_reserved_mb": 5344.0
+              }
+            },
+            "cache": {
+              "available": true,
+              "files": 0,
+              "bytes": 0,
+              "disk_free_bytes": 1067538083840,
+              "disk_total_bytes": 1079292710912,
+              "disk_free_ratio": 0.9891089535274751
+            },
+            "processes": {
+              "backend": {
+                "count": 1,
+                "pids": [
+                  3681279
+                ]
+              },
+              "vad": {
+                "count": 4,
+                "pids": [
+                  3719714,
+                  3719715,
+                  3719716,
+                  3719718
+                ]
+              }
+            },
+            "npu": {
+              "available": true,
+              "reason": null,
+              "memory_scope": "npu-smi device HBM aggregate; includes other processes and runtime allocations",
+              "npus": [
+                {
+                  "index": 7,
+                  "name": "910B3",
+                  "health": "OK",
+                  "chip": 0,
+                  "bus_id": "0000:42:00.0",
+                  "available": true,
+                  "hbm_used_mb": 21137,
+                  "hbm_total_mb": 65536,
+                  "hbm_free_mb": 44399,
+                  "utilization_aicore": 0
+                }
+              ],
+              "service_compute_apps": [
+                {
+                  "index": 7,
+                  "chip": 0,
+                  "pid": 3719716,
+                  "process_name": "asr-offline-vad",
+                  "memory_mb": 125
+                },
+                {
+                  "index": 7,
+                  "chip": 0,
+                  "pid": 3719718,
+                  "process_name": "asr-offline-vad",
+                  "memory_mb": 125
+                },
+                {
+                  "index": 7,
+                  "chip": 0,
+                  "pid": 3681279,
+                  "process_name": "asr-offline-mod",
+                  "memory_mb": 5677
+                }
+              ],
+              "other_compute_apps": [
+                {
+                  "index": 7,
+                  "chip": 0,
+                  "pid": 1601397,
+                  "process_name": "uvicorn",
+                  "memory_mb": 11875
+                }
+              ]
+            }
+          },
+          "owned_process": {
+            "available": true,
+            "pid": 3681279,
+            "rss_bytes": 3084546048,
+            "threads": 246,
+            "num_fds": 132,
+            "cpu_user_s": 103.06,
+            "cpu_system_s": 23.13,
+            "cpu_scope": "main_service_process_excludes_workers_and_shared_processes"
+          }
+        },
+        "checks": {
+          "allocated_bytes": true,
+          "reserved_bytes": true,
+          "rss_bytes": true,
+          "threads": true,
+          "num_fds": true,
+          "vad_workers": true,
+          "cache_empty": true,
+          "model_leases_empty": true
+        },
+        "limits": {
+          "allocated_growth_bytes": 16777216,
+          "reserved_growth_bytes": 268435456,
+          "rss_growth_bytes": 268435456,
+          "thread_growth": 8,
+          "fd_growth": 4
+        }
+      },
+      "original_evidence": {
+        "application.log": {
+          "sha256": "dae6b8610b41ef11e025d06e3040e5018d3a3ca88e7511546c2497c8b39c7711",
+          "bytes": 40770
+        },
+        "asr_stats.json": {
+          "sha256": "c75c808892a744363be9d9dda6cd9897cbc003218ed17383d113918a6fdf38b0",
+          "bytes": 132
+        },
+        "config.toml": {
+          "sha256": "2e00631e8b55fc233a8cbc43f1ebd37c8c35cae6e0eabb44d4fedb3480873f59",
+          "bytes": 4897
+        },
+        "ownership.json": {
+          "sha256": "abe023900468e88e5c640bbb91830f02ee17c535dcdb3ec56bb1940886b6e127",
+          "bytes": 839
+        },
+        "request-steady-0.json": {
+          "sha256": "9766b6668da726bb29b85100bb43da97e373b27f0375af5bdf95be761fa7c7c0",
+          "bytes": 1491
+        },
+        "request-steady-1.json": {
+          "sha256": "d29a3c38e5e2c3352cbd26965b2ea0ad20578b8368c2b4a3f32e8b7d914402dd",
+          "bytes": 1593
+        },
+        "request-steady-10.json": {
+          "sha256": "4fe58de6b7133255f9b0e9af35ee64026ccbec978b3a6e8f4333642eb4c9e650",
+          "bytes": 1491
+        },
+        "request-steady-11.json": {
+          "sha256": "13c185f14f931c3bb824ec7f15cd63b43fb22b5aea9d2f11a15f9329f08d5623",
+          "bytes": 1594
+        },
+        "request-steady-12.json": {
+          "sha256": "08ebe64e71679e8e5ce90c7d4096b6886f6e055494e52bd0222713b7b4cbc294",
+          "bytes": 1492
+        },
+        "request-steady-13.json": {
+          "sha256": "4b2fa59d7acbc5c222a215028624e359222308b6d6010e2ed8e92f0a8abf52b6",
+          "bytes": 1593
+        },
+        "request-steady-14.json": {
+          "sha256": "9f4b90e4e784050be037e3133cb026443f53865a6077632ece1f0abbda83a416",
+          "bytes": 1492
+        },
+        "request-steady-15.json": {
+          "sha256": "9cdb92c25f09ac9cc7760c20205474368080c79f73f73f68d2c7f19143e6e31e",
+          "bytes": 1593
+        },
+        "request-steady-2.json": {
+          "sha256": "b0af0fbe6e01e8842eec08766531932035a21e280f1f48cd4b2b0c77ab0360f7",
+          "bytes": 1489
+        },
+        "request-steady-3.json": {
+          "sha256": "72e32644f385b8c53318589b796345ef167bcfb2f0a56f9c484030d6073baefe",
+          "bytes": 1592
+        },
+        "request-steady-4.json": {
+          "sha256": "2d2b212df95378d1e037dc95ba768e28b81567b6a1dd0eb8f035f5cdffb226ce",
+          "bytes": 1490
+        },
+        "request-steady-5.json": {
+          "sha256": "673cae5934d78b0c7491a51cd26818651d520086a06bb2a50f7457add889516a",
+          "bytes": 1593
+        },
+        "request-steady-6.json": {
+          "sha256": "e465e19a5f73f1fe68e7941a6429a92e9dbe73e9bbb080cb4b3f2882005ad29e",
+          "bytes": 1491
+        },
+        "request-steady-7.json": {
+          "sha256": "6f7513f59bd6d7dd7cfa8798a3a59327abe2a69ad4658bc2b988865e9d3631ef",
+          "bytes": 1593
+        },
+        "request-steady-8.json": {
+          "sha256": "26b2d2837da88e4bd6bc67cb78909db23413e03c23d75319b56c9b478aa84357",
+          "bytes": 1491
+        },
+        "request-steady-9.json": {
+          "sha256": "aede65778a2e4d710e5f00127df02cba45d41334d568eb8d710bd818cf328c1d",
+          "bytes": 1592
+        },
+        "request-warmup-0.json": {
+          "sha256": "bf2a2c3b060ae775b313d3601390546506b7da39ee1abf6ecd19465046d4be1c",
+          "bytes": 1593
+        },
+        "request-warmup-1.json": {
+          "sha256": "faa1a09c9d57f322d04380e522786f3937475196aae0b5f7d1f7a2891acdc1b5",
+          "bytes": 1592
+        },
+        "request-warmup-2.json": {
+          "sha256": "d5b7b05a797a3ab12f0fda7ab15fc0212643b6be59a11603a39492da924eb6ab",
+          "bytes": 1593
+        },
+        "service.log": {
+          "sha256": "fbb4b6f10d37e32b7baf46b26642bfd1319b4d304b84b5e584dccd7f791fd4de",
+          "bytes": 66640
+        },
+        "shutdown-after.json": {
+          "sha256": "13c139e1a38fa6a169db49ba8c75d476271daf9e699c52c96eaa5642f2b6b0de",
+          "bytes": 1895
+        },
+        "shutdown-before.json": {
+          "sha256": "1284d18d0dcf9080e9d902d86d6d516976ab0413b9d6be42f9391cc9261d8876",
+          "bytes": 3029
+        },
+        "status-drained.json": {
+          "sha256": "38d915a6db505422922f2c7fbba5422f9fb52c1f0d32b08a0253168385595d11",
+          "bytes": 19748
+        },
+        "status-initial.json": {
+          "sha256": "99d4c71ce565b769f301c80519fd3a1c5526204474f9257524124c89f9119b04",
+          "bytes": 18025
+        },
+        "status.jsonl": {
+          "sha256": "214be3b8199f94fdd2137f2c0f7aca8090af63e3b58905d39f89b387735785eb",
+          "bytes": 93858
+        },
+        "steady-baseline.json": {
+          "sha256": "3a86510df733b48b142f116a50caad44adc7d20ce6baba883d9bbc68a2eac23f",
+          "bytes": 9320
+        },
+        "steady-check.json": {
+          "sha256": "926f16ce9f6633d6bf877bcc9852a6f1bd66fdc4559024b35691f158f1ffe90c",
+          "bytes": 20422
+        },
+        "steady-plan.json": {
+          "sha256": "33fc14bf3863df777301e014d046541d01a49e7bc3027800f0155d8a14a00319",
+          "bytes": 318
+        },
+        "summary.json": {
+          "sha256": "ded21af0d6d38411ca08122700eb6f4d6c861945b2ed26f2dd022ecc224da0b3",
+          "bytes": 4198
+        }
+      }
+    }
+  }
+}

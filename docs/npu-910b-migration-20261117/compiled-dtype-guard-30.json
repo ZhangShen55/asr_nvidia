@@ -1,0 +1,27 @@
+{
+  "module_origin": "/tmp/asr-cython-dtype-20261117-yanuedv6/core/model_loading.cpython-310-aarch64-linux-gnu.so",
+  "cpu_only": true,
+  "torch_npu_imported": false,
+  "models_from_disk_loaded": false,
+  "service_started": false,
+  "concurrency": {
+    "native_blocked_during_hf": true,
+    "hf_dtype_before_exit": "torch.bfloat16",
+    "native_tensor_dtype": "torch.float32",
+    "after_concurrent_loads": "torch.float32"
+  },
+  "nested_exception_restoration": true,
+  "parameter_validation": {
+    "expected_dtype": "torch.bfloat16",
+    "floating_parameter_dtype_counts": {
+      "torch.bfloat16": 2
+    },
+    "nonfloating_parameter_count": 0,
+    "buffers_cast_or_checked": false
+  },
+  "fp32_buffer_preserved": true,
+  "wrong_dtype_rejected": true,
+  "empty_model_rejected": true,
+  "original_dtype_restored": "torch.float32",
+  "probe_path": "/tmp/asr_compiled_dtype_guard_probe.py"
+}

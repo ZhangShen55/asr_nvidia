@@ -45,12 +45,13 @@ extensions = [
 ext_modules = cythonize(
     extensions,
     nthreads=int(os.environ.get("CYTHON_NTHREADS", "4")),
+    # Python glue must retain indexing/division semantics; kernels execute in torch.
     compiler_directives={
         "language_level": "3",
-        "boundscheck": False,
-        "wraparound": False,
-        "initializedcheck": False,
-        "cdivision": True,
+        "boundscheck": True,
+        "wraparound": True,
+        "initializedcheck": True,
+        "cdivision": False,
     },
 )
 

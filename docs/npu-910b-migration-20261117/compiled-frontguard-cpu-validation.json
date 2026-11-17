@@ -1,0 +1,28 @@
+{
+  "schema": 1,
+  "stage": "/tmp/asr-cython-frontguard-20261117-nhxp0l35",
+  "formal_runtime_python": "/home/zhangs/conda-envs/asr/bin/python",
+  "models_report": {
+    "file": "compiled-frontguard-cpu.json",
+    "raw_path": "/tmp/asr-compiled-frontguard-cpu-3hr7fbt3.json",
+    "sha256": "5b31e93246c75117641e41df374cf87eca8c74958b51364cef320245947ed820",
+    "passed_cases": 4
+  },
+  "qwen_report": {
+    "file": "qwen-frontguard-cpu-parity.json",
+    "raw_path": "/tmp/asr-qwen-frontguard-cpu-20261117-r9uy5a4s/formal-runtime/parity.json",
+    "sha256": "6cf3c832e9ab3caf12489433ef04e41a083341b76b49148d1ce4279a93f5c0e0",
+    "source_tests_passed": 10,
+    "compiled_tests_passed": 10,
+    "move_inputs_outputs_equal": true
+  },
+  "parity_snapshot_before_main_fix_sha256": "3221de119a56d0d6bd7a24051b205759aea4ede7a09929740186f340988bd37a",
+  "current_snapshot_sha256": "9484a0beb4d89011d839368413a0b66c6cf33acaff91dd6b18d553c250f76bae",
+  "only_main_updated_after_parity": true,
+  "30_extension_files_unchanged": true,
+  "source_changed": [],
+  "npu_initialized": false,
+  "npu_forward_checked": false,
+  "service_started_by_these_parity_probes": false,
+  "scope_note": "真实CPU fbank/ALiBi/HF小模型并发与dtype；没有加载项目大模型。main关闭fixture证据另列。FunASR可导入torch_npu，但is_initialized始终false。"
+}

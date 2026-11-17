@@ -1,0 +1,1228 @@
+{
+  "schema": 1,
+  "recorded_at": 1794908960.728478,
+  "cpu_only": true,
+  "npu_forward_checked": false,
+  "models_loaded": false,
+  "service_started": false,
+  "pooling": {
+    "source": {
+      "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+      "cpu_only": true,
+      "npu_backend_imported": false,
+      "cases": [
+        {
+          "length": 1,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            1
+          ],
+          "sha256": "31e8c61e9a8c26f070794a62b8605790896864ea0ec67fa8efac23c635f4f7cd",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0
+          ]
+        },
+        {
+          "length": 1,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            1
+          ],
+          "sha256": "31e8c61e9a8c26f070794a62b8605790896864ea0ec67fa8efac23c635f4f7cd",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0
+          ]
+        },
+        {
+          "length": 1,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            1
+          ],
+          "sha256": "31e8c61e9a8c26f070794a62b8605790896864ea0ec67fa8efac23c635f4f7cd",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0
+          ]
+        },
+        {
+          "length": 1,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            1
+          ],
+          "sha256": "31e8c61e9a8c26f070794a62b8605790896864ea0ec67fa8efac23c635f4f7cd",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0
+          ]
+        },
+        {
+          "length": 3,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            3
+          ],
+          "sha256": "85ff07eb23e833c993321130ed395787bfa8d9f314c2f2bf0a0259960fb65dd0",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.0,
+            -2.0,
+            -2.0
+          ]
+        },
+        {
+          "length": 3,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            3
+          ],
+          "sha256": "64ee0044434f6a5bbb3d7d574b145bb9c2778cb61f849db58d0a376459aa46f6",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 3,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            3
+          ],
+          "sha256": "85ff07eb23e833c993321130ed395787bfa8d9f314c2f2bf0a0259960fb65dd0",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.0,
+            -2.0,
+            -2.0
+          ]
+        },
+        {
+          "length": 3,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            3
+          ],
+          "sha256": "64ee0044434f6a5bbb3d7d574b145bb9c2778cb61f849db58d0a376459aa46f6",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 4,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            4
+          ],
+          "sha256": "b2f8c5edff60f5ae08ca36a53d3b9ead6b86d4c394f362546be6471e798416ce",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.5,
+            -2.5,
+            -2.5,
+            -2.5
+          ]
+        },
+        {
+          "length": 4,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            4
+          ],
+          "sha256": "af3302565f1dfa8e07a37393af7d089bf7c64225516dbc5cc86a6e3a2a5b694c",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 4,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            4
+          ],
+          "sha256": "b2f8c5edff60f5ae08ca36a53d3b9ead6b86d4c394f362546be6471e798416ce",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.5,
+            -2.5,
+            -2.5,
+            -2.5
+          ]
+        },
+        {
+          "length": 4,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            4
+          ],
+          "sha256": "af3302565f1dfa8e07a37393af7d089bf7c64225516dbc5cc86a6e3a2a5b694c",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 5,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            5
+          ],
+          "sha256": "bd23636a4cc98073fabc1873e1d5db730c427c106aa2fcb13e4af2981e1a5125",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.5,
+            -2.5,
+            -2.5,
+            -5.0
+          ]
+        },
+        {
+          "length": 5,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            5
+          ],
+          "sha256": "402b26899159a69d749b3462a732e0c1cddbd2d7554c753bca48027b24b84b66",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -5.0
+          ]
+        },
+        {
+          "length": 5,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            5
+          ],
+          "sha256": "2c124a5334d3af09e62752f8a08739bec57c534118b9651e8df1248baf622e2f",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -3.0,
+            -3.0,
+            -3.0,
+            -3.0
+          ]
+        },
+        {
+          "length": 5,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            5
+          ],
+          "sha256": "c8b62cf67fc9112882e322f0e03aeb688b05fe62f6536385b238ce2f94003fde",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 101,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            101
+          ],
+          "sha256": "7dbdcb1c3b266f8ceba14de35623907068b88be6fae245aafacccd6e419721ca",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -98.5,
+            -98.5,
+            -98.5,
+            -101.0
+          ]
+        },
+        {
+          "length": 101,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            101
+          ],
+          "sha256": "d24bbee7103bfd82794d218cab6b13d8590db7d2a008dcae295dbde1e25f1ae2",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -97.0,
+            -97.0,
+            -97.0,
+            -101.0
+          ]
+        },
+        {
+          "length": 101,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            101
+          ],
+          "sha256": "411ba74e8a9622ec80aad8bbf0874ea28e89a98cc1c6a7e445ef2bf0773371d5",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -50.5,
+            -50.5,
+            -50.5,
+            -101.0
+          ]
+        },
+        {
+          "length": 101,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            101
+          ],
+          "sha256": "695832034f1fa1eab18ae312e968e20175854281e8adea7eadd55cfa44e3acdb",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -101.0
+          ]
+        },
+        {
+          "length": 103,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            103
+          ],
+          "sha256": "88be3a810b0ca31c8a515691c8a1b00b8aa2e04413ce839c220925e10d423baf",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -98.5,
+            -102.0,
+            -102.0,
+            -102.0
+          ]
+        },
+        {
+          "length": 103,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            103
+          ],
+          "sha256": "53c24693b4ab59b27ff52f2c1f4f7eec838d5be40369b32368014d53476d8942",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -97.0,
+            -101.0,
+            -101.0,
+            -101.0
+          ]
+        },
+        {
+          "length": 103,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            103
+          ],
+          "sha256": "6bb4051e8f1264b40b6cafddbe945e8a5f38b6b9254dfa84411fdf56d7a70642",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -50.5,
+            -102.0,
+            -102.0,
+            -102.0
+          ]
+        },
+        {
+          "length": 103,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            103
+          ],
+          "sha256": "3fbe01d27d8def288a26236f98d14dfc9b1c25286f13c5d7720978277d9ae4fb",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -101.0,
+            -101.0,
+            -101.0
+          ]
+        },
+        {
+          "length": 201,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            201
+          ],
+          "sha256": "cf9e997ceb327bf6a1a80b116f327bf839d1a2f3eec229f83c249d36812d8214",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -198.5,
+            -198.5,
+            -198.5,
+            -201.0
+          ]
+        },
+        {
+          "length": 201,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            201
+          ],
+          "sha256": "274c5c19a73ce39be7c0311e1bab1e26fe7c5ba66b91f06f5e587edefd83f7c4",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -197.0,
+            -197.0,
+            -197.0,
+            -201.0
+          ]
+        },
+        {
+          "length": 201,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            201
+          ],
+          "sha256": "86b2fb6196da45e5eff836aa4f05d865c9bca9b8ae6b6f06b628b6a850146359",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -150.5,
+            -150.5,
+            -150.5,
+            -201.0
+          ]
+        },
+        {
+          "length": 201,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            201
+          ],
+          "sha256": "e57b89600e531df047f04e2c2e6a90308b980657e3d8d0ce51235b390a822ac0",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -101.0,
+            -101.0,
+            -101.0,
+            -201.0
+          ]
+        }
+      ],
+      "invalid_input_errors": [
+        "池化长度和输入必须非空",
+        "池化长度和输入必须非空",
+        "Wrong segment pooling type."
+      ]
+    },
+    "compiled": {
+      "module_origin": "/tmp/asr-cython-safe-20261117-8kckdji2/core/local_inference.cpython-310-aarch64-linux-gnu.so",
+      "cpu_only": true,
+      "npu_backend_imported": false,
+      "cases": [
+        {
+          "length": 1,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            1
+          ],
+          "sha256": "31e8c61e9a8c26f070794a62b8605790896864ea0ec67fa8efac23c635f4f7cd",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0
+          ]
+        },
+        {
+          "length": 1,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            1
+          ],
+          "sha256": "31e8c61e9a8c26f070794a62b8605790896864ea0ec67fa8efac23c635f4f7cd",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0
+          ]
+        },
+        {
+          "length": 1,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            1
+          ],
+          "sha256": "31e8c61e9a8c26f070794a62b8605790896864ea0ec67fa8efac23c635f4f7cd",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0
+          ]
+        },
+        {
+          "length": 1,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            1
+          ],
+          "sha256": "31e8c61e9a8c26f070794a62b8605790896864ea0ec67fa8efac23c635f4f7cd",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0
+          ]
+        },
+        {
+          "length": 3,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            3
+          ],
+          "sha256": "85ff07eb23e833c993321130ed395787bfa8d9f314c2f2bf0a0259960fb65dd0",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.0,
+            -2.0,
+            -2.0
+          ]
+        },
+        {
+          "length": 3,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            3
+          ],
+          "sha256": "64ee0044434f6a5bbb3d7d574b145bb9c2778cb61f849db58d0a376459aa46f6",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 3,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            3
+          ],
+          "sha256": "85ff07eb23e833c993321130ed395787bfa8d9f314c2f2bf0a0259960fb65dd0",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.0,
+            -2.0,
+            -2.0
+          ]
+        },
+        {
+          "length": 3,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            3
+          ],
+          "sha256": "64ee0044434f6a5bbb3d7d574b145bb9c2778cb61f849db58d0a376459aa46f6",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 4,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            4
+          ],
+          "sha256": "b2f8c5edff60f5ae08ca36a53d3b9ead6b86d4c394f362546be6471e798416ce",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.5,
+            -2.5,
+            -2.5,
+            -2.5
+          ]
+        },
+        {
+          "length": 4,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            4
+          ],
+          "sha256": "af3302565f1dfa8e07a37393af7d089bf7c64225516dbc5cc86a6e3a2a5b694c",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 4,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            4
+          ],
+          "sha256": "b2f8c5edff60f5ae08ca36a53d3b9ead6b86d4c394f362546be6471e798416ce",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.5,
+            -2.5,
+            -2.5,
+            -2.5
+          ]
+        },
+        {
+          "length": 4,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            4
+          ],
+          "sha256": "af3302565f1dfa8e07a37393af7d089bf7c64225516dbc5cc86a6e3a2a5b694c",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 5,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            5
+          ],
+          "sha256": "bd23636a4cc98073fabc1873e1d5db730c427c106aa2fcb13e4af2981e1a5125",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -2.5,
+            -2.5,
+            -2.5,
+            -5.0
+          ]
+        },
+        {
+          "length": 5,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            5
+          ],
+          "sha256": "402b26899159a69d749b3462a732e0c1cddbd2d7554c753bca48027b24b84b66",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -5.0
+          ]
+        },
+        {
+          "length": 5,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            5
+          ],
+          "sha256": "2c124a5334d3af09e62752f8a08739bec57c534118b9651e8df1248baf622e2f",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -3.0,
+            -3.0,
+            -3.0,
+            -3.0
+          ]
+        },
+        {
+          "length": 5,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            5
+          ],
+          "sha256": "c8b62cf67fc9112882e322f0e03aeb688b05fe62f6536385b238ce2f94003fde",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -1.0
+          ]
+        },
+        {
+          "length": 101,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            101
+          ],
+          "sha256": "7dbdcb1c3b266f8ceba14de35623907068b88be6fae245aafacccd6e419721ca",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -98.5,
+            -98.5,
+            -98.5,
+            -101.0
+          ]
+        },
+        {
+          "length": 101,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            101
+          ],
+          "sha256": "d24bbee7103bfd82794d218cab6b13d8590db7d2a008dcae295dbde1e25f1ae2",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -97.0,
+            -97.0,
+            -97.0,
+            -101.0
+          ]
+        },
+        {
+          "length": 101,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            101
+          ],
+          "sha256": "411ba74e8a9622ec80aad8bbf0874ea28e89a98cc1c6a7e445ef2bf0773371d5",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -50.5,
+            -50.5,
+            -50.5,
+            -101.0
+          ]
+        },
+        {
+          "length": 101,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            101
+          ],
+          "sha256": "695832034f1fa1eab18ae312e968e20175854281e8adea7eadd55cfa44e3acdb",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -1.0,
+            -1.0,
+            -101.0
+          ]
+        },
+        {
+          "length": 103,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            103
+          ],
+          "sha256": "88be3a810b0ca31c8a515691c8a1b00b8aa2e04413ce839c220925e10d423baf",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -98.5,
+            -102.0,
+            -102.0,
+            -102.0
+          ]
+        },
+        {
+          "length": 103,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            103
+          ],
+          "sha256": "53c24693b4ab59b27ff52f2c1f4f7eec838d5be40369b32368014d53476d8942",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -97.0,
+            -101.0,
+            -101.0,
+            -101.0
+          ]
+        },
+        {
+          "length": 103,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            103
+          ],
+          "sha256": "6bb4051e8f1264b40b6cafddbe945e8a5f38b6b9254dfa84411fdf56d7a70642",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -50.5,
+            -102.0,
+            -102.0,
+            -102.0
+          ]
+        },
+        {
+          "length": 103,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            103
+          ],
+          "sha256": "3fbe01d27d8def288a26236f98d14dfc9b1c25286f13c5d7720978277d9ae4fb",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -1.0,
+            -101.0,
+            -101.0,
+            -101.0
+          ]
+        },
+        {
+          "length": 201,
+          "segment_length": 4,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            201
+          ],
+          "sha256": "cf9e997ceb327bf6a1a80b116f327bf839d1a2f3eec229f83c249d36812d8214",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -198.5,
+            -198.5,
+            -198.5,
+            -201.0
+          ]
+        },
+        {
+          "length": 201,
+          "segment_length": 4,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            201
+          ],
+          "sha256": "274c5c19a73ce39be7c0311e1bab1e26fe7c5ba66b91f06f5e587edefd83f7c4",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -197.0,
+            -197.0,
+            -197.0,
+            -201.0
+          ]
+        },
+        {
+          "length": 201,
+          "segment_length": 100,
+          "kind": "avg",
+          "shape": [
+            2,
+            3,
+            201
+          ],
+          "sha256": "86b2fb6196da45e5eff836aa4f05d865c9bca9b8ae6b6f06b628b6a850146359",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -150.5,
+            -150.5,
+            -150.5,
+            -201.0
+          ]
+        },
+        {
+          "length": 201,
+          "segment_length": 100,
+          "kind": "max",
+          "shape": [
+            2,
+            3,
+            201
+          ],
+          "sha256": "e57b89600e531df047f04e2c2e6a90308b980657e3d8d0ce51235b390a822ac0",
+          "max_abs_vs_reference": 0.0,
+          "tail": [
+            -101.0,
+            -101.0,
+            -101.0,
+            -201.0
+          ]
+        }
+      ],
+      "invalid_input_errors": [
+        "池化长度和输入必须非空",
+        "池化长度和输入必须非空",
+        "Wrong segment pooling type."
+      ]
+    },
+    "equal": true,
+    "command": "TORCH_DEVICE_BACKEND_AUTOLOAD=0 /tmp/asr-rebuild-20261117-build/bin/python /tmp/asr_pooling_cpu_parity.py --source <root> --output <json>",
+    "source_probe": "/tmp/asr_pooling_cpu_parity.py"
+  },
+  "qwen_inputs": {
+    "status": "passed",
+    "scope": "CPU only; no NPU/model/server; source-vs-Cython move_inputs parity",
+    "roots": {
+      "source": "/home/zhangs/asr_nvidia",
+      "compiled": "/tmp/asr-cython-safe-20261117-8kckdji2"
+    },
+    "results": {
+      "source": {
+        "module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+        "module_sha256": "221c4b4072210a22facdaa92d84b92e87142ede7754e99d05637f41537394bb6",
+        "torch_version": "2.5.1",
+        "torch_npu_imported": false,
+        "npu_initialized": false,
+        "outputs": {
+          "input_features": {
+            "dtype": "torch.bfloat16",
+            "shape": [
+              2,
+              3
+            ],
+            "values": [
+              [
+                1.0,
+                2.5,
+                -3.25
+              ],
+              [
+                0.125,
+                -0.5,
+                16.0
+              ]
+            ],
+            "device": "cpu"
+          },
+          "input_ids": {
+            "dtype": "torch.int64",
+            "shape": [
+              1,
+              4
+            ],
+            "values": [
+              [
+                1,
+                129,
+                32767,
+                123456
+              ]
+            ],
+            "device": "cpu"
+          },
+          "attention_mask": {
+            "dtype": "torch.int64",
+            "shape": [
+              1,
+              4
+            ],
+            "values": [
+              [
+                1,
+                1,
+                0,
+                1
+              ]
+            ],
+            "device": "cpu"
+          },
+          "boolean_mask": {
+            "dtype": "torch.bool",
+            "shape": [
+              1,
+              3
+            ],
+            "values": [
+              [
+                true,
+                false,
+                true
+              ]
+            ],
+            "device": "cpu"
+          },
+          "nested": {
+            "features": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                2
+              ],
+              "values": [
+                -1.0,
+                0.25
+              ],
+              "device": "cpu"
+            },
+            "ids": {
+              "dtype": "torch.int32",
+              "shape": [
+                1
+              ],
+              "values": [
+                10001
+              ],
+              "device": "cpu"
+            }
+          }
+        }
+      },
+      "compiled": {
+        "module_file": "/tmp/asr-cython-safe-20261117-8kckdji2/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+        "module_sha256": "9fe71e01dbaf5ab14fe67d1eeb817215b2b489cbeabd2d39085e2d7e92609ff6",
+        "torch_version": "2.5.1",
+        "torch_npu_imported": false,
+        "npu_initialized": false,
+        "outputs": {
+          "input_features": {
+            "dtype": "torch.bfloat16",
+            "shape": [
+              2,
+              3
+            ],
+            "values": [
+              [
+                1.0,
+                2.5,
+                -3.25
+              ],
+              [
+                0.125,
+                -0.5,
+                16.0
+              ]
+            ],
+            "device": "cpu"
+          },
+          "input_ids": {
+            "dtype": "torch.int64",
+            "shape": [
+              1,
+              4
+            ],
+            "values": [
+              [
+                1,
+                129,
+                32767,
+                123456
+              ]
+            ],
+            "device": "cpu"
+          },
+          "attention_mask": {
+            "dtype": "torch.int64",
+            "shape": [
+              1,
+              4
+            ],
+            "values": [
+              [
+                1,
+                1,
+                0,
+                1
+              ]
+            ],
+            "device": "cpu"
+          },
+          "boolean_mask": {
+            "dtype": "torch.bool",
+            "shape": [
+              1,
+              3
+            ],
+            "values": [
+              [
+                true,
+                false,
+                true
+              ]
+            ],
+            "device": "cpu"
+          },
+          "nested": {
+            "features": {
+              "dtype": "torch.bfloat16",
+              "shape": [
+                2
+              ],
+              "values": [
+                -1.0,
+                0.25
+              ],
+              "device": "cpu"
+            },
+            "ids": {
+              "dtype": "torch.int32",
+              "shape": [
+                1
+              ],
+              "values": [
+                10001
+              ],
+              "device": "cpu"
+            }
+          }
+        }
+      }
+    },
+    "outputs_equal": true,
+    "command": "TORCH_DEVICE_BACKEND_AUTOLOAD=0 ASR_PARITY_SOURCE_ROOT=<root> /home/zhangs/conda-envs/asr/bin/python /tmp/asr-qwen-dtype-cpu-parity-20261117-808l1cb6/probe.py"
+  },
+  "qwen_inputs_evidence": {
+    "path": "/tmp/asr-qwen-dtype-cpu-parity-20261117-808l1cb6/result.json",
+    "sha256": "fdf93f1fe2ebe370051201917be07d2981cdb43ab1bdc20583bfad5ba856b1e0",
+    "probe": "/tmp/asr-qwen-dtype-cpu-parity-20261117-808l1cb6/probe.py"
+  }
+}

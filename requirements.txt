@@ -1,32 +1,6 @@
-# modelscope>=1.11.1
-modelscope
-av==14.4.0
-funasr==1.2.6
-addict # 使用modelscope 后加的
-datasets==2.21.0 # 使用modelscope 后加的
-fastapi>=0.95.1
-aiofiles
-uvicorn
-requests
-httpx                 # Qwen3-ASR（/v3/seacraft_asr）OpenAI 兼容接口异步客户端
-torch>=1.13
-torchaudio
-#ffmpeg
-numpy==1.26.4
-ffmpeg-python
-python-multipart
-soundfile 
-librosa
-pydub
-tomli # TOML 配置文件解析
-WeTextProcessing==1.2.0 # 文本规范化（ITN）规则包，pynini 由 conda-forge 安装
-setproctitle==1.3.8 # 服务进程名覆写（nvidia-smi 中显示 asr-offline-model）
-tqdm # TTY 下显示 v3 每音频有效 VAD 段进度
-#容器环境
-# datasets                 2.21.0 
-# modelscope               1.25.0
-#python-ffmpeg
-# mac 使用 pip install torch  torchaudio 默认拉取版本torch-2.5.1 torchaudio-2.5.1
-# mac 安装numpy 1.26.4
-
-
+# 先用 scripts/rebuild_npu_env.sh 建立独立 conda 环境（av/pynini 由 conda 提供）。
+# 运行依赖入口；构建工具与 pytest 不进入生产运行清单。
+-r requirements-pip.txt
+-r requirements-pip-runtime.txt
+-r requirements-npu.txt
+-r requirements-pip-extra.txt

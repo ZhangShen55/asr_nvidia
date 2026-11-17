@@ -1,141 +1,75 @@
-"""VAD 实例的基准测试：GPU/CPU 速度、每实例显存/内存、多实例并发扩展性。
+"""FSMN-VAD CPU/NPU 原始 FP32 单实例和多实例扩展性。
 
-用法：
-    python scripts/bench_vad_scaling.py --audio test/audio_file/教师1.wav --slice-s 300
+先 source CANN，默认宿主 npu:7；容器映射该卡时显式 --device npu:0。
+独立实例各自预热；报告不包括加载时间，不启动服务。
 """
-
 from __future__ import annotations
-
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 import json
 import os
-import subprocess
-import tempfile
-import threading
-import time
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+import sys
+import time
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-
-
-def gpu_mem_mb() -> float:
-    try:
-        out = subprocess.check_output(
-            ["nvidia-smi", "--query-gpu=memory.used", "--format=csv,noheader,nounits"],
-            text=True,
-            timeout=10,
-        )
-        return float(out.strip().splitlines()[0])
-    except Exception:
-        return 0.0
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts.bench_vad_cpu_vs_gpu import build_model, run_vad, make_slice, allocated_mb
 
 
-def make_slice(src: str, seconds: int) -> str:
-    """切出前 N 秒音频到临时 wav（16k 单声道）。"""
-    dst = tempfile.NamedTemporaryFile(delete=False, suffix=".wav").name
-    subprocess.run(
-        [
-            "ffmpeg", "-y", "-v", "error", "-i", src,
-            "-t", str(seconds), "-ar", "16000", "-ac", "1", dst,
-        ],
-        check=True,
-    )
-    return dst
-
-
-def build_model(device: str):
-    from funasr import AutoModel
-
-    return AutoModel(
-        model=str(REPO_ROOT / "model" / "speech_fsmn_vad_zh-cn-16k-common-pytorch"),
-        device=device,
-        vad_kwargs={
-            "max_single_segment_time": 30000,
-            "max_end_silence_time": 800,
-        },
-        disable_update=True,
-        disable_pbar=True,
-    )
-
-
-def run_vad(model, path: str) -> Dict[str, Any]:
+def measure(model, audio):
     started = time.perf_counter()
-    result = model.generate(input=path, cache={}, vad_kwargs={
-        "max_single_segment_time": 30000,
-        "max_end_silence_time": 800,
-    })
-    elapsed = time.perf_counter() - started
-    spans = 0
-    try:
-        spans = len(result[0]["value"])
-    except Exception:
-        pass
-    return {"elapsed_s": round(elapsed, 3), "segments": spans}
+    spans = run_vad(model, audio)
+    return {"elapsed_s": time.perf_counter() - started, "segments": len(spans)}
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--audio", default=str(REPO_ROOT / "test" / "audio_file" / "教师1.wav"))
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--audio", required=True)
     parser.add_argument("--slice-s", type=int, default=300)
-    parser.add_argument("--gpu-concurrency", default="1,2,4,8")
+    parser.add_argument("--device", default="npu:7")
+    parser.add_argument("--concurrency", "--gpu-concurrency", dest="concurrency", default="1,2,4,8")
     args = parser.parse_args()
-
-    slice_path = make_slice(args.audio, args.slice_s)
-    print(f"基准音频：{args.audio} 前 {args.slice_s}s -> {slice_path}")
-
-    # ---- 单实例：GPU vs CPU
-    print("\n=== 单实例速度 ===")
-    before = gpu_mem_mb()
-    t0 = time.perf_counter()
-    gpu_model = build_model("cuda:0")
-    load_s = time.perf_counter() - t0
-    after = gpu_mem_mb()
-    print(f"GPU 实例加载：{load_s:.2f}s，显存 {after - before:.1f} MB")
-    gpu_single = run_vad(gpu_model, slice_path)
-    print(f"GPU 单实例：{gpu_single['elapsed_s']}s（{gpu_single['segments']} 段）")
-
-    t0 = time.perf_counter()
-    cpu_model = build_model("cpu")
-    cpu_load_s = time.perf_counter() - t0
-    cpu_single = run_vad(cpu_model, slice_path)
-    print(f"CPU 实例加载：{cpu_load_s:.2f}s")
-    print(f"CPU 单实例：{cpu_single['elapsed_s']}s（{cpu_single['segments']} 段）")
-    ratio = cpu_single["elapsed_s"] / max(gpu_single["elapsed_s"], 1e-6)
-    print(f"CPU/GPU 速度比：{ratio:.1f}x")
-
-    # ---- 并发扩展性（GPU / CPU 各档，先预热排除首次调用的 CUDA 惰性加载干扰）
-    for device, base_model, label in (("cuda:0", gpu_model, "GPU"), ("cpu", cpu_model, "CPU")):
-        print(f"\n=== {label} 多实例并发（每个实例跑同一段，先预热）===")
-        for conc in [int(x) for x in args.gpu_concurrency.split(",")]:
-            models = [base_model] + [build_model(device) for _ in range(conc - 1)]
-            # 预热：每个实例先跑一次，排除首次 CUDA 调用/内核加载
-            for m in models:
-                run_vad(m, slice_path)
-            mem = gpu_mem_mb()
-            results: List[Dict[str, Any]] = []
-            lock = threading.Lock()
-
-            def worker(model):
-                r = run_vad(model, slice_path)
-                with lock:
-                    results.append(r)
-
-            threads = [threading.Thread(target=worker, args=(m,)) for m in models]
-            t0 = time.perf_counter()
-            for t in threads:
-                t.start()
-            for t in threads:
-                t.join()
-            wall = time.perf_counter() - t0
-            per = sum(r["elapsed_s"] for r in results) / len(results)
-            print(
-                f"  {label} 并发{conc:>2}：墙钟 {wall:.2f}s，单实例均 {per:.2f}s，"
-                f"总吞吐 {conc * args.slice_s / wall:.1f}x 实时，显存 {mem:.0f} MB"
-            )
-            del models
-
-    os.unlink(slice_path)
+    from core.local_inference import backend_for_device
+    backend_for_device(args.device)
+    counts = [int(value) for value in args.concurrency.split(",")]
+    if not counts or min(counts) < 1 or args.slice_s <= 0:
+        parser.error("positive concurrency and --slice-s required")
+    audio = make_slice(args.audio, args.slice_s)
+    try:
+        for device in dict.fromkeys(("cpu", args.device)):
+            for count in counts:
+                models = []
+                try:
+                    before = allocated_mb(device)
+                    started = time.perf_counter()
+                    for _ in range(count):
+                        models.append(build_model(device))
+                    load_s = time.perf_counter() - started
+                    for model in models:
+                        run_vad(model, audio)
+                    after = allocated_mb(device)
+                    started = time.perf_counter()
+                    with ThreadPoolExecutor(max_workers=count) as executor:
+                        results = list(executor.map(lambda model: measure(model, audio), models))
+                    wall = time.perf_counter() - started
+                    print(json.dumps({"device": device, "precision": "fp32", "instances": count,
+                                      "load_s": load_s, "wall_s": wall,
+                                      "mean_instance_s": sum(item["elapsed_s"] for item in results) / count,
+                                      "throughput_realtime": count * args.slice_s / wall,
+                                      "allocated_mb": after,
+                                      "allocation_delta_mb": after - before if before is not None else None,
+                                      "results": results}, ensure_ascii=False), flush=True)
+                finally:
+                    close_errors = []
+                    for model in models:
+                        try:
+                            model.close()
+                        except Exception as exc:
+                            close_errors.append(exc)
+                    if close_errors:
+                        raise RuntimeError(f"{len(close_errors)} VAD instances failed to close") from close_errors[0]
+    finally:
+        os.unlink(audio)
 
 
 if __name__ == "__main__":

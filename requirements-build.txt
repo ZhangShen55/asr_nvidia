@@ -1,0 +1,5 @@
+# 仅独立构建环境安装，不自动升级当前 asr 开发环境。
+Cython==3.0.12
+setuptools==84.0.0
+wheel==0.48.0
+conda-pack==0.8.1

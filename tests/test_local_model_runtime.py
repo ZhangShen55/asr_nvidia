@@ -19,9 +19,11 @@ class StatusContractTests(unittest.TestCase):
         from main import create_app
 
         # 用上下文管理器进入，确保 lifespan（记录启动时刻）被执行；
-        # 单测不真的拉起 VAD worker 进程（真实模型加载要数秒）
+        # 合约单测隔离部署预检与 VAD worker；真实预检由 test_deployment 单独验证，
+        # 本处保留完整 lifespan 的资源关闭路径，只以替身避免访问硬件。
         with patch("main.start_vad_pool", new=AsyncMock()), \
-                patch("main.stop_vad_pool", new=AsyncMock()):
+                patch("main.stop_vad_pool", new=AsyncMock()), \
+                patch("main.validate_npu_runtime", return_value={"unit_test": True}):
             with TestClient(create_app()) as client:
                 return client.get("/get_status").json()
 
@@ -69,13 +71,13 @@ class StatusContractTests(unittest.TestCase):
         diagnostics = payload["resourceDiagnostics"]
         self.assertIn("host", diagnostics)
         self.assertIn("vmstat", diagnostics)
-        self.assertIn("gpu", diagnostics)
+        self.assertIn("npu", diagnostics)
         self.assertIn("cache", diagnostics)
         self.assertIn("requestTelemetry", diagnostics)
         self.assertIn("processes", diagnostics)
         # 采集失败必须有明确标志，不能用 0 伪造成功采样。
         self.assertIn("available", diagnostics["host"])
-        self.assertIn("available", diagnostics["gpu"])
+        self.assertIn("available", diagnostics["npu"])
 
     def test_v118_route_is_removed(self):
         from main import create_app
@@ -147,11 +149,11 @@ class ConfigFileStructureTests(unittest.TestCase):
         for name in ("config.toml", "docker/config.toml"):
             self.assertIs(self._load(name)["itn"]["remove_interjections"], True)
 
-    def test_model_device_arrays_pin_gpu0(self):
+    def test_model_device_arrays_use_host_or_container_npu(self):
         for name in ("config.toml", "docker/config.toml"):
             devices = self._load(name)["model_device_pool"]
-            self.assertEqual(devices["emotion2vec_devices"], ["cuda:0"])
-            self.assertEqual(devices["speech_campplus_devices"], ["cuda:0", "cuda:0", "cuda:0"])
+            self.assertEqual(devices["emotion2vec_devices"], ["npu:7" if name == "config.toml" else "npu:0"])
+            self.assertEqual(devices["speech_campplus_devices"], ["npu:7" if name == "config.toml" else "npu:0"] * 3)
 
     def test_log_path_and_vad_threshold_are_nested(self):
         expected_log_paths = {

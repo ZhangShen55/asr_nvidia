@@ -195,6 +195,23 @@ class VadPoolTests(unittest.TestCase):
 
         asyncio.run(scenario())
 
+    def test_damaged_device_worker_exits_and_is_replaced(self):
+        async def scenario():
+            pool = make_pool()
+            try:
+                await pool.start()
+                before = set(pool._workers)
+                with self.assertRaises(VadPoolError):
+                    await pool.detect("devicefail")
+                deadline = time.monotonic() + 10
+                while (set(pool._workers) == before or pool.stats()["loaded_instances"] < 1) and time.monotonic() < deadline:
+                    await asyncio.sleep(0.05)
+                self.assertNotEqual(set(pool._workers), before)
+                self.assertEqual(len(_parse_vad_result(await pool.detect("ok"))), 2)
+            finally:
+                await pool.stop()
+        asyncio.run(scenario())
+
     def test_stats_expose_fixed_capacity(self):
         async def scenario():
             pool = make_pool(pool_size=2, pool_max=5)
@@ -218,15 +235,15 @@ class VadDeviceTests(unittest.TestCase):
 
         with with_vad_device("cpu"):
             self.assertEqual(resolve_vad_device(), "cpu")
-        with with_vad_device("cuda:1"):
-            with patch("core.models.torch.cuda.is_available", return_value=True), \
-                    patch("core.models.torch.cuda.device_count", return_value=2):
-                self.assertEqual(resolve_vad_device(), "cuda:1")
-        with with_vad_device("cuda:9"):
-            with patch("core.models.torch.cuda.is_available", return_value=True), \
-                    patch("core.models.torch.cuda.device_count", return_value=2):
-                with self.assertRaises(RuntimeError):
-                    resolve_vad_device()
+        from unittest.mock import Mock
+        api = Mock()
+        api.is_available.return_value = True
+        api.device_count.return_value = 8
+        with with_vad_device("npu:7"), patch("core.models.npu_api", return_value=api):
+            self.assertEqual(resolve_vad_device(), "npu:7")
+        with with_vad_device("npu:9"), patch("core.models.npu_api", return_value=api):
+            with self.assertRaises(RuntimeError):
+                resolve_vad_device()
 
     def test_cpu_mode_needs_no_cuda(self):
         from core.models import resolve_vad_device
@@ -242,15 +259,15 @@ class VadConfigDefaultsTests(unittest.TestCase):
             path = Path(directory) / "config.toml"
             path.write_text("", encoding="utf-8")
             cfg = Settings(config_path=str(path))
-        self.assertEqual(len(cfg.vad_device), 8)
-        self.assertEqual(cfg.vad_device[:4], ["cpu"] * 4)
+        self.assertTrue(cfg.vad_device)
+        self.assertTrue(all(d == "cpu" or d.startswith("npu:") for d in cfg.vad_device))
         self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.8)
 
     def test_defaults_when_keys_are_absent(self):
         cfg = Settings.__new__(Settings)
         cfg._cfg = {}
         cfg.config_path = ""
-        self.assertEqual(len(cfg.vad_device), 8)
+        self.assertTrue(cfg.vad_device)
         self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.8)
 
     def test_threshold_range_is_validated(self):

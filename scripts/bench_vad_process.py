@@ -1,125 +1,78 @@
-"""验证 VAD 的扩展性瓶颈是 GIL 还是算力：同进程多线程 vs 多进程。
+"""FSMN-VAD 同进程独立实例多线程与 spawn 多进程扩展性。
 
-用法：
-    python scripts/bench_vad_process.py --slice-s 300 --workers 4 --mode process
+CPU 默认；显式 --device npu:7 才使用指定卡，先 source CANN。
+每个实例独占调用，模型关闭和 spawn manager 回收均在 finally 中完成。
 """
-
 from __future__ import annotations
-
 import argparse
+from concurrent.futures import ThreadPoolExecutor
+import json
 import multiprocessing as mp
 import os
-import subprocess
-import tempfile
-import time
 from pathlib import Path
-from typing import Any, Dict, List
+import sys
+import time
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-MODEL_DIR = REPO_ROOT / "model" / "speech_fsmn_vad_zh-cn-16k-common-pytorch"
-
-
-def make_slice(src: str, seconds: int) -> str:
-    dst = tempfile.NamedTemporaryFile(delete=False, suffix=".wav").name
-    subprocess.run(
-        ["ffmpeg", "-y", "-v", "error", "-i", src, "-t", str(seconds),
-         "-ar", "16000", "-ac", "1", dst],
-        check=True,
-    )
-    return dst
-
-
-def build_model(device: str):
-    from funasr import AutoModel
-
-    return AutoModel(
-        model=str(MODEL_DIR),
-        device=device,
-        vad_kwargs={"max_single_segment_time": 30000, "max_end_silence_time": 800},
-        disable_update=True,
-        disable_pbar=True,
-    )
-
-
-def run_vad(model, path: str) -> float:
-    started = time.perf_counter()
-    model.generate(input=path, cache={}, vad_kwargs={
-        "max_single_segment_time": 30000, "max_end_silence_time": 800,
-    })
-    return time.perf_counter() - started
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from scripts.bench_vad_cpu_vs_gpu import build_model, run_vad, make_slice
 
 
 def _worker(args):
     device, path, barrier = args
-    model = build_model(device)
-    run_vad(model, path)  # 预热
-    barrier.wait()  # 所有 worker 就绪后同时开跑，排除启动开销
-    started = time.perf_counter()
-    run_vad(model, path)
-    return started, time.perf_counter()
+    model = None
+    try:
+        model = build_model(device)
+        run_vad(model, path)
+        barrier.wait(timeout=600)
+        started = time.perf_counter()
+        run_vad(model, path)
+        return started, time.perf_counter()
+    except BaseException:
+        # 任一实例启动/推理失败须唤醒其他等待者，避免遗留600秒Barrier等待。
+        try:
+            barrier.abort()
+        except Exception:
+            pass
+        raise
+    finally:
+        if model is not None:
+            model.close()
 
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--audio", default=str(REPO_ROOT / "test" / "audio_file" / "教师1.wav")
-    )
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--audio", required=True)
     parser.add_argument("--slice-s", type=int, default=300)
     parser.add_argument("--workers", default="1,2,4,8")
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--mode", choices=["process", "thread"], default="process")
     args = parser.parse_args()
-
-    slice_path = make_slice(args.audio, args.slice_s)
-    print(f"基准：{args.slice_s}s 片段，设备 {args.device}，模式 {args.mode}")
-
-    for workers in [int(x) for x in args.workers.split(",")]:
-        if args.mode == "process":
-            ctx = mp.get_context("spawn")
-            # Manager().Barrier 是代理对象，可以跨 spawn 进程传递
-            barrier = ctx.Manager().Barrier(workers)
-            with ctx.Pool(workers) as pool:
-                t0 = time.perf_counter()
-                results = pool.map(
-                    _worker, [(args.device, slice_path, barrier)] * workers
-                )
-                wall = time.perf_counter() - t0
-        else:
-            import threading
-
-            models = [build_model(args.device) for _ in range(workers)]
-            for m in models:
-                run_vad(m, slice_path)
-            results: List[float] = []
-            lock = threading.Lock()
-
-            def worker(m):
-                started = time.perf_counter()
-                run_vad(m, slice_path)
-                r = (started, time.perf_counter())
-                with lock:
-                    results.append(r)
-
-            threads = [threading.Thread(target=worker, args=(m,)) for m in models]
-            t0 = time.perf_counter()
-            for t in threads:
-                t.start()
-            for t in threads:
-                t.join()
-            wall = time.perf_counter() - t0
-
-        # 只统计「真正开跑」的区间：进程启动、模型加载、预热都不计入吞吐
-        batch_start = min(r[0] for r in results)
-        batch_end = max(r[1] for r in results)
-        wall = batch_end - batch_start
-        per = sum(r[1] - r[0] for r in results) / len(results)
-        print(
-            "{:>6} 并发：实测区间墙钟 {:.2f}s，单实例均 {:.2f}s，总吞吐 {:.1f}x 实时".format(
-                workers, wall, per, workers * args.slice_s / wall
-            )
-        )
-
-    os.unlink(slice_path)
+    from core.local_inference import backend_for_device
+    backend_for_device(args.device)
+    counts = [int(value) for value in args.workers.split(",")]
+    if not counts or min(counts) < 1 or args.slice_s <= 0:
+        parser.error("positive workers and --slice-s required")
+    path = make_slice(args.audio, args.slice_s)
+    try:
+        for count in counts:
+            if args.mode == "process":
+                ctx = mp.get_context("spawn")
+                with ctx.Manager() as manager:
+                    barrier = manager.Barrier(count)
+                    with ctx.Pool(count) as pool:
+                        results = pool.map(_worker, [(args.device, path, barrier)] * count)
+            else:
+                from threading import Barrier
+                barrier = Barrier(count)
+                with ThreadPoolExecutor(max_workers=count) as executor:
+                    results = list(executor.map(_worker, [(args.device, path, barrier)] * count))
+            wall = max(item[1] for item in results) - min(item[0] for item in results)
+            print(json.dumps({"workers": count, "mode": args.mode, "device": args.device,
+                              "precision": "fp32", "wall_s": wall,
+                              "mean_instance_s": sum(end - begin for begin, end in results) / count,
+                              "throughput_realtime": count * args.slice_s / max(wall, 1e-9)}), flush=True)
+    finally:
+        os.unlink(path)
 
 
 if __name__ == "__main__":

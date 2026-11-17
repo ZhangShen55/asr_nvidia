@@ -15,7 +15,8 @@ import time
 from pathlib import Path
 from typing import Dict, List
 
-from core.vad_pool import VadPool
+import sys
+sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -38,18 +39,16 @@ def _cpu_seconds(pid: int) -> float:
 
 
 async def measure(audio: Path, workers: int) -> Dict[str, object]:
+    from core.vad_pool import VadPool
+    from scripts.bench_vad_cpu_vs_gpu import vad_kwargs
     audio = audio.resolve()
     pool = VadPool(
-        pool_size=workers,
-        pool_max=workers,
-        watermark=0,
-        queue_timeout_s=600,
-        device="cpu",
+        devices=["cpu"] * workers,
         model_dir=str(MODEL_DIR),
-        vad_kwargs=VAD_KWARGS,
+        vad_kwargs=vad_kwargs(),
     )
-    await pool.start()
     try:
+        await pool.start()
         pids = [worker.process.pid for worker in pool._workers.values()]
         before = {pid: _cpu_seconds(pid) for pid in pids}
         started = time.perf_counter()
@@ -59,7 +58,7 @@ async def measure(audio: Path, workers: int) -> Dict[str, object]:
         cpu_seconds = sum(max(0.0, after[pid] - before[pid]) for pid in pids)
         return {
             "workers": workers,
-            "audio": str(audio.relative_to(REPO_ROOT)),
+            "audio": str(audio),
             "wall_s": round(elapsed, 3),
             "aggregate_cpu_s": round(cpu_seconds, 3),
             "aggregate_cpu_cores": round(cpu_seconds / max(elapsed, 1e-9), 3),
@@ -81,11 +80,14 @@ def main() -> None:
     parser.add_argument(
         "--audio",
         type=Path,
-        default=REPO_ROOT / "test/audio_file/储能学术英语实践.wav",
+        required=True,
     )
     parser.add_argument("--workers", default="4,8,16")
     args = parser.parse_args()
-    asyncio.run(run(args.audio.resolve(), [int(value) for value in args.workers.split(",")]))
+    counts = [int(value) for value in args.workers.split(",")]
+    if not counts or min(counts) < 1:
+        parser.error("--workers must be positive")
+    asyncio.run(run(args.audio.resolve(), counts))
 
 
 if __name__ == "__main__":

@@ -1,0 +1,148 @@
+{
+  "response": {
+    "language": "English",
+    "segments": [
+      {
+        "segment_text": "今天学习。",
+        "bg": "0.00",
+        "ed": "1.00",
+        "speed": 96,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      },
+      {
+        "segment_text": "Hello class.",
+        "bg": "1.50",
+        "ed": "3.00",
+        "speed": 32,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      }
+    ],
+    "text": "今天学习。 Hello class.",
+    "speed_info": [
+      {
+        "unit": 1,
+        "segment_info": {
+          "segment_count": 1,
+          "speed": [
+            120
+          ]
+        }
+      },
+      {
+        "unit": 5,
+        "segment_info": {
+          "segment_count": 1,
+          "speed": [
+            120
+          ]
+        }
+      },
+      {
+        "unit": 10,
+        "segment_info": {
+          "segment_count": 1,
+          "speed": [
+            120
+          ]
+        }
+      }
+    ],
+    "load_audio_time_ms": "12.35",
+    "gpu_time_ms": "10000.00",
+    "language_ratio": {
+      "zh": 35.3,
+      "en": 64.7
+    }
+  },
+  "punctuation_only_response": {
+    "language": "Chinese",
+    "segments": [],
+    "text": "",
+    "speed_info": [
+      {
+        "unit": 1,
+        "segment_info": {
+          "segment_count": 1,
+          "speed": [
+            0
+          ]
+        }
+      },
+      {
+        "unit": 5,
+        "segment_info": {
+          "segment_count": 1,
+          "speed": [
+            0
+          ]
+        }
+      },
+      {
+        "unit": 10,
+        "segment_info": {
+          "segment_count": 1,
+          "speed": [
+            0
+          ]
+        }
+      }
+    ],
+    "load_audio_time_ms": "12.35",
+    "gpu_time_ms": "10000.00",
+    "language_ratio": {}
+  },
+  "request_fields": [
+    "audioFile",
+    "hotWords",
+    "language",
+    "openPanel",
+    "output",
+    "showEmotion",
+    "showRoleIdentify",
+    "showSpeed",
+    "showSpk",
+    "wordTimestamps"
+  ],
+  "baseline_revision": "79c7c1bbc94ec1824281c8e06c26e4f2a3ae5ff9",
+  "reference_conditions": {
+    "sample_rate": 16000,
+    "audio_seconds": 3.0,
+    "itn_enabled": false,
+    "rate_factor": 0.4,
+    "clock_start_s": 10.0,
+    "clock_end_s": 20.0,
+    "models": "deterministic substitutes; no NPU"
+  },
+  "request_defaults": {
+    "language": "auto",
+    "wordTimestamps": false,
+    "hotWords": [],
+    "showSpk": false,
+    "openPanel": false,
+    "showEmotion": false,
+    "showSpeed": false,
+    "showRoleIdentify": false
+  },
+  "errors": {
+    "4008": {
+      "code": 4008,
+      "msg": "音频文件为空或未检测到任何人声"
+    },
+    "4009": {
+      "code": 4009,
+      "msg": "不支持的语言"
+    },
+    "4011": {
+      "code": 4011,
+      "msg": "Qwen 服务不可用或未发现可用模型"
+    },
+    "4012": {
+      "code": 4012,
+      "msg": "Qwen 服务调用失败，请稍后再试"
+    }
+  }
+}
