@@ -2,106 +2,107 @@
 
 ## Purpose
 
-定义基于 Qwen3-ASR 的 `/v2/seacraft_asr` 离线转写能力：本地 VAD 切分与时间轴映射、对 Qwen 服务的并发调用与音频排队、模型自动发现、与 `/v1.1.8` 同构的响应封装，以及后续真实说话人角色与情绪的异步并行计算。
+定义现行 `/v3/seacraft_asr` 中基于 Qwen3-ASR 的离线转写链路：本地 VAD 切分及时间轴映射、独立内存音频段的本地推理、语种与原始输出解析、并发排队和整音频准入、既有响应封装，以及说话人角色与情绪计算。能力名称保留历史 v2 标识，不恢复已下线的 v2 或 v1.1.8 路由；迁移保持既有错误、取消、缓存清理及段级后处理语义。
 
 ## Requirements
 
 ### Requirement: 提供 Qwen 版转写接口
-系统 MUST 提供 POST /v3/seacraft_asr，其 multipart 表单参数与 POST /v1.1.8/seacraft_asr 一致（音频文件、语言、词级时间戳、热词、说话人、情绪、语速、角色识别），且 /v1.1.8/seacraft_asr 的行为 MUST NOT 因本能力而改变。
+系统 MUST 提供 POST `/v3/seacraft_asr`，保留既有 multipart 字段、默认值、响应序列化、错误码及计时契约；历史接口仅作为字段演进参考。`/v2/seacraft_asr`、`/v1.1.7/seacraft_asr` 与 `/v1.1.8/seacraft_asr` 已下线，MUST 返回未找到路由，MUST NOT 为迁移恢复 Paraformer/Whisper 分流或旧接口。下列历史 Scenario 标题仅作稳定标识，实际请求路径和行为以当前正文为准。
 
 #### Scenario: 提交音频到 v2 接口
-- **WHEN** 客户端向 /v3/seacraft_asr 上传有效音频
-- **THEN** 系统返回与 /v1.1.8/seacraft_asr 同构的成功响应，顶层包含 language、segments、text、speed_info、load_audio_time_ms、gpu_time_ms
+- **WHEN** 客户端向 `/v3/seacraft_asr` 上传有效音频
+- **THEN** 系统按现行v3合同返回成功响应，顶层包含 language、language_ratio、segments、text、speed_info、load_audio_time_ms、gpu_time_ms，保留既有字段类型与可选字段规则
 
 #### Scenario: 未提交可选参数
 - **WHEN** 客户端只提交音频文件
 - **THEN** 系统按 language=auto、wordTimestamps=false、showSpk=false、showEmotion=false、showRoleIdentify=false 处理
 
 #### Scenario: v1.1.8 行为保持不变
-- **WHEN** 客户端向 /v1.1.8/seacraft_asr 提交请求
-- **THEN** 系统仍按原有 Paraformer/Whisper 分流逻辑处理，响应结构与错误码不变
+- **WHEN** 客户端向 `/v1.1.8/seacraft_asr`、`/v1.1.7/seacraft_asr` 或 `/v2/seacraft_asr` 提交请求
+- **THEN** 系统返回 HTTP 404，不注册旧路由、不加载其专用模型；既有v3字段与业务行为保持不变
+
 ### Requirement: 以 VAD 段作为转写与时间轴单元
-系统 MUST 在服务本地对音频做 VAD 切分，并以「1 个 VAD 段对应 1 次 Qwen 请求、对应 1 个响应分段」的方式组织结果，响应分段的 `bg` 与 `ed` MUST 取该 VAD 段的起止时间；系统 MUST NOT 合并相邻 VAD 段。
+系统 MUST 在服务本地对音频做 VAD 切分，并以「一个 VAD 段对应一个独立本地 Qwen 逻辑任务、至多一个有效响应分段」组织结果，`bg` 与 `ed` MUST 取原 VAD 边界。系统 MUST NOT 合并相邻段或通过落盘、拼接、补零改变段音频；本轮原生 eager 单段执行，经验证的候选批执行亦须保留独立归属和无有效文本的过滤规则。
 
 #### Scenario: 音频被切分为多段
-- **当** 音频包含多段人声
-- **则** 系统按 VAD 段逐段请求 Qwen 服务，响应分段的起止时间与对应 VAD 段边界一致
+- **WHEN** 音频包含多段人声
+- **THEN** 系统按原VAD顺序为每段建立独立本地Qwen任务，响应起止时间与对应段边界一致
 
 #### Scenario: 音频无人声
-- **当** VAD 未检测到任何有效人声
-- **则** 系统返回 `{"msg": "音频文件为空或未检测到任何人声", "code": 4008}`
+- **WHEN** VAD 未检测到任何有效人声
+- **THEN** 系统返回 `{"msg": "音频文件为空或未检测到任何人声", "code": 4008}`
 
 #### Scenario: 过滤过短语音段
-- **当** 某 VAD 段时长小于配置的最小语音段时长
-- **则** 系统不向 Qwen 服务发起该段的请求，且该段不产出响应分段
+- **WHEN** 某VAD段时长小于配置的最小语音段时长
+- **THEN** 系统不执行该段的本地Qwen任务，且该段不产出响应分段
 
 ### Requirement: 自动发现 Qwen 服务模型
-系统 MUST 在未显式配置模型名时，通过调用 Qwen 服务的 `/v1/models` 接口获取可用模型标识并使用之，且请求 MUST NOT 携带 API Key。
+系统 MUST 在未显式配置模型名时，从配置的本地模型目录加载 Qwen3-ASR 权重与处理器，MUST NOT 依赖外部服务的模型发现接口；模型加载 MUST 放置到配置的 NPU 设备，MUST NOT 携带任何 API Key。加载失败 MUST 映射为 `4011`。
 
 #### Scenario: 未配置模型名
-- **当** 配置中的模型名为空
-- **则** 系统从 `/v1/models` 返回的列表中选取模型标识用于转写请求
+- **WHEN** 配置中的模型名为空
+- **THEN** 系统从本地模型目录加载权重与处理器并放置到目标 NPU 设备，用于后续转写
 
 #### Scenario: 显式配置模型名
-- **当** 配置中填写了模型名
-- **则** 系统直接使用该模型名，不调用模型发现
+- **WHEN** 配置中填写了模型名
+- **THEN** 系统直接使用该模型名标识本地加载的模型，不发起任何模型发现请求
 
 #### Scenario: 模型发现失败
-- **当** `/v1/models` 不可达或返回空列表且未显式配置模型名
-- **则** 系统返回 `{"msg": "Qwen 服务不可用或未发现可用模型", "code": 4011}`
+- **WHEN** 本地模型目录缺失、权重不可读或目标设备不可用
+- **THEN** 系统返回 `{"msg": "Qwen 服务不可用或未发现可用模型", "code": 4011}`
 
 ### Requirement: 解析 Qwen 转写结果
-系统 MUST 解析 Qwen 服务返回的原始文本，剥离 `language <语种><asr_text>` 前缀，取出转写文本与识别语种；返回文本为空或语种为空的段 MUST NOT 产出响应分段。
+系统 MUST 解析转写链路返回的原始文本，剥离 `language <语种><asr_text>` 前缀，取出转写文本与识别语种；返回文本为空或语种为空的段 MUST NOT 产出响应分段。进程内推理的原始输出 MUST 保持与外部服务一致的前缀格式，既有解析契约 MUST NOT 失效。
 
 #### Scenario: 返回带语种前缀的文本
-- **当** Qwen 服务返回 `language Chinese<asr_text>识别文本`
-- **则** 系统产出文本为 `识别文本`、语种为 `Chinese` 的分段
+- **WHEN** 转写链路返回 `language Chinese<asr_text>识别文本`
+- **THEN** 系统产出文本为 `识别文本`、语种为 `Chinese` 的分段
 
 #### Scenario: 段内无有效语音
-- **当** Qwen 服务返回 `language None<asr_text>`
-- **则** 该段不产出响应分段
+- **WHEN** 转写链路返回 `language None<asr_text>`
+- **THEN** 该段不产出响应分段
 
 #### Scenario: 服务返回多段拼接文本
-- **当** Qwen 服务返回包含多个 `language <语种><asr_text>` 片段的文本
-- **则** 系统拼接各片段文本并取第一个可识别的语种
+- **WHEN** 转写链路返回包含多个 `language <语种><asr_text>` 片段的文本
+- **THEN** 系统拼接各片段文本并取第一个可识别的语种
 
 #### Scenario: Qwen 服务调用失败
-- **当** Qwen 服务不可达、超时或返回错误状态
-- **则** 系统按配置的失败策略重试，重试耗尽后返回 `{"msg": "Qwen 服务调用失败，请稍后再试", "code": 4012}`
+- **WHEN** 转写链路不可用、超时或返回错误状态
+- **THEN** 系统按配置的失败策略重试，重试耗尽后返回 `{"msg": "Qwen 服务调用失败，请稍后再试", "code": 4012}`
 
 ### Requirement: 按规则透传语言参数
-系统 MUST 保留 `/v2/seacraft_asr` 的 `language` 请求参数（默认 `auto`），但当取值为 `auto`、空串或未提交时 MUST NOT 向 Qwen 服务发送 `language` 字段；提交具体语种时 MUST 原样透传。响应的 `language` MUST 取模型实际识别出的语种，而非请求参数回显。
+系统 MUST 保留 `/v3/seacraft_asr` 的 `language` 请求参数（默认 `auto`），但当取值为 `auto`、空串或未提交时 MUST NOT 指定具体语种，由模型自动识别；提交具体语种时 MUST 传入处理器，处理器接受语种全名或 ISO 简写。系统 MUST 锁定并记录处理器实现与版本；当前目标环境的 system hint 行为 MUST 通过已安装 5.13.0 代码及实机语种用例验证，MUST NOT 将 latest 文档中的 assistant forced-language 行为当作本机事实。响应的 `language` MUST 取模型实际识别出的语种，而非请求参数回显。语种不受支持时 MUST 返回 `4009`，MUST NOT 降级为自动识别。
 
 #### Scenario: 未提交语言参数
-- **当** 客户端未提交 `language`，或提交 `auto`
-- **则** 系统不向 Qwen 服务发送 `language` 字段，由模型自动识别语种，响应 `language` 为识别结果
+- **WHEN** 客户端未提交 `language`，或提交 `auto`
+- **THEN** 系统不指定具体语种，由模型自动识别语种，响应 `language` 为识别结果
 
 #### Scenario: 提交具体语种
-- **当** 客户端提交 `language=en`
-- **则** 系统把 `en` 透传给 Qwen 服务
+- **WHEN** 客户端提交 `language=en`
+- **THEN** 系统把 `en` 传入处理器进行识别
 
 #### Scenario: Qwen 服务不支持该语种
-- **当** 提交的语种不在 Qwen 服务支持的清单内
-- **则** 系统返回 `{"msg": "不支持的语言", "code": 4009}`
+- **WHEN** 提交的语种不在模型支持的清单内
+- **THEN** 系统返回 `{"msg": "不支持的语言", "code": 4009}`
 
 ### Requirement: 返回语种占比字典
-系统 MUST 在 `/v2/seacraft_asr` 的响应顶层返回 `language_ratio` 字典，键为模型识别出的语种的**简写标识**（例如中文 `zh`、英文 `en`、粤语 `yue`），值为该语种文本字符数占总字符数的百分比（保留一位小数，各值之和为 100.0）；无有效文本时返回空字典。语种判定来源与判定逻辑 MUST NOT 改变，仅对键名做简写映射；无法映射的语种 MUST 原样透传其原始名称。
+系统 MUST 在 `/v3/seacraft_asr` 的响应顶层返回 `language_ratio` 字典，键为模型识别出的语种的**简写标识**（例如中文 `zh`、英文 `en`、粤语 `yue`），值为该语种文本字符数占总字符数的百分比（保留一位小数，各值之和为 100.0）；无有效文本时返回空字典。语种判定来源与判定逻辑 MUST NOT 改变，仅对键名做简写映射；无法映射的语种 MUST 原样透传其原始名称。
 
 #### Scenario: 单语种音频
-- **当** 音频全部识别为中文
-- **则** 响应 `language_ratio` 为 `{"zh": 100.0}`
+- **WHEN** 音频全部识别为中文
+- **THEN** 响应 `language_ratio` 为 `{"zh": 100.0}`
 
 #### Scenario: 中英混合音频
-- **当** 音频中部分段落识别为英文、其余为中文
-- **则** 响应 `language_ratio` 同时包含 `zh` 与 `en` 两个键，值为各自文本字符占比
+- **WHEN** 音频中部分段落识别为英文、其余为中文
+- **THEN** 响应 `language_ratio` 同时包含 `zh` 与 `en` 两个键，值为各自文本字符占比
 
 #### Scenario: 无法映射的语种
-- **当** 模型识别出简写表中不存在的语种
-- **则** 响应 `language_ratio` 中该语种以模型返回的原始名称作为键
+- **WHEN** 模型识别出简写表中不存在的语种
+- **THEN** 响应 `language_ratio` 中该语种以模型返回的原始名称作为键
 
 #### Scenario: 无有效文本
-- **当** 没有任何有效转写文本
-- **则** 响应 `language_ratio` 为空字典
+- **WHEN** 没有任何有效转写文本
+- **THEN** 响应 `language_ratio` 为空字典
 
 ### Requirement: 限制同时处理的音频数量
 系统 MUST 使用 `audio_concurrency` 限制 A+B 同时处理的音频文件总数（默认 8）。每个请求 MUST 从准入成功持有槽位至处理及该请求全部临时文件清理完成，并在成功、异常或取消时准确释放。默认不等待，超过总上限 MUST 立即返回总处理队列满；B 类请求另受增强音频并发上限限制。
@@ -127,18 +128,18 @@
 - **THEN** 系统清理该请求产生的全部临时文件后准确释放其全部活动槽位，不影响后续请求
 
 ### Requirement: 限制对 Qwen 服务的并发请求数
-系统 MUST 限制单个音频内同时发往 Qwen 服务的 VAD 段请求数量（`segment_concurrency`，默认 16），并 MUST 限制所有音频合计发往 Qwen 服务的请求数量（`request_concurrency`，默认 128），超出部分 MUST 等待可用名额后再发出。两个默认值 MUST 与 Qwen 服务的实际承载能力匹配；扩容收益由 Qwen 服务侧承担。
+系统 MUST 限制单个音频内同时执行的转写推理任务数量（`segment_concurrency`，由实测标定），并 MUST 限制所有音频合计同时执行的转写推理任务数量（`request_concurrency`，由实测标定），超出部分 MUST 等待可用名额后再执行。两个交付默认值 MUST 与本地推理的实测承载能力匹配，并记录依据，MUST NOT 将历史 16/128 或当前配置快照视为已验收档位。物理执行可在同一实例内采用已验证的微批，但每个逻辑段任务仍分别计入对应并发闸门；增加信号量本身 MUST NOT 被描述为吞吐扩容。
 
 #### Scenario: 单个音频产生大量分段
-- **WHEN** 一个音频切分出超过 16 个 VAD 段
-- **THEN** 系统按 `segment_concurrency=16` 分批向 Qwen 服务发起请求，单个音频不超过该上限
+- **WHEN** 一个音频切分出的有效段数超过配置的 segment_concurrency
+- **THEN** 系统按配置的 `segment_concurrency` 执行逻辑段任务，单个音频不超过该上限
 
 #### Scenario: 多个音频同时处理
 - **WHEN** 多个音频同时进入处理
-- **THEN** 全部音频合计发往 Qwen 服务的并发请求数不超过 `request_concurrency=128`
+- **THEN** 全部音频合计执行的转写推理并发数不超过 配置的 `request_concurrency`
 
 ### Requirement: 保留扩展字段
-`/v2/seacraft_asr` 的每个成功响应分段 MUST 保留 `segment_words`、`role`、`emotion` 三个字段，其中 `segment_words` 为空数组。`role`、`emotion` 在对应能力未被请求或已启用模型的段级推断失败时为 `null`；请求要求的能力被配置关闭时 MUST 返回请求级错误，不得作为成功转写返回 `null`。
+`/v3/seacraft_asr` 的每个成功响应分段 MUST 保留 `segment_words`、`role`、`emotion` 三个字段，其中 `segment_words` 为空数组。`role`、`emotion` 在对应能力未被请求或已启用模型的段级推断失败时为 `null`；请求要求的能力被配置关闭时 MUST 返回请求级错误，不得作为成功转写返回 `null`。
 
 #### Scenario: 返回扩展字段
 - **WHEN** 成功响应包含分段
@@ -149,11 +150,11 @@
 - **THEN** 每个分段的 `role` 与 `emotion` 均为 `null`
 
 ### Requirement: 通过配置外置运行参数
-Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发度、增强音频并发度、队列容量、超时和 VAD 参数 MUST 来自配置文件；VAD 参数 MUST 只从 `[vad]` 读取，VAD 实例数 MUST 只由 `[vad].vad_device` 数组长度决定，动态 VAD 池参数 MUST 不再作为有效配置。
+Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音频并发度、增强音频并发度、队列容量、超时和 VAD 参数 MUST 来自配置文件；VAD 参数 MUST 只从 `[vad]` 读取，VAD 实例数 MUST 只由 `[vad].vad_device` 数组长度决定，动态 VAD 池参数 MUST 不再作为有效配置。
 
 #### Scenario: 修改并发参数后重启生效
-- **WHEN** 运维把 `[vad].vad_device` 改为 8 个元素、`[qwen_asr].segment_concurrency` 改为 16、`[qwen_asr].audio_concurrency` 改为 8、`[qwen_asr].audio_spk_emo_concurrency` 改为 4 并重启服务
-- **THEN** 服务启动 8 个固定 VAD worker，并按新的 Qwen、总音频和增强音频并发参数运行
+- **WHEN** 运维把 `[vad].vad_device` 改为经验证的设备数组、`[qwen_asr].segment_concurrency` 改为有标定依据的值、`[qwen_asr].audio_concurrency` 改为 8、`[qwen_asr].audio_spk_emo_concurrency` 改为 4 并重启服务
+- **THEN** 服务按设备数组长度启动固定 VAD worker，并按新的转写、总音频和增强音频并发参数运行
 
 #### Scenario: VAD 旧配置不作为回退
 - **WHEN** 配置只在 `[qwen_asr]` 中提供 `vad_device` 或其它 VAD 参数，而 `[vad]` 未提供对应配置
@@ -161,13 +162,13 @@ Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发
 
 #### Scenario: 配置缺省时使用默认值
 - **WHEN** 配置文件缺少相关新配置项
-- **THEN** 服务使用默认 `vad_device=["cpu","cpu","cpu","cpu","cuda:0","cuda:0","cuda:0","cuda:0"]`、`segment_concurrency=16`、`request_concurrency=128`、`audio_concurrency=8`、`audio_spk_emo_concurrency=4`，默认满额立即拒绝
+- **THEN** 服务使用配置加载器与交付模板一致的默认值；VAD 设备配比及段级/全局并发须有实机依据，不能静默恢复 NVIDIA 时期固定 16/128，默认满额立即拒绝策略保持不变
 
 ### Requirement: 配置 v2 链路模型的落卡
-系统 MUST 通过 `[model_device_pool]` 下的 `speech_campplus_devices` 与 `emotion2vec_devices` 数组配置 CAM++ 和 emotion2vec 的实例设备；数组元素数量分别决定两个模型池的配置容量，旧 `[model_device]` 单设备字段和 `[model_device.local_model_pool]` 结构 MUST 不再生效。
+该历史 Requirement 名称中的 v2 仅为能力标识，本次仅作用于现行 `/v3/seacraft_asr` 链路，不恢复 v2 路由。系统 MUST 通过 `[model_device_pool]` 下的 `speech_campplus_devices` 与 `emotion2vec_devices` 数组配置 CAM++ 和 emotion2vec 的实例设备；数组元素数量分别决定两个模型池的配置容量，旧 `[model_device]` 单设备字段和 `[model_device.local_model_pool]` 结构 MUST 不再生效。设备元素 MUST 支持 `cpu` 与 `npu:N`。
 
 #### Scenario: 修改落卡配置
-- **WHEN** `speech_campplus_devices=["cuda:0","cuda:0","cuda:0"]` 且 `emotion2vec_devices=["cuda:0"]`
+- **WHEN** `speech_campplus_devices=["npu:0","npu:0","npu:0"]` 且 `emotion2vec_devices=["npu:0"]`
 - **THEN** 服务按 3 个 CAM++ 实例和 1 个 emotion2vec 实例建立独立模型池，两个池互不借用实例
 
 #### Scenario: 配置缺省
@@ -179,7 +180,7 @@ Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发
 - **THEN** 服务只使用新数组，并记录配置迁移提示
 
 ### Requirement: 异步并行计算真实角色与情绪
-系统 MUST 支持使用 `speech_campplus_sv_zh_en_16k-common_advanced` 推断说话人角色、使用 `emotion2vec_plus_large` 推断情绪，并与 Qwen 转写并行执行：每个 VAD 段的转写与所请求的 role/emotion 任务 MUST 同时发起。CAM++ 与 emotion2vec 的段级并发容量 MUST 分别由各自设备数组的成功实例数决定，不增加共享模型推理闸门；B 类整音频准入限制不改变模型池实例容量。两个模型 MUST 分别由独立配置开关控制，emotion2vec 的 PyTorch CUDA 路径 MUST 沿用既有半精度加载策略，TensorRT 路径 MUST 按 emotion2vec_tensorrt_precision 选择 fp16 或 fp32，NPU/CPU 精度 MUST 独立于 TensorRT 配置；请求关闭的能力 MUST 在音频准入前报错。
+系统 MUST 使用现有 CAM++ 与 emotion2vec 模型按请求能力产生角色和情绪，与同段 Qwen 任务并行发起。各模型按独立设备数组的健康实例提供容量，不增加共享模型槽位；总/B准入不改变模型池容量。CPU 使用 PyTorch CPU，`npu:N` 使用原生 torch_npu，CAM++ 与 emotion2vec MUST 保持已验证的 FP32 参数、浮点缓冲和计算策略，MUST NOT 沿用旧 CUDA FP16 或 TensorRT engine 精度配置。能力开关、段级失败降级和请求级错误优先级 MUST 保留。下列旧 Scenario 标题仅为稳定标识。
 
 #### Scenario: 开启角色与情绪能力
 - **WHEN** 两个功能开关均为 `true`，请求 `showSpk=true`、`showEmotion=true` 且模型推断成功
@@ -206,39 +207,38 @@ Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发
 - **THEN** 该分段的 `role` 或 `emotion` 回退为 `null`，转写结果仍正常返回
 
 #### Scenario: 情绪模型精度
-- **WHEN** emotion2vec 使用 PyTorch CUDA 后端
-- **THEN** 沿用既有 fp16 加载和推理策略，TensorRT 精度配置不改变该路径
+- **WHEN** emotion2vec 在CPU或NPU原生后端加载和推理
+- **THEN** 参数与浮点缓冲均按已验证FP32策略构造、加载及放置，实际状态仅在核验成功后报告fp32；加载不得受并发Qwen HF临时BF16默认dtype污染，未使用的engine配置不决定精度
 
 #### Scenario: 情绪 TensorRT 精度
-- **WHEN** emotion2vec CUDA 实例启用 TensorRT 并显式配置 fp32
-- **THEN** 加载该模型 FP32 engine，若精度未配置则选择 FP16 engine，业务情绪映射不变
+- **WHEN** 旧部署或配置仍提及TensorRT精度
+- **THEN** 该配置不触发engine加载或FP16切换，迁移提示与实际torch_npu/pytorch_cpu及FP32状态可追溯，原业务情绪映射不变
 
 #### Scenario: 两个模型使用不同后端
-- **WHEN** CAM++ CUDA 实例启用 TensorRT，emotion2vec CUDA 实例关闭 TensorRT
-- **THEN** 两种增强任务仍与该段 Qwen 任务并行发起，各自按模型池容量执行，emotion2vec 继续使用 PyTorch CUDA
+- **WHEN** CAM++ 与emotion2vec分别采用经配置的CPU或NPU实例，或采用非对称实例数量
+- **THEN** 增强任务仍与同段Qwen任务并行发起，各自按所属模型池健康容量执行，不借用其它池槽位、不隐式回退、不改变业务映射
 
 ### Requirement: 验证效果与性能边界
-系统 MUST 在 `test/audio_file/` 提供的音频上完成效果与性能验证，覆盖 1、2、4、8 路并发下的 GPU 算力占用、端到端时延、转写准确度、时间戳准度，并记录出现幻觉或重复的并发边界。
+系统 MUST 使用 `test/音频文件/` 实际可用且可追溯的音频完成本轮NPU效果与性能验证。报告 MUST 区分单路、混合并发、冷启动、稳态与候选实验，覆盖完整音频边界、幻觉/复读观测、NPU资源与客户端端到端时延；本轮正式混合验收按八条完整SHA256去重WAV的4B+4A及g1/g2条件执行。历史1/2/4/8逐档专项与当前验收范围 MUST 分别列明，未执行档位不得冒称完成；无人工真值时不得输出绝对准确率、WER或时间戳准确率。
 
 #### Scenario: 完成并发压测
-- **当** 开发人员在目标服务器上按 1、2、4、8 路并发发起请求
-- **则** 测试记录包含各并发档位的时延、GPU 算力占用与转写质量观测
+- **WHEN** 按本轮测试计划执行单路、同源暖标定或八条独立完整音频混合批次
+- **THEN** 分别记录样本、并发/实际活动峰值、g1/g2、加载是否计入、NPU与host资源、端到端耗时、错误、语种和质量观测；同源重复暖标定不冒充八条独立文件，未执行的历史并发专项列为未执行/不适用及原因
 
 #### Scenario: 产出测试报告
-- **当** 验证完成
-- **则** 仓库中留下一份可归档的测试报告，说明准确度、时间戳准度与幻觉/重复出现的边界
+- **WHEN** 交付本轮验证结果
+- **THEN** 仓库保留可复算中文报告与原始响应/日志/清单，说明文本一致性、分段/时间边界、幻觉/复读样例及证据限制；没有人工标注或可追溯旧设备基准时明确未知，不将短片一致或无错误宣称绝对准确率或最优性能
 
 ### Requirement: 验证角色与情绪的效果与性能
-
-系统 MUST 在 `test/audio_file/` 的音频上验证 role 与 emotion 的效果与性能：与 `/v1.1.8` 链路的逐段结果比对一致率，并测量开启后的时延、吞吐与显存增量；验证 MUST 覆盖由设备数组决定的非对称模型实例组合，并记录模型池各自的等待情况。
+系统 MUST 在本轮可用音频上验证role/emotion及其模型数值和业务映射，测量时延、吞吐、模型池等待与明确定义口径的NPU/host资源增量。参考优先使用可追溯同权重CUDA golden；缺少时使用CPU FP32参考并明确限制，MUST NOT 恢复已下线接口来制造基准。正式八路验收 MUST 使用同一清单的八条完整去重WAV、4B+4A、NPU原生三CAM++/一emotion2vec与实际健康容量，按相同条件比较g1/g2；不把旧CUDA6:2组合作为本轮默认。
 
 #### Scenario: 角色与情绪效果比对
-- **WHEN** 在同一音频、同一 VAD 参数下分别调用 `/v2/seacraft_asr`（`showSpk=true`、`showEmotion=true`）与 `/v1.1.8/seacraft_asr`
-- **THEN** 逐段比较 role 的角色语义与 emotion 的业务标签，记录一致率与不一致样本
+- **WHEN** 使用同段PCM、原始权重、特征与映射规则比较CPU FP32参考和NPU原生输出
+- **THEN** 保留CAM++192维embedding、emotion2vec完整分类及误差/容差证据，再核对角色聚类与业务标签；记录不一致样本，无CUDA golden或人工角色/情绪标注时明确未验证相应准确率，不调用已404的v2/v1.1.8充作参考
 
 #### Scenario: 8 路非对称模型池压测
-- **WHEN** CAM++ 与 emotion2vec 均部署在 `cuda:0`，设备数组分别配置 6 个和 2 个元素，并发提交 8 个完整音频请求
-- **THEN** 记录端到端 P50/P95、CAM++/emotion2vec 各自 busy/waiting、GPU 利用率、显存、错误和吞吐；6:2 仅作为测试组合，不成为固定默认值
+- **WHEN** 宿主npu:7使用三CAM++/一emotion2vec、单Qwen和固定VAD池，对八条完整去重WAV执行4B+4A并比较g1=1/1与g2=2/2
+- **THEN** 记录实际健康实例、总/B峰值、各池busy/waiting、逐请求客户端耗时及线性插值P50/P95、吞吐、错误、NPU/host与共享卡干扰；不同容量另列，不与本轮条件混算，按服务八路报告契约保留原始证据并关闭owned资源
 
 #### Scenario: 并行开销可接受
 - **WHEN** 比较「仅转写」与「说话人与情绪全开」两组在同一并发档位下的端到端时延
@@ -249,57 +249,57 @@ Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发
 - **THEN** 两组的分段数量与每段起止时间一致，段内文本差异幅度不高于「仅转写」组自身在两次独立请求之间的波动幅度
 
 #### Scenario: 显存与吞吐可记录
-- **WHEN** 在非对称模型实例组合下运行 role/emotion 全开
-- **THEN** 记录本机 GPU 的 SM 利用率与显存占用增量、吞吐（音频/分钟、段/秒）以及两个模型池的等待耗时，并写入中文测试报告
+- **WHEN** 在已记录的非对称模型实例组合下运行所请求增强能力
+- **THEN** 记录NPU利用率与HBM、当前服务进程allocator、RSS/PSS等可观测值及其范围，未知标明原因；加载窗口delta不能相加当逐模型独占量。记录吞吐（音频/分钟、段/秒）和两个模型池等待，不以不存在的CUDA SM指标充作NPU数据，写入中文报告
 
 ### Requirement: 规范化输出分段文本的标点
-系统 MUST 在文本规范化之后对 `/v2/seacraft_asr` 的分段文本做标点卫生处理：当一个分段的文本去除空白后只剩标点符号时，该分段 MUST 从响应中移除；当一个分段的文本首个字符是标点符号时，MUST 移除该开头标点。该规则 MUST 独立于文本规范化开关生效，即规范化关闭时同样执行。
+系统 MUST 在文本规范化之后对 `/v3/seacraft_asr` 的分段文本做标点卫生处理：当一个分段的文本去除空白后只剩标点符号时，该分段 MUST 从响应中移除；当一个分段的文本首个字符是标点符号时，MUST 移除该开头标点。该规则 MUST 独立于文本规范化开关生效，即规范化关闭时同样执行。
 
 #### Scenario: 分段只有标点
-- **当** 某个分段的文本只有标点符号（如 `。`、`！`）
-- **则** 该分段不出现在响应的 `segments` 数组中
+- **WHEN** 某个分段的文本只有标点符号（如 `。`、`！`）
+- **THEN** 该分段不出现在响应的 `segments` 数组中
 
 #### Scenario: 分段以标点开头
-- **当** 某个分段的文本以标点符号开头（如 `，就。`）
-- **则** 响应中该分段的文本不再以标点开头
+- **WHEN** 某个分段的文本以标点符号开头（如 `，就。`）
+- **THEN** 响应中该分段的文本不再以标点开头
 
 #### Scenario: 规范化关闭时规则仍生效
-- **当** 文本规范化被关闭
-- **则** 上述两条标点处理规则仍然作用于响应分段
+- **WHEN** 文本规范化被关闭
+- **THEN** 上述两条标点处理规则仍然作用于响应分段
 
 ### Requirement: 提供文本规范化开关
 系统 MUST 支持通过配置控制文本规范化的启用与行为：启用开关默认开启（`enabled` 为 true），并支持独立控制独立数字转换（`enable_standalone_number`）、数字逐位读出（`enable_0_to_9`）与语气词剔除（`remove_interjections`）。语气词剔除开关 MUST 可在配置中显式设置，默认行为 MUST 为剔除「呃」「啊」等语气词；剔除产生的标点副作用 MUST 由标点卫生规则清理。
 
 #### Scenario: 默认开启文本规范化
-- **当** 部署配置未显式覆盖文本规范化开关
-- **则** 系统对转写文本执行规范化，并按配置剔除语气词
+- **WHEN** 部署配置未显式覆盖文本规范化开关
+- **THEN** 系统对转写文本执行规范化，并按配置剔除语气词
 
 #### Scenario: 显式保留语气词
-- **当** 部署配置把语气词剔除开关设为 false
-- **则** 系统保留转写文本中的语气词
+- **WHEN** 部署配置把语气词剔除开关设为 false
+- **THEN** 系统保留转写文本中的语气词
 
 #### Scenario: 关闭文本规范化
-- **当** 部署配置关闭文本规范化
-- **则** 系统直接返回模型原始转写文本，不做数字与标点规范化
+- **WHEN** 部署配置关闭文本规范化
+- **THEN** 系统直接返回模型原始转写文本，不做数字与标点规范化
 
 #### Scenario: 规范化依赖不可用
-- **当** 文本规范化依赖缺失或初始化失败且失败策略为 `passthrough`
-- **则** 请求仍成功返回，文本保持 ASR 原始输出
+- **WHEN** 文本规范化依赖缺失或初始化失败且失败策略为 `passthrough`
+- **THEN** 请求仍成功返回，文本保持 ASR 原始输出
 
 ### Requirement: VAD worker 数量由设备数组固定决定
-系统 MUST 在启动时按 `[vad].vad_device` 数组的元素顺序预热固定数量的 FSMN-VAD worker；数组长度 MUST 等于 VAD 的有效并发数。worker MUST 按 FIFO 接收完整音频，单个 worker 同时只能处理一个完整音频，运行期间 MUST NOT 动态扩容或回收。
+系统 MUST 在启动时按 `[vad].vad_device` 数组元素顺序以 spawn 预热固定数量的 FSMN-VAD worker；数组长度决定配置容量，实际健康 worker 决定可用容量。worker MUST 按 FIFO 接收完整音频，每个 worker 同时只处理一个完整音频，运行期 MUST NOT 动态扩容或回收。合法设备为 `cpu` 与 `npu:N`，旧 `cuda:N` MUST 在就绪前给出迁移诊断，MUST NOT 隐式回退。该能力服务于现行v3，不恢复v2路由。下列历史Scenario标题保留作稳定标识，实际设备与行为以现行CPU/NPU正文为准，不恢复CUDA。
 
 #### Scenario: CPU 与 GPU 混合 VAD 配置
-- **WHEN** `[vad].vad_device = ["cpu", "cpu", "cuda:0", "cuda:0"]`
-- **THEN** 服务启动 4 个 VAD worker，其中 2 个使用 CPU、2 个使用 `cuda:0`，最多同时对 4 个完整音频执行 VAD
+- **WHEN** 宿主使用 `[vad].vad_device=["cpu","cpu","npu:7","npu:7"]`
+- **THEN** 启动四个固定worker，其中两个CPU、两个物理7号卡NPU，健康时最多同时处理四个完整音频；仅暴露物理7号卡的容器按可见映射使用逻辑 `npu:0`
 
 #### Scenario: 超过 VAD worker 数量的请求
-- **WHEN** 同时提交的完整音频数超过 `[vad].vad_device` 数组长度
-- **THEN** 超出的音频按既有准入和 FIFO 排队规则等待或返回容量错误，不创建临时 VAD worker
+- **WHEN** 同时提交的完整音频数超过健康VAD worker容量
+- **THEN** 超出部分按既有音频准入和固定池FIFO排队规则等待或返回容量错误，不创建临时worker，不改变A/B分类或名额优先级
 
 #### Scenario: VAD 数组元素无效
-- **WHEN** `[vad].vad_device` 包含空字符串、未知设备类型或格式不是 `cpu`/`cuda:N` 的元素
-- **THEN** 服务启动配置校验失败并指出具体数组下标，不以隐式 CPU 回退
+- **WHEN** `[vad].vad_device` 含空字符串、未知类型、`cuda:N` 或格式不是 `cpu`/`npu:N` 的元素
+- **THEN** 服务就绪前的配置校验失败并指出具体数组下标与迁移提示，不以隐式CPU回退
 
 ### Requirement: VAD 配置删除动态池参数
 系统 MUST 以 `[vad].vad_device` 数组作为 VAD 实例配置来源，并 MUST 不再读取或要求 `vad_pool_size`、`vad_pool_max`、`vad_queue_watermark`、`vad_collapse_timeout_s`、`vad_queue_timeout_s`、`vad_call_timeout_s`；VAD 排队由音频并发准入和固定 worker FIFO 调度承担。
@@ -310,7 +310,7 @@ Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发
 
 #### Scenario: 固定池启动失败
 - **WHEN** `[vad].vad_device` 为空或没有任何 worker 成功预热
-- **THEN** 服务启动失败并返回明确配置错误，不能以没有 VAD worker 的状态接收 v2 请求
+- **THEN** 服务启动失败并返回明确配置错误，不能以没有 VAD worker 的状态接收 v3 请求
 
 ### Requirement: 段级低能量过滤在 Qwen 请求前生效
 系统 MUST 在短段过滤之后、Qwen 请求调度之前，对每个候选 VAD 段独立执行启用的段级 decibel、SNR 和 RMS 规则；任一已启用规则判定丢弃时，该段 MUST 不发起 Qwen、CAM++ 或 emotion2vec 请求。
@@ -370,40 +370,56 @@ Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发
 - **THEN** 服务配置校验失败并指出具体参数，不静默转换为 `0`
 
 ### Requirement: 全局 FunASR 参数与段级参数职责分离
-系统 MUST 将 `vad_decibel_thres` 和 `vad_snr_thres` 继续作为传给 FunASR 的全局帧级 VAD 参数，同时使用独立的 `vad_segment_decibel_thres`、`vad_decibel_low_frame_ratio_thres`、段级 SNR 阈值和 RMS dBFS 阈值执行 VAD 后过滤；全局阈值单位不得按 dBFS 解释。
+系统 MUST 区分 `[vad]` 配置声明、nested `vad_kwargs` 传递、实际模型 `model_conf`/选项及来源、`core.vad` 段级后过滤四层证据，不凭声明或同值匹配声称覆盖构造。迁移 MUST 保留当前模型与调用方式的实际行为、兼容配置键和独立段级过滤，不修改算法/阈值，不把本轮有效值永久规定为其它模型默认；详细保留约束与后续变更边界见下列场景。
 
 #### Scenario: 全局阈值保持原有语义
-- **WHEN** `vad_decibel_thres=-100.0` 或 `vad_snr_thres=-100.0`
-- **THEN** 对应 FunASR 全局限制保持原行为；这两个值不自动关闭或替代段级过滤开关
+- **WHEN** 声明的 `vad_decibel_thres=-100.0` 或 `vad_snr_thres=-100.0` 沿既有nested位置传递，或核对到模型实际选项为-100
+- **THEN** 记录声明、转发形态与模型实际采用值及来源，不从传入或模型内-100推断段级过滤开关状态；段级仍按服务实际读取的门限、enable与既有-100禁用边界处理，不改写布尔开关或新增全局覆盖
 
 #### Scenario: 段级 decibel 使用独立门限
-- **WHEN** `vad_segment_decibel_thres=-40.0` 且段级 decibel 开关为 `true`
-- **THEN** 系统用段内帧的 dBFS 统计与 `-40.0` 比较，不把该值作为 FunASR 的 log 能量参数传入
+- **WHEN** `vad_segment_decibel_thres=-40.0` 且段级decibel开关为true、该段处于既有过滤范围
+- **THEN** 服务按段内帧dBFS与-40比较并结合低能量帧比例规则；此段级门限不被当作FunASR模型实际log能量选项，也不以模型内decibel=-100取消这条独立过滤。`vad_decibel_thres`的既有声明、nested及兼容getter仍保留，不因本场景误判为废弃键；本场景不建立global decibel到segment门限的隐式绑定
 
 #### Scenario: 段级 SNR 与 RMS 使用显式开关
-- **WHEN** `vad_snr_thres=-18.0` 或 `vad_low_volume_rms_dbfs_thres=-40.0` 且对应 enable 为 `true`
-- **THEN** 系统按现有段级 `snr_db`/`rms_dbfs` 口径执行过滤；阈值等于或低于 `-100.0` 时对应规则不丢弃段
+- **WHEN** `vad_snr_thres=-18.0` 或 `vad_low_volume_rms_dbfs_thres=-40.0` 且对应enable为true
+- **THEN** 系统按现有段级 `snr_db`/`rms_dbfs` 口径执行过滤，阈值等于或低于-100时对应规则不丢弃段；本轮服务SNR18与段级能量/RMS门限-40的实际生效层次单独记录，不能由nested SNR18未覆盖模型内-100推断其在服务中无效
+
+#### Scenario: 本轮模型实际选项与nested声明不同
+- **WHEN** 核验本轮固定FSMN权重与当前FunASR/原生构造链，nested声明为maxsingle12000、end_silence800、speech_noise0.8、decibel-40、snr18
+- **THEN** 记录原CPU实例实读及native构造链核对得到的model_conf选项分别为8000、800、0.6、-100、-100及其模型YAML来源；明确nested未覆盖这些构造选项，800同值也不单独构成覆盖证明，同时记录服务段级SNR18、独立decibel/RMS门限和开关的实际读取。不得把本轮结果写成新模型必须永久采用这些值，或冒充未执行的NPU实例选项实读
+
+#### Scenario: 后续调整模型或参数绑定
+- **WHEN** 后续更换权重/模型版本、升级FunASR、调整nested与顶层绑定或希望使声明值实际覆盖构造
+- **THEN** 作为独立行为变更先复核有效选项来源、分段与过滤参考并执行适用验收，更新相应规格与报告；本次NVIDIA到NPU迁移不借此更改算法、模型默认值、段上限或现有过滤阈值
+
+#### Scenario: 四层证据与兼容配置完整保留
+- **WHEN** 审查配置传递、模型有效选项或服务段级过滤
+- **THEN** 下列来源、兼容读取、门限和开关约束均须保持，不以重新排版删除原约束。
+
+系统 MUST 区分四层证据：`[vad]` 的配置声明、传给调用链的 nested `vad_kwargs`、模型构造后实际采用的 `model_conf`/选项及来源、服务 `core.vad` 的段级后过滤。`vad_decibel_thres`、`vad_snr_thres` 等声明 MUST 保留既有nested传递与兼容读取形态，MUST NOT 仅凭配置文字、字典中存在或同值匹配就宣称已覆盖FunASR模型的全局帧级参数。模型全局log能量/状态机选项与段级dBFS/SNR统计 MUST 分别记录单位和实际读取点，不能混称或互相替代。
+
+迁移 MUST 保留当前原模型与调用方式的实际行为，不把nested参数顺手提升为模型构造顶层覆盖，也不因未覆盖构造就删除仍承担声明、nested传递或兼容getter职责的配置键。`vad_segment_decibel_thres`有独立配置默认值，MUST NOT 假定其缺省取 `vad_decibel_thres`；`core.vad_volume`已有的low_energy门限到RMS门限的统计回退按原调用参数保留，不能误称为global decibel到segment配置的回退。段级过滤继续按 `vad_segment_decibel_thres`、低能量帧比例、服务读取的 `vad_snr_thres`、RMS dBFS及各自enable/禁用边界执行；模型内某选项为-100不证明服务后过滤已关闭。验收记录 MUST 关联模型/配置/代码版本并区分实例实读与构造链推导，不把本轮模型的实际值永久规定为其它模型的默认值。
 
 ### Requirement: 每个 VAD 段通过内存音频请求 Qwen
-系统 MUST 保持一个 VAD 段对应一个独立 Qwen request，但 MUST 直接上传该段标准化后的内存 WAV 字节；段请求 MUST NOT 依赖为 Qwen 反复创建、打开和删除临时 WAV 文件。上传字节必须保持 VAD 起止样本、16 kHz、单声道和 PCM 内容不变。
+系统 MUST 保持一个 VAD 段对应一个独立转写任务，但 MUST 直接使用该段标准化后的内存音频数据；段请求 MUST NOT 依赖为转写反复创建、打开和删除临时 WAV 文件。音频内容必须保持 VAD 起止样本、16 kHz、单声道和 PCM 内容不变。
 
 #### Scenario: 正常段请求
 - **WHEN** VAD 产出一个有效段
-- **THEN** Qwen 收到一个独立的 16 kHz 单声道 PCM WAV 请求，响应分段时间轴仍使用该 VAD 段的 `bg` 和 `ed`
+- **THEN** 转写链路收到一个独立的 16 kHz 单声道 PCM 段，响应分段时间轴仍使用该 VAD 段的 `bg` 和 `ed`
 
 #### Scenario: 多段音频
 - **WHEN** 一个完整音频包含多个 VAD 段
-- **THEN** 每个段分别向 Qwen 发起请求，不合并相邻段，段级并发仍受 `segment_concurrency` 限制
+- **THEN** 每个段建立独立逻辑转写任务，不拼接相邻段；允许经验证的微批物理执行，但各段输入、输出和时间轴独立，逻辑段并发仍受 `segment_concurrency` 限制
 
 #### Scenario: Qwen 请求失败
-- **WHEN** 内存字节请求超时、不可达或返回错误
+- **WHEN** 段转写超时、模型不可用或推理返回错误
 - **THEN** 按既有重试和错误码契约处理，不能因为取消临时 clip 清理而泄漏文件或改变其它段的结果
 
 ### Requirement: 严格清理服务自有缓存文件
 系统 MUST 登记每个请求创建的源音频临时文件、兼容路径下的段缓存和其它服务自有缓存，并 MUST 在成功、VAD 异常、裁剪异常、Qwen/本地模型失败、请求取消和超时的所有退出路径执行幂等清理；清理范围 MUST 仅限服务可识别的自有路径。
 
 #### Scenario: 请求成功完成
-- **WHEN** v2 请求成功返回或返回无有效人声
+- **WHEN** v3 请求成功返回或返回无有效人声
 - **THEN** 该请求创建的源文件、段缓存和临时 WAV 全部删除，服务自有缓存目录不留下该请求文件
 
 #### Scenario: VAD 或裁剪异常
@@ -449,64 +465,64 @@ Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发
 系统 MUST 在分段文本进入文本规范化之前检测复读（同一短语被连续重复输出的生成循环），并对命中的分段把重复部分折叠为一次出现。检测 MUST 依据两项判据：分段文本长度超过按该段语音时长估算的合理上限，且文本中存在连续重复的子串。长度合理的分段 MUST NOT 被修改。
 
 #### Scenario: 复读长串被折叠
-- **当** 一个 6 秒的分段文本为 1863 个字符的「最小S零，这个这个这个这个，……」
-- **则** 该段文本被折叠为长度正常的短文本，且以「最小S零」开头
+- **WHEN** 一个 6 秒的分段文本为 1863 个字符的「最小S零，这个这个这个这个，……」
+- **THEN** 该段文本被折叠为长度正常的短文本，且以「最小S零」开头
 
 #### Scenario: 正常长度的分段不受影响
-- **当** 一个分段文本的长度未超过该段时长对应的合理上限
-- **则** 该段文本原样保留，不做任何改写
+- **WHEN** 一个分段文本的长度未超过该段时长对应的合理上限
+- **THEN** 该段文本原样保留，不做任何改写
 
 #### Scenario: 长度正常但存在叠词的文本不受影响
-- **当** 一个分段文本为「温度载荷，温度载荷，温度载荷，」且长度未超限
-- **则** 该段文本原样保留
+- **WHEN** 一个分段文本为「温度载荷，温度载荷，温度载荷，」且长度未超限
+- **THEN** 该段文本原样保留
 
 ### Requirement: 长度异常但无复读结构时不得截断
 系统 MUST 在分段文本长度超过合理上限、但未检出连续重复结构时保留原文并记录告警，MUST NOT 以截断或截取前 N 个字符的方式修改该文本。系统 MUST NOT 对未检出复读结构的文本做任何形式的内容裁剪。
 
 #### Scenario: 超长但无复读结构的文本被保留
-- **当** 一个 5 秒的分段文本长度为 300 字符且其中不存在连续重复的子串
-- **则** 该段文本原样返回，其长度与内容均未被修改
+- **WHEN** 一个 5 秒的分段文本长度为 300 字符且其中不存在连续重复的子串
+- **THEN** 该段文本原样返回，其长度与内容均未被修改
 
 #### Scenario: 超长无复读结构时留下告警
-- **当** 出现上一场景的文本
-- **则** 服务日志中记录一条告警，包含原长度、时长上限与该段时长
+- **WHEN** 出现上一场景的文本
+- **THEN** 服务日志中记录一条告警，包含原长度、时长上限与该段时长
 
 ### Requirement: 复读判据的阈值可配置且有明确的标定依据
 系统 MUST 支持通过配置调整复读检测的阈值，至少包括：是否启用修复的开关、按语音时长估算的字符数上限系数、以及重复子串的最小单元长度与最小重复次数。默认的字符数上限系数 MUST 为 40 字符/秒，其标定依据 MUST 为真实样本统计：正常段的高分位值约 20.3 字符/秒、观测到的最高值约 26.2，而复读段为 282~313。判定为异常的最低字符数 MUST 不低于 120。
 
 #### Scenario: 默认阈值下的判定边界
-- **当** 一个 10 秒的分段文本长度为 300 字符
-- **则** 合理上限为 400 字符，该段不被判定为长度异常
+- **WHEN** 一个 10 秒的分段文本长度为 300 字符
+- **THEN** 合理上限为 400 字符，该段不被判定为长度异常
 
 #### Scenario: 关闭复读修复开关
-- **当** 配置把复读修复开关设为关闭
-- **则** 系统不做任何复读检测与折叠，分段文本原样返回
+- **WHEN** 配置把复读修复开关设为关闭
+- **THEN** 系统不做任何复读检测与折叠，分段文本原样返回
 
 #### Scenario: 调整字符数上限系数
-- **当** 运维人员把字符数上限系数从 40 调整为 60 并重启服务
-- **则** 系统按新的系数估算合理上限并据此判定长度异常
+- **WHEN** 运维人员把字符数上限系数从 40 调整为 60 并重启服务
+- **THEN** 系统按新的系数估算合理上限并据此判定长度异常
 
 ### Requirement: 复读修复独立于文本规范化开关
 系统 MUST 在文本规范化之前执行复读检测与修复，该规则 MUST 独立于文本规范化开关生效，即规范化关闭时同样执行。修复 MUST NOT 改变文本规范化与标点卫生规则的行为，两类处理 MUST NOT 互相覆盖。
 
 #### Scenario: 文本规范化关闭时仍修复复读
-- **当** 配置关闭文本规范化且某个分段为复读长串
-- **则** 该段仍被折叠为短文本
+- **WHEN** 配置关闭文本规范化且某个分段为复读长串
+- **THEN** 该段仍被折叠为短文本
 
 #### Scenario: 复读修复与标点卫生并存
-- **当** 一个分段既是复读长串又以标点开头
-- **则** 先完成复读折叠，再由标点卫生规则处理其段首标点，两条规则都生效
+- **WHEN** 一个分段既是复读长串又以标点开头
+- **THEN** 先完成复读折叠，再由标点卫生规则处理其段首标点，两条规则都生效
 
 ### Requirement: 复读修复行为可观测
 系统 MUST 在发生折叠时记录日志，日志 MUST 包含原文本长度、折叠后长度、按该段时长计算的长度上限与该段时长。系统 MUST NOT 把被折叠文本的完整内容写入日志，MUST 只记录其前缀。
 
 #### Scenario: 折叠发生时留下日志
-- **当** 某个分段被折叠
-- **则** 服务日志中出现一条包含原长度、折叠后长度、时长上限与时长的记录
+- **WHEN** 某个分段被折叠
+- **THEN** 服务日志中出现一条包含原长度、折叠后长度、时长上限与时长的记录
 
 #### Scenario: 未触发修复时不产生噪声日志
-- **当** 全部请求的分段文本均未触发复读修复
-- **则** 不产生任何复读告警日志
+- **WHEN** 全部请求的分段文本均未触发复读修复
+- **THEN** 不产生任何复读告警日志
 
 ### Requirement: 提供细小声音统计报告
 系统 MUST 为参考音频的 46 个人工标注区间输出可复核统计，至少包含每段时长、RMS dBFS、峰值 dBFS、VAD 后验分数摘要、VAD 命中状态，并同时提供未标注对照区间的分布统计。
@@ -592,26 +608,26 @@ Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发
 
 ### Requirement: 记录本地模型池排队对端到端耗时的影响
 
-系统 MUST 为 v2 请求记录 CAM++ 和 emotion2vec 的调用次数、推理耗时和模型池等待耗时，并 MUST 能在测试报告中分别比较本地模型等待、VAD、Qwen 分段处理和其它后处理阶段。
+系统 MUST 为 v3 请求记录 CAM++ 和 emotion2vec 的调用次数、推理耗时和模型池等待耗时，并 MUST 能在测试报告中分别比较本地模型等待、VAD、Qwen 分段处理和其它后处理阶段。
 
 #### Scenario: 8 路完整音频压测
-- **WHEN** 使用同一份完整音频并发提交 8 个 `showSpk=true`、`showEmotion=true` 请求
-- **THEN** 结果包含两个模型池各自的 busy/waiting、等待耗时、P50/P95、错误数和音频吞吐
+- **WHEN** 对本轮八条完整SHA256去重WAV按4B+4A执行同条件g1/g2混合批次
+- **THEN** 结果包含总/B实际活动峰值、两个模型池各自的busy/waiting与调用/跳过/失败情况、等待耗时、客户端端到端P50/P95、错误数和音频吞吐，A请求不触发未请求增强能力
 
 #### Scenario: 模型池实例比例变化
 - **WHEN** 仅改变两个设备数组的元素数量而不新增槽位配置
 - **THEN** 测试可以比较不同模型实例组合对 CAM++ 等待、emotion2vec 等待和端到端效率的影响
 
 ### Requirement: 完成固定配置的全量 WAV 质量压测
-系统 MUST 支持对目标目录递归发现的全部 WAV 执行固定配置的 `/v2/seacraft_asr` 压测，并保存每个请求的响应、错误、耗时和过滤统计。测试配置 MUST 使用 RMS `-41.0 dBFS`、低音量过滤开启、`segment_concurrency=4`、说话人与情绪均关闭、音频并发 16。
+系统 MUST 支持按显式清单对 `test/音频文件/` 的完整WAV执行 `/v3/seacraft_asr` 质量与性能验证，保存每请求响应、错误、耗时和过滤/复读统计。本轮完整批次 MUST 为八条按完整源SHA256去重的WAV、4B+4A、总8/B4、Qwen单副本、三CAM++/一emo，分别执行g1=1/1与g2=2/2对照，按完整实测和质量/资源约束选择并记录最终默认；VAD、RMS及其它阈值保持迁移前实际行为。MUST NOT 自动套用历史RMS-41、segment4/audio16或要求恢复旧v2及其45文件配对资产。历史专项与本轮清单分别记录，不将八文件结果冒称旧专项已执行。
 
 #### Scenario: 45 个 WAV 全部配对并执行
-- **WHEN** 目标目录包含 45 个 WAV 和对应的 `seaco_paraformer-<WAV 文件名>.json`
-- **THEN** 系统按同目录文件名配对并执行 45 个请求，缺失或多余配对文件时测试失败并列出清单
+- **WHEN** 准备本轮实际八条完整WAV清单，或另行提供历史45文件及其Paraformer配对参考
+- **THEN** 本轮验证先核八文件ID、路径编码、大小/完整时长/SHA256及实际配置，按固定清单完成4B+4A；历史标题保留作稳定标识，不以缺少旧45配对阻塞本轮迁移，也不称其已完成。若另行执行历史参考专项则逐一核对配对，缺失/多余明确失败，不补造旧接口或基线
 
 #### Scenario: 记录端到端分位数
-- **WHEN** 全量请求完成
-- **THEN** 报告给出成功数、失败数、超时数、端到端 P50、P95、最大值和每个文件的耗时
+- **WHEN** 完整清单请求全部完成或任一失败
+- **THEN** 报告每档成功数/8、失败/超时与原始逐文件耗时；成功完整批次按既有八路契约计算客户端端到端P50/P95和最大值、RTF及吞吐，失败批次完整保留并标记不完整，不丢失败后冒称八路成功
 
 ### Requirement: 按时间和文本证据评估低音量过滤
 系统 MUST 将 Qwen 响应段与 Paraformer 基线段按时间重叠对齐，区分基线独有、Qwen 独有和双方重叠段，并为基线独有段保留基线文本、时间、RMS、时长和上下文。系统 MUST 将“细小声音无关内容”作为候选分类结果，不得仅凭段数减少宣称准确率提升。
@@ -758,27 +774,27 @@ Qwen 适配链路的服务地址、模型名、请求并发度、总音频并发
 - **THEN** 系统完成必要的清理尝试并释放一个总音频槽位及一个增强槽位，保留原有错误或取消语义
 
 ### Requirement: 本地后端切换保持音频准入和取消契约
-系统 MUST 在切换 CAM++/emotion2vec 后端时保留既有 A/B 分类、总音频/B 音频上限、段/Qwen 并发、能力开关、错误优先级和清理规则。请求取消 MUST 在已启动的线程/设备工作、结果读取和必要清理完成后归还对应资源，MUST NOT 因 TensorRT 异步提交返回而提前释放租约。
+系统 MUST 在将CAM++/emotion2vec迁移为原生torch_npu后保留既有A/B分类、总音频/B上限、段/Qwen并发、能力开关、错误优先级和缓存清理规则。设备为NPU时实际走torch_npu，CPU时走PyTorch CPU，不以已退役TensorRT开关、engine存在或设备数组绕过功能校验。请求取消 MUST 等待已启动线程、NPU实际工作、结果读取/必要同步及清理完成后再准确归还模型实例和整音频租约；异步提交或线程返回不代表设备完成，重复取消不得遗弃收尾。下列历史Scenario标题仅为兼容的规格标识，实际WHEN/THEN均采用现行原生后端，不恢复CUDA/TensorRT执行。
 
 #### Scenario: B 上限不因后端切换而变化
-- **WHEN** 总音频上限为 8、B 上限为 4，已有 3A+4B，后端从 PyTorch 改为 TensorRT
-- **THEN** 新 B 仍返回 4017，新 A 仍可获准，模型实例容量仍由各自设备数组决定
+- **WHEN** 总音频上限8、B上限4，已有3A+4B，增强模型由CPU参考路径迁移到torch_npu
+- **THEN** 新B仍返回4017，新A仍可获准，实例容量仍由各模型设备数组和健康状态决定；总容量也满时仍按既有4013优先级返回
 
 #### Scenario: 普通转写不触发增强模型
-- **WHEN** 三个增强请求参数均为 false，模型 TensorRT 开关为 true
-- **THEN** 请求仍为 A，不因后端配置加载或调用 CAM++/emotion2vec，也不要求其 engine
+- **WHEN** `showSpk`、`showEmotion`、`showRoleIdentify`均为false，即使NPU增强设备数组非空或模型已加载
+- **THEN** 请求仍是A，不加载、租用或调用CAM++/emotion2vec，不要求任何engine；本地Qwen转写按自身契约处理
 
 #### Scenario: 启用 TensorRT 后请求关闭能力
-- **WHEN** 模型 TensorRT 开关为 true，但请求要求的功能被 features 配置关闭
-- **THEN** 仍在音频准入前按既有 4015/4016/4018 返回，不因存在 engine 而绕过校验
+- **WHEN** 请求需要的增强功能被features关闭，即使对应NPU实例曾加载或设备数组非空
+- **THEN** 仍在音频准入前按既有单项/组合4015、4016、4018错误返回，不因后端选择绕过校验或伪造标签
 
 #### Scenario: CUDA 工作尚未完成时取消
-- **WHEN** 已准入 B 请求取消，而某实例已经提交 TensorRT 工作且设备尚未完成
-- **THEN** 请求仍持有该模型及整音频租约，完成设备工作和必要清理后才归还，最终计数一致
+- **WHEN** 已准入B请求被取消或重复取消，而某NPU实例的设备工作或结果读取尚未完成
+- **THEN** 原任务继续持有该模型和整音频租约，等待实际设备工作、同步和必要清理后才归还；不提前复用可写缓冲，最终计数一致且不重复释放
 
 #### Scenario: engine 初始化失败
-- **WHEN** 已准入请求所需模型的全部 TensorRT 实例初始化失败
-- **THEN** 返回对应模型不可用 4015 或 4016，并完成请求清理和音频租约释放，不自动切为 PyTorch 或改用组合能力关闭错误
+- **WHEN** 已准入请求所需增强模型的全部实例权重加载或目标设备初始化失败
+- **THEN** 返回对应模型不可用4015或4016，完成请求清理和音频租约释放；不自动改走CPU、CUDA或组合能力关闭错误
 
 ### Requirement: 移除 v2 Qwen 路由
 服务 MUST NOT 再注册或文档化 POST /v2/seacraft_asr；客户端访问该路径 MUST 得到未找到路由的结果，v3 是本链路唯一公开版本。

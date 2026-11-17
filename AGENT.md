@@ -139,8 +139,8 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 
 | 目录                                   | 内容                                                     | 是否入库                         |
 | ------------------------------------ | ------------------------------------------------------ | ---------------------------- |
-| `openspec/specs/`                    | 7 份能力契约（系统基线）                                          | 是                            |
-| `openspec/changes/archive/`          | 18 个已归档变更，是**演进决策的唯一可信来源**                             | 是                            |
+| `openspec/specs/`                    | 9 份能力契约（系统基线）                                          | 是                            |
+| `openspec/changes/archive/`          | 19 个已归档变更，是**演进决策的唯一可信来源**                             | 是                            |
 | `docs/`                              | 压测报告、方法说明、验证结论，命名带日期                                   | 是                            |
 | `scripts/`                           | 压测 / 标定 / 导出 / 校验脚本（`bench_*`、`validate_*`、`export_*`） | 是                            |
 | `tests/`                             | pytest 单元与集成测试                                         | 是                            |
@@ -202,7 +202,7 @@ openspec/specs/<capability>/spec.md      当前系统「必须做到什么」（
 openspec/changes/archive/<change>/       历史上的每次变更（proposal / design / tasks / spec delta）
 ```
 
-已归档的 18 个 change 构成完整演进史，遇到"为什么这么设计"的问题，先查 archive，别猜。
+已归档的 19 个 change 构成完整演进史，遇到"为什么这么设计"的问题，先查 archive，别猜。
 
 **写作约定**（`openspec/config.yaml`）：
 

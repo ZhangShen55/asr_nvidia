@@ -1,24 +1,10 @@
 # local-model-runtime Specification
 
 ## Purpose
-定义 v2 链路三个本地模型（VAD、CAM++、emotion2vec）在服务进程内的承载方式与显存归属标识约定：
-三个模型由同一个服务进程承载、进程名统一为 `asr-offline-model`，运维通过 `nvidia-smi` 的进程列表
-即可定位本服务占用的显存；模型仍保持懒加载，未触发的模型不占显存。
+
+定义现行 v3 链路的模型承载与资源归属：主服务进程按需承载 CAM++、emotion2vec 和本地 Qwen，VAD 由启动时以 spawn 创建并预热的固定独立 worker 池承载并按 FIFO 调度。状态与运维观测须区分主服务和 VAD worker、配置与健康容量，以及各进程的 HBM 和主机资源口径。
 
 ## Requirements
-
-### Requirement: 本地模型由单一服务进程承载并统一命名
-系统 MUST 在同一个服务进程内承载 VAD、CAM++、emotion2vec 三个本地模型，MUST NOT 为每个模型单独拉起独立进程；
-承载本地模型的服务进程的进程名 MUST 为 `asr-offline-model`，且 MUST 通过覆写进程命令行首项的方式设置，
-使 `nvidia-smi` 的进程列表直接显示该名称。
-
-#### Scenario: 在 nvidia-smi 中定位服务显存
-- **当** 运维在 `nvidia-smi` 的 GPU 进程列表中查看
-- **则** 本服务以 `asr-offline-model` 进程名出现，其显存占用为该进程内已加载本地模型的合计占用
-
-#### Scenario: 未拆分为多个模型进程
-- **当** 服务同时加载了 VAD、CAM++ 与 emotion2vec
-- **则** 三个模型处于同一进程内，`nvidia-smi` 中不出现按模型拆分的多个进程行
 
 ### Requirement: 本地模型按需懒加载
 系统 MUST 支持本地模型的懒加载：对应功能开关关闭或请求未触发时，MUST NOT 加载或调用该模型；需要加载时，MUST 等待加载完成后才发起推理，模型加载失败 MUST NOT 导致整个服务无法启动。请求要求被关闭的能力时 MUST 在音频准入前返回明确错误，不得以空值掩盖配置关闭。
@@ -36,20 +22,18 @@
 - **THEN** 服务保持可用，该请求得到对应模型不可用错误（CAM++ 为 `4015`、emotion2vec 为 `4016`），且失败原因可被记录与查询
 
 ### Requirement: 暴露本地模型的加载状态与显存明细
-
-系统 MUST 在状态接口中暴露三个本地模型各自的加载状态与显存占用明细，使运维在 `nvidia-smi` 只能看到聚合显存的情况下仍能区分各模型的占用；对于 CAM++ 与 emotion2vec，状态 MUST 同时包含设备数组和独立模型池的容量、忙碌、等待与失败信息。
+系统 MUST 在状态接口中暴露 VAD、CAM++、emotion2vec 各自的加载状态与明确口径的 NPU HBM 占用信息，区分主服务与 VAD worker 进程；无法按模型准确归因的资源 MUST 明确标记，不得把其他进程占用算作本模型占用；对于 CAM++ 与 emotion2vec，状态 MUST 同时包含设备数组和独立模型池的容量、忙碌、等待与失败信息。
 
 #### Scenario: 查询模型状态
 - **WHEN** 运维请求 `GET /get_status`
-- **THEN** 响应中包含 VAD、CAM++、emotion2vec 三个模型的加载状态、设备、显存占用和各自模型池状态
+- **THEN** 响应中包含 VAD、CAM++、emotion2vec 三个模型的加载状态、设备、HBM 观测口径和各自模型池状态；转写模型的状态由本地推理契约另行提供
 
 #### Scenario: 模型尚未加载
-- **WHEN** 某模型尚未被任何请求触发加载
-- **THEN** 状态接口中该模型的加载状态为未加载且显存占用为 0，同时保留其配置实例数和设备数组
+- **WHEN** CAM++ 或 emotion2vec 尚未被任何请求触发加载
+- **THEN** 状态接口中该模型的加载状态为未加载且 HBM 占用为 0，同时保留其配置实例数和设备数组
 
 ### Requirement: 实例数量与显存放大的关系可控
-
-系统 MUST 保证服务实例数量与显存占用之间存在明确、可预期的关系：完整服务进程实例数量 MUST 由配置项 `instance_count` 决定；单个服务进程内 CAM++ 与 emotion2vec 的模型副本数量和并发容量 MUST 分别由各自设备数组决定，不能由 `instance_count` 或共享模型槽位隐式改变。
+系统 MUST 保证服务实例数量与 HBM 占用之间存在明确、可预期的关系：完整服务进程实例数量 MUST 由配置项 `instance_count` 决定；单个服务进程内 CAM++ 与 emotion2vec 的模型副本数量和并发容量 MUST 分别由各自设备数组决定，不能由 `instance_count` 或共享模型槽位隐式改变。
 
 #### Scenario: 默认单实例
 - **WHEN** 配置中未显式设置 `instance_count` 且两个模型设备数组各有一个元素
@@ -57,7 +41,7 @@
 
 #### Scenario: 配置多个实例
 - **WHEN** 配置中 `instance_count` 为 2 且模型设备数组保持不变
-- **THEN** 服务以 2 个进程运行，每个进程按各自设备数组加载模型，模型池比例不在进程间合并
+- **THEN** 服务以 2 个进程运行，每个进程独立建立增强模型池和 VAD worker 池，并在触发转写后各自加载 Qwen 权重；HBM 容量评估包含这些副本，模型池比例不在进程间合并
 
 ### Requirement: 本地增强模型池按设备数组建立固定实例
 系统 MUST 从 `[model_device_pool]` 的两个设备数组建立 CAM++ 与 emotion2vec 独立模型池；每个数组元素对应一个模型实例，数组长度决定配置实例数，实例在首次启用对应能力时按数组顺序加载到指定设备。
@@ -67,7 +51,7 @@
 - **THEN** 两个模型池分别最多提供 3 个和 1 个实例，不因数量不同而补齐或共享实例
 
 #### Scenario: 多卡设备数组
-- **WHEN** 同一模型数组包含多个 `cuda:N` 设备
+- **WHEN** 同一模型数组包含多个 `npu:N` 设备
 - **THEN** 每个实例加载到对应数组元素指定的设备，并在状态接口中按实例顺序展示设备
 
 ### Requirement: 模型池配置只使用新配置结构
@@ -141,3 +125,18 @@
 #### Scenario: 仅使用已开启的另一种能力
 - **WHEN** 一种增强能力关闭，另一种开启，请求只需要已开启的能力
 - **THEN** 请求按 B 类正常准入，仅加载和调用所需模型，关闭的模型不因设备配置而生效
+
+### Requirement: 主服务与固定 VAD worker 分工承载模型
+系统 MUST 在主服务进程中承载 CAM++、emotion2vec 与本地 Qwen 推理；CAM++、emotion2vec 和 Qwen 按各自能力契约懒加载。VAD MUST 保留 spawn 创建的固定独立 worker 池，启动时预热，按 FIFO 调度，设备数组长度决定 worker 数，MUST NOT 为本次迁移改为主进程内 VAD。主服务进程 MUST 命名为 `asr-offline-model`，VAD worker MUST 使用 `asr-offline-vad`；运维 MUST 能区分两类进程的资源，MUST NOT 把主服务 HBM 称为含独立 VAD worker 的全部占用。
+
+#### Scenario: 服务启动并预热 VAD
+- **WHEN** 服务按固定 VAD 设备数组启动
+- **THEN** spawn worker 完成 VAD 预热后才报告就绪，主服务不因此加载尚未请求的增强模型或 Qwen 权重
+
+#### Scenario: 查询进程资源
+- **WHEN** 运维查看 NPU 进程及服务状态
+- **THEN** 主服务与 VAD worker 可区分，资源统计覆盖各自进程，无法归因的 HBM 明确标记；查询不触发懒加载
+
+#### Scenario: 本轮宿主开发使用指定设备
+- **WHEN** 在 xjtu910b7 的 conda asr 环境开展本轮开发
+- **THEN** 使用 `/home/zhangs/conda-envs/asr/bin/python` 和宿主 `npu:7`，不调度其他卡或终止既有服务；容器内逻辑编号按实际设备映射核对，不照搬宿主卡号

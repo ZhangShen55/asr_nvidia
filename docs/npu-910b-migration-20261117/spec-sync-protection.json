@@ -1,0 +1,1632 @@
+{
+  "schema": 1,
+  "project": "/home/zhangs/asr_nvidia",
+  "change": "2026-11-17-npu-910b-local-qwen-asr",
+  "preview_root": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j",
+  "mode": "isolated_preview_only",
+  "real_main_modified": false,
+  "archive_executed": false,
+  "counts": {
+    "MODIFIED Requirements": 57,
+    "REMOVED Requirements": 11,
+    "ADDED Requirements": 27
+  },
+  "files": {
+    "container-model-packaging": {
+      "delta_path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/container-model-packaging/spec.md",
+      "delta_sha256": "53949c257015fa910dbb46244d193ab6720d9d4a49feeee4b5e5c976d604b097",
+      "target_path": "openspec/specs/container-model-packaging/spec.md",
+      "main_sha256": "fc12c94aeef3067543a3e33d50040e1fa66748a8ad569e34fb4c51f1bf009e3f",
+      "main_mode": 420,
+      "preview_sha256": "4adfcdc5df66bb44ca2fdfd12f887abd3ed6e31e9aa17822c150f52983d0e447",
+      "created": false,
+      "requirements_before": 17,
+      "requirements_after": 14,
+      "added_titles": [
+        "提供昇腾 NPU 部署镜像"
+      ],
+      "modified_titles": [
+        "随镜像交付完整模型集合",
+        "默认容器使用容器专用配置",
+        "目标环境兼容信息必须可追溯",
+        "容器默认使用镜像内模型路径",
+        "模型文件不进入版本控制",
+        "Docker 构建不依赖仓库外 PyArrow wheel",
+        "允许挂载配置但不要求挂载模型",
+        "配置通过挂载注入"
+      ],
+      "removed_titles": [
+        "TensorRT engine 使用可校验的模型资产结构",
+        "engine 和运行依赖只对需要的后端生效",
+        "提供 CUDA 12.4 TensorRT 部署镜像",
+        "CUDA 部署强制交付 fp16 engine"
+      ],
+      "untouched_requirements": [
+        {
+          "title": "使用固定模型目录结构",
+          "body_sha256": "17476144399dcddb517b8ad641104f33670b205bc03f11cf1665ba54929567a5"
+        },
+        {
+          "title": "模型目录进入 Docker 构建上下文",
+          "body_sha256": "7d8d2c1f14c4ed9ae5e1d4a6890640517b87db51a2381e39bd9291f0237e1d28"
+        },
+        {
+          "title": "镜像内置转写与规范化运行时",
+          "body_sha256": "37e59111c63878ff2ed3bc7d4d1a1168d583564e8f6899694dd3cbcb7a7b5140"
+        },
+        {
+          "title": "运行镜像只保留 Cython 产物",
+          "body_sha256": "2a460bb744a81f0cea7548072dcac55b43d9fe1ada45fc247bc019cd65fc26d5"
+        },
+        {
+          "title": "Docker 交付文件集中且构建上下文最小",
+          "body_sha256": "e13fa19c195b30fccd00a1f02f102b6b953ea8461f1222ce5b92e1b855d4239b"
+        }
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "same_scenarios_preserved": [],
+      "changed_scenarios": [
+        [
+          "随镜像交付完整模型集合",
+          "不挂载模型启动容器"
+        ],
+        [
+          "随镜像交付完整模型集合",
+          "模型目录缺失"
+        ],
+        [
+          "随镜像交付完整模型集合",
+          "已下线模型目录缺失"
+        ],
+        [
+          "默认容器使用容器专用配置",
+          "启动默认镜像"
+        ],
+        [
+          "目标环境兼容信息必须可追溯",
+          "使用当前已验证产物"
+        ],
+        [
+          "目标环境兼容信息必须可追溯",
+          "engine 与实际设备不兼容"
+        ],
+        [
+          "容器默认使用镜像内模型路径",
+          "检查默认容器配置"
+        ],
+        [
+          "模型文件不进入版本控制",
+          "放入模型后检查 Git 状态"
+        ],
+        [
+          "Docker 构建不依赖仓库外 PyArrow wheel",
+          "干净构建上下文构建镜像"
+        ],
+        [
+          "允许挂载配置但不要求挂载模型",
+          "挂载调整并发参数的配置"
+        ],
+        [
+          "配置通过挂载注入",
+          "挂载运行配置"
+        ],
+        [
+          "配置通过挂载注入",
+          "未提供挂载配置"
+        ]
+      ],
+      "new_scenarios": [],
+      "purpose_changed": true,
+      "full_new_purpose_copied": false,
+      "diff_path": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j/diffs/container-model-packaging.diff",
+      "diff_sha256": "5cde0c8d24fc022fbba7365f46d70c27005f6efdcc6c29424760e2889ee2a3f9",
+      "idempotent": true,
+      "raw_merged_sha256": "f9c0df74cf8a42702c7fa0797f85a96108ef9bd94ede3ea18914c47af18f2623",
+      "mechanical_steps_changed": 12
+    },
+    "local-model-inference-backends": {
+      "delta_path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/local-model-inference-backends/spec.md",
+      "delta_sha256": "1f3eb89158318a71ba0b19a6e1570776f5cbf6292e480a817922c04190227bd6",
+      "target_path": "openspec/specs/local-model-inference-backends/spec.md",
+      "main_sha256": "b0c7fa539004901d62af28e81991f49d34a8a2bbadc19d19b861c03e8a04c69f",
+      "main_mode": 420,
+      "preview_sha256": "c4ce9dbbdb0184359e32bafd801931d7850897ab8b1c01d54ca67c0c6e68000b",
+      "created": false,
+      "requirements_before": 10,
+      "requirements_after": 8,
+      "added_titles": [
+        "NPU 不可用算子必须以等价序列替换",
+        "后端优化须经同条件测量与业务验证"
+      ],
+      "modified_titles": [
+        "按实例设备和模型开关解析实际后端",
+        "后端选择不得改变能力开关和模型池容量",
+        "每个实例的推理资源独立且正确收尾",
+        "输入输出边界必须保持模型和业务语义",
+        "后端依赖和设备 API 必须隔离",
+        "暴露每个实例的实际后端和健康状态"
+      ],
+      "removed_titles": [
+        "TensorRT 资产失败必须显式报告",
+        "生产资格必须经过模型与同卡业务验证",
+        "CUDA Docker profile 强制使用 fp16 TensorRT",
+        "Docker profile 与通用后端开关隔离"
+      ],
+      "untouched_requirements": [],
+      "unmentioned_scenarios_preserved": [],
+      "same_scenarios_preserved": [
+        [
+          "后端选择不得改变能力开关和模型池容量",
+          "两个模型配置非对称实例"
+        ],
+        [
+          "每个实例的推理资源独立且正确收尾",
+          "取消与重复取消"
+        ],
+        [
+          "暴露每个实例的实际后端和健康状态",
+          "实例故障"
+        ]
+      ],
+      "changed_scenarios": [
+        [
+          "按实例设备和模型开关解析实际后端",
+          "CUDA 启用或关闭 TensorRT"
+        ],
+        [
+          "按实例设备和模型开关解析实际后端",
+          "NPU 忽略 TensorRT 配置"
+        ],
+        [
+          "按实例设备和模型开关解析实际后端",
+          "CPU 忽略 TensorRT 配置"
+        ],
+        [
+          "按实例设备和模型开关解析实际后端",
+          "混合设备池"
+        ],
+        [
+          "后端选择不得改变能力开关和模型池容量",
+          "功能关闭但 engine 存在"
+        ],
+        [
+          "每个实例的推理资源独立且正确收尾",
+          "同时处理不同长度输入"
+        ],
+        [
+          "每个实例的推理资源独立且正确收尾",
+          "提交返回但设备仍忙"
+        ],
+        [
+          "输入输出边界必须保持模型和业务语义",
+          "CAM++ 特征与输出"
+        ],
+        [
+          "输入输出边界必须保持模型和业务语义",
+          "emotion2vec 完整分类"
+        ],
+        [
+          "输入输出边界必须保持模型和业务语义",
+          "profile 越界"
+        ],
+        [
+          "后端依赖和设备 API 必须隔离",
+          "未安装 TensorRT"
+        ],
+        [
+          "后端依赖和设备 API 必须隔离",
+          "NPU 运行环境不可用"
+        ],
+        [
+          "暴露每个实例的实际后端和健康状态",
+          "配置精度与实际精度分开"
+        ]
+      ],
+      "new_scenarios": [],
+      "purpose_changed": true,
+      "full_new_purpose_copied": false,
+      "diff_path": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j/diffs/local-model-inference-backends.diff",
+      "diff_sha256": "229d28ffd9ec7e62431e88c35693e129072689fac29223517e8563e9fc2037be",
+      "idempotent": true,
+      "raw_merged_sha256": "c4ce9dbbdb0184359e32bafd801931d7850897ab8b1c01d54ca67c0c6e68000b",
+      "mechanical_steps_changed": 0
+    },
+    "local-model-runtime": {
+      "delta_path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/local-model-runtime/spec.md",
+      "delta_sha256": "e08209f113df7bcec33c4c0dbfbad59a4f2c0d91cbbc1f531ed3eda72072737e",
+      "target_path": "openspec/specs/local-model-runtime/spec.md",
+      "main_sha256": "a7199207bd0065bcf9e493cfbec5783c528c5687fc2e12c70851dbd5a572f768",
+      "main_mode": 420,
+      "preview_sha256": "b2aa75987ff0c50c34b11d30bf7dcffd871521b18da5372e5268d814b22d1974",
+      "created": false,
+      "requirements_before": 10,
+      "requirements_after": 10,
+      "added_titles": [
+        "主服务与固定 VAD worker 分工承载模型"
+      ],
+      "modified_titles": [
+        "暴露本地模型的加载状态与显存明细",
+        "实例数量与显存放大的关系可控",
+        "本地增强模型池按设备数组建立固定实例",
+        "模型池配置只使用新配置结构",
+        "模型池并发容量由各自设备数组决定"
+      ],
+      "removed_titles": [
+        "本地模型由单一服务进程承载并统一命名"
+      ],
+      "untouched_requirements": [
+        {
+          "title": "本地模型按需懒加载",
+          "body_sha256": "0bd6e1158d422aaaf5d766ee41dfea34efd2cbf6545cd5fd5d75cd7f4a466e9a"
+        },
+        {
+          "title": "暴露模型池配置容量与运行容量",
+          "body_sha256": "99be249e61c67649f0b4725f1ee7d33ebc45ac93fd045f464ef8b15de50a6551"
+        },
+        {
+          "title": "模型池状态区分独立容量与等待",
+          "body_sha256": "85d4077c1f69ec5a445482a360e008793b715f1cebd6855997157f35499de16f"
+        },
+        {
+          "title": "功能开关不能被设备配置或推理入口绕过",
+          "body_sha256": "d11297af37a5b06d7c4614ce11cf79a6c7c665026085dec334175da981556d41"
+        }
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "same_scenarios_preserved": [
+        [
+          "实例数量与显存放大的关系可控",
+          "默认单实例"
+        ],
+        [
+          "本地增强模型池按设备数组建立固定实例",
+          "CAM++ 与 emotion2vec 实例数量不同"
+        ],
+        [
+          "模型池配置只使用新配置结构",
+          "只存在新配置"
+        ],
+        [
+          "模型池配置只使用新配置结构",
+          "旧配置与新配置同时存在"
+        ],
+        [
+          "模型池配置只使用新配置结构",
+          "空数组禁用模型"
+        ],
+        [
+          "模型池并发容量由各自设备数组决定",
+          "两个模型配置不同数量实例"
+        ],
+        [
+          "模型池并发容量由各自设备数组决定",
+          "配置数组为空"
+        ],
+        [
+          "模型池并发容量由各自设备数组决定",
+          "部分实例加载失败"
+        ]
+      ],
+      "changed_scenarios": [
+        [
+          "暴露本地模型的加载状态与显存明细",
+          "查询模型状态"
+        ],
+        [
+          "暴露本地模型的加载状态与显存明细",
+          "模型尚未加载"
+        ],
+        [
+          "实例数量与显存放大的关系可控",
+          "配置多个实例"
+        ],
+        [
+          "本地增强模型池按设备数组建立固定实例",
+          "多卡设备数组"
+        ]
+      ],
+      "new_scenarios": [],
+      "purpose_changed": true,
+      "full_new_purpose_copied": false,
+      "diff_path": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j/diffs/local-model-runtime.diff",
+      "diff_sha256": "d22b298b40ac13aaada21e586610e1ee9e3f70bf49e601c67ecb6397a447b263",
+      "idempotent": true,
+      "raw_merged_sha256": "b2aa75987ff0c50c34b11d30bf7dcffd871521b18da5372e5268d814b22d1974",
+      "mechanical_steps_changed": 0
+    },
+    "local-qwen-asr-inference": {
+      "delta_path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/local-qwen-asr-inference/spec.md",
+      "delta_sha256": "c197ef5e29addb352e63eecda74a725eaff938cc1f24adf53b9211713b60133a",
+      "target_path": "openspec/specs/local-qwen-asr-inference/spec.md",
+      "main_sha256": null,
+      "main_mode": null,
+      "preview_sha256": "6c48ec7a41806b510b2ca82e72281ffe0b7a4c8e5794d14b06a9d335661a0cbd",
+      "created": true,
+      "requirements_before": 0,
+      "requirements_after": 8,
+      "added_titles": [
+        "从本地权重目录加载转写模型",
+        "以内存音频直接发起转写",
+        "语种参数按既有规则注入",
+        "原始输出保持既有前缀格式",
+        "本地推理受并发闸门约束",
+        "推理失败映射到既有错误码",
+        "推理模型按需加载且状态可观测",
+        "原生交付基线与性能候选分阶段验收"
+      ],
+      "modified_titles": [],
+      "removed_titles": [],
+      "untouched_requirements": [],
+      "unmentioned_scenarios_preserved": [],
+      "same_scenarios_preserved": [],
+      "changed_scenarios": [],
+      "new_scenarios": [],
+      "purpose_changed": true,
+      "full_new_purpose_copied": true,
+      "diff_path": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j/diffs/local-qwen-asr-inference.diff",
+      "diff_sha256": "f457628abfaba15ed7b3f99a28802b62a9de6062401a8fde5933c5e147622c75",
+      "idempotent": true,
+      "raw_merged_sha256": "6c48ec7a41806b510b2ca82e72281ffe0b7a4c8e5794d14b06a9d335661a0cbd",
+      "mechanical_steps_changed": 0
+    },
+    "npu-910b-runtime": {
+      "delta_path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/npu-910b-runtime/spec.md",
+      "delta_sha256": "ae9291e2ffa880be120cf0e2c1b5ac068bac3abdfca4c06c877777865a5a895e",
+      "target_path": "openspec/specs/npu-910b-runtime/spec.md",
+      "main_sha256": null,
+      "main_mode": null,
+      "preview_sha256": "5e82e77ee5c0e72bdad40f59574048c92315133ebd21c0be7cf9afc631dd822a",
+      "created": true,
+      "requirements_before": 0,
+      "requirements_after": 9,
+      "added_titles": [
+        "固定 NPU 依赖栈版本矩阵",
+        "运行时必须使用虚拟环境自带解释器",
+        "补齐 CANN 编译器依赖模块",
+        "容器必须正确绑定 NPU 设备",
+        "容器内设备编号按可见设备重新映射",
+        "推理输入必须显式对齐模型精度",
+        "观测 NPU 资源占用口径",
+        "验证等级与依赖交付证据可区分",
+        "本轮开发使用指定物理设备与解释器"
+      ],
+      "modified_titles": [],
+      "removed_titles": [],
+      "untouched_requirements": [],
+      "unmentioned_scenarios_preserved": [],
+      "same_scenarios_preserved": [],
+      "changed_scenarios": [],
+      "new_scenarios": [],
+      "purpose_changed": true,
+      "full_new_purpose_copied": true,
+      "diff_path": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j/diffs/npu-910b-runtime.diff",
+      "diff_sha256": "fbadfbcabf4d7b0a11d151e353eeab5ca060aa0a45bf6787c9273cc16fef81a3",
+      "idempotent": true,
+      "raw_merged_sha256": "5e82e77ee5c0e72bdad40f59574048c92315133ebd21c0be7cf9afc631dd822a",
+      "mechanical_steps_changed": 0
+    },
+    "offline-asr-service": {
+      "delta_path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/offline-asr-service/spec.md",
+      "delta_sha256": "f3cdb2fabd15eec1c871a8e60e54d232f350dcdbc5fb5df06f871dd5e18884b6",
+      "target_path": "openspec/specs/offline-asr-service/spec.md",
+      "main_sha256": "1183166d6576c3f1c95e6ac4e9d0678ac425648fb279d4337873a61860da4514",
+      "main_mode": 420,
+      "preview_sha256": "80740078077529e23da948cd23cac1a00a939660dc960b83f3ec1d53e88f9f36",
+      "created": false,
+      "requirements_before": 3,
+      "requirements_after": 5,
+      "added_titles": [
+        "NPU 迁移保持 v3 接口序列化与计时契约",
+        "批执行保持独立段的业务归属"
+      ],
+      "modified_titles": [],
+      "removed_titles": [],
+      "untouched_requirements": [
+        {
+          "title": "保留最小业务接口集",
+          "body_sha256": "eefbbe5f4338228dadf679029d3d0690ed0a4750e105315106a75296d2d2d0c5"
+        },
+        {
+          "title": "移除低频能力依赖",
+          "body_sha256": "32567d3ce5875b405d57be62359f94c059d5a99244aef95702cd108f14b417bc"
+        },
+        {
+          "title": "语速统计覆盖非 ASCII 文本",
+          "body_sha256": "45ccb71d3da9c6290082ff3abe5c934c656da26c93576a07ee9e59bbacd95d32"
+        }
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "same_scenarios_preserved": [],
+      "changed_scenarios": [],
+      "new_scenarios": [],
+      "purpose_changed": false,
+      "full_new_purpose_copied": false,
+      "diff_path": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j/diffs/offline-asr-service.diff",
+      "diff_sha256": "86c5d7fed815a8d2cb0390c7a6bc19a655db4a94199c0d5a09a07321a7c41786",
+      "idempotent": true,
+      "raw_merged_sha256": "94708d9770e04f0d009470ae85e076f68098746f78caca7637dc7ba6d3ae7c3a",
+      "mechanical_steps_changed": 4
+    },
+    "qwen-asr-v2-adapter": {
+      "delta_path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/qwen-asr-v2-adapter/spec.md",
+      "delta_sha256": "ffdf62f1b14da23c38591bf618e54452496372bb9ae85e548e27d578e5e4e1d4",
+      "target_path": "openspec/specs/qwen-asr-v2-adapter/spec.md",
+      "main_sha256": "ce505adddd055161cc02da091c4319b93ddeaaaef0af6136be60d1b5a4d9ed98",
+      "main_mode": 420,
+      "preview_sha256": "8711d13837d1422bee081366468cfa5a0e06c049c22aa991c98ab26d6deeb606",
+      "created": false,
+      "requirements_before": 49,
+      "requirements_after": 49,
+      "added_titles": [],
+      "modified_titles": [
+        "自动发现 Qwen 服务模型",
+        "解析 Qwen 转写结果",
+        "按规则透传语言参数",
+        "限制对 Qwen 服务的并发请求数",
+        "通过配置外置运行参数",
+        "配置 v2 链路模型的落卡",
+        "每个 VAD 段通过内存音频请求 Qwen",
+        "VAD worker 数量由设备数组固定决定",
+        "本地后端切换保持音频准入和取消契约",
+        "全局 FunASR 参数与段级参数职责分离",
+        "提供 Qwen 版转写接口",
+        "返回语种占比字典",
+        "保留扩展字段",
+        "规范化输出分段文本的标点",
+        "VAD 配置删除动态池参数",
+        "严格清理服务自有缓存文件",
+        "记录本地模型池排队对端到端耗时的影响",
+        "以 VAD 段作为转写与时间轴单元",
+        "异步并行计算真实角色与情绪",
+        "验证效果与性能边界",
+        "验证角色与情绪的效果与性能",
+        "完成固定配置的全量 WAV 质量压测"
+      ],
+      "removed_titles": [],
+      "untouched_requirements": [
+        {
+          "title": "限制同时处理的音频数量",
+          "body_sha256": "b1fe3a7c37b4abdc6b8322481cb7ea54aae583e2028548c56bfd2306c99da24c"
+        },
+        {
+          "title": "提供文本规范化开关",
+          "body_sha256": "96f3ee7773af224b2a1af21557ee343fb061d64603a3c08d8d052a4255415cd8"
+        },
+        {
+          "title": "段级低能量过滤在 Qwen 请求前生效",
+          "body_sha256": "7b7cb890bb43680d90d6ba5babb861e1d547fe71eb184d67d6258bcd0cdaf287"
+        },
+        {
+          "title": "段级 decibel 抽帧比例可控且统计口径稳定",
+          "body_sha256": "9d41674506991d91516d5a9f390284f8d55fe4f72837b336939bf8460e0603ed"
+        },
+        {
+          "title": "段级过滤时间范围按完整音频边界控制",
+          "body_sha256": "1b72b3f0bb030cd72bf1d0be783dca9fe99a5f53cd057ece6060fce0676f0668"
+        },
+        {
+          "title": "显示每个音频的有效段处理进度",
+          "body_sha256": "9f5afc4ec7e71c04246ef88e889419f00a979435ab9adeccca38e920ba616c16"
+        },
+        {
+          "title": "检测并修复复读分段文本",
+          "body_sha256": "07ca3a96e516dbc947a14721c0d5261f0eadd17df01c87da54f5e3efa8e1202b"
+        },
+        {
+          "title": "长度异常但无复读结构时不得截断",
+          "body_sha256": "ea9ad65602427437a97d59e588ccaa1cad4fbd5f6fa0dd9b74369444683f241d"
+        },
+        {
+          "title": "复读判据的阈值可配置且有明确的标定依据",
+          "body_sha256": "9129e37c93c3e28b4e94a47f23d53eb877da00a24ec79ebfb7e21ba11255dc10"
+        },
+        {
+          "title": "复读修复独立于文本规范化开关",
+          "body_sha256": "e2f898372cd10e09c496255df5f41df3224389d63320579427cf2cab883c5204"
+        },
+        {
+          "title": "复读修复行为可观测",
+          "body_sha256": "d2e8db4c687a5853efbfe2493eeee8c75f199201775e703e2cea77ae769d0a0c"
+        },
+        {
+          "title": "提供细小声音统计报告",
+          "body_sha256": "3ff1bf86fbbeb2e930fe0f09647c74eb3d5cb66e1a5106fe9bbe841252a42013"
+        },
+        {
+          "title": "配置低音量过滤参数",
+          "body_sha256": "de42b2272829e8b134cfd8e58f3b3d9b491b93908d11fd78b5c8a89a687c0f09"
+        },
+        {
+          "title": "自动搜索可行低音量阈值",
+          "body_sha256": "907c647f695a5d87aae0bca96b597b6e6391cc43a0ab0820e17e6a56bbaa3d33"
+        },
+        {
+          "title": "低音量段不得发送给 Qwen",
+          "body_sha256": "335022cc4088103292e0bab94b682939b58aa5406a111f81ffe70310e0e32cfb"
+        },
+        {
+          "title": "验证细小声音区间内无识别内容",
+          "body_sha256": "598b097dc66b44cf693615208cb41f21fa5daf773d02ba181ea867f1af6017cf"
+        },
+        {
+          "title": "参考音频验收必须区分帧和段",
+          "body_sha256": "8a6c7512b65eb6c7733df35e992ecde45f8466bd6d7d287e21e841e90967eb77"
+        },
+        {
+          "title": "v2 本地增强能力按模型池独立排队",
+          "body_sha256": "b4470a810d17712bd466b0739aaee5fcdb177b6229df5f924099afe1a1c70114"
+        },
+        {
+          "title": "按时间和文本证据评估低音量过滤",
+          "body_sha256": "c6b8342f910b41f9481b9aee95bb2f94956514b0448b51e5bfe2f473eafa5a57"
+        },
+        {
+          "title": "审计复读后处理并识别漏网模式",
+          "body_sha256": "91504be4e7e955b8ec66ed0907fa438496fb66c5e45647a747fca76faba803d2"
+        },
+        {
+          "title": "形成可归档报告和后续优化决策",
+          "body_sha256": "376328c95b687ba461815544897815828fc44aac2c2c83e477fdecbd3e7687cd"
+        },
+        {
+          "title": "按请求的增强能力分类音频",
+          "body_sha256": "d85a833774e6c439cae873d3887c50409a0ee7e347e8512d6bb72b7facaeeb30"
+        },
+        {
+          "title": "增强音频容量是总容量的子集",
+          "body_sha256": "91c9d5ee4631af456e4df7332ca5187d9df8859534fea5060ca43befada9c4dd"
+        },
+        {
+          "title": "关闭能力在准入之前拒绝",
+          "body_sha256": "c2eed0c5ea0b32eca510a15c83a1720beea749b12b9a0ef616750efe0fe2a379"
+        },
+        {
+          "title": "等待队列按可用容量调度",
+          "body_sha256": "08c7fd558689a06d7ab5bd43e86e2567b45039bf03319e2d6c13f458a56b7397"
+        },
+        {
+          "title": "取消和并发竞争不泄漏名额",
+          "body_sha256": "a55ad14d048bdfed1d133dee2c11744bbaac6d064f98cd2f043a8021217c32c2"
+        },
+        {
+          "title": "移除 v2 Qwen 路由",
+          "body_sha256": "c2dba342fbe96390a9385eec082080b761b275130ce375cc268b32b04a23a0c1"
+        }
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "same_scenarios_preserved": [
+        [
+          "通过配置外置运行参数",
+          "VAD 旧配置不作为回退"
+        ],
+        [
+          "配置 v2 链路模型的落卡",
+          "配置缺省"
+        ],
+        [
+          "配置 v2 链路模型的落卡",
+          "旧单设备字段残留"
+        ],
+        [
+          "提供 Qwen 版转写接口",
+          "未提交可选参数"
+        ],
+        [
+          "保留扩展字段",
+          "返回扩展字段"
+        ],
+        [
+          "保留扩展字段",
+          "未开启说话人与情绪能力"
+        ],
+        [
+          "VAD 配置删除动态池参数",
+          "旧动态池字段残留"
+        ],
+        [
+          "严格清理服务自有缓存文件",
+          "VAD 或裁剪异常"
+        ],
+        [
+          "严格清理服务自有缓存文件",
+          "Qwen 或本地模型失败"
+        ],
+        [
+          "严格清理服务自有缓存文件",
+          "客户端取消或服务超时"
+        ],
+        [
+          "严格清理服务自有缓存文件",
+          "并发同名上传"
+        ],
+        [
+          "严格清理服务自有缓存文件",
+          "服务重启后存在残留"
+        ],
+        [
+          "记录本地模型池排队对端到端耗时的影响",
+          "模型池实例比例变化"
+        ],
+        [
+          "异步并行计算真实角色与情绪",
+          "开启角色与情绪能力"
+        ],
+        [
+          "异步并行计算真实角色与情绪",
+          "角色与情绪能力未开启"
+        ],
+        [
+          "异步并行计算真实角色与情绪",
+          "配置未开启说话人能力"
+        ],
+        [
+          "异步并行计算真实角色与情绪",
+          "配置未开启情绪能力"
+        ],
+        [
+          "异步并行计算真实角色与情绪",
+          "配置未同时开启说话人与情绪能力"
+        ],
+        [
+          "异步并行计算真实角色与情绪",
+          "角色或情绪推断失败"
+        ],
+        [
+          "验证角色与情绪的效果与性能",
+          "并行开销可接受"
+        ],
+        [
+          "验证角色与情绪的效果与性能",
+          "开启增强能力不破坏分段结构"
+        ]
+      ],
+      "changed_scenarios": [
+        [
+          "自动发现 Qwen 服务模型",
+          "未配置模型名"
+        ],
+        [
+          "自动发现 Qwen 服务模型",
+          "显式配置模型名"
+        ],
+        [
+          "自动发现 Qwen 服务模型",
+          "模型发现失败"
+        ],
+        [
+          "解析 Qwen 转写结果",
+          "返回带语种前缀的文本"
+        ],
+        [
+          "解析 Qwen 转写结果",
+          "段内无有效语音"
+        ],
+        [
+          "解析 Qwen 转写结果",
+          "服务返回多段拼接文本"
+        ],
+        [
+          "解析 Qwen 转写结果",
+          "Qwen 服务调用失败"
+        ],
+        [
+          "按规则透传语言参数",
+          "未提交语言参数"
+        ],
+        [
+          "按规则透传语言参数",
+          "提交具体语种"
+        ],
+        [
+          "按规则透传语言参数",
+          "Qwen 服务不支持该语种"
+        ],
+        [
+          "限制对 Qwen 服务的并发请求数",
+          "单个音频产生大量分段"
+        ],
+        [
+          "限制对 Qwen 服务的并发请求数",
+          "多个音频同时处理"
+        ],
+        [
+          "通过配置外置运行参数",
+          "修改并发参数后重启生效"
+        ],
+        [
+          "通过配置外置运行参数",
+          "配置缺省时使用默认值"
+        ],
+        [
+          "配置 v2 链路模型的落卡",
+          "修改落卡配置"
+        ],
+        [
+          "每个 VAD 段通过内存音频请求 Qwen",
+          "正常段请求"
+        ],
+        [
+          "每个 VAD 段通过内存音频请求 Qwen",
+          "多段音频"
+        ],
+        [
+          "每个 VAD 段通过内存音频请求 Qwen",
+          "Qwen 请求失败"
+        ],
+        [
+          "VAD worker 数量由设备数组固定决定",
+          "CPU 与 GPU 混合 VAD 配置"
+        ],
+        [
+          "VAD worker 数量由设备数组固定决定",
+          "超过 VAD worker 数量的请求"
+        ],
+        [
+          "VAD worker 数量由设备数组固定决定",
+          "VAD 数组元素无效"
+        ],
+        [
+          "本地后端切换保持音频准入和取消契约",
+          "B 上限不因后端切换而变化"
+        ],
+        [
+          "本地后端切换保持音频准入和取消契约",
+          "普通转写不触发增强模型"
+        ],
+        [
+          "本地后端切换保持音频准入和取消契约",
+          "启用 TensorRT 后请求关闭能力"
+        ],
+        [
+          "本地后端切换保持音频准入和取消契约",
+          "CUDA 工作尚未完成时取消"
+        ],
+        [
+          "本地后端切换保持音频准入和取消契约",
+          "engine 初始化失败"
+        ],
+        [
+          "全局 FunASR 参数与段级参数职责分离",
+          "全局阈值保持原有语义"
+        ],
+        [
+          "全局 FunASR 参数与段级参数职责分离",
+          "段级 decibel 使用独立门限"
+        ],
+        [
+          "全局 FunASR 参数与段级参数职责分离",
+          "段级 SNR 与 RMS 使用显式开关"
+        ],
+        [
+          "提供 Qwen 版转写接口",
+          "提交音频到 v2 接口"
+        ],
+        [
+          "提供 Qwen 版转写接口",
+          "v1.1.8 行为保持不变"
+        ],
+        [
+          "返回语种占比字典",
+          "单语种音频"
+        ],
+        [
+          "返回语种占比字典",
+          "中英混合音频"
+        ],
+        [
+          "返回语种占比字典",
+          "无法映射的语种"
+        ],
+        [
+          "返回语种占比字典",
+          "无有效文本"
+        ],
+        [
+          "规范化输出分段文本的标点",
+          "分段只有标点"
+        ],
+        [
+          "规范化输出分段文本的标点",
+          "分段以标点开头"
+        ],
+        [
+          "规范化输出分段文本的标点",
+          "规范化关闭时规则仍生效"
+        ],
+        [
+          "VAD 配置删除动态池参数",
+          "固定池启动失败"
+        ],
+        [
+          "严格清理服务自有缓存文件",
+          "请求成功完成"
+        ],
+        [
+          "记录本地模型池排队对端到端耗时的影响",
+          "8 路完整音频压测"
+        ],
+        [
+          "以 VAD 段作为转写与时间轴单元",
+          "音频被切分为多段"
+        ],
+        [
+          "以 VAD 段作为转写与时间轴单元",
+          "音频无人声"
+        ],
+        [
+          "以 VAD 段作为转写与时间轴单元",
+          "过滤过短语音段"
+        ],
+        [
+          "异步并行计算真实角色与情绪",
+          "情绪模型精度"
+        ],
+        [
+          "异步并行计算真实角色与情绪",
+          "情绪 TensorRT 精度"
+        ],
+        [
+          "异步并行计算真实角色与情绪",
+          "两个模型使用不同后端"
+        ],
+        [
+          "验证效果与性能边界",
+          "完成并发压测"
+        ],
+        [
+          "验证效果与性能边界",
+          "产出测试报告"
+        ],
+        [
+          "验证角色与情绪的效果与性能",
+          "角色与情绪效果比对"
+        ],
+        [
+          "验证角色与情绪的效果与性能",
+          "8 路非对称模型池压测"
+        ],
+        [
+          "验证角色与情绪的效果与性能",
+          "显存与吞吐可记录"
+        ],
+        [
+          "完成固定配置的全量 WAV 质量压测",
+          "45 个 WAV 全部配对并执行"
+        ],
+        [
+          "完成固定配置的全量 WAV 质量压测",
+          "记录端到端分位数"
+        ]
+      ],
+      "new_scenarios": [
+        [
+          "全局 FunASR 参数与段级参数职责分离",
+          "四层证据与兼容配置完整保留"
+        ],
+        [
+          "全局 FunASR 参数与段级参数职责分离",
+          "后续调整模型或参数绑定"
+        ],
+        [
+          "全局 FunASR 参数与段级参数职责分离",
+          "本轮模型实际选项与nested声明不同"
+        ]
+      ],
+      "purpose_changed": true,
+      "full_new_purpose_copied": false,
+      "diff_path": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j/diffs/qwen-asr-v2-adapter.diff",
+      "diff_sha256": "785d031e499236c4a074c4c04d2825a7f9aeb496fec187226c58c2568786c392",
+      "idempotent": true,
+      "raw_merged_sha256": "b9f4a83cae6e05b02ed177509a0531e23646dcca3ec2654af64be9e016cb19a7",
+      "mechanical_steps_changed": 32
+    },
+    "resource-pressure-diagnostics": {
+      "delta_path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/resource-pressure-diagnostics/spec.md",
+      "delta_sha256": "27c060048abf7ce2fa23f55cd6c5872b29840f915235a25341d3ce88ea3674c1",
+      "target_path": "openspec/specs/resource-pressure-diagnostics/spec.md",
+      "main_sha256": "8bab458fbd88b6a876cb60f174cef25bb8d71ba8a9f6d1dac01454e1db28ef22",
+      "main_mode": 420,
+      "preview_sha256": "7f8be35e0d086530c2dbabdb1dfeb3e090fe14bc42d9f391908888c50b9676cb",
+      "created": false,
+      "requirements_before": 6,
+      "requirements_after": 8,
+      "added_titles": [
+        "转写推理资源必须纳入诊断归因",
+        "共享设备与异步执行的诊断边界明确"
+      ],
+      "modified_titles": [
+        "采集统一资源快照",
+        "执行资源安全闸门",
+        "输出资源压力归因报告",
+        "测试结束后验证回收"
+      ],
+      "removed_titles": [],
+      "untouched_requirements": [
+        {
+          "title": "按阶段受控升压",
+          "body_sha256": "d804d4a906ba9ea857a39dc855a8f72ddf972a95155740f04e813dd03877db54"
+        },
+        {
+          "title": "保留请求和模型池关联指标",
+          "body_sha256": "66dddf6625c83cc98d1088a22ae3ef3684d93b42fa2c084ba6dea5148dd42499"
+        }
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "same_scenarios_preserved": [
+        [
+          "采集统一资源快照",
+          "区分模型与请求资源"
+        ],
+        [
+          "执行资源安全闸门",
+          "Swap 或内存压力终止"
+        ],
+        [
+          "输出资源压力归因报告",
+          "模型常驻内存过高"
+        ],
+        [
+          "输出资源压力归因报告",
+          "并发缓冲或释放异常"
+        ],
+        [
+          "测试结束后验证回收",
+          "正常阶段结束"
+        ],
+        [
+          "测试结束后验证回收",
+          "异常阶段终止"
+        ]
+      ],
+      "changed_scenarios": [
+        [
+          "采集统一资源快照",
+          "采集运行中快照"
+        ],
+        [
+          "执行资源安全闸门",
+          "GPU 或进程异常终止"
+        ],
+        [
+          "输出资源压力归因报告",
+          "GPU 算力争用"
+        ]
+      ],
+      "new_scenarios": [
+        [
+          "测试结束后验证回收",
+          "关闭流程自身被重复取消"
+        ],
+        [
+          "测试结束后验证回收",
+          "测试批次完成后释放接口"
+        ],
+        [
+          "测试结束后验证回收",
+          "测试服务关闭失败"
+        ]
+      ],
+      "purpose_changed": false,
+      "full_new_purpose_copied": false,
+      "diff_path": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j/diffs/resource-pressure-diagnostics.diff",
+      "diff_sha256": "46fcce44d7ec03803283f4da74594dc970deb4c25bd32fcfc0adf3d69c799d44",
+      "idempotent": true,
+      "raw_merged_sha256": "7f8be35e0d086530c2dbabdb1dfeb3e090fe14bc42d9f391908888c50b9676cb",
+      "mechanical_steps_changed": 0
+    },
+    "service-operations": {
+      "delta_path": "openspec/changes/2026-11-17-npu-910b-local-qwen-asr/specs/service-operations/spec.md",
+      "delta_sha256": "0335139fd794b92f21d1740c07d1bceba75215f3658432e7b092190fc656873c",
+      "target_path": "openspec/specs/service-operations/spec.md",
+      "main_sha256": "663931894718cc4197e2fe652e0b00a66fa0b60bdcc7c1f492d1950380d480d3",
+      "main_mode": 420,
+      "preview_sha256": "20bcfb297565554c98e696a9c75d5df92159eba7f1dc8356485f419a2cbde64d",
+      "created": false,
+      "requirements_before": 23,
+      "requirements_after": 23,
+      "added_titles": [
+        "性能报告保留业务计时字段并区分内部测量",
+        "交付文件准备与部署执行分阶段跟踪"
+      ],
+      "modified_titles": [
+        "明确实例设备与 TensorRT 配置的优先级",
+        "运维状态必须区分配置值和实际后端",
+        "后端文档和性能报告必须反映实际配置",
+        "提供可复现的 v3 Docker 部署入口",
+        "镜像标签符合 v3 时间格式",
+        "启动前校验部署前置条件",
+        "配置挂载和镜像模型路径可观测",
+        "启动时固定预热 VAD 实例",
+        "支持安全的测试收尾",
+        "八路完整音频报告必须提供可复算的 P50 和 P95",
+        "默认配置体现有效并发来源",
+        "分类准入记录有界且可区分错误原因"
+      ],
+      "removed_titles": [
+        "四个 TensorRT 参数使用正式模型池配置表",
+        "配置类型和精度必须严格校验"
+      ],
+      "untouched_requirements": [
+        {
+          "title": "限制服务日志的保留规模",
+          "body_sha256": "d631ec0a758840d298986394bc095fa18f0e10ce47043d9c71af84c2cf5e4f2e"
+        },
+        {
+          "title": "提供稳定的状态查询契约",
+          "body_sha256": "31d0836bbb96e27ad29cb355d5cea43ce6f01c6b0f740d82c3c5325a14696515"
+        },
+        {
+          "title": "明确实例数量的语义",
+          "body_sha256": "8741a4eddd471ce570cbacf96e2cc8a006c8f370f8ad0cdee5258f070164d26c"
+        },
+        {
+          "title": "维护配置项清单",
+          "body_sha256": "49db8e8f0ec9323f0c50488e42ebb8d6fdfd74c0811b717c7a82f5da08293317"
+        },
+        {
+          "title": "降低控制台 HTTP 访问日志噪声",
+          "body_sha256": "3eaf4ddeaed9fbc2bf8bb3bd6bdf5dfc3bbe2c3def69606b450708e88392c799"
+        },
+        {
+          "title": "暴露资源诊断状态",
+          "body_sha256": "02838c849a74268ceb9ab7df8900d78075a89c388e4ea40e2d59fcedec5e789d"
+        },
+        {
+          "title": "增强音频并发配置具有确定默认值",
+          "body_sha256": "d97bed3ec30b06e853d824261c82c6bb7a285fe185c858ff657336a983fd0eab"
+        },
+        {
+          "title": "暴露音频分类准入状态",
+          "body_sha256": "5e5284f97f1b7039fdf7bc9cdab459b8e7eaf0a3f27309ed632d48b99031dcae"
+        },
+        {
+          "title": "文档明确分类限制与能力错误",
+          "body_sha256": "ae7361fdcc08dc6eb40dd3c7e56e3a5dba6740ce0b3c7c068a37032344157755"
+        }
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "same_scenarios_preserved": [
+        [
+          "运维状态必须区分配置值和实际后端",
+          "区分整音频等待和模型池等待"
+        ],
+        [
+          "镜像标签符合 v3 时间格式",
+          "构建并启动时间标签镜像"
+        ],
+        [
+          "镜像标签符合 v3 时间格式",
+          "标签格式错误"
+        ],
+        [
+          "默认配置体现有效并发来源",
+          "功能关闭时模型池不生效"
+        ],
+        [
+          "分类准入记录有界且可区分错误原因",
+          "区分两个满额错误"
+        ],
+        [
+          "分类准入记录有界且可区分错误原因",
+          "同码不同拒绝原因"
+        ],
+        [
+          "分类准入记录有界且可区分错误原因",
+          "组合关闭错误和提前返回"
+        ],
+        [
+          "分类准入记录有界且可区分错误原因",
+          "等待和处理取消"
+        ],
+        [
+          "分类准入记录有界且可区分错误原因",
+          "长期运行的遥测存储"
+        ]
+      ],
+      "changed_scenarios": [
+        [
+          "明确实例设备与 TensorRT 配置的优先级",
+          "NPU 配置同时打开开关"
+        ],
+        [
+          "明确实例设备与 TensorRT 配置的优先级",
+          "重复 CUDA 设备"
+        ],
+        [
+          "明确实例设备与 TensorRT 配置的优先级",
+          "功能关闭时的配置保留"
+        ],
+        [
+          "运维状态必须区分配置值和实际后端",
+          "查看 CUDA TensorRT 实例"
+        ],
+        [
+          "运维状态必须区分配置值和实际后端",
+          "查看未生效的 TensorRT 配置"
+        ],
+        [
+          "运维状态必须区分配置值和实际后端",
+          "后端与资产失败"
+        ],
+        [
+          "后端文档和性能报告必须反映实际配置",
+          "默认 B 上限的性能报告"
+        ],
+        [
+          "后端文档和性能报告必须反映实际配置",
+          "非 PyTorch 分配内存"
+        ],
+        [
+          "提供可复现的 v3 Docker 部署入口",
+          "查看部署目录"
+        ],
+        [
+          "提供可复现的 v3 Docker 部署入口",
+          "compose 启动服务"
+        ],
+        [
+          "启动前校验部署前置条件",
+          "GPU 或资产不可用"
+        ],
+        [
+          "启动前校验部署前置条件",
+          "前置条件通过"
+        ],
+        [
+          "配置挂载和镜像模型路径可观测",
+          "挂载自定义配置"
+        ],
+        [
+          "启动时固定预热 VAD 实例",
+          "默认混合设备配置"
+        ],
+        [
+          "启动时固定预热 VAD 实例",
+          "启动时设备不可用"
+        ],
+        [
+          "支持安全的测试收尾",
+          "收到测试终止信号"
+        ],
+        [
+          "支持安全的测试收尾",
+          "Qwen 服务保持运行"
+        ],
+        [
+          "八路完整音频报告必须提供可复算的 P50 和 P95",
+          "八个成功完整请求的分位数"
+        ],
+        [
+          "八路完整音频报告必须提供可复算的 P50 和 P95",
+          "测量清单与复算证据"
+        ],
+        [
+          "八路完整音频报告必须提供可复算的 P50 和 P95",
+          "八路批次存在失败或拒绝"
+        ],
+        [
+          "默认配置体现有效并发来源",
+          "检查默认配置"
+        ]
+      ],
+      "new_scenarios": [],
+      "purpose_changed": false,
+      "full_new_purpose_copied": false,
+      "diff_path": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j/diffs/service-operations.diff",
+      "diff_sha256": "2c90720fe39ac82a9a1ea0b01c23c4ffdad974bb959be397df0edeb0dc2f6a35",
+      "idempotent": true,
+      "raw_merged_sha256": "702aa241b1697f8bdbfd661efa7cd7e376cc8d541793187b4ff4f38d61c45bba",
+      "mechanical_steps_changed": 14
+    }
+  },
+  "checks": {
+    "input_copy_sha_matches": true,
+    "duplicate_requirement_titles_absent": true,
+    "all_11_removed_blocks_absent": true,
+    "all_27_added_blocks_present": true,
+    "all_57_modified_blocks_present": true,
+    "raw_merge_unmentioned_requirement_bodies_identical_except_boundary_blank_lines": true,
+    "final_unmentioned_requirement_bodies_identical_after_documented_step_marker_mapping": true,
+    "raw_merge_unmentioned_and_same_scenarios_identical_except_boundary_blank_lines": true,
+    "final_preserved_scenarios_identical_after_documented_step_marker_mapping": true,
+    "old_scenario_order_preserved": true,
+    "three_unaffected_purposes_identical": true,
+    "two_new_purposes_complete_and_copied": true,
+    "second_sync_byte_identical": true,
+    "no_delta_markers_in_main": true
+  },
+  "purpose_overrides": {
+    "container-model-packaging": "定义离线 ASR 的昇腾模型与运行环境交付方式：VAD、CAM++ 和 emotion2vec 三个小模型随镜像内置，Qwen 原始 HF 权重通过独立只读挂载提供，运行参数可通过配置文件覆盖。交付材料须明确目标依赖、解释器和模型资产边界，并区分文件准备与实际镜像构建、启动和上线验收。",
+    "local-model-inference-backends": "定义 CAM++ 和 emotion2vec 按各模型池实例的配置设备选择 PyTorch CPU 或 torch_npu 的行为契约，保持既有能力开关、固定容量、独立排队和业务输入输出语义，并使实际后端、实际精度、健康状态与资源生命周期可验证、可追溯。",
+    "local-model-runtime": "定义现行 v3 链路的模型承载与资源归属：主服务进程按需承载 CAM++、emotion2vec 和本地 Qwen，VAD 由启动时以 spawn 创建并预热的固定独立 worker 池承载并按 FIFO 调度。状态与运维观测须区分主服务和 VAD worker、配置与健康容量，以及各进程的 HBM 和主机资源口径。",
+    "qwen-asr-v2-adapter": "定义现行 `/v3/seacraft_asr` 中基于 Qwen3-ASR 的离线转写链路：本地 VAD 切分及时间轴映射、独立内存音频段的本地推理、语种与原始输出解析、并发排队和整音频准入、既有响应封装，以及说话人角色与情绪计算。能力名称保留历史 v2 标识，不恢复已下线的 v2 或 v1.1.8 路由；迁移保持既有错误、取消、缓存清理及段级后处理语义。"
+  },
+  "mechanical_step_normalization": {
+    "operation": "only leading Markdown step markers 当/则 to WHEN/THEN",
+    "files": {
+      "container-model-packaging": {
+        "when_count": 6,
+        "then_count": 6,
+        "changed_lines": 12,
+        "changes": [
+          {
+            "line": 28,
+            "before": "- **当** 三个模型按约定目录名放入仓库根目录的 `model/`",
+            "after": "- **WHEN** 三个模型按约定目录名放入仓库根目录的 `model/`"
+          },
+          {
+            "line": 29,
+            "before": "- **则** 镜像构建无需额外重命名即可将模型复制到 `/app/model/`",
+            "after": "- **THEN** 镜像构建无需额外重命名即可将模型复制到 `/app/model/`"
+          },
+          {
+            "line": 32,
+            "before": "- **当** `model/` 下仍存在历史遗留的 `faster-whisper-large-v3` 目录",
+            "after": "- **WHEN** `model/` 下仍存在历史遗留的 `faster-whisper-large-v3` 目录"
+          },
+          {
+            "line": 33,
+            "before": "- **则** 镜像构建忽略该目录，不将其复制到 `/app/model/`，法语转写能力已随 `/v1.1.8/seacraft_asr` 下线",
+            "after": "- **THEN** 镜像构建忽略该目录，不将其复制到 `/app/model/`，法语转写能力已随 `/v1.1.8/seacraft_asr` 下线"
+          },
+          {
+            "line": 60,
+            "before": "- **当** 开发者在本地准备好 `model/` 后执行 `docker build`",
+            "after": "- **WHEN** 开发者在本地准备好 `model/` 后执行 `docker build`"
+          },
+          {
+            "line": 61,
+            "before": "- **则** Docker 构建上下文包含所需权重，并将其复制到运行镜像",
+            "after": "- **THEN** Docker 构建上下文包含所需权重，并将其复制到运行镜像"
+          },
+          {
+            "line": 81,
+            "before": "- **当** 容器内文本规范化依赖可用",
+            "after": "- **WHEN** 容器内文本规范化依赖可用"
+          },
+          {
+            "line": 82,
+            "before": "- **则** 转写请求的文本按配置执行规范化",
+            "after": "- **THEN** 转写请求的文本按配置执行规范化"
+          },
+          {
+            "line": 85,
+            "before": "- **当** 部署配置中残留多语言或法语相关开关",
+            "after": "- **WHEN** 部署配置中残留多语言或法语相关开关"
+          },
+          {
+            "line": 86,
+            "before": "- **则** 服务忽略该开关，不加载 Whisper 模型，法语能力已随 `/v1.1.8/seacraft_asr` 下线",
+            "after": "- **THEN** 服务忽略该开关，不加载 Whisper 模型，法语能力已随 `/v1.1.8/seacraft_asr` 下线"
+          },
+          {
+            "line": 89,
+            "before": "- **当** 容器内文本规范化依赖不可用",
+            "after": "- **WHEN** 容器内文本规范化依赖不可用"
+          },
+          {
+            "line": 90,
+            "before": "- **则** 转写请求仍返回成功结果，文本保持 ASR 原始输出",
+            "after": "- **THEN** 转写请求仍返回成功结果，文本保持 ASR 原始输出"
+          }
+        ]
+      },
+      "local-model-inference-backends": {
+        "when_count": 0,
+        "then_count": 0,
+        "changed_lines": 0,
+        "changes": []
+      },
+      "local-model-runtime": {
+        "when_count": 0,
+        "then_count": 0,
+        "changed_lines": 0,
+        "changes": []
+      },
+      "local-qwen-asr-inference": {
+        "when_count": 0,
+        "then_count": 0,
+        "changed_lines": 0,
+        "changes": []
+      },
+      "npu-910b-runtime": {
+        "when_count": 0,
+        "then_count": 0,
+        "changed_lines": 0,
+        "changes": []
+      },
+      "offline-asr-service": {
+        "when_count": 2,
+        "then_count": 2,
+        "changed_lines": 4,
+        "changes": [
+          {
+            "line": 35,
+            "before": "- **当** 转写结果包含带重音符号或其它非 ASCII 字符的文本",
+            "after": "- **WHEN** 转写结果包含带重音符号或其它非 ASCII 字符的文本"
+          },
+          {
+            "line": 36,
+            "before": "- **则** 分段语速与整段语速统计按实际词数计算，而非按零计数",
+            "after": "- **THEN** 分段语速与整段语速统计按实际词数计算，而非按零计数"
+          },
+          {
+            "line": 39,
+            "before": "- **当** 转写结果包含带重音符号的西语、德语等非 ASCII 文本",
+            "after": "- **WHEN** 转写结果包含带重音符号的西语、德语等非 ASCII 文本"
+          },
+          {
+            "line": 40,
+            "before": "- **则** 分段语速与整段语速统计按实际词数计算，而非按零计数",
+            "after": "- **THEN** 分段语速与整段语速统计按实际词数计算，而非按零计数"
+          }
+        ]
+      },
+      "qwen-asr-v2-adapter": {
+        "when_count": 16,
+        "then_count": 16,
+        "changed_lines": 32,
+        "changes": [
+          {
+            "line": 274,
+            "before": "- **当** 部署配置未显式覆盖文本规范化开关",
+            "after": "- **WHEN** 部署配置未显式覆盖文本规范化开关"
+          },
+          {
+            "line": 275,
+            "before": "- **则** 系统对转写文本执行规范化，并按配置剔除语气词",
+            "after": "- **THEN** 系统对转写文本执行规范化，并按配置剔除语气词"
+          },
+          {
+            "line": 278,
+            "before": "- **当** 部署配置把语气词剔除开关设为 false",
+            "after": "- **WHEN** 部署配置把语气词剔除开关设为 false"
+          },
+          {
+            "line": 279,
+            "before": "- **则** 系统保留转写文本中的语气词",
+            "after": "- **THEN** 系统保留转写文本中的语气词"
+          },
+          {
+            "line": 282,
+            "before": "- **当** 部署配置关闭文本规范化",
+            "after": "- **WHEN** 部署配置关闭文本规范化"
+          },
+          {
+            "line": 283,
+            "before": "- **则** 系统直接返回模型原始转写文本，不做数字与标点规范化",
+            "after": "- **THEN** 系统直接返回模型原始转写文本，不做数字与标点规范化"
+          },
+          {
+            "line": 286,
+            "before": "- **当** 文本规范化依赖缺失或初始化失败且失败策略为 `passthrough`",
+            "after": "- **WHEN** 文本规范化依赖缺失或初始化失败且失败策略为 `passthrough`"
+          },
+          {
+            "line": 287,
+            "before": "- **则** 请求仍成功返回，文本保持 ASR 原始输出",
+            "after": "- **THEN** 请求仍成功返回，文本保持 ASR 原始输出"
+          },
+          {
+            "line": 468,
+            "before": "- **当** 一个 6 秒的分段文本为 1863 个字符的「最小S零，这个这个这个这个，……」",
+            "after": "- **WHEN** 一个 6 秒的分段文本为 1863 个字符的「最小S零，这个这个这个这个，……」"
+          },
+          {
+            "line": 469,
+            "before": "- **则** 该段文本被折叠为长度正常的短文本，且以「最小S零」开头",
+            "after": "- **THEN** 该段文本被折叠为长度正常的短文本，且以「最小S零」开头"
+          },
+          {
+            "line": 472,
+            "before": "- **当** 一个分段文本的长度未超过该段时长对应的合理上限",
+            "after": "- **WHEN** 一个分段文本的长度未超过该段时长对应的合理上限"
+          },
+          {
+            "line": 473,
+            "before": "- **则** 该段文本原样保留，不做任何改写",
+            "after": "- **THEN** 该段文本原样保留，不做任何改写"
+          },
+          {
+            "line": 476,
+            "before": "- **当** 一个分段文本为「温度载荷，温度载荷，温度载荷，」且长度未超限",
+            "after": "- **WHEN** 一个分段文本为「温度载荷，温度载荷，温度载荷，」且长度未超限"
+          },
+          {
+            "line": 477,
+            "before": "- **则** 该段文本原样保留",
+            "after": "- **THEN** 该段文本原样保留"
+          },
+          {
+            "line": 483,
+            "before": "- **当** 一个 5 秒的分段文本长度为 300 字符且其中不存在连续重复的子串",
+            "after": "- **WHEN** 一个 5 秒的分段文本长度为 300 字符且其中不存在连续重复的子串"
+          },
+          {
+            "line": 484,
+            "before": "- **则** 该段文本原样返回，其长度与内容均未被修改",
+            "after": "- **THEN** 该段文本原样返回，其长度与内容均未被修改"
+          },
+          {
+            "line": 487,
+            "before": "- **当** 出现上一场景的文本",
+            "after": "- **WHEN** 出现上一场景的文本"
+          },
+          {
+            "line": 488,
+            "before": "- **则** 服务日志中记录一条告警，包含原长度、时长上限与该段时长",
+            "after": "- **THEN** 服务日志中记录一条告警，包含原长度、时长上限与该段时长"
+          },
+          {
+            "line": 494,
+            "before": "- **当** 一个 10 秒的分段文本长度为 300 字符",
+            "after": "- **WHEN** 一个 10 秒的分段文本长度为 300 字符"
+          },
+          {
+            "line": 495,
+            "before": "- **则** 合理上限为 400 字符，该段不被判定为长度异常",
+            "after": "- **THEN** 合理上限为 400 字符，该段不被判定为长度异常"
+          },
+          {
+            "line": 498,
+            "before": "- **当** 配置把复读修复开关设为关闭",
+            "after": "- **WHEN** 配置把复读修复开关设为关闭"
+          },
+          {
+            "line": 499,
+            "before": "- **则** 系统不做任何复读检测与折叠，分段文本原样返回",
+            "after": "- **THEN** 系统不做任何复读检测与折叠，分段文本原样返回"
+          },
+          {
+            "line": 502,
+            "before": "- **当** 运维人员把字符数上限系数从 40 调整为 60 并重启服务",
+            "after": "- **WHEN** 运维人员把字符数上限系数从 40 调整为 60 并重启服务"
+          },
+          {
+            "line": 503,
+            "before": "- **则** 系统按新的系数估算合理上限并据此判定长度异常",
+            "after": "- **THEN** 系统按新的系数估算合理上限并据此判定长度异常"
+          },
+          {
+            "line": 509,
+            "before": "- **当** 配置关闭文本规范化且某个分段为复读长串",
+            "after": "- **WHEN** 配置关闭文本规范化且某个分段为复读长串"
+          },
+          {
+            "line": 510,
+            "before": "- **则** 该段仍被折叠为短文本",
+            "after": "- **THEN** 该段仍被折叠为短文本"
+          },
+          {
+            "line": 513,
+            "before": "- **当** 一个分段既是复读长串又以标点开头",
+            "after": "- **WHEN** 一个分段既是复读长串又以标点开头"
+          },
+          {
+            "line": 514,
+            "before": "- **则** 先完成复读折叠，再由标点卫生规则处理其段首标点，两条规则都生效",
+            "after": "- **THEN** 先完成复读折叠，再由标点卫生规则处理其段首标点，两条规则都生效"
+          },
+          {
+            "line": 520,
+            "before": "- **当** 某个分段被折叠",
+            "after": "- **WHEN** 某个分段被折叠"
+          },
+          {
+            "line": 521,
+            "before": "- **则** 服务日志中出现一条包含原长度、折叠后长度、时长上限与时长的记录",
+            "after": "- **THEN** 服务日志中出现一条包含原长度、折叠后长度、时长上限与时长的记录"
+          },
+          {
+            "line": 524,
+            "before": "- **当** 全部请求的分段文本均未触发复读修复",
+            "after": "- **WHEN** 全部请求的分段文本均未触发复读修复"
+          },
+          {
+            "line": 525,
+            "before": "- **则** 不产生任何复读告警日志",
+            "after": "- **THEN** 不产生任何复读告警日志"
+          }
+        ]
+      },
+      "resource-pressure-diagnostics": {
+        "when_count": 0,
+        "then_count": 0,
+        "changed_lines": 0,
+        "changes": []
+      },
+      "service-operations": {
+        "when_count": 7,
+        "then_count": 7,
+        "changed_lines": 14,
+        "changes": [
+          {
+            "line": 12,
+            "before": "- **当** 当前日志文件增长到配置的大小上限",
+            "after": "- **WHEN** 当前日志文件增长到配置的大小上限"
+          },
+          {
+            "line": 13,
+            "before": "- **则** 系统切分出新的日志文件继续写入，旧文件按保留策略处理",
+            "after": "- **THEN** 系统切分出新的日志文件继续写入，旧文件按保留策略处理"
+          },
+          {
+            "line": 16,
+            "before": "- **当** 存在超过保留天数的日志文件",
+            "after": "- **WHEN** 存在超过保留天数的日志文件"
+          },
+          {
+            "line": 17,
+            "before": "- **则** 系统在启动时与写入过程中删除这些过期文件",
+            "after": "- **THEN** 系统在启动时与写入过程中删除这些过期文件"
+          },
+          {
+            "line": 20,
+            "before": "- **当** 配置文件中缺少日志保留相关配置项",
+            "after": "- **WHEN** 配置文件中缺少日志保留相关配置项"
+          },
+          {
+            "line": 21,
+            "before": "- **则** 系统按保留 7 天、单文件上限 100 MB 运行",
+            "after": "- **THEN** 系统按保留 7 天、单文件上限 100 MB 运行"
+          },
+          {
+            "line": 29,
+            "before": "- **当** 客户端调用 `GET /get_status`",
+            "after": "- **WHEN** 客户端调用 `GET /get_status`"
+          },
+          {
+            "line": 30,
+            "before": "- **则** 响应包含 `status`、`appVersion`（取值 `latest`）、运行时长字段与引擎标识字段（返回固定占位值）",
+            "after": "- **THEN** 响应包含 `status`、`appVersion`（取值 `latest`）、运行时长字段与引擎标识字段（返回固定占位值）"
+          },
+          {
+            "line": 33,
+            "before": "- **当** 部署配置中不再提供引擎标识配置项",
+            "after": "- **WHEN** 部署配置中不再提供引擎标识配置项"
+          },
+          {
+            "line": 34,
+            "before": "- **则** 状态接口仍返回引擎标识字段，取值为固定占位值，运维平台的字段结构保持不变",
+            "after": "- **THEN** 状态接口仍返回引擎标识字段，取值为固定占位值，运维平台的字段结构保持不变"
+          },
+          {
+            "line": 40,
+            "before": "- **当** 配置中 `instance_count` 大于 1",
+            "after": "- **WHEN** 配置中 `instance_count` 大于 1"
+          },
+          {
+            "line": 41,
+            "before": "- **则** 容器内并行运行对应数量的服务实例，请求按负载均衡方式分发到各实例",
+            "after": "- **THEN** 容器内并行运行对应数量的服务实例，请求按负载均衡方式分发到各实例"
+          },
+          {
+            "line": 44,
+            "before": "- **当** 配置文件中缺少实例数量配置",
+            "after": "- **WHEN** 配置文件中缺少实例数量配置"
+          },
+          {
+            "line": 45,
+            "before": "- **则** 系统按默认实例数量 1 运行",
+            "after": "- **THEN** 系统按默认实例数量 1 运行"
+          }
+        ]
+      }
+    },
+    "when_count": 31,
+    "then_count": 31,
+    "changed_lines": 62
+  },
+  "totals": {
+    "main_requirements_before": 118,
+    "main_requirements_after": 134,
+    "untouched_requirements_preserved": 50,
+    "untouched_scenarios_preserved_in_modified_requirements": 0,
+    "same_scenarios_preserved_in_modified_requirements": 47,
+    "changed_scenarios": 107,
+    "new_scenarios_in_modified_requirements": 6,
+    "removed_requirements": 11,
+    "added_requirements": 27,
+    "modified_requirements": 57
+  }
+}

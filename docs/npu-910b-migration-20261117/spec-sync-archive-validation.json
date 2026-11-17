@@ -1,0 +1,362 @@
+{
+  "implementation_commit": "2ce5c12803ef01d1ffcbf42c8e3eb6dd2b0b9ec2",
+  "implementation_push_confirmed_before_sync": true,
+  "sync_method": "reviewed intelligent merge, preserve unrelated requirements/scenarios; guarded atomic apply before CLI archive",
+  "counts": {
+    "MODIFIED Requirements": 57,
+    "REMOVED Requirements": 11,
+    "ADDED Requirements": 27
+  },
+  "protection_checks": {
+    "input_copy_sha_matches": true,
+    "duplicate_requirement_titles_absent": true,
+    "all_11_removed_blocks_absent": true,
+    "all_27_added_blocks_present": true,
+    "all_57_modified_blocks_present": true,
+    "raw_merge_unmentioned_requirement_bodies_identical_except_boundary_blank_lines": true,
+    "final_unmentioned_requirement_bodies_identical_after_documented_step_marker_mapping": true,
+    "raw_merge_unmentioned_and_same_scenarios_identical_except_boundary_blank_lines": true,
+    "final_preserved_scenarios_identical_after_documented_step_marker_mapping": true,
+    "old_scenario_order_preserved": true,
+    "three_unaffected_purposes_identical": true,
+    "two_new_purposes_complete_and_copied": true,
+    "second_sync_byte_identical": true,
+    "no_delta_markers_in_main": true
+  },
+  "totals": {
+    "main_requirements_before": 118,
+    "main_requirements_after": 134,
+    "untouched_requirements_preserved": 50,
+    "untouched_scenarios_preserved_in_modified_requirements": 0,
+    "same_scenarios_preserved_in_modified_requirements": 47,
+    "changed_scenarios": 107,
+    "new_scenarios_in_modified_requirements": 6,
+    "removed_requirements": 11,
+    "added_requirements": 27,
+    "modified_requirements": 57
+  },
+  "mechanical_step_marker_changes": 62,
+  "reviewed_preview": "/tmp/asr-openspec-sync-preview-final-20261118-byqbx_7j",
+  "sync_backup": "/tmp/asr-openspec-reviewed-backup-y2eq3cqk",
+  "actual_sync_receipt": {
+    "mode": "applied_reviewed_specs",
+    "backup": "/tmp/asr-openspec-reviewed-backup-y2eq3cqk",
+    "written": [
+      "openspec/specs/container-model-packaging/spec.md",
+      "openspec/specs/local-model-inference-backends/spec.md",
+      "openspec/specs/local-model-runtime/spec.md",
+      "openspec/specs/local-qwen-asr-inference/spec.md",
+      "openspec/specs/npu-910b-runtime/spec.md",
+      "openspec/specs/offline-asr-service/spec.md",
+      "openspec/specs/qwen-asr-v2-adapter/spec.md",
+      "openspec/specs/resource-pressure-diagnostics/spec.md",
+      "openspec/specs/service-operations/spec.md"
+    ],
+    "archive_executed": false,
+    "git_commit_executed": false,
+    "git_push_executed": false,
+    "next": "严格校验主规格和当前change；归档由维护者单独执行 --skip-specs，不由本脚本完成。"
+  },
+  "archive": {
+    "change": "2026-11-17-npu-910b-local-qwen-asr",
+    "archivedAs": "2026-11-17-npu-910b-local-qwen-asr",
+    "path": "/home/zhangs/asr_nvidia/openspec/changes/archive/2026-11-17-npu-910b-local-qwen-asr",
+    "command": [
+      "/data/nodejs/bin/openspec",
+      "archive",
+      "2026-11-17-npu-910b-local-qwen-asr",
+      "--skip-specs",
+      "--yes",
+      "--json"
+    ],
+    "cli_specsUpdated": false,
+    "explanation": "skip-specs only avoids reapplying already synchronized deltas; all nine actual main files equal reviewed output hashes"
+  },
+  "main_strict_validation": {
+    "items": [
+      {
+        "id": "container-model-packaging",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 30
+      },
+      {
+        "id": "local-model-inference-backends",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 10
+      },
+      {
+        "id": "local-model-runtime",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 6
+      },
+      {
+        "id": "local-qwen-asr-inference",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 4
+      },
+      {
+        "id": "npu-910b-runtime",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 2
+      },
+      {
+        "id": "offline-asr-service",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "qwen-asr-v2-adapter",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 17
+      },
+      {
+        "id": "resource-pressure-diagnostics",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 6
+      },
+      {
+        "id": "service-operations",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 4
+      }
+    ],
+    "summary": {
+      "totals": {
+        "items": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      "byType": {
+        "spec": {
+          "items": 9,
+          "passed": 9,
+          "failed": 0
+        }
+      }
+    },
+    "version": "1.0",
+    "root": {
+      "path": "/home/zhangs/asr_nvidia",
+      "source": "nearest"
+    }
+  },
+  "all_archived_task_validation": {
+    "items": [
+      {
+        "id": "2026-10-21-remove-infrequently-used-interfaces",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 32
+      },
+      {
+        "id": "2026-10-22-adapt-qwen-asr-v2-interface",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 2
+      },
+      {
+        "id": "2026-10-22-align-v118-interface-with-mac",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 2
+      },
+      {
+        "id": "2026-10-23-qwen-repetition-guard",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "2026-10-23-retire-v118-and-refine-v2-config",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 3
+      },
+      {
+        "id": "2026-10-23-vad-cpu-process-pool",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "2026-10-26-cam-emo-local-model-pool",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 2
+      },
+      {
+        "id": "2026-10-26-vad-low-volume-calibration",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "2026-10-26-vad-threshold-and-text-postprocess",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 3
+      },
+      {
+        "id": "2026-10-27-cam-emo-independent-concurrency-gates",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "2026-10-28-fireredvad-vad-comparison",
+        "type": "change",
+        "valid": false,
+        "issues": [
+          {
+            "level": "ERROR",
+            "path": "tasks.md",
+            "message": "7 incomplete tasks (10/17 completed)"
+          }
+        ],
+        "durationMs": 1
+      },
+      {
+        "id": "2026-10-28-vad-low-volume-qwen-quality-validation",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "2026-10-29-fireredvad-cam-emo-tensorrt-backends",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 2
+      },
+      {
+        "id": "2026-10-29-static-vad-device-pool-memory-qwen-clips",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "2026-10-30-model-memory-pressure-diagnostics",
+        "type": "change",
+        "valid": false,
+        "issues": [
+          {
+            "level": "ERROR",
+            "path": "tasks.md",
+            "message": "1 incomplete task (22/23 completed)"
+          }
+        ],
+        "durationMs": 2
+      },
+      {
+        "id": "2026-11-02-cuda-cython-docker-v3-deployment",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 2
+      },
+      {
+        "id": "2026-11-02-split-audio-concurrency-gates",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "2026-11-05-vad-segment-filter-config",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "2026-11-17-npu-910b-local-qwen-asr",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      }
+    ],
+    "summary": {
+      "totals": {
+        "items": 19,
+        "passed": 17,
+        "failed": 2
+      },
+      "byType": {
+        "change": {
+          "items": 19,
+          "passed": 17,
+          "failed": 2
+        }
+      }
+    },
+    "version": "1.0",
+    "root": {
+      "path": "/home/zhangs/asr_nvidia",
+      "source": "nearest"
+    }
+  },
+  "current_archive_passed": true,
+  "historical_archive_failures_unchanged": [
+    {
+      "id": "2026-10-28-fireredvad-vad-comparison",
+      "issues": [
+        {
+          "level": "ERROR",
+          "path": "tasks.md",
+          "message": "7 incomplete tasks (10/17 completed)"
+        }
+      ],
+      "tasks_unchanged_from_baseline": true,
+      "sha256": "3dc38a777880debf106fb10e5872f3431f858286bcbccf3a29f417b9aa4413fd"
+    },
+    {
+      "id": "2026-10-30-model-memory-pressure-diagnostics",
+      "issues": [
+        {
+          "level": "ERROR",
+          "path": "tasks.md",
+          "message": "1 incomplete task (22/23 completed)"
+        }
+      ],
+      "tasks_unchanged_from_baseline": true,
+      "sha256": "c4e367dce4f7a23afca53b6bff37e386ece804388610e19f7da6c6460f5e2650"
+    }
+  ],
+  "tasks_complete": 76,
+  "tasks_total": 76,
+  "services_started_by_spec_sync_or_archive": false,
+  "actual_docker_build_and_deployment_executed": false,
+  "agent_documentation_only_change": "counts7→9 capabilities and18→19 archives; implementation asset audit retains pre-archive snapshot",
+  "agent_sha256_after_archive": "c955669a4bee36b563c1c66c03f6ebc6703b621652c2fe966b3d8328dc2ebf4d"
+}
