@@ -126,7 +126,7 @@ class ConfigFileStructureTests(unittest.TestCase):
         self.assertEqual(set(host.keys()), set(docker.keys()))
         sections = ("log", "model_paths", "speech_rate", "features", "itn", "qwen_asr", "model_device_pool")
         for section in sections:
-            self.assertEqual(set(host[section].keys()), set(docker[section].keys()))
+            self.assertTrue(set(host[section].keys()).issuperset(set(docker[section].keys())), section)
 
     def test_removed_config_keys_are_absent(self):
         for name in ("config.toml", "docker/config.toml"):
@@ -143,7 +143,7 @@ class ConfigFileStructureTests(unittest.TestCase):
                 self.assertNotIn(key, paths, f"{name} 不应再包含 model_paths.{key}")
 
     def test_model_paths_point_to_three_models(self):
-        pairs = (("config.toml", "./model"), ("docker/config.toml", "/app/model"))
+        pairs = (("config.toml", "/home/zhangs/asr_nvidia/model"), ("docker/config.toml", "/app/model"))
         for name, prefix in pairs:
             paths = self._load(name)["model_paths"]
             expected = {"vad_model_dir", "spk_model_dir", "emotion_model_dir"}
@@ -158,8 +158,8 @@ class ConfigFileStructureTests(unittest.TestCase):
     def test_model_device_arrays_use_host_or_container_npu(self):
         for name in ("config.toml", "docker/config.toml"):
             devices = self._load(name)["model_device_pool"]
-            self.assertEqual(devices["emotion2vec_devices"], ["npu:7" if name == "config.toml" else "npu:0"])
-            self.assertEqual(devices["speech_campplus_devices"], ["npu:7" if name == "config.toml" else "npu:0"] * 3)
+            self.assertEqual(devices["emotion2vec_devices"], ["npu:7"] * 8 if name == "config.toml" else ["npu:0"])
+            self.assertEqual(devices["speech_campplus_devices"], ["npu:7"] * 8 if name == "config.toml" else ["npu:0"] * 3)
 
     def test_log_path_and_vad_threshold_are_nested(self):
         expected_log_paths = {
@@ -170,7 +170,7 @@ class ConfigFileStructureTests(unittest.TestCase):
             cfg = self._load(name)
             self.assertEqual(cfg["log"]["log_path"], expected_log_path)
             self.assertNotIn("log_path", {key for key in cfg if key != "log"})
-            self.assertEqual(cfg["vad"]["vad_speech_noise_thres"], 0.8)
+            self.assertNotIn("vad_speech_noise_thres", cfg["vad"])
 
 
 if __name__ == "__main__":

@@ -314,9 +314,7 @@ class Settings:
         legacy = self._cfg.get("qwen_asr", {})
         if isinstance(legacy, dict):
             legacy_keys = {
-                "vad_device", "min_segment_duration_s", "vad_max_single_segment_time_ms",
-                "vad_max_end_silence_time_ms", "vad_speech_noise_thres", "vad_decibel_thres",
-                "vad_snr_thres", "vad_low_volume_rms_dbfs_thres", "vad_low_volume_filter_enabled",
+                "vad_device", "min_segment_duration_s", "vad_snr_thres", "vad_low_volume_rms_dbfs_thres", "vad_low_volume_filter_enabled",
                 "vad_decibel_thres_filter_enabled", "vad_snr_thres_filter_enabled",
                 "vad_segment_decibel_thres", "vad_decibel_frame_sample_ratio",
                 "vad_decibel_low_frame_ratio_thres", "after_start", "before_end",
@@ -341,44 +339,6 @@ class Settings:
             raise ValueError("[vad].min_segment_duration_s 必须是非负有限数值")
         return value
 
-    @property
-    def qwen_vad_max_single_segment_time_ms(self) -> int:
-        return self.vad_max_single_segment_time_ms
-
-    @property
-    def vad_max_single_segment_time_ms(self) -> int:
-        value = int(self._vad_section().get("vad_max_single_segment_time_ms", 12000))
-        if value <= 0:
-            raise ValueError("[vad].vad_max_single_segment_time_ms 必须是正整数")
-        return value
-
-    @property
-    def qwen_vad_max_end_silence_time_ms(self) -> int:
-        return self.vad_max_end_silence_time_ms
-
-    @property
-    def vad_max_end_silence_time_ms(self) -> int:
-        value = int(self._vad_section().get("vad_max_end_silence_time_ms", 800))
-        if value < 0:
-            raise ValueError("[vad].vad_max_end_silence_time_ms 必须是非负整数")
-        return value
-
-    @property
-    def qwen_vad_speech_noise_thres(self) -> float:
-        return self.vad_speech_noise_thres
-
-    @property
-    def vad_speech_noise_thres(self) -> float:
-        """FSMN-VAD 的语音/噪声判定阈值（越小越灵敏）。"""
-        raw = self._vad_section().get("vad_speech_noise_thres", 0.8)
-        try:
-            value = float(raw)
-        except (TypeError, ValueError) as exc:
-            raise ValueError("[vad].vad_speech_noise_thres 必须是 0.0~1.0 数值") from exc
-        if not math.isfinite(value) or not 0.0 <= value <= 1.0:
-            raise ValueError("[vad].vad_speech_noise_thres 必须在 0.0~1.0 范围内")
-        return value
-
     @staticmethod
     def _validated_vad_float(section: dict, key: str, default: float, lower: float, upper: float) -> float:
         raw = section.get(key, default)
@@ -390,10 +350,6 @@ class Settings:
             raise ValueError(f"[vad].{key} 必须在 {lower}~{upper} 范围内")
         return value
 
-    @property
-    def qwen_vad_decibel_thres(self) -> float:
-        """FunASR 帧级 log 能量阈值，单位不是 dBFS；-100 表示不额外限制。"""
-        return self.vad_decibel_thres
 
     @property
     def qwen_vad_snr_thres(self) -> float:
@@ -409,9 +365,6 @@ class Settings:
     def qwen_vad_low_volume_filter_enabled(self) -> bool:
         return self.vad_low_volume_filter_enabled
 
-    @property
-    def vad_decibel_thres(self) -> float:
-        return self._validated_vad_float(self._vad_section(), "vad_decibel_thres", -40.0, -100.0, 0.0)
 
     @property
     def vad_snr_thres(self) -> float:

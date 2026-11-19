@@ -37,12 +37,8 @@ def make_slice(src, seconds):
 
 
 def vad_kwargs():
-    from core.config import settings
-    return {"max_single_segment_time": settings.vad_max_single_segment_time_ms,
-            "max_end_silence_time": settings.vad_max_end_silence_time_ms,
-            "speech_noise_thres": settings.vad_speech_noise_thres,
-            "decibel_thres": settings.vad_decibel_thres, "snr_thres": settings.vad_snr_thres}
-
+    # 使用模型原始FSMN选项，与正式池保持一致，不转发无效nested阈值。
+    return {}
 
 def build_model(device):
     from core.local_inference import NativeVadRunner

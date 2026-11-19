@@ -36,17 +36,22 @@ def test_bad_or_unmeasured_physical_batch_rejected_before_loading(tmp_path, lite
 
 
 @pytest.mark.parametrize('name', ['config.toml', 'docker/config.toml'])
-def test_shipped_default_and_all_new_explicit_budgets_retain_old_values(name):
+def test_shipped_host_384_and_container_defaults_match_selected_profiles(name):
     settings = Settings(str(ROOT / name))
     settings.validate_model_backends()
+    host = name == 'config.toml'
     assert settings.qwen_local_instance_count == 1
-    assert settings.qwen_segment_concurrency == settings.qwen_request_concurrency == 1
-    assert settings.qwen_max_inference_batch_size == 1
-    assert settings.qwen_preload_on_startup is False
+    assert settings.qwen_segment_concurrency == (48 if host else 1)
+    assert settings.qwen_request_concurrency == (384 if host else 1)
+    assert settings.qwen_max_inference_batch_size == (384 if host else 1)
+    assert settings.qwen_preload_on_startup is host
     qwen = settings._cfg['qwen_asr']
-    expected = dict(max_inference_batch_size=1, batch_wait_timeout_ms=10,
-                    batch_max_duration_ratio=4.0, max_batch_audio_frames=102400,
-                    max_batch_tokens=78336, pending_segment_limit=256,
+    expected = dict(max_inference_batch_size=384 if host else 1,
+                    batch_wait_timeout_ms=100 if host else 10,
+                    batch_max_duration_ratio=32.0 if host else 4.0,
+                    max_batch_audio_frames=345600 if host else 102400,
+                    max_batch_tokens=240000 if host else 78336,
+                    pending_segment_limit=512 if host else 256,
                     pending_audio_bytes_limit=268435456)
     assert {k: qwen[k] for k in expected} == expected
 

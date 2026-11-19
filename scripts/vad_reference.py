@@ -415,8 +415,6 @@ async def scan_thresholds(
     for threshold in thresholds:
         started = time.perf_counter()
         pool = pool_factory(vad_kwargs={
-            "max_single_segment_time": settings.qwen_vad_max_single_segment_time_ms,
-            "max_end_silence_time": settings.qwen_vad_max_end_silence_time_ms,
             "speech_noise_thres": float(threshold),
         })
         try:

@@ -96,16 +96,16 @@ class ConfigContractTests(unittest.TestCase):
                     self.assertIsInstance(getattr(cfg, 'model_device_' + key), float)
                     self.assertEqual(cfg.qwen_request_timeout_s, 120)
 
-    def test_host_and_container_templates_keep_safe_cam_thread_defaults(self):
+    def test_host_384_and_container_cam_modes_match_selected_profiles(self):
         root = Path(__file__).resolve().parents[1]
         for name, device in (('config.toml', 'npu:7'), ('docker/config.toml', 'npu:0')):
             with self.subTest(template=name):
                 cfg = Settings(config_path=str(root / name))
                 cfg.validate_model_backends()
-                self.assertEqual(cfg.model_device_speech_campplus_execution_mode, 'thread')
+                self.assertEqual(cfg.model_device_speech_campplus_execution_mode, 'process' if name == 'config.toml' else 'thread')
                 self.assertEqual(cfg.model_device_speech_campplus_process_startup_timeout_s, 60.)
                 self.assertEqual(cfg.model_device_speech_campplus_process_shutdown_grace_s, 30.)
-                self.assertEqual(cfg.model_device_speech_campplus_devices, [device] * 3)
+                self.assertEqual(cfg.model_device_speech_campplus_devices, [device] * (8 if name == 'config.toml' else 3))
 
     def test_calibrated_qwen_limits_keep_one_model_copy(self):
         settings = self._settings("")
@@ -224,18 +224,15 @@ class ConfigContractTests(unittest.TestCase):
 
     def test_low_volume_defaults_and_boundaries(self):
         settings = self._settings("[vad]\n")
-        self.assertEqual(settings.qwen_vad_decibel_thres, -40.0)
         self.assertEqual(settings.qwen_vad_snr_thres, 18.0)
         self.assertEqual(settings.qwen_vad_low_volume_rms_dbfs_thres, -40.0)
         self.assertTrue(settings.qwen_vad_low_volume_filter_enabled)
         settings = self._settings(
             "[vad]\n"
-            "vad_decibel_thres = -80\n"
             "vad_snr_thres = 5\n"
             "vad_low_volume_rms_dbfs_thres = -42.5\n"
             "vad_low_volume_filter_enabled = true\n"
         )
-        self.assertEqual(settings.vad_decibel_thres, -80.0)
         self.assertEqual(settings.vad_snr_thres, 5.0)
         self.assertEqual(settings.vad_low_volume_rms_dbfs_thres, -42.5)
         self.assertTrue(settings.vad_low_volume_filter_enabled)

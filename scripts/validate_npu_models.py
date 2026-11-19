@@ -434,11 +434,8 @@ def run(args: argparse.Namespace) -> int:
                     if compiler == "eager" and precision == "fp32":
                         all_passed &= candidate_ok
         if not args.skip_vad:
-            vad_kwargs = {"max_single_segment_time": settings.qwen_vad_max_single_segment_time_ms,
-                          "max_end_silence_time": settings.qwen_vad_max_end_silence_time_ms,
-                          "speech_noise_thres": settings.qwen_vad_speech_noise_thres,
-                          "decibel_thres": settings.qwen_vad_decibel_thres,
-                          "snr_thres": settings.qwen_vad_snr_thres}
+            # 模型配置提供真实FSMN选项，保持与正式VAD池一致。
+            vad_kwargs = {}
             with tempfile.TemporaryDirectory(prefix="asr-model-validation-") as directory:
                 all_passed &= run_vad(clips, settings.vad_model_dir, vad_kwargs, handle, Path(directory))
         write_record(handle, {"type": "complete", "baseline_passed": bool(all_passed), "background": interference_snapshot()})

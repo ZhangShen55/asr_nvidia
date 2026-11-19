@@ -261,26 +261,22 @@ class VadConfigDefaultsTests(unittest.TestCase):
             cfg = Settings(config_path=str(path))
         self.assertTrue(cfg.vad_device)
         self.assertTrue(all(d == "cpu" or d.startswith("npu:") for d in cfg.vad_device))
-        self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.8)
 
     def test_defaults_when_keys_are_absent(self):
         cfg = Settings.__new__(Settings)
         cfg._cfg = {}
         cfg.config_path = ""
         self.assertTrue(cfg.vad_device)
-        self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.8)
 
-    def test_threshold_range_is_validated(self):
-        cfg = Settings.__new__(Settings)
-        cfg._cfg = {"vad": {"vad_speech_noise_thres": 0.3}}
-        self.assertEqual(cfg.qwen_vad_speech_noise_thres, 0.3)
-        cfg._cfg["vad"]["vad_speech_noise_thres"] = 1.1
-        with self.assertRaises(ValueError):
-            _ = cfg.qwen_vad_speech_noise_thres
-
-    def test_pool_default_forwards_threshold(self):
+    def test_pool_default_does_not_forward_ineffective_thresholds(self):
         pool = make_pool(vad_kwargs=None)
-        self.assertEqual(pool._vad_kwargs["speech_noise_thres"], 0.8)
+        self.assertEqual(pool._vad_kwargs, {})
+
+    def test_removed_thresholds_have_no_settings_api(self):
+        for key in ("vad_max_single_segment_time_ms", "vad_max_end_silence_time_ms",
+                    "vad_speech_noise_thres", "vad_decibel_thres"):
+            self.assertFalse(hasattr(Settings, key))
+            self.assertFalse(hasattr(Settings, "qwen_" + key))
 
 
 if __name__ == "__main__":

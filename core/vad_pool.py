@@ -253,15 +253,8 @@ class VadPool:
             devices = configured
         self._devices = [str(item).strip().lower() for item in devices]
         self._model_dir = model_dir if model_dir is not None else settings.vad_model_dir
-        self._vad_kwargs = {
-            "max_single_segment_time": settings.vad_max_single_segment_time_ms,
-            "max_end_silence_time": settings.vad_max_end_silence_time_ms,
-            "speech_noise_thres": settings.vad_speech_noise_thres,
-            "decibel_thres": settings.vad_decibel_thres,
-            "snr_thres": settings.vad_snr_thres,
-        }
-        if vad_kwargs:
-            self._vad_kwargs.update(vad_kwargs)
+        # FSMN构造选项由模型配置提供；旧nested阈值不会覆盖它们，避免暴露无效调参入口。
+        self._vad_kwargs = dict(vad_kwargs or {})
         self._builder_spec = builder_spec
         self._runner_spec = runner_spec
         self._start_timeout_s = float(start_timeout_s)

@@ -258,10 +258,6 @@ CPU原始AutoModel与原生NPU保持同一既有行为；服务段级过滤独�
 |--------|--------|------|
 | `vad_device` | `["cpu", "cpu", "npu:7", "npu:7"]` | 每个元素启动一个固定 FSMN-VAD worker；数组长度决定完整音频 VAD 并发 |
 | `min_segment_duration_s` | `0.3` | 过滤过短 VAD 段，单位：秒 |
-| `vad_max_single_segment_time_ms` | `12000` | 历史nested声明；当前权重实际单段上限8000ms |
-| `vad_max_end_silence_time_ms` | `800` | VAD 结束静音时长，单位：毫秒 |
-| `vad_speech_noise_thres` | `0.8` | 历史nested声明；当前模型实际采用0.6 |
-| `vad_decibel_thres` | `-40.0` | 全局log能量声明，非dBFS；当前模型实际为-100，段级门槛另设 |
 | `vad_snr_thres` | `18.0` | 服务段级SNR真实取值；nested声明未覆盖FSMN全局-100 |
 | `vad_decibel_thres_filter_enabled` | `true` | 段级低能量帧比例过滤开关 |
 | `vad_segment_decibel_thres` | `-40.0` | 段级 dBFS 低能量帧阈值 |
@@ -383,7 +379,7 @@ python scripts/vad_reference.py --output /tmp/vad-reference.json
 
 报告包含 46 个“细小声音”标注段的抑制率、未标注段保留率、VAD 段数、Qwen 请求数、耗时以及 RMS/峰值诊断。区间命中定义为 VAD 输出与标注区间重叠达到标注区间的 50%；响度只用于诊断，不作为唯一判据。该长测不会进入默认快速测试，也不修改原始音频和标注文件。
 
-`vad_decibel_thres` 使用 FunASR 内部 log 能量单位，不能直接填入 RMS dBFS；`vad_low_volume_rms_dbfs_thres` 才是面向采集音量的段级门限。历史试验最初默认关闭；当前宿主与容器模板启用三项段级过滤、窗口为开头/结尾各3分钟。新推荐值必须来自参考音频扫描并同时满足细小声音抑制率、标注区间无有效识别内容和正常语音保留率。扫描可用 `--target-suppression-rate`、`--target-retention-rate`、`--coarse-step`、`--fine-step` 和 `--output` 覆盖目标与输出路径。回滚时将开关改回 `false` 并重启，原有 `vad_speech_noise_thres` 语义不变。现有 `min_segment_duration_s` 仍是通用兼容过滤，但不参与本次低音量第一阶段标定。
+`vad_segment_decibel_thres` 使用段级 log 能量单位，不能直接填入 RMS dBFS；`vad_low_volume_rms_dbfs_thres` 才是面向采集音量的段级门限。历史试验最初默认关闭；当前宿主与容器模板启用三项段级过滤、窗口为开头/结尾各3分钟。新推荐值必须来自参考音频扫描并同时满足细小声音抑制率、标注区间无有效识别内容和正常语音保留率。扫描可用 `--target-suppression-rate`、`--target-retention-rate`、`--coarse-step`、`--fine-step` 和 `--output` 覆盖目标与输出路径。回滚时将开关改回 `false` 并重启，FSMN模型内部有效选项保持不变。现有 `min_segment_duration_s` 仍是通用兼容过滤，但不参与本次低音量第一阶段标定。
 
 ### role / emotion 的加载条件
 
@@ -439,7 +435,7 @@ curl http://127.0.0.1:8083/get_status
 
 当前安全缺省为单Qwen、实际batch1、每音频/全局窗口1/1；仓库VAD设备及CAM三份/emo一份是前次已验收配置快照。独立候选profile为VAD八CPU、CAM八NPU:7、emo八NPU:7、单Qwen每音频16/全局128、物理批上限128、增强预取5。总音频上限8、B子上限默认4保持；纯B8容量验证另配子上限8。候选配置通过解析校验，不表示真实128批、八份健康池或完整音频性能已经通过。
 
-本轮候选关闭`vad_snr_thres_filter_enabled`、`vad_decibel_thres_filter_enabled`、`vad_low_volume_filter_enabled`，`min_segment_duration_s=0.3`、`vad_decibel_thres=-100`、`after_start=-1`、`before_end=-1`。三个false才关闭服务段级能量过滤；-1/-1仅表示不限制过滤位置，不能把它当开关。原FSMN检测和四层参数证据仍保留，新候选与基线须使用相同过滤/PCM清单，不与旧开启过滤的80分钟数据直接算加速比。
+本轮候选关闭`vad_snr_thres_filter_enabled`、`vad_decibel_thres_filter_enabled`、`vad_low_volume_filter_enabled`，`min_segment_duration_s=0.3`、`after_start=-1`、`before_end=-1`。三个false才关闭服务段级能量过滤；-1/-1仅表示不限制过滤位置，不能把它当开关。原FSMN检测和四层参数证据仍保留，新候选与基线须使用相同过滤/PCM清单，不与旧开启过滤的80分钟数据直接算加速比。
 
 VAD按完整音频FIFO调度，每worker同时处理一条；八文件/四worker时，任一worker完成VAD即交给下一条，不等前四全部完成，也不等Qwen/CAM/emo。VAD租约归还不释放整音频准入租约；整音频仍持有至必要工作和finally清理结束。
 
@@ -548,3 +544,7 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 ### 根配置同步384（2026-11-19）
 
 按用户明确要求，根 `config.toml` 已原样同步 `test/config.qwen384.toml`：单 Qwen process、预加载 true、每音频48/全局384、物理批384、八CPU VAD、八CAM process/八emo thread、关闭三项能量过滤，总8/B4。修改需重启生效；此次未重启服务。此前“根配置保留1/1、batch1、预加载false”的描述仅代表同步前状态；容器模板未改。此配置选择不表示完整八音频/增强共驻性能已验收，现有验收缺口仍保留。
+
+### 无效VAD配置清理（2026-11-19）
+
+已删除 `vad_max_single_segment_time_ms`、`vad_max_end_silence_time_ms`、`vad_speech_noise_thres`、`vad_decibel_thres` 及对应Settings正名/别名和默认nested转发；它们不会覆盖FSMN真实构造选项。模型原始配置与有效选项不变，不将删除操作当作阈值调整。`vad_snr_thres`仍用于服务段级过滤，独立 `vad_segment_decibel_thres`、RMS、开关及范围参数均有效并保留。复读参数移至实际读取的 `[qwen_asr]`，此前误放 `[vad]` 的值恰与有效缺省一致，修正不改变当前有效值。历史章节中的旧参数仅代表清理前版本。当前服务未重启。

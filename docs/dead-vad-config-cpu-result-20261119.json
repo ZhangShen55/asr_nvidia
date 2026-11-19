@@ -1,0 +1,10 @@
+{
+  "status": "passed",
+  "returncode": 0,
+  "elapsed_s": 239.63685146067291,
+  "source_changed": [],
+  "config_changed": false,
+  "remaining_owned": [],
+  "global_cache_mutation_attempts": [],
+  "required_node_evidence_status": "passed"
+}

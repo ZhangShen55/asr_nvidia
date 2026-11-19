@@ -470,3 +470,7 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 ### 根配置同步384（2026-11-19）
 
 按用户明确要求，根 `config.toml` 已原样同步 `test/config.qwen384.toml`：单 Qwen process、预加载 true、每音频48/全局384、物理批384、八CPU VAD、八CAM process/八emo thread、关闭三项能量过滤，总8/B4。修改需重启生效；此次未重启服务。此前“根配置保留1/1、batch1、预加载false”的描述仅代表同步前状态；容器模板未改。此配置选择不表示完整八音频/增强共驻性能已验收，现有验收缺口仍保留。
+
+### 无效VAD配置清理（2026-11-19）
+
+已删除 `vad_max_single_segment_time_ms`、`vad_max_end_silence_time_ms`、`vad_speech_noise_thres`、`vad_decibel_thres` 及对应Settings正名/别名和默认nested转发；它们不会覆盖FSMN真实构造选项。模型原始配置与有效选项不变，不将删除操作当作阈值调整。`vad_snr_thres`仍用于服务段级过滤，独立 `vad_segment_decibel_thres`、RMS、开关及范围参数均有效并保留。复读参数移至实际读取的 `[qwen_asr]`，此前误放 `[vad]` 的值恰与有效缺省一致，修正不改变当前有效值。历史章节中的旧参数仅代表清理前版本。当前服务未重启。

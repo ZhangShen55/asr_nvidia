@@ -54,28 +54,29 @@ max_batch_tokens = 240000
 pending_segment_limit = 512
 pending_audio_bytes_limit = 268435456
 
+# 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
+# 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
+# 1863 字符的复读串）。这里按语速上限判定异常长度，再折叠重复部分。
+# 标定依据（68,018 段真实样本）：正常段 p99.9 = 20.3 字符/秒、峰值 26.2；
+# 复读段 282~313。取 40 留约 1.5 倍余量且远低于复读量级。
+# 复读保护由Qwen后处理读取；保持原有效缺省值。
+repetition_guard_enabled = true          # 是否启用复读检测与修复
+repetition_max_chars_per_second = 40     # 按段时长估算合理字符数的上限系数
+repetition_min_chars = 120               # 判定长度异常的绝对下限字符数
+repetition_min_unit = 4                  # 判定为循环的重复子串最小长度
+repetition_min_times = 3                 # 判定为循环的最小连续重复次数
+
 [vad]
-# 保留既有nested kwargs传递方式，不把声明值误当实际FSMN选项。
-# 本次权重model_conf实际为：单段8000ms、结束静音800ms、speech_noise=0.6、
-# 全局decibel=-100、全局snr=-100；下列12000/0.8/-40/18未覆盖这些构造值。
-# 服务段级SNR18、独立segment_decibel=-40与RMS过滤另行真实生效。
 # 详见docs/npu-910b-migration-20261117/classroom-threshold-review.md。
 # 每个元素对应一个独立 FSMN-VAD worker；数组长度决定完整音频 VAD 并发上限
 vad_device = ["cpu","cpu","cpu","cpu","cpu","cpu","cpu","cpu"]
 # 小于该时长的候选段直接丢弃，单位：秒
 min_segment_duration_s = 0.3
-# 历史nested传入值，单位毫秒；实际选项见上方说明
-vad_max_single_segment_time_ms = 12000
-vad_max_end_silence_time_ms = 800
-# 历史nested语音/噪声声明；当前模型有效值为0.6，不能据此声称已应用0.8
-vad_speech_noise_thres = 0.8
 
 vad_snr_thres = 18.0 # 段级 SNR 过滤；18.0
 vad_snr_thres_filter_enabled = false
 
-# 历史全局帧级log能量声明，非dBFS；当前FSMN实际仍为模型配置-100
-vad_decibel_thres = -100.0
-# 独立服务段级log能量阈值，非dBFS；不等于上方FSMN全局选项
+# 独立服务段级log能量阈值，非dBFS；与模型内部FSMN全局选项独立
 vad_segment_decibel_thres = -40.0
 vad_decibel_frame_sample_ratio = 0.5 # 每秒采取帧率
 vad_decibel_low_frame_ratio_thres = 0.8 # 段级 decibel 过滤：抽取帧中低能量比例达到 0.8 时删除该段
@@ -91,16 +92,6 @@ vad_low_volume_filter_enabled = false
 after_start = -1
 before_end = -1
 
-# 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
-# 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
-# 1863 字符的复读串）。这里按语速上限判定异常长度，再折叠重复部分。
-# 标定依据（68,018 段真实样本）：正常段 p99.9 = 20.3 字符/秒、峰值 26.2；
-# 复读段 282~313。取 40 留约 1.5 倍余量且远低于复读量级。
-repetition_guard_enabled = true          # 是否启用复读检测与修复
-repetition_max_chars_per_second = 40     # 按段时长估算合理字符数的上限系数
-repetition_min_chars = 120               # 判定长度异常的绝对下限字符数
-repetition_min_unit = 4                  # 判定为循环的重复子串最小长度
-repetition_min_times = 3                 # 判定为循环的最小连续重复次数
 
 # 功能开关配置：v3 链路的说话人与情绪能力互相独立
 [features]
