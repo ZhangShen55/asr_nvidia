@@ -1,0 +1,125 @@
+{
+  "status": "applied_originals_preserved",
+  "recorded_unix": 1795039490.2296486,
+  "scope": "report-only; all original bytes retained in ignored logs; no RUN/originalaudio/model edits",
+  "sensitive_text_leaves_replaced": 2806,
+  "other_leaves_preserved": {
+    "all_unchanged_non_sensitive_leaves_preserved": true,
+    "list_counts_and_order_preserved": true,
+    "config_paths_languageIDs_numeric_counts_diffs_preserved": true,
+    "known_raw_and_parsed_ASR_fields_sanitized": true,
+    "biometric_vectors_or_score_arrays_found": 0,
+    "unclassified_numeric_arrays_found": 0,
+    "private_destination_gitignored": true,
+    "per_file": [
+      {
+        "file": "docs/npu-throughput-20261118/http-admission-source-v6.json",
+        "verified_sensitive_leaves": 26,
+        "unchanged_other_leaves": 16070,
+        "current_ROOT_original_SHA_still_matches": true,
+        "compact_SHA_matches": true
+      },
+      {
+        "file": "docs/npu-throughput-20261118/process-ownership-protected-v5.json",
+        "verified_sensitive_leaves": 23,
+        "unchanged_other_leaves": 2871,
+        "current_ROOT_original_SHA_still_matches": true,
+        "compact_SHA_matches": true
+      },
+      {
+        "file": "docs/npu-throughput-20261118/process-ownership-source-v5.json",
+        "verified_sensitive_leaves": 23,
+        "unchanged_other_leaves": 2871,
+        "current_ROOT_original_SHA_still_matches": true,
+        "compact_SHA_matches": true
+      },
+      {
+        "file": "docs/npu-throughput-20261118/qwen-quality-final-canonical-v5.json",
+        "verified_sensitive_leaves": 2440,
+        "unchanged_other_leaves": 57847,
+        "current_ROOT_original_SHA_still_matches": true,
+        "compact_SHA_matches": true
+      },
+      {
+        "file": "docs/npu-throughput-20261118/qwen-quality-initial.json",
+        "verified_sensitive_leaves": 294,
+        "unchanged_other_leaves": 23752,
+        "current_ROOT_original_SHA_still_matches": true,
+        "compact_SHA_matches": true
+      }
+    ]
+  },
+  "files": [
+    {
+      "path": "docs/npu-throughput-20261118/http-admission-source-v6.json",
+      "original_sha256": "c90754c0b5603e6ac59a5cac8ae9ed682bbafd85c896e3af692af5bfdf058e42",
+      "compact_sha256": "4abadb91039c84da64870e9d5ef417ad4502b84412c6bc5f091cce257a6d4d2e",
+      "private_raw_path": "/home/zhangs/asr_nvidia/logs/npu-throughput-20261118/private-report-originals-v17/http-admission-source-v6.json",
+      "sensitive_path_count": 26
+    },
+    {
+      "path": "docs/npu-throughput-20261118/process-ownership-protected-v5.json",
+      "original_sha256": "bfd39d0edb31c81bf3e98d33a4bf016e53acc722668c628d4aa89744fc958bcb",
+      "compact_sha256": "aaaf275db79db813377ab41584e05853fd902c63d2410bb4a40abad74414175b",
+      "private_raw_path": "/home/zhangs/asr_nvidia/logs/npu-throughput-20261118/private-report-originals-v17/process-ownership-protected-v5.json",
+      "sensitive_path_count": 23
+    },
+    {
+      "path": "docs/npu-throughput-20261118/process-ownership-source-v5.json",
+      "original_sha256": "882e01ec99bebae0d0028e77a91b55244fe79568f543934f186b5452056d7d69",
+      "compact_sha256": "c3d826dbff305f1c28e4445e1faedab871b7e48e5c6c8c19f9fd5079f3b6b1cf",
+      "private_raw_path": "/home/zhangs/asr_nvidia/logs/npu-throughput-20261118/private-report-originals-v17/process-ownership-source-v5.json",
+      "sensitive_path_count": 23
+    },
+    {
+      "path": "docs/npu-throughput-20261118/qwen-quality-final-canonical-v5.json",
+      "original_sha256": "05753fde9b4a6429bbf1eb7ba96c68a2cf49dd81e2b83883ead5710ad822cefb",
+      "compact_sha256": "00ec3d49c66963c90b36e69d55fec34302ed7eb12d70db2ca79c99fc299568a9",
+      "private_raw_path": "/home/zhangs/asr_nvidia/logs/npu-throughput-20261118/private-report-originals-v17/qwen-quality-final-canonical-v5.json",
+      "sensitive_path_count": 2440
+    },
+    {
+      "path": "docs/npu-throughput-20261118/qwen-quality-initial.json",
+      "original_sha256": "5b451de06403899cb6c5b5530506cc17abdd9a3cd199101d065077b27d0e607d",
+      "compact_sha256": "e68fe16883d7918505fee8000088acbb18b4a8bfb1a64a0272899b318ac8b0a1",
+      "private_raw_path": "/home/zhangs/asr_nvidia/logs/npu-throughput-20261118/private-report-originals-v17/qwen-quality-initial.json",
+      "sensitive_path_count": 294
+    }
+  ],
+  "original_SHA_reference_policy": [
+    {
+      "reference_file": "docs/npu-throughput-20261118/v6-validation-independent.json",
+      "line": 1011,
+      "original_report": "docs/npu-throughput-20261118/http-admission-source-v6.json",
+      "original_sha256": "c90754c0b5603e6ac59a5cac8ae9ed682bbafd85c896e3af692af5bfdf058e42",
+      "compact_sha256": "4abadb91039c84da64870e9d5ef417ad4502b84412c6bc5f091cce257a6d4d2e",
+      "scope": "historical_original_bytes_not_compact_file",
+      "instruction": "Preserve original SHA as historical evidence; label it original_full_file_sha256. Use compact_sha256 only for the replacement artifact; never rewrite a historical frozen-source checksum to pretend it was compiled from compact bytes.",
+      "JSON_path_components": [
+        [
+          "inputs",
+          "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-v6-short/admission.json",
+          "sha256"
+        ]
+      ],
+      "historical_reference_kind": "raw_original_evidence_bytes"
+    },
+    {
+      "reference_file": "docs/npu-throughput-20261118/protected-build-v4.json",
+      "line": 79,
+      "original_report": "docs/npu-throughput-20261118/qwen-quality-initial.json",
+      "original_sha256": "5b451de06403899cb6c5b5530506cc17abdd9a3cd199101d065077b27d0e607d",
+      "compact_sha256": "e68fe16883d7918505fee8000088acbb18b4a8bfb1a64a0272899b318ac8b0a1",
+      "scope": "historical_original_bytes_not_compact_file",
+      "instruction": "Preserve original SHA as historical evidence; label it original_full_file_sha256. Use compact_sha256 only for the replacement artifact; never rewrite a historical frozen-source checksum to pretend it was compiled from compact bytes.",
+      "JSON_path_components": [
+        [
+          "source_sha256",
+          "docs/npu-throughput-20261118/qwen-quality-initial.json"
+        ]
+      ],
+      "historical_reference_kind": "frozen_source_original_bytes"
+    }
+  ],
+  "draft_manifest_sha256": "69f98558669ac4a2876ea1083e014682c48104f88fc98317d236d3065c187f6a"
+}

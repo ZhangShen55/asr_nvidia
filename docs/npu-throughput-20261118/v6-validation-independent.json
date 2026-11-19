@@ -1,0 +1,1121 @@
+{
+  "schema": 1,
+  "generated_at_utc": "2026-11-18T13:20:09.232268+00:00",
+  "scope": "independent bounded JSON/log audit, CPU-only; no tests/service/NPU execution",
+  "cpu": {
+    "source": {
+      "passed": 723,
+      "skipped": 1,
+      "subtests_passed": 243,
+      "pytest_elapsed_s": 125.74,
+      "runner": {
+        "returncode": 0,
+        "elapsed_s": 128.36204674001783,
+        "child_pid": 1804697
+      },
+      "log": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-v6-frozen.log"
+    },
+    "protected": {
+      "passed": 724,
+      "subtests_passed": 243,
+      "pytest_elapsed_s": 131.14,
+      "returncode": 0,
+      "log": "/tmp/asr-throughput-cython-v6-20261118-id1hccef/cpu-full-tests.log",
+      "stage": "/tmp/asr-throughput-cython-v6-20261118-id1hccef",
+      "extensions_count": 34,
+      "compiled_extensions_count": 4,
+      "reused_extensions_count": 30,
+      "frozen_inputs_unchanged": true,
+      "all_owned_build_test_processes_exited": true,
+      "npu_forward_checked": false
+    },
+    "version_scope": {
+      "api_source_sha256_at_v6_build": "e616f1015ae3e6bbe2f11b45aab70fb13eb6659f7ceab04d30de6c92cafc8992",
+      "qwen_process_source_sha256": "ae85af3e67cfedb7095e1d814b417baec2926692e7d69359478bbd9c73921a55",
+      "later_api_branch_progress_sha256": "45a37417d5a04e96356daf39c9868744bd60581907633a3ac7d53f7199a83ded",
+      "later_branch_progress_not_covered_by_these_historical_full_runs": true
+    }
+  },
+  "http_admission": [
+    {
+      "kind": "source",
+      "status": "passed",
+      "complete": true,
+      "raw_path": "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-v6-short/admission.json",
+      "runner": {
+        "returncode": 0,
+        "elapsed_s": 120.75729213003069,
+        "child_pid": 2445711
+      },
+      "source_root": "/home/zhangs/asr_nvidia",
+      "source_file_count": 42,
+      "actual_source_hashes_unchanged": true,
+      "recorded_source_changes": [],
+      "config_unchanged": true,
+      "config_sha256": "35d47d9081e329e3f757a4c6a43976fc81bc953588a3645d0223b28984ef5d8c",
+      "wav_seconds": 4.1,
+      "request_count": 15,
+      "requests": [
+        {
+          "id": "B4-base-0",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.1340859802439809,
+          "segments_count": 1
+        },
+        {
+          "id": "B4-base-1",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 0.5583691094070673,
+          "segments_count": 1
+        },
+        {
+          "id": "B4-base-2",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.1878507994115353,
+          "segments_count": 1
+        },
+        {
+          "id": "B4-base-3",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.1602278798818588,
+          "segments_count": 1
+        },
+        {
+          "id": "B4-fifth_B",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": 4017,
+          "elapsed_s": 0.02114668022841215,
+          "segments_count": null
+        },
+        {
+          "id": "total8-base-0",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 0.7514635100960732,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-1",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.3039211006835103,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-2",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.3514170395210385,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-3",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.197885219939053,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-4",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.4970065001398325,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-5",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.2506935000419617,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-6",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.396411970257759,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-7",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.444314369931817,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-ninth_A",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": 4013,
+          "elapsed_s": 0.01755219977349043,
+          "segments_count": null
+        },
+        {
+          "id": "total8-ninth_B",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": 4013,
+          "elapsed_s": 0.060448880307376385,
+          "segments_count": null
+        }
+      ],
+      "stages": [
+        {
+          "id": "B4",
+          "status": "passed",
+          "target_observed": true,
+          "target_total": 4,
+          "target_B": 4,
+          "drain_observed": true,
+          "drain_total": 0,
+          "drain_B": 0,
+          "base_requests_successful": true,
+          "probes": [
+            {
+              "id": "B4-fifth_B",
+              "expected_code": 4017,
+              "actual_code": 4017,
+              "http_status": 200,
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "id": "total8",
+          "status": "passed",
+          "target_observed": true,
+          "target_total": 8,
+          "target_B": 4,
+          "drain_observed": true,
+          "drain_total": 0,
+          "drain_B": 0,
+          "base_requests_successful": true,
+          "probes": [
+            {
+              "id": "total8-ninth_A",
+              "expected_code": 4013,
+              "actual_code": 4013,
+              "http_status": 200,
+              "status": "passed"
+            },
+            {
+              "id": "total8-ninth_B",
+              "expected_code": 4013,
+              "actual_code": 4013,
+              "http_status": 200,
+              "status": "passed"
+            }
+          ]
+        }
+      ],
+      "get_status_ms": {
+        "n": 43,
+        "p50": 2.841469831764698,
+        "p95": 30.29923681169748,
+        "max": 46.09452001750469,
+        "scope": "HTTP GET plus JSON decode; excludes owned PID scan; no kernel-time claim"
+      },
+      "shutdown": {
+        "passed": true,
+        "owned": true,
+        "exit_code": 0,
+        "forced": false,
+        "orphan_cleanup": false,
+        "remaining_pids": [],
+        "observe_s": 5,
+        "port_observation_count": 26,
+        "all_port_observations_free": true,
+        "registered_identity_count": 51
+      },
+      "preserved_pid_unchanged": true,
+      "preserved_pid": 1601397,
+      "warmup": {
+        "kind": "warmup_clip_not_full_audio",
+        "complete": true,
+        "status": "completed",
+        "elapsed_s": 66.2634448101744
+      },
+      "worker": {
+        "worker_pid": 2792974,
+        "worker_create_time": 1795000864.16,
+        "worker_start_ticks": "708853816",
+        "ready_verified": true,
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "start_method": "spawn",
+        "entry_identity": {
+          "factory": "core.qwen_asr_process:_worker",
+          "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+          "module_sha256": "ae85af3e67cfedb7095e1d814b417baec2926692e7d69359478bbd9c73921a55"
+        },
+        "identity_registered_for_cleanup": true
+      },
+      "acceptance_scope": "functional HTTP admission on one4.1s source; not N8 full-audio performance or all-shape steady state"
+    },
+    {
+      "kind": "protected",
+      "status": "passed",
+      "complete": true,
+      "raw_path": "/tmp/asr-throughput-20261118-xvior99k/http-admission-protected-v6-short/admission.json",
+      "runner": {
+        "returncode": 0,
+        "elapsed_s": 116.26688536070287,
+        "child_pid": 1736153
+      },
+      "source_root": "/tmp/asr-throughput-cython-v6-20261118-id1hccef",
+      "source_file_count": 42,
+      "actual_source_hashes_unchanged": true,
+      "recorded_source_changes": [],
+      "config_unchanged": true,
+      "config_sha256": "35d47d9081e329e3f757a4c6a43976fc81bc953588a3645d0223b28984ef5d8c",
+      "wav_seconds": 4.1,
+      "request_count": 15,
+      "requests": [
+        {
+          "id": "B4-base-0",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 0.6499509895220399,
+          "segments_count": 1
+        },
+        {
+          "id": "B4-base-1",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.1750014899298549,
+          "segments_count": 1
+        },
+        {
+          "id": "B4-base-2",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.2037283899262547,
+          "segments_count": 1
+        },
+        {
+          "id": "B4-base-3",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.2303073899820447,
+          "segments_count": 1
+        },
+        {
+          "id": "B4-fifth_B",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": 4017,
+          "elapsed_s": 0.010515090078115463,
+          "segments_count": null
+        },
+        {
+          "id": "total8-base-0",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 0.7789410892874002,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-1",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 0.8275783499702811,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-2",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 0.8745042700320482,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-3",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.195108280517161,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-4",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.294500189833343,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-5",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.2450209595263004,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-6",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 0.6992378504946828,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-base-7",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": null,
+          "elapsed_s": 1.3403185000643134,
+          "segments_count": 1
+        },
+        {
+          "id": "total8-ninth_A",
+          "kind": "A",
+          "status": "completed",
+          "http_status": 200,
+          "code": 4013,
+          "elapsed_s": 0.017969009466469288,
+          "segments_count": null
+        },
+        {
+          "id": "total8-ninth_B",
+          "kind": "B",
+          "status": "completed",
+          "http_status": 200,
+          "code": 4013,
+          "elapsed_s": 0.05940491985529661,
+          "segments_count": null
+        }
+      ],
+      "stages": [
+        {
+          "id": "B4",
+          "status": "passed",
+          "target_observed": true,
+          "target_total": 4,
+          "target_B": 4,
+          "drain_observed": true,
+          "drain_total": 0,
+          "drain_B": 0,
+          "base_requests_successful": true,
+          "probes": [
+            {
+              "id": "B4-fifth_B",
+              "expected_code": 4017,
+              "actual_code": 4017,
+              "http_status": 200,
+              "status": "passed"
+            }
+          ]
+        },
+        {
+          "id": "total8",
+          "status": "passed",
+          "target_observed": true,
+          "target_total": 8,
+          "target_B": 4,
+          "drain_observed": true,
+          "drain_total": 0,
+          "drain_B": 0,
+          "base_requests_successful": true,
+          "probes": [
+            {
+              "id": "total8-ninth_A",
+              "expected_code": 4013,
+              "actual_code": 4013,
+              "http_status": 200,
+              "status": "passed"
+            },
+            {
+              "id": "total8-ninth_B",
+              "expected_code": 4013,
+              "actual_code": 4013,
+              "http_status": 200,
+              "status": "passed"
+            }
+          ]
+        }
+      ],
+      "get_status_ms": {
+        "n": 44,
+        "p50": 2.7518048882484436,
+        "p95": 30.062723811715845,
+        "max": 54.300930351018906,
+        "scope": "HTTP GET plus JSON decode; excludes owned PID scan; no kernel-time claim"
+      },
+      "shutdown": {
+        "passed": true,
+        "owned": true,
+        "exit_code": 0,
+        "forced": false,
+        "orphan_cleanup": false,
+        "remaining_pids": [],
+        "observe_s": 5,
+        "port_observation_count": 26,
+        "all_port_observations_free": true,
+        "registered_identity_count": 51
+      },
+      "preserved_pid_unchanged": true,
+      "preserved_pid": 1601397,
+      "warmup": {
+        "kind": "warmup_clip_not_full_audio",
+        "complete": true,
+        "status": "completed",
+        "elapsed_s": 66.06925101019442
+      },
+      "worker": {
+        "worker_pid": 2267359,
+        "worker_create_time": 1795001291.07,
+        "worker_start_ticks": "708896507",
+        "ready_verified": true,
+        "worker_entry_module_file": "/tmp/asr-throughput-cython-v6-20261118-id1hccef/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+        "start_method": "spawn",
+        "entry_identity": {
+          "factory": "core.qwen_asr_process:_worker",
+          "module_origin": "/tmp/asr-throughput-cython-v6-20261118-id1hccef/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+          "module_sha256": "ab700a14b6264c47b6d2863b1078339dd57440e2808941fe506fd28af7e96902"
+        },
+        "identity_registered_for_cleanup": true
+      },
+      "acceptance_scope": "functional HTTP admission on one4.1s source; not N8 full-audio performance or all-shape steady state"
+    }
+  ],
+  "protected_B128_component": {
+    "status": "completed",
+    "enhanced_workload": true,
+    "config_sha256": "35d47d9081e329e3f757a4c6a43976fc81bc953588a3645d0223b28984ef5d8c",
+    "manifest_sha256": "0c6c26dbc53cd882a789b758cd2ff2c6abf8fe550d6805924dac6c1ca4f6ee32",
+    "rounds": [
+      {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6/batch-128-round-0.json",
+        "warmup": true,
+        "status": "completed",
+        "N_members": 128,
+        "success_count": 128,
+        "elapsed_s": 24.517405949532986,
+        "observer_inclusive_elapsed_s": 25.662493179552257,
+        "measurement_cleanup_s": 1.1450872300192714,
+        "actual_batch_distribution": {
+          "128": 1
+        },
+        "Qwen_execution_wall_s": 24.457641050219536,
+        "Qwen_generate_wall_s": 5.643963580019772,
+        "CAM_completed_segments": 128,
+        "emo_completed_segments": 107,
+        "emo_skipped_segments": 21
+      },
+      {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6/batch-128-round-1.json",
+        "warmup": false,
+        "status": "completed",
+        "N_members": 128,
+        "success_count": 128,
+        "elapsed_s": 10.811408040113747,
+        "observer_inclusive_elapsed_s": 11.4423166802153,
+        "measurement_cleanup_s": 0.630908640101552,
+        "actual_batch_distribution": {
+          "128": 1
+        },
+        "Qwen_execution_wall_s": 5.0628892397508025,
+        "Qwen_generate_wall_s": 4.075017869472504,
+        "CAM_completed_segments": 128,
+        "emo_completed_segments": 107,
+        "emo_skipped_segments": 21
+      },
+      {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6/batch-128-round-2.json",
+        "warmup": false,
+        "status": "completed",
+        "N_members": 128,
+        "success_count": 128,
+        "elapsed_s": 10.51726099010557,
+        "observer_inclusive_elapsed_s": 11.462090660817921,
+        "measurement_cleanup_s": 0.9448296707123518,
+        "actual_batch_distribution": {
+          "128": 1
+        },
+        "Qwen_execution_wall_s": 4.876640230417252,
+        "Qwen_generate_wall_s": 3.988327359780669,
+        "CAM_completed_segments": 128,
+        "emo_completed_segments": 107,
+        "emo_skipped_segments": 21
+      },
+      {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6/batch-128-round-3.json",
+        "warmup": false,
+        "status": "completed",
+        "N_members": 128,
+        "success_count": 128,
+        "elapsed_s": 10.928132209926844,
+        "observer_inclusive_elapsed_s": 11.45312059018761,
+        "measurement_cleanup_s": 0.5249883802607656,
+        "actual_batch_distribution": {
+          "128": 1
+        },
+        "Qwen_execution_wall_s": 4.885770750232041,
+        "Qwen_generate_wall_s": 3.997338769957423,
+        "CAM_completed_segments": 128,
+        "emo_completed_segments": 107,
+        "emo_skipped_segments": 21
+      }
+    ],
+    "steady_median_s": 10.811408040113747,
+    "cleanup": {
+      "closed": true,
+      "no_service_ports_started": true
+    },
+    "runner": {
+      "returncode": 0,
+      "elapsed_s": 120.03450093977153,
+      "child_pid": 452491
+    },
+    "scope": "protected component capacity: same128 independent VAD segments plus CAM/emo workload; no full-audio N8 claim",
+    "model_worker": {
+      "worker_pid": 758864,
+      "worker_create_time": 1795001623.92,
+      "worker_start_ticks": "708929792",
+      "worker_entry_module_file": "/tmp/asr-throughput-cython-v6-20261118-id1hccef/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+      "ready_verified": true,
+      "start_method": "spawn"
+    },
+    "HF_factory": {
+      "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+      "module_origin": "/tmp/asr-throughput-cython-v6-20261118-id1hccef/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+      "module_sha256": "82a176cc8548eb2a941993fd3e8e492ca30ecb40ba5dcd7cea3ce03a6c495e56"
+    },
+    "worker_entry_identity": {
+      "factory": "core.qwen_asr_process:_worker",
+      "module_origin": "/tmp/asr-throughput-cython-v6-20261118-id1hccef/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+      "module_sha256": "ab700a14b6264c47b6d2863b1078339dd57440e2808941fe506fd28af7e96902"
+    },
+    "round_loaded_instances": [
+      {
+        "round": 0,
+        "models": {
+          "speech_campplus": {
+            "configured_instances": 8,
+            "instances": 8,
+            "failed_instances": 0
+          },
+          "emotion2vec": {
+            "configured_instances": 8,
+            "instances": 8,
+            "failed_instances": 0
+          }
+        }
+      },
+      {
+        "round": 1,
+        "models": {
+          "speech_campplus": {
+            "configured_instances": 8,
+            "instances": 8,
+            "failed_instances": 0
+          },
+          "emotion2vec": {
+            "configured_instances": 8,
+            "instances": 8,
+            "failed_instances": 0
+          }
+        }
+      },
+      {
+        "round": 2,
+        "models": {
+          "speech_campplus": {
+            "configured_instances": 8,
+            "instances": 8,
+            "failed_instances": 0
+          },
+          "emotion2vec": {
+            "configured_instances": 8,
+            "instances": 8,
+            "failed_instances": 0
+          }
+        }
+      },
+      {
+        "round": 3,
+        "models": {
+          "speech_campplus": {
+            "configured_instances": 8,
+            "instances": 8,
+            "failed_instances": 0
+          },
+          "emotion2vec": {
+            "configured_instances": 8,
+            "instances": 8,
+            "failed_instances": 0
+          }
+        }
+      }
+    ]
+  },
+  "full8B_precheck": {
+    "status": "diagnostic_aborted",
+    "complete": false,
+    "successful": 0,
+    "expected": 8,
+    "mode": "B",
+    "concurrency": 8,
+    "temperature": "warmup_completed",
+    "diagnostic_trigger": {
+      "reason": "inflight_wall_timeout",
+      "observed_monotonic": 7090708.39437198,
+      "request_id": "full-1-b3f93e7aa4c7",
+      "observed_s": 421.23804721981287,
+      "threshold_s": 420.0
+    },
+    "formal_batch_elapsed_s": 423.8616254599765,
+    "batch_started_utc": "2026-11-18T11:50:13.563537+00:00",
+    "batch_ended_utc": "2026-11-18T11:57:17.425176+00:00",
+    "record_statuses": {
+      "cancelled": 8
+    },
+    "records": [
+      {
+        "sample_id": "full-1-b3f93e7aa4c7",
+        "sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+        "status": "cancelled",
+        "elapsed_s": 423.613237939775
+      },
+      {
+        "sample_id": "full-2-eccf9249245e",
+        "sha256": "eccf9249245ee86ef0299de774670d72eeb7e2347802d1c98306c1b28acf0d4e",
+        "status": "cancelled",
+        "elapsed_s": 423.6124893501401
+      },
+      {
+        "sample_id": "full-3-16cdf4a72578",
+        "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+        "status": "cancelled",
+        "elapsed_s": 423.61197362001985
+      },
+      {
+        "sample_id": "full-4-ce5a4529cd1c",
+        "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+        "status": "cancelled",
+        "elapsed_s": 423.6114993998781
+      },
+      {
+        "sample_id": "full-5-99195ce63638",
+        "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+        "status": "cancelled",
+        "elapsed_s": 423.6110554803163
+      },
+      {
+        "sample_id": "full-6-25782e0ad459",
+        "sha256": "25782e0ad459d6be270188951da7343a6951a78126bd549e9ee5c69a476a2f0e",
+        "status": "cancelled",
+        "elapsed_s": 423.6105931401253
+      },
+      {
+        "sample_id": "full-7-f5adfe2b880e",
+        "sha256": "f5adfe2b880e2064e4990ac87d8144bdd159faacb0deb4ee3829fdf45f553b4e",
+        "status": "cancelled",
+        "elapsed_s": 423.61006748024374
+      },
+      {
+        "sample_id": "full-8-44d6e78dbc4d",
+        "sha256": "44d6e78dbc4dffe2079e79ff9d6df96e3abf5fce98caa2f3290d3b104754ca19",
+        "status": "cancelled",
+        "elapsed_s": 423.6092675803229
+      }
+    ],
+    "completion_quantiles": {
+      "n": 0,
+      "p50_s": null,
+      "p95_s": null,
+      "method": "linear interpolation; incomplete rounds are censored and not acceptance"
+    },
+    "shutdown": {
+      "passed": true,
+      "owned": true,
+      "exit_code": 0,
+      "forced": false,
+      "orphan_cleanup": false,
+      "remaining_pids": [],
+      "observe_s": 5.0,
+      "port_observation_count": 26,
+      "all_port_observations_free": true,
+      "registered_identity_count": 85
+    },
+    "source_changed_during_round": false,
+    "source_identity_complete": true,
+    "source_hashes_unchanged": true,
+    "predeclared_scope": "extra diagnostic qualification, not one of final18 warm acceptance cells",
+    "decision_before_execution": true,
+    "counts_toward_final18": false,
+    "runner": {
+      "returncode": 2,
+      "elapsed_s": 717.3150930199772,
+      "child_pid": 2991087
+    },
+    "diagnostic_snapshot": {
+      "active_count": 8,
+      "active_progress": [
+        {
+          "request_id": "34da8980-009e-421d-8a6a-bf05ed782ac7",
+          "stage": "segments",
+          "progress": {
+            "segments_total": 367,
+            "cut_done": 362,
+            "qwen_done": 356,
+            "spk_done": 330,
+            "emo_done": 330,
+            "segments_done": 330
+          }
+        },
+        {
+          "request_id": "0d3dcf68-26fd-4cb9-94f2-4fd299411746",
+          "stage": "segments",
+          "progress": {
+            "segments_total": 361,
+            "cut_done": 344,
+            "qwen_done": 337,
+            "spk_done": 312,
+            "emo_done": 312,
+            "segments_done": 312
+          }
+        },
+        {
+          "request_id": "a81bb87e-93a2-4e19-bf71-4dd71329d707",
+          "stage": "segments",
+          "progress": {
+            "segments_total": 397,
+            "cut_done": 350,
+            "qwen_done": 343,
+            "spk_done": 318,
+            "emo_done": 318,
+            "segments_done": 318
+          }
+        },
+        {
+          "request_id": "6b8031d6-0248-47d5-938b-699e3bf98e8f",
+          "stage": "segments",
+          "progress": {
+            "segments_total": 753,
+            "cut_done": 344,
+            "qwen_done": 337,
+            "spk_done": 312,
+            "emo_done": 312,
+            "segments_done": 312
+          }
+        },
+        {
+          "request_id": "49590ab2-c213-4c0c-8f20-7176e6c92e2f",
+          "stage": "segments",
+          "progress": {
+            "segments_total": 557,
+            "cut_done": 334,
+            "qwen_done": 327,
+            "spk_done": 302,
+            "emo_done": 302,
+            "segments_done": 302
+          }
+        },
+        {
+          "request_id": "f0652227-fdaa-421f-bedc-d6bce7ff1313",
+          "stage": "segments",
+          "progress": {
+            "segments_total": 665,
+            "cut_done": 328,
+            "qwen_done": 321,
+            "spk_done": 296,
+            "emo_done": 296,
+            "segments_done": 296
+          }
+        },
+        {
+          "request_id": "b0ca6c53-3499-45f6-98d9-80da0a7637d9",
+          "stage": "segments",
+          "progress": {
+            "segments_total": 615,
+            "cut_done": 334,
+            "qwen_done": 327,
+            "spk_done": 302,
+            "emo_done": 302,
+            "segments_done": 302
+          }
+        },
+        {
+          "request_id": "daa8dd19-46f1-46d2-a7ac-f931928547af",
+          "stage": "segments",
+          "progress": {
+            "segments_total": 654,
+            "cut_done": 328,
+            "qwen_done": 321,
+            "spk_done": 296,
+            "emo_done": 296,
+            "segments_done": 296
+          }
+        }
+      ],
+      "pool": {
+        "speech_campplus": {
+          "configured_instances": 8,
+          "instances": 8,
+          "failed_instances": 0,
+          "busy": 8,
+          "waiting": 248,
+          "calls": 2469,
+          "prefetch_queue_depth": 0,
+          "backpressure_waiting": 248
+        },
+        "emotion2vec": {
+          "configured_instances": 8,
+          "instances": 8,
+          "failed_instances": 0,
+          "busy": 4,
+          "waiting": 0,
+          "calls": 2320,
+          "prefetch_queue_depth": 0,
+          "backpressure_waiting": 0
+        }
+      },
+      "VAD": {
+        "configured_instances": 8,
+        "loaded_instances": 8,
+        "busy": 0,
+        "waiting": 0,
+        "failed_instances": 0
+      },
+      "qwen": {
+        "busy": 1,
+        "waiting": 13,
+        "batch_count": 58,
+        "batch_sizes": {
+          "1": 1,
+          "3": 1,
+          "13": 1,
+          "19": 2,
+          "45": 8,
+          "83": 4,
+          "46": 2,
+          "53": 2,
+          "70": 2,
+          "58": 2,
+          "60": 1,
+          "57": 1,
+          "69": 1,
+          "59": 1,
+          "48": 4,
+          "54": 1,
+          "51": 3,
+          "50": 2,
+          "56": 1,
+          "52": 1,
+          "47": 1,
+          "49": 2,
+          "15": 1,
+          "42": 2,
+          "31": 1,
+          "41": 2,
+          "21": 1,
+          "37": 1,
+          "36": 1,
+          "43": 2,
+          "40": 2
+        }
+      },
+      "pending_budget": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 256,
+        "audio_bytes": 110914816,
+        "waiting": 68,
+        "peak": 256,
+        "peak_audio_bytes": 121548736
+      }
+    },
+    "limits": [
+      "0/8 completed; no successful subset or N8 P50/P95 manufactured",
+      "component B128 success does not prove complete-audio B8 throughput",
+      "spk_done/emo_done in this old API were published after join; not independent stage-speed evidence",
+      "full299MB status.jsonl retained at origin; this audit only parses bounded diagnostic snapshot plus round records"
+    ],
+    "saved_config_sha256": "10bd533e5f5f4cde45ef1c500af0db3f29662b23c91910afe9ea779dc0b186b8",
+    "saved_config_matches_predeclared_B8_profile": true
+  },
+  "inputs": {
+    "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-v6-frozen.log": {
+      "bytes": 1762,
+      "sha256": "a5acbe784a596c712fbcc0c61d8fee79c31f05947715802f0c9ea9462053cadf"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-v6-frozen-exit.json": {
+      "bytes": 72,
+      "sha256": "247f09af88849892248ca3a18b918ba77d1b7d4096861a0c6123ff31e5ce9e40"
+    },
+    "/home/zhangs/asr_nvidia/docs/npu-throughput-20261118/protected-build-v6.json": {
+      "bytes": 41125,
+      "sha256": "cbc39ce7e7696ebc21f1290efcfb7c1a1534ace19cb4f1df7c81951f926ee665"
+    },
+    "/tmp/asr-throughput-cython-v6-20261118-id1hccef/cpu-full-tests.log": {
+      "bytes": 1781,
+      "sha256": "eec41103bffaf27fab01d71204d95e5768106d901e6058b8292795b9259f5f06"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-v6-short/admission.json": {
+      "bytes": 860316,
+      "sha256": "c90754c0b5603e6ac59a5cac8ae9ed682bbafd85c896e3af692af5bfdf058e42"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-v6-short-exit.json": {
+      "bytes": 72,
+      "sha256": "146c9cd69ba070dd398b6a9a61ae8d98f3f7c71fbfe736c20d98c42f26c1c635"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/http-admission-protected-v6-short/admission.json": {
+      "bytes": 856206,
+      "sha256": "46e753709e3479d9273d904eea801ed02b727855d60d5438190990844f9e42b5"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/http-admission-protected-v6-short-exit.json": {
+      "bytes": 72,
+      "sha256": "017a80670f6b2bd63c52287aa9574b26dde704229a723bc69c1ae97d555a8b08"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6/summary.json": {
+      "bytes": 1043028,
+      "sha256": "38ede8251c1d43c37b851d6854623d2a27071c52c6b932ed6b9aea63ea646833"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6-exit.json": {
+      "bytes": 71,
+      "sha256": "dacbcb4e8b396d7cba95aa5f6690d0bf528d8268f24e00aa6123edca03ab6b7b"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6/batch-128-round-0.json": {
+      "bytes": 348768,
+      "sha256": "aff818ac4b867ab69bac711b298ae845ec2d15243041dbfabd49763a1367e860"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6/batch-128-round-1.json": {
+      "bytes": 337164,
+      "sha256": "96ba8d7aaaabe4f77e2aa8b835694aceab89bf2943a69e5a6d4db73bf97c7994"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6/batch-128-round-2.json": {
+      "bytes": 337179,
+      "sha256": "7be7487eb29db34094af9fb6618140d660bd4014e8ebd417be1f6d8f8abe804b"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/qwen-protected-process-128-v6/batch-128-round-3.json": {
+      "bytes": 337172,
+      "sha256": "67d707d83e144e422c5a2d701440074966c650485f641397c2b112191965753a"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/full-v6-precheck-8B/c8-B-r1/summary.json": {
+      "bytes": 151778,
+      "sha256": "966c7adbc1883219139e5b188072102c558d26f3a610f3db00f69ef9da6a6d81"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/full-v6-precheck-8B/c8-B-r1/run.json": {
+      "bytes": 29266,
+      "sha256": "fb3735ecff79ddb9dde5ee508eb63dc89568adfbca9d22864f066806c59a8380"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/full-v6-precheck-8B/c8-B-r1/diagnostic-status.json": {
+      "bytes": 4798800,
+      "sha256": "cd005138529061bb9ff17c67916f64e6577499cd38b0d0e17c7006a3fe7638ba"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/full-v6-precheck-8B/c8-B-r1/diagnostic-trigger.json": {
+      "bytes": 3611,
+      "sha256": "842ce0fe2a2b693c0d20da4c445b5d76ba0df761a7660ec33297ae3370be30b4"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/full-v6-precheck-predeclared.json": {
+      "bytes": 1584,
+      "sha256": "c0503157425f1442a41fd3559650f197fa0bb304687b6f020f8856abc9b6242a"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/full-v6-precheck-8B-exit.json": {
+      "bytes": 71,
+      "sha256": "2ddb2fc9466c399efb817541bbdb4a5f73ab2215621731d2402c7f48eda6f163"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-v5/admission.json": {
+      "bytes": 631775,
+      "sha256": "fbd154118d14bd8c3d7cf10dd2753a8805c41715f30374a591507e1a65a46dab"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-v5-long/admission.json": {
+      "bytes": 506614,
+      "sha256": "a9696d90d717bc664bcbda90ea648a82b3ec13a153144101d7a0127d958df64b"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/full-v6-precheck-8B/c8-B-r1/config.toml": {
+      "bytes": 5378,
+      "sha256": "10bd533e5f5f4cde45ef1c500af0db3f29662b23c91910afe9ea779dc0b186b8"
+    },
+    "/tmp/asr-throughput-20261118-xvior99k/final-process-v6-b8.toml": {
+      "bytes": 5378,
+      "sha256": "10bd533e5f5f4cde45ef1c500af0db3f29662b23c91910afe9ea779dc0b186b8"
+    }
+  },
+  "limits": [
+    "This evidence binds historical v6 frozen sources, not later branch-progress/test-fixture edits",
+    "No incomplete/in-progress stream-policy results included",
+    "No giant vectors, raw transcript bodies, PCM or source audio copied"
+  ],
+  "historical_http_admission_not_passed": [
+    {
+      "raw_path": "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-v5/admission.json",
+      "status": "not_observed",
+      "error": null,
+      "wav_seconds": 4.1,
+      "shutdown": {
+        "passed": true,
+        "exit_code": 0,
+        "forced": false
+      },
+      "counts_toward_final_matrix": false
+    },
+    {
+      "raw_path": "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-v5-long/admission.json",
+      "status": "failed",
+      "error": "ReadTimeout: ",
+      "wav_seconds": 120.0,
+      "shutdown": {
+        "passed": true,
+        "exit_code": 0,
+        "forced": false
+      },
+      "counts_toward_final_matrix": false
+    }
+  ]
+}

@@ -1,0 +1,2877 @@
+{
+  "schema": "v14_compact_delivery_draft_2_after_B8_failure",
+  "created_utc": "2026-11-18T19:46:26.305627+00:00",
+  "scope": "Independent CPU file/OS metadata digest of completed evidence; no ROOT changes, port GET, model or NPU operations.",
+  "counts": {
+    "raw_transcripts": 0,
+    "raw_vectors": 0,
+    "raw_score_lists": 0,
+    "PCM_or_audio_bytes_copied": 0
+  },
+  "acceptance": {
+    "tasks_checked": 42,
+    "tasks_total": 54,
+    "final_matrix_rounds_required": 18,
+    "final_matrix_started": false,
+    "full_performance_acceptance": false,
+    "B8_precheck": "Completed diagnostic_aborted at420.463s;3completed/5cancelled; nonacceptance. Final18rounds not started.",
+    "v15_B8_wait50": "Running per root assignment; excluded from completed result table."
+  },
+  "isolated_CPU_regression": {
+    "source": {
+      "artifacts": {
+        "result.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/result.json",
+          "sha256": "36b705ba817f0f70c1681753a2c417079a2c02f347066c361b84b74b1ef8bdcd",
+          "bytes": 82581
+        },
+        "freeze.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/freeze.json",
+          "sha256": "c8953c01da62c2a9b8a2dc5931e4b67a925d80e42be83b130daf36e8700cd3b4",
+          "bytes": 21452
+        },
+        "owner.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/owner.json",
+          "sha256": "4b9e6419b6368e16785936ac90768b4cc5e0d1ceebaca1c25e35df86d11177cf",
+          "bytes": 438
+        },
+        "isolation-preflight.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/isolation-preflight.json",
+          "sha256": "40bed8e539a3e1a9fc65a134d946abae3318aa6cb29bc2558426567df62d4b4a",
+          "bytes": 2558
+        },
+        "required-node-evidence.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/required-node-evidence.json",
+          "sha256": "ec525147acce75bb75d109d945dc3d3eaefcb4614fa28db73facc1247e418a85",
+          "bytes": 914
+        },
+        "pytest.log": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/pytest.log",
+          "sha256": "0fcff600ced1f8148d9028114985504aecf33873a783da0b771861fd09568033",
+          "bytes": 1976
+        },
+        "guard.log": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/guard.log",
+          "sha256": "41b105c7ed20805e1a304000513e9bc97c7bb0e3c9c6da1ee08fbe2d39ae7422",
+          "bytes": 625
+        },
+        "cache-guard.log": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/cache-guard.log",
+          "sha256": "14072f1a89d721182d70aef9eae7494e3f08fb317b1465b73225e2c77dc995e8",
+          "bytes": 7408
+        }
+      },
+      "status": "passed",
+      "passed": 902,
+      "subtests_passed": 281,
+      "skipped": 2,
+      "hardware_test_deselected": "test_status_snapshot_marks_health_as_skipped",
+      "elapsed_s": 228.6740913502872,
+      "owner_identity": {
+        "pid": 743829,
+        "create_time": 1795027031.01
+      },
+      "owned_count": 149,
+      "remaining_owned": [],
+      "all_registered_births_gone_now": true,
+      "isolation": {
+        "TMPDIR": "/tmp/asr-cpu-hu2zznw2",
+        "cache_dir": "/tmp/asr-cpu-hu2zznw2/seacraft_asr",
+        "r4_guard_sha256": "8cbc95bd47e620c25fcb92735038084361c1c57b63404cc2e3b3ff1655c08863",
+        "guard_sha256": "5f112116ccb993275a8c940239d5f699c87da00d17ae7e4b78e96e3fa2b5b121",
+        "plugin_sha256": "9de93ba600d9d2b9dd21a1cc283aef46cc658da7a8779d5ac5eedceb62201543",
+        "scope": "private short TMPDIR before tested Python imports; shared production cache mutation prohibited; metadata reads allowed"
+      },
+      "global_cache_mutation_attempts": [],
+      "actual_torch_npu_imported": false,
+      "optional_backend_probe_blocked": [
+        "BLOCK_IMPORT torch_npu"
+      ],
+      "metadata_read_allowed_both_helpers": true,
+      "actual_helpers": {
+        "source": {
+          "cache_dir": "/tmp/asr-cpu-hu2zznw2/seacraft_asr",
+          "origins": {
+            "utils.audio_utils": "/home/zhangs/asr_nvidia/utils/audio_utils.py",
+            "api.routes.asr_common": "/home/zhangs/asr_nvidia/api/routes/asr_common.py",
+            "core.resource_diagnostics": "/home/zhangs/asr_nvidia/core/resource_diagnostics.py"
+          },
+          "returncode": 0,
+          "exited": true,
+          "torch_npu_imported": false
+        },
+        "protected": {
+          "cache_dir": "/tmp/asr-cpu-hu2zznw2/seacraft_asr",
+          "origins": {
+            "utils.audio_utils": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/utils/audio_utils.cpython-310-aarch64-linux-gnu.so",
+            "api.routes.asr_common": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/api/routes/asr_common.cpython-310-aarch64-linux-gnu.so",
+            "core.resource_diagnostics": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/core/resource_diagnostics.cpython-310-aarch64-linux-gnu.so"
+          },
+          "returncode": 0,
+          "exited": true,
+          "torch_npu_imported": false
+        }
+      },
+      "required_nodes": {
+        "test_protected_spawn_reports_real_worker_entry_artifact_when_requested": [
+          "skipped"
+        ],
+        "test_protected_stage_plan_resolves_actual_core_artifact_without_import": [
+          "skipped"
+        ],
+        "test_real_spawn_core_worker_entry_matches_current_module_and_optional_so": [
+          "passed"
+        ],
+        "test_owned_tmpdir_isolates_actual_source_and_protected_cache_helpers": [
+          "passed",
+          "passed"
+        ]
+      },
+      "actual_so_count": 0,
+      "source_or_stage_or_config_changed": false
+    },
+    "protected": {
+      "artifacts": {
+        "result.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/result.json",
+          "sha256": "79b7837597672b0efe0b851ab385d074a1e49d3db91dac285dafa0b692b9ad42",
+          "bytes": 74162
+        },
+        "freeze.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/freeze.json",
+          "sha256": "f33630009233deb862861236acbe8405404e27ef8230790ab7c22657dd7b5bc2",
+          "bytes": 73256
+        },
+        "owner.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/owner.json",
+          "sha256": "173d837bfa6678c26cae7d26e35fffa19640fe8a7355eea86c27a5372d06fabd",
+          "bytes": 469
+        },
+        "isolation-preflight.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/isolation-preflight.json",
+          "sha256": "fd90783c93ad84a3086484cd72fe7e072d693c4885ee8dad920260c336f075de",
+          "bytes": 2885
+        },
+        "required-node-evidence.json": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/required-node-evidence.json",
+          "sha256": "d1d53813600155d4e04626eee496d62714e9668b639da4ad902377e514f7d73f",
+          "bytes": 5219
+        },
+        "pytest.log": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/pytest.log",
+          "sha256": "5f9407dec09f5754d8231af2fb25f7196f2d9ecf7d655403e910f74bfc5c7605",
+          "bytes": 1965
+        },
+        "guard.log": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/guard.log",
+          "sha256": "2347f379e53e1cd869849a6d599cfdb5e24e33b6bfa5693f83fdf0c4a55f0134",
+          "bytes": 635
+        },
+        "cache-guard.log": {
+          "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/cache-guard.log",
+          "sha256": "bf5737cb401c11e1f03be213ee41a0578002f2b77a94fa88003c20d0e7e858d6",
+          "bytes": 7428
+        }
+      },
+      "status": "passed",
+      "passed": 904,
+      "subtests_passed": 281,
+      "skipped": 0,
+      "hardware_test_deselected": "test_status_snapshot_marks_health_as_skipped",
+      "elapsed_s": 231.73386295046657,
+      "owner_identity": {
+        "pid": 3836641,
+        "create_time": 1795027427.84
+      },
+      "owned_count": 148,
+      "remaining_owned": [],
+      "all_registered_births_gone_now": true,
+      "isolation": {
+        "TMPDIR": "/tmp/asr-cpu-jxopwh5v",
+        "cache_dir": "/tmp/asr-cpu-jxopwh5v/seacraft_asr",
+        "r4_guard_sha256": "8cbc95bd47e620c25fcb92735038084361c1c57b63404cc2e3b3ff1655c08863",
+        "guard_sha256": "5f112116ccb993275a8c940239d5f699c87da00d17ae7e4b78e96e3fa2b5b121",
+        "plugin_sha256": "9de93ba600d9d2b9dd21a1cc283aef46cc658da7a8779d5ac5eedceb62201543",
+        "scope": "private short TMPDIR before tested Python imports; shared production cache mutation prohibited; metadata reads allowed"
+      },
+      "global_cache_mutation_attempts": [],
+      "actual_torch_npu_imported": false,
+      "optional_backend_probe_blocked": [
+        "BLOCK_IMPORT torch_npu"
+      ],
+      "metadata_read_allowed_both_helpers": true,
+      "actual_helpers": {
+        "source": {
+          "cache_dir": "/tmp/asr-cpu-jxopwh5v/seacraft_asr",
+          "origins": {
+            "utils.audio_utils": "/home/zhangs/asr_nvidia/utils/audio_utils.py",
+            "api.routes.asr_common": "/home/zhangs/asr_nvidia/api/routes/asr_common.py",
+            "core.resource_diagnostics": "/home/zhangs/asr_nvidia/core/resource_diagnostics.py"
+          },
+          "returncode": 0,
+          "exited": true,
+          "torch_npu_imported": false
+        },
+        "protected": {
+          "cache_dir": "/tmp/asr-cpu-jxopwh5v/seacraft_asr",
+          "origins": {
+            "utils.audio_utils": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/utils/audio_utils.cpython-310-aarch64-linux-gnu.so",
+            "api.routes.asr_common": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/api/routes/asr_common.cpython-310-aarch64-linux-gnu.so",
+            "core.resource_diagnostics": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/core/resource_diagnostics.cpython-310-aarch64-linux-gnu.so"
+          },
+          "returncode": 0,
+          "exited": true,
+          "torch_npu_imported": false
+        }
+      },
+      "required_nodes": {
+        "test_protected_spawn_reports_real_worker_entry_artifact_when_requested": [
+          "passed"
+        ],
+        "test_protected_stage_plan_resolves_actual_core_artifact_without_import": [
+          "passed"
+        ],
+        "test_real_spawn_core_worker_entry_matches_current_module_and_optional_so": [
+          "passed"
+        ],
+        "test_owned_tmpdir_isolates_actual_source_and_protected_cache_helpers": [
+          "passed",
+          "passed"
+        ]
+      },
+      "actual_so_count": 35,
+      "source_or_stage_or_config_changed": false
+    }
+  },
+  "isolated_HTTP_admission": {
+    "audit": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-protected-v14-independent-audit.json",
+      "sha256": "55cf502ce256d43cd2601aef53bb64f61e937cd19bc87874a5855c895f32b2a7",
+      "bytes": 38708
+    },
+    "runs": {
+      "source": {
+        "successful_base_count": 12,
+        "rejection_codes": [
+          4017,
+          4013,
+          4013
+        ],
+        "capacity_stages": [
+          {
+            "id": "B4",
+            "actual_total_B": [
+              4,
+              4
+            ],
+            "configured_total_B": [
+              8,
+              4
+            ],
+            "drained_total_B": [
+              0,
+              0
+            ],
+            "probe_ids_codes": [
+              {
+                "id": "B4-fifth_B",
+                "expected_code": 4017,
+                "actual_code": 4017
+              }
+            ]
+          },
+          {
+            "id": "total8",
+            "actual_total_B": [
+              8,
+              4
+            ],
+            "configured_total_B": [
+              8,
+              4
+            ],
+            "drained_total_B": [
+              0,
+              0
+            ],
+            "probe_ids_codes": [
+              {
+                "id": "total8-ninth_A",
+                "expected_code": 4013,
+                "actual_code": 4013
+              },
+              {
+                "id": "total8-ninth_B",
+                "expected_code": 4013,
+                "actual_code": 4013
+              }
+            ]
+          }
+        ],
+        "GET_timings": {
+          "n": 44,
+          "p50_ms": 2.642849925905466,
+          "p95_ms": 64.27881931886077,
+          "max_ms": 79.9859194085002,
+          "scope": "HTTP GET + response JSON only; excludes owned PID scan; not model/kernel or end-to-end audio latency",
+          "quantile_method": "linear interpolation",
+          "raw_timing_error_fields": 0
+        },
+        "warmup_s": 215.40745822992176,
+        "actual_health": {
+          "VAD_CPU": 8,
+          "CAM_FP32_NPU7": 8,
+          "emo_NPU7": 8
+        },
+        "owned_process_count": 212,
+        "remaining_owned_now": [],
+        "cache": {
+          "temp_dir": "/tmp/asr-svc-aq36kb57",
+          "cache_dir": "/tmp/asr-svc-aq36kb57/seacraft_asr",
+          "diagnostic_cache_paths": [
+            "/tmp/asr-svc-aq36kb57/seacraft_asr"
+          ],
+          "logged_warmup_base_cache_file_paths": [
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-0abcd137c2d44a328bf12df451f91efd-9sm69d8a.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-1c6cc9137e84481b8ab08aec8867d0da-vi9so6nx.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-25583a1a407149b5877228c4d9ccfa29-xhrr22ue.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-26d041643e1849fda651eb5bf0150681-rl76fxis.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-6b52b34b35744bfa9d8104679d0d5c36-3l5r7gv2.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-6d2ca883a3b04f36804c5f16143f3521-yd3agyuh.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-883e9cb45e54439895b1b0c4e1995031-cdc3mazq.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-ca6e0d526be649d0b25c8aa5a51c6489-k_s0q3dq.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-caddcaa216d1430bb5e0f0582c52695b-qsxkms8e.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-ccd3585e5ad4419e980ff3a00d6e66c6-2poj7bx0.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-ebc59d087afe448a8c26261f6956c4a0-7tg2c_vm.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-f36784e7237b4127a35017d7abfebe55-_c895957.wav",
+            "/tmp/asr-svc-aq36kb57/seacraft_asr/seacraft-asr-v3-f4d03b073d0143a38d9f13cbc44f3c2d-o9_bkze6.wav"
+          ],
+          "logged_paths_count": 13,
+          "remaining_cache_files": [],
+          "cache_scan_error": null,
+          "temp_dir_retained": true
+        },
+        "shutdown": {
+          "passed": true,
+          "exit_code": 0,
+          "forced": false,
+          "orphan_cleanup": false,
+          "observe_s": 5,
+          "port_observations": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "term_to_parent_exit_s": 27.12345806043595
+        },
+        "shared_identity": {
+          "pid": 1601397,
+          "create_time": 1791963491.5,
+          "present": true
+        },
+        "source_identity_complete": true,
+        "config_unchanged": true
+      },
+      "protected": {
+        "successful_base_count": 12,
+        "rejection_codes": [
+          4017,
+          4013,
+          4013
+        ],
+        "capacity_stages": [
+          {
+            "id": "B4",
+            "actual_total_B": [
+              4,
+              4
+            ],
+            "configured_total_B": [
+              8,
+              4
+            ],
+            "drained_total_B": [
+              0,
+              0
+            ],
+            "probe_ids_codes": [
+              {
+                "id": "B4-fifth_B",
+                "expected_code": 4017,
+                "actual_code": 4017
+              }
+            ]
+          },
+          {
+            "id": "total8",
+            "actual_total_B": [
+              8,
+              4
+            ],
+            "configured_total_B": [
+              8,
+              4
+            ],
+            "drained_total_B": [
+              0,
+              0
+            ],
+            "probe_ids_codes": [
+              {
+                "id": "total8-ninth_A",
+                "expected_code": 4013,
+                "actual_code": 4013
+              },
+              {
+                "id": "total8-ninth_B",
+                "expected_code": 4013,
+                "actual_code": 4013
+              }
+            ]
+          }
+        ],
+        "GET_timings": {
+          "n": 42,
+          "p50_ms": 3.347785212099552,
+          "p95_ms": 69.40006371587512,
+          "max_ms": 80.60644008219242,
+          "scope": "HTTP GET + response JSON only; excludes owned PID scan; not model/kernel or end-to-end audio latency",
+          "quantile_method": "linear interpolation",
+          "raw_timing_error_fields": 0
+        },
+        "warmup_s": 213.6747016897425,
+        "actual_health": {
+          "VAD_CPU": 8,
+          "CAM_FP32_NPU7": 8,
+          "emo_NPU7": 8
+        },
+        "owned_process_count": 213,
+        "remaining_owned_now": [],
+        "cache": {
+          "temp_dir": "/tmp/asr-svc-xv9n5_uw",
+          "cache_dir": "/tmp/asr-svc-xv9n5_uw/seacraft_asr",
+          "diagnostic_cache_paths": [
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr"
+          ],
+          "logged_warmup_base_cache_file_paths": [
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-23f45bd01a0e49caaa5b3a8bcb5451ee-ho4gii9k.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-2d30faa63f1d4310b5d2e67080b50e84-1_aocvwp.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-5b1894abeb154e868979110c20d6381d-jgmia7i4.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-611f9535c3e442318bf3c8569fc8fdc6-77k5wdm_.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-7934e129ac10477b974b184524659313-ipzuziuj.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-7c5d76207cc84202bc81b23d14543493-qs_19zfc.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-97749087789c4e56a96e332cb3d8e98a-867jeyd4.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-9eac3a92b0804c45bf3b0c7a918d432b-ylmp4tl1.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-bd806c0b0b9a4816a9e2b3e25db62629-hktjedai.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-ce92098e7d1c451f8224510e1a4aad58-r_u9h0h7.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-df2a0fb47c7b4124ab810c264fdfbd4a-quc1xp2b.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-f43ce6de2f8e467c850814ef47611b8a-492fvyic.wav",
+            "/tmp/asr-svc-xv9n5_uw/seacraft_asr/seacraft-asr-v3-fa9a7b88cdc44c22875c4e77f7170e48-bkvlfp0l.wav"
+          ],
+          "logged_paths_count": 13,
+          "remaining_cache_files": [],
+          "cache_scan_error": null,
+          "temp_dir_retained": true
+        },
+        "shutdown": {
+          "passed": true,
+          "exit_code": 0,
+          "forced": false,
+          "orphan_cleanup": false,
+          "observe_s": 5,
+          "port_observations": [
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "term_to_parent_exit_s": 29.512090199626982
+        },
+        "shared_identity": {
+          "pid": 1601397,
+          "create_time": 1791963491.5,
+          "present": true
+        },
+        "source_identity_complete": true,
+        "config_unchanged": true
+      }
+    },
+    "limits": [
+      "Real 4.1-second functional admission only; not complete-audio N8 or throughput acceptance.",
+      "Worker normal close is enforced by main/runner contracts; direct artifacts show main exit0, no force, exact born PIDs gone and port/cache released.",
+      "Old CPU/cache overlap supports interference; it does not identify an individual unlink event.",
+      "No ports were contacted and no model/device operation was executed by this audit."
+    ]
+  },
+  "actual128_source_protected": {
+    "audit": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/formal-cam128-source-protected-v14-independent-audit.json",
+      "sha256": "cffec744908a5f2c774339e95c4d27c73ef84273335b947818a1a8e65b5d1fc9",
+      "bytes": 38379
+    },
+    "checks_true": 58,
+    "checks_false": [],
+    "summary": {
+      "rounds": [
+        {
+          "round": 0,
+          "warmup": true,
+          "source_wall_s": 7.090268059633672,
+          "protected_wall_s": 6.806297660805285,
+          "Qwen_raw_exact_count": 128,
+          "Qwen_parsed_exact_count": 128,
+          "NN_calls": {
+            "emotion2vec": 108,
+            "speech_campplus": 128
+          },
+          "NN_instance_counts": {
+            "emotion2vec": 8,
+            "speech_campplus": 8
+          },
+          "CAM_child_PIDs": [
+            3378055,
+            3440531,
+            3505326,
+            3597178,
+            3683824,
+            3792501,
+            3863837,
+            3997434
+          ],
+          "maxabs_by_model": {
+            "emotion2vec": 0.0,
+            "speech_campplus": 0.0
+          },
+          "NN_labels_exact": true,
+          "CAM_actual_DONE_identity_actor_PCM_verified": true,
+          "protected_generate_ms": 5666.698249988258
+        },
+        {
+          "round": 1,
+          "warmup": false,
+          "source_wall_s": 5.04688239004463,
+          "protected_wall_s": 4.71835196018219,
+          "Qwen_raw_exact_count": 128,
+          "Qwen_parsed_exact_count": 128,
+          "NN_calls": {
+            "speech_campplus": 128,
+            "emotion2vec": 108
+          },
+          "NN_instance_counts": {
+            "speech_campplus": 8,
+            "emotion2vec": 8
+          },
+          "CAM_child_PIDs": [
+            3378055,
+            3440531,
+            3505326,
+            3597178,
+            3683824,
+            3792501,
+            3863837,
+            3997434
+          ],
+          "maxabs_by_model": {
+            "speech_campplus": 0.0,
+            "emotion2vec": 0.0
+          },
+          "NN_labels_exact": true,
+          "CAM_actual_DONE_identity_actor_PCM_verified": true,
+          "protected_generate_ms": 3687.6457994803786
+        },
+        {
+          "round": 2,
+          "warmup": false,
+          "source_wall_s": 4.956577789969742,
+          "protected_wall_s": 5.263902259990573,
+          "Qwen_raw_exact_count": 128,
+          "Qwen_parsed_exact_count": 128,
+          "NN_calls": {
+            "speech_campplus": 128,
+            "emotion2vec": 108
+          },
+          "NN_instance_counts": {
+            "speech_campplus": 8,
+            "emotion2vec": 8
+          },
+          "CAM_child_PIDs": [
+            3378055,
+            3440531,
+            3505326,
+            3597178,
+            3683824,
+            3792501,
+            3863837,
+            3997434
+          ],
+          "maxabs_by_model": {
+            "speech_campplus": 0.0,
+            "emotion2vec": 0.0
+          },
+          "NN_labels_exact": true,
+          "CAM_actual_DONE_identity_actor_PCM_verified": true,
+          "protected_generate_ms": 3650.207359343767
+        },
+        {
+          "round": 3,
+          "warmup": false,
+          "source_wall_s": 4.863613359630108,
+          "protected_wall_s": 4.805920150130987,
+          "Qwen_raw_exact_count": 128,
+          "Qwen_parsed_exact_count": 128,
+          "NN_calls": {
+            "speech_campplus": 128,
+            "emotion2vec": 108
+          },
+          "NN_instance_counts": {
+            "speech_campplus": 8,
+            "emotion2vec": 8
+          },
+          "CAM_child_PIDs": [
+            3378055,
+            3440531,
+            3505326,
+            3597178,
+            3683824,
+            3792501,
+            3863837,
+            3997434
+          ],
+          "maxabs_by_model": {
+            "speech_campplus": 0.0,
+            "emotion2vec": 0.0
+          },
+          "NN_labels_exact": true,
+          "CAM_actual_DONE_identity_actor_PCM_verified": true,
+          "protected_generate_ms": 3781.26862924546
+        }
+      ],
+      "steady_source_median_s": 4.956577789969742,
+      "steady_protected_median_s": 4.805920150130987
+    },
+    "identity": {
+      "same_actual128_PCM_WAV_samples_sr_IDs": true,
+      "config_sha256": "e497b880c8fa7a7b3fc9409c21b0251e2d22d613160411bc32a26946beacd878",
+      "manifest_sha256": "f21a6557972f99bf1df40363c48697f4fec019501d1944949fb8ea5b15ece5f9",
+      "source_ROOT": "/home/zhangs/asr_nvidia",
+      "protected_ROOT": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91",
+      "runtime_source_drift": {},
+      "source_sha_scope": "35 runtime .py source hashes from protected freeze manifest independently match current authoritative ROOT. Binary .so SHA intentionally differs from source .py SHA; exact compiled provenance uses frozen-source/build/reuse-chain records, not an assertion that binary hashes equal source hashes."
+    },
+    "CAM8": {
+      "count": 8,
+      "actual_origin": ".so",
+      "actual_dtype": "FP32",
+      "device": "npu:7",
+      "all_verified_by_audit": true
+    },
+    "Qwen_worker": {
+      "worker_pid": 238707,
+      "worker_create_time": 1795028035.36,
+      "worker_start_ticks": "711570936",
+      "worker_entry_module_file": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+      "normal_exit_ok": true,
+      "worker_exitcode": 0,
+      "worker_alive": false,
+      "resource_reaped": true,
+      "forced_cleanup": false
+    },
+    "cleanup": {
+      "status": "passed",
+      "outer_exit": 0,
+      "outer_elapsed_s": 239.31518593989313,
+      "term_sent": false,
+      "forced_kill": false,
+      "residual_owned_pids": []
+    },
+    "ownership": {
+      "status": "passed",
+      "phase_contracts": [
+        {
+          "phase": "partial_cancel_invalid",
+          "status": "passed",
+          "codes": [
+            4009,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+          ],
+          "cancelled_indices": [
+            1
+          ],
+          "request_timeout_s": null,
+          "normal_worker_exitcode": null
+        },
+        {
+          "phase": "timeout_waits_done",
+          "status": "passed",
+          "codes": [
+            4012,
+            4012,
+            4012,
+            4012,
+            4012,
+            4012,
+            4012,
+            4012
+          ],
+          "cancelled_indices": null,
+          "request_timeout_s": 0.01,
+          "normal_worker_exitcode": null
+        },
+        {
+          "phase": "cancel_aclose",
+          "status": "passed",
+          "codes": null,
+          "cancelled_indices": null,
+          "request_timeout_s": null,
+          "normal_worker_exitcode": 0
+        }
+      ],
+      "scope": "The controlled gate holds the parent only after actual model DONE, synchronize and verified RPC read; cancellation/timeout keeps lease until parent owned-call return. This proves ownership/drain behavior at that gate, not cancellation of an executing device kernel. Partial-invalid physical valid batch7 for requested8 is expected and remaining phases use8."
+    },
+    "limits": [
+      "No human ASR/speaker/emotion accuracy judgement; exact source/protected output preservation only.",
+      "Fixed128 component acceptance is not full-file1/2/4/8 throughput acceptance. No VAD/full HTTP/postprocessing measurement here.",
+      "No live NPU/GET/model action performed by auditor; cleanup/liveness conclusions are from recorded worker/outer supervisor evidence.",
+      "All NN vectors/transcripts used only in memory for comparison; no raw values copied into audit.",
+      "Allocator values belong to each worker and peak_scope may be last_generate_only; parent allocator is not aggregate child HBM."
+    ]
+  },
+  "source_thread_vs_process128": {
+    "audit": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/formal-cam128-v11-independent-audit.json",
+      "sha256": "e60e7bac337c8b7dbde9a9a2603a04be19b5348d7512dec0293648de0d343545",
+      "bytes": 83197
+    },
+    "status": "passed",
+    "steady_thread_median_s": 13.413526279851794,
+    "steady_process_median_s": 4.956577789969742,
+    "scope": "Fixed selected128 component, one warmup plus3 steady; not complete-file throughput; nonexclusive host."
+  },
+  "prefetch": {
+    "audit": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/formal-cam-prefetch-v11-independent-audit.json",
+      "sha256": "a69c4598cb4dabaa19089c45e7eba0b4b23bbd101d298183c755cf10e6f2e580",
+      "bytes": 25279
+    },
+    "tail_resource_audit": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/formal-cam-prefetch-v11-resources-tail-audit.json",
+      "sha256": "cfd1100cde8b7c7b9ff50dd16016cc168c928581b2a032869423efe52e407915",
+      "bytes": 234795
+    },
+    "performance": {
+      "0": {
+        "warmup_s": 7.090268059633672,
+        "steady_s": [
+          5.04688239004463,
+          4.956577789969742,
+          4.863613359630108
+        ],
+        "median_s": 4.956577789969742,
+        "median_relative_to_depth0": 1.0
+      },
+      "1": {
+        "warmup_s": 7.394879040308297,
+        "steady_s": [
+          5.06372538022697,
+          5.057938059791923,
+          5.031679750420153
+        ],
+        "median_s": 5.057938059791923,
+        "median_relative_to_depth0": 1.0204496477443157
+      },
+      "5": {
+        "warmup_s": 7.134091090410948,
+        "steady_s": [
+          5.029655089601874,
+          5.021832009777427,
+          5.036992140114307
+        ],
+        "median_s": 5.029655089601874,
+        "median_relative_to_depth0": 1.014743498988357
+      }
+    },
+    "selected_depth": 0,
+    "selection_reason": "Depth0 has the smallest observed three-steady median and no prefetch buffer; retain0. About1-2% differences are descriptive, not statistical significance.",
+    "all_Qwen_raw_parsed_and_NN_exact": true,
+    "depths": {
+      "0": {
+        "steady_rounds": [
+          {
+            "round": 1,
+            "work_done_elapsed_s": 5.04688239004463,
+            "last_to_complete": "Qwen",
+            "branch_last_return_from_origin_s": {
+              "Qwen": 5.036419999785721,
+              "speech_campplus": 1.8640608601272106,
+              "emotion2vec": 3.8668558299541473
+            },
+            "finished_before_last_s": {
+              "Qwen": 0.0,
+              "speech_campplus": 3.1723591396585107,
+              "emotion2vec": 1.169564169831574
+            },
+            "models": {
+              "speech_campplus": {
+                "actual_calls": 128,
+                "original_call_first_to_last_span_s": 1.7230432601645589,
+                "through_CPU_capture_span_s": 1.7255002399906516,
+                "logical_last_return_from_origin_s": 1.8640608601272106,
+                "tail8_completion_counts_by_instance": {
+                  "speech_campplus[3]": 1,
+                  "speech_campplus[1]": 1,
+                  "speech_campplus[6]": 1,
+                  "speech_campplus[0]": 1,
+                  "speech_campplus[2]": 1,
+                  "speech_campplus[4]": 1,
+                  "speech_campplus[5]": 1,
+                  "speech_campplus[7]": 1
+                },
+                "tail8_completion_window_s": 0.15535965003073215,
+                "composite_queued_to_actual_call": {
+                  "n": 128,
+                  "total_ms": 107156.76731523126,
+                  "max_ms": 1580.8866694569588,
+                  "p50_ms": 852.9663453809917,
+                  "p95_ms": 1493.9655002206564
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              },
+              "emotion2vec": {
+                "actual_calls": 108,
+                "original_call_first_to_last_span_s": 3.727850920520723,
+                "through_CPU_capture_span_s": 3.728136910125613,
+                "logical_last_return_from_origin_s": 3.8668558299541473,
+                "tail8_completion_counts_by_instance": {
+                  "emotion2vec[0]": 1,
+                  "emotion2vec[4]": 1,
+                  "emotion2vec[5]": 1,
+                  "emotion2vec[2]": 1,
+                  "emotion2vec[7]": 1,
+                  "emotion2vec[3]": 1,
+                  "emotion2vec[1]": 1,
+                  "emotion2vec[6]": 1
+                },
+                "tail8_completion_window_s": 0.05196201987564564,
+                "composite_queued_to_actual_call": {
+                  "n": 108,
+                  "total_ms": 223401.62909124047,
+                  "max_ms": 3660.159840248525,
+                  "p50_ms": 2212.5551397912204,
+                  "p95_ms": 3503.5125815775245
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              }
+            }
+          },
+          {
+            "round": 2,
+            "work_done_elapsed_s": 4.956577789969742,
+            "last_to_complete": "Qwen",
+            "branch_last_return_from_origin_s": {
+              "Qwen": 4.94481887947768,
+              "speech_campplus": 1.8419981691986322,
+              "emotion2vec": 3.690223849378526
+            },
+            "finished_before_last_s": {
+              "Qwen": 0.0,
+              "speech_campplus": 3.1028207102790475,
+              "emotion2vec": 1.2545950300991535
+            },
+            "models": {
+              "speech_campplus": {
+                "actual_calls": 128,
+                "original_call_first_to_last_span_s": 1.7025002697482705,
+                "through_CPU_capture_span_s": 1.7076489897444844,
+                "logical_last_return_from_origin_s": 1.8419981691986322,
+                "tail8_completion_counts_by_instance": {
+                  "speech_campplus[4]": 1,
+                  "speech_campplus[1]": 1,
+                  "speech_campplus[2]": 1,
+                  "speech_campplus[5]": 1,
+                  "speech_campplus[6]": 1,
+                  "speech_campplus[0]": 1,
+                  "speech_campplus[7]": 1,
+                  "speech_campplus[3]": 1
+                },
+                "tail8_completion_window_s": 0.13911935966461897,
+                "composite_queued_to_actual_call": {
+                  "n": 128,
+                  "total_ms": 105934.50525216758,
+                  "max_ms": 1576.2976901605725,
+                  "p50_ms": 819.9966745451093,
+                  "p95_ms": 1501.9187867175788
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              },
+              "emotion2vec": {
+                "actual_calls": 108,
+                "original_call_first_to_last_span_s": 3.5562699995934963,
+                "through_CPU_capture_span_s": 3.556548399850726,
+                "logical_last_return_from_origin_s": 3.690223849378526,
+                "tail8_completion_counts_by_instance": {
+                  "emotion2vec[4]": 1,
+                  "emotion2vec[5]": 1,
+                  "emotion2vec[7]": 1,
+                  "emotion2vec[1]": 1,
+                  "emotion2vec[3]": 1,
+                  "emotion2vec[2]": 1,
+                  "emotion2vec[0]": 1,
+                  "emotion2vec[6]": 1
+                },
+                "tail8_completion_window_s": 0.08814714942127466,
+                "composite_queued_to_actual_call": {
+                  "n": 108,
+                  "total_ms": 214237.4127600342,
+                  "max_ms": 3467.570910230279,
+                  "p50_ms": 2165.7225796952844,
+                  "p95_ms": 3362.564545404165
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              }
+            }
+          },
+          {
+            "round": 3,
+            "work_done_elapsed_s": 4.863613359630108,
+            "last_to_complete": "Qwen",
+            "branch_last_return_from_origin_s": {
+              "Qwen": 4.851936060003936,
+              "speech_campplus": 1.8220600597560406,
+              "emotion2vec": 3.465119590051472
+            },
+            "finished_before_last_s": {
+              "Qwen": 0.0,
+              "speech_campplus": 3.0298760002478957,
+              "emotion2vec": 1.386816469952464
+            },
+            "models": {
+              "speech_campplus": {
+                "actual_calls": 128,
+                "original_call_first_to_last_span_s": 1.680420340038836,
+                "through_CPU_capture_span_s": 1.6842550300061703,
+                "logical_last_return_from_origin_s": 1.8220600597560406,
+                "tail8_completion_counts_by_instance": {
+                  "speech_campplus[6]": 1,
+                  "speech_campplus[1]": 1,
+                  "speech_campplus[5]": 1,
+                  "speech_campplus[0]": 1,
+                  "speech_campplus[4]": 1,
+                  "speech_campplus[3]": 1,
+                  "speech_campplus[7]": 1,
+                  "speech_campplus[2]": 1
+                },
+                "tail8_completion_window_s": 0.06935113947838545,
+                "composite_queued_to_actual_call": {
+                  "n": 128,
+                  "total_ms": 105124.05558954924,
+                  "max_ms": 1610.7262000441551,
+                  "p50_ms": 808.4823302924633,
+                  "p95_ms": 1541.4516870863736
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              },
+              "emotion2vec": {
+                "actual_calls": 108,
+                "original_call_first_to_last_span_s": 3.327367080375552,
+                "through_CPU_capture_span_s": 3.327655980363488,
+                "logical_last_return_from_origin_s": 3.465119590051472,
+                "tail8_completion_counts_by_instance": {
+                  "emotion2vec[7]": 1,
+                  "emotion2vec[3]": 1,
+                  "emotion2vec[0]": 1,
+                  "emotion2vec[6]": 1,
+                  "emotion2vec[5]": 1,
+                  "emotion2vec[4]": 1,
+                  "emotion2vec[1]": 1,
+                  "emotion2vec[2]": 1
+                },
+                "tail8_completion_window_s": 0.08074408024549484,
+                "composite_queued_to_actual_call": {
+                  "n": 108,
+                  "total_ms": 205907.51091297716,
+                  "max_ms": 3239.297579973936,
+                  "p50_ms": 2033.841070253402,
+                  "p95_ms": 3108.3081083837897
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              }
+            }
+          }
+        ],
+        "saved_steady_only_HBM_ranges": {
+          "sample_count": 3,
+          "device7_usage_pct": {
+            "n": 3,
+            "min": 60,
+            "max": 60
+          },
+          "parent_sampled_HBM_MB": {
+            "n": 3,
+            "min": 6949,
+            "max": 6949
+          },
+          "Qwen_sampled_HBM_MB": {
+            "n": 3,
+            "min": 16137,
+            "max": 16137
+          },
+          "CAM8_reported_process_sum_HBM_MB": {
+            "n": 3,
+            "min": 1725,
+            "max": 1729
+          },
+          "project_reported_process_sum_HBM_MB": {
+            "n": 3,
+            "min": 24811,
+            "max": 24815
+          },
+          "shared_HBM_MB": {
+            "n": 3,
+            "min": 11875,
+            "max": 11875
+          }
+        },
+        "saved_HBM_scope": "Three saved before-round npu-smi points, sequential per-process reads; not device peak or exact incremental prefetch HBM.",
+        "actual_pool_capacity": {
+          "speech_campplus": {
+            "instances": 8,
+            "configured_instances": 8,
+            "failed_instances": 0,
+            "prefetch_queue_depth": 0,
+            "waiting_capacity": 0,
+            "actual_batch_size": 1
+          },
+          "emotion2vec": {
+            "instances": 8,
+            "configured_instances": 8,
+            "failed_instances": 0,
+            "prefetch_queue_depth": 0,
+            "waiting_capacity": 0,
+            "actual_batch_size": 1
+          }
+        }
+      },
+      "1": {
+        "steady_rounds": [
+          {
+            "round": 1,
+            "work_done_elapsed_s": 5.06372538022697,
+            "last_to_complete": "Qwen",
+            "branch_last_return_from_origin_s": {
+              "Qwen": 5.052287540398538,
+              "speech_campplus": 2.0146480398252606,
+              "emotion2vec": 3.7177924504503608
+            },
+            "finished_before_last_s": {
+              "Qwen": 0.0,
+              "speech_campplus": 3.0376395005732775,
+              "emotion2vec": 1.3344950899481773
+            },
+            "models": {
+              "speech_campplus": {
+                "actual_calls": 128,
+                "original_call_first_to_last_span_s": 1.8604084197431803,
+                "through_CPU_capture_span_s": 1.8716511698439717,
+                "logical_last_return_from_origin_s": 2.0146480398252606,
+                "tail8_completion_counts_by_instance": {
+                  "speech_campplus[3]": 1,
+                  "speech_campplus[1]": 1,
+                  "speech_campplus[2]": 1,
+                  "speech_campplus[5]": 1,
+                  "speech_campplus[4]": 1,
+                  "speech_campplus[7]": 1,
+                  "speech_campplus[0]": 1,
+                  "speech_campplus[6]": 1
+                },
+                "tail8_completion_window_s": 0.04009499028325081,
+                "composite_queued_to_actual_call": {
+                  "n": 128,
+                  "total_ms": 116183.58103185892,
+                  "max_ms": 1770.4088799655437,
+                  "p50_ms": 883.9333103969693,
+                  "p95_ms": 1756.0944167431442
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              },
+              "emotion2vec": {
+                "actual_calls": 108,
+                "original_call_first_to_last_span_s": 3.575833569280803,
+                "through_CPU_capture_span_s": 3.576001529581845,
+                "logical_last_return_from_origin_s": 3.7177924504503608,
+                "tail8_completion_counts_by_instance": {
+                  "emotion2vec[1]": 1,
+                  "emotion2vec[2]": 1,
+                  "emotion2vec[6]": 1,
+                  "emotion2vec[3]": 1,
+                  "emotion2vec[4]": 1,
+                  "emotion2vec[5]": 1,
+                  "emotion2vec[0]": 1,
+                  "emotion2vec[7]": 1
+                },
+                "tail8_completion_window_s": 0.08905253000557423,
+                "composite_queued_to_actual_call": {
+                  "n": 108,
+                  "total_ms": 227818.3306856081,
+                  "max_ms": 3487.8951301798224,
+                  "p50_ms": 2292.348289396614,
+                  "p95_ms": 3341.1727970000356
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              }
+            }
+          },
+          {
+            "round": 2,
+            "work_done_elapsed_s": 5.057938059791923,
+            "last_to_complete": "Qwen",
+            "branch_last_return_from_origin_s": {
+              "Qwen": 5.043490290641785,
+              "speech_campplus": 1.8919846108183265,
+              "emotion2vec": 3.6250700000673532
+            },
+            "finished_before_last_s": {
+              "Qwen": 0.0,
+              "speech_campplus": 3.151505679823458,
+              "emotion2vec": 1.4184202905744314
+            },
+            "models": {
+              "speech_campplus": {
+                "actual_calls": 128,
+                "original_call_first_to_last_span_s": 1.7399354800581932,
+                "through_CPU_capture_span_s": 1.7430041693150997,
+                "logical_last_return_from_origin_s": 1.8919846108183265,
+                "tail8_completion_counts_by_instance": {
+                  "speech_campplus[5]": 1,
+                  "speech_campplus[7]": 1,
+                  "speech_campplus[6]": 1,
+                  "speech_campplus[4]": 1,
+                  "speech_campplus[2]": 1,
+                  "speech_campplus[1]": 1,
+                  "speech_campplus[0]": 1,
+                  "speech_campplus[3]": 1
+                },
+                "tail8_completion_window_s": 0.060536100529134274,
+                "composite_queued_to_actual_call": {
+                  "n": 128,
+                  "total_ms": 105546.42618633807,
+                  "max_ms": 1537.690019235015,
+                  "p50_ms": 835.8387998305261,
+                  "p95_ms": 1473.3002739492804
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              },
+              "emotion2vec": {
+                "actual_calls": 108,
+                "original_call_first_to_last_span_s": 3.4760809605941176,
+                "through_CPU_capture_span_s": 3.4764020005241036,
+                "logical_last_return_from_origin_s": 3.6250700000673532,
+                "tail8_completion_counts_by_instance": {
+                  "emotion2vec[4]": 1,
+                  "emotion2vec[5]": 1,
+                  "emotion2vec[1]": 1,
+                  "emotion2vec[3]": 1,
+                  "emotion2vec[2]": 1,
+                  "emotion2vec[6]": 1,
+                  "emotion2vec[0]": 1,
+                  "emotion2vec[7]": 1
+                },
+                "tail8_completion_window_s": 0.08598654065281153,
+                "composite_queued_to_actual_call": {
+                  "n": 108,
+                  "total_ms": 212892.702229321,
+                  "max_ms": 3364.7551396861672,
+                  "p50_ms": 2248.674939852208,
+                  "p95_ms": 3279.231776949018
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              }
+            }
+          },
+          {
+            "round": 3,
+            "work_done_elapsed_s": 5.031679750420153,
+            "last_to_complete": "Qwen",
+            "branch_last_return_from_origin_s": {
+              "Qwen": 5.019252950325608,
+              "speech_campplus": 1.8686812603846192,
+              "emotion2vec": 3.564813540317118
+            },
+            "finished_before_last_s": {
+              "Qwen": 0.0,
+              "speech_campplus": 3.150571689940989,
+              "emotion2vec": 1.45443941000849
+            },
+            "models": {
+              "speech_campplus": {
+                "actual_calls": 128,
+                "original_call_first_to_last_span_s": 1.7173413997516036,
+                "through_CPU_capture_span_s": 1.723054239526391,
+                "logical_last_return_from_origin_s": 1.8686812603846192,
+                "tail8_completion_counts_by_instance": {
+                  "speech_campplus[3]": 2,
+                  "speech_campplus[7]": 1,
+                  "speech_campplus[2]": 1,
+                  "speech_campplus[1]": 1,
+                  "speech_campplus[6]": 1,
+                  "speech_campplus[0]": 1,
+                  "speech_campplus[4]": 1
+                },
+                "tail8_completion_window_s": 0.13904543966054916,
+                "composite_queued_to_actual_call": {
+                  "n": 128,
+                  "total_ms": 106725.96981097013,
+                  "max_ms": 1605.6647403165698,
+                  "p50_ms": 809.6401249058545,
+                  "p95_ms": 1513.1203024182469
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              },
+              "emotion2vec": {
+                "actual_calls": 108,
+                "original_call_first_to_last_span_s": 3.422677230089903,
+                "through_CPU_capture_span_s": 3.4230222795158625,
+                "logical_last_return_from_origin_s": 3.564813540317118,
+                "tail8_completion_counts_by_instance": {
+                  "emotion2vec[5]": 1,
+                  "emotion2vec[0]": 1,
+                  "emotion2vec[3]": 1,
+                  "emotion2vec[1]": 1,
+                  "emotion2vec[7]": 1,
+                  "emotion2vec[4]": 1,
+                  "emotion2vec[6]": 1,
+                  "emotion2vec[2]": 1
+                },
+                "tail8_completion_window_s": 0.0653956700116396,
+                "composite_queued_to_actual_call": {
+                  "n": 108,
+                  "total_ms": 213951.11519936472,
+                  "max_ms": 3353.4025605767965,
+                  "p50_ms": 2149.252879898995,
+                  "p95_ms": 3197.8745908010746
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              }
+            }
+          }
+        ],
+        "saved_steady_only_HBM_ranges": {
+          "sample_count": 3,
+          "device7_usage_pct": {
+            "n": 3,
+            "min": 60,
+            "max": 60
+          },
+          "parent_sampled_HBM_MB": {
+            "n": 3,
+            "min": 6952,
+            "max": 6958
+          },
+          "Qwen_sampled_HBM_MB": {
+            "n": 3,
+            "min": 16137,
+            "max": 16137
+          },
+          "CAM8_reported_process_sum_HBM_MB": {
+            "n": 3,
+            "min": 1724,
+            "max": 1728
+          },
+          "project_reported_process_sum_HBM_MB": {
+            "n": 3,
+            "min": 24813,
+            "max": 24823
+          },
+          "shared_HBM_MB": {
+            "n": 3,
+            "min": 11875,
+            "max": 11875
+          }
+        },
+        "saved_HBM_scope": "Three saved before-round npu-smi points, sequential per-process reads; not device peak or exact incremental prefetch HBM.",
+        "actual_pool_capacity": {
+          "speech_campplus": {
+            "instances": 8,
+            "configured_instances": 8,
+            "failed_instances": 0,
+            "prefetch_queue_depth": 1,
+            "waiting_capacity": 8,
+            "actual_batch_size": 1
+          },
+          "emotion2vec": {
+            "instances": 8,
+            "configured_instances": 8,
+            "failed_instances": 0,
+            "prefetch_queue_depth": 1,
+            "waiting_capacity": 8,
+            "actual_batch_size": 1
+          }
+        }
+      },
+      "5": {
+        "steady_rounds": [
+          {
+            "round": 1,
+            "work_done_elapsed_s": 5.029655089601874,
+            "last_to_complete": "Qwen",
+            "branch_last_return_from_origin_s": {
+              "Qwen": 5.018144180066884,
+              "speech_campplus": 1.8434828501194715,
+              "emotion2vec": 3.735594349913299
+            },
+            "finished_before_last_s": {
+              "Qwen": 0.0,
+              "speech_campplus": 3.174661329947412,
+              "emotion2vec": 1.2825498301535845
+            },
+            "models": {
+              "speech_campplus": {
+                "actual_calls": 128,
+                "original_call_first_to_last_span_s": 1.6805532798171043,
+                "through_CPU_capture_span_s": 1.6865772996097803,
+                "logical_last_return_from_origin_s": 1.8434828501194715,
+                "tail8_completion_counts_by_instance": {
+                  "speech_campplus[3]": 1,
+                  "speech_campplus[1]": 1,
+                  "speech_campplus[4]": 1,
+                  "speech_campplus[5]": 1,
+                  "speech_campplus[2]": 1,
+                  "speech_campplus[7]": 1,
+                  "speech_campplus[0]": 1,
+                  "speech_campplus[6]": 1
+                },
+                "tail8_completion_window_s": 0.054500079713761806,
+                "composite_queued_to_actual_call": {
+                  "n": 128,
+                  "total_ms": 109939.27437905222,
+                  "max_ms": 1604.5611891895533,
+                  "p50_ms": 865.8751249313354,
+                  "p95_ms": 1529.7588440589607
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              },
+              "emotion2vec": {
+                "actual_calls": 108,
+                "original_call_first_to_last_span_s": 3.578306969255209,
+                "through_CPU_capture_span_s": 3.578608269803226,
+                "logical_last_return_from_origin_s": 3.735594349913299,
+                "tail8_completion_counts_by_instance": {
+                  "emotion2vec[3]": 1,
+                  "emotion2vec[6]": 1,
+                  "emotion2vec[4]": 1,
+                  "emotion2vec[7]": 1,
+                  "emotion2vec[1]": 1,
+                  "emotion2vec[2]": 1,
+                  "emotion2vec[0]": 1,
+                  "emotion2vec[5]": 1
+                },
+                "tail8_completion_window_s": 0.07954525947570801,
+                "composite_queued_to_actual_call": {
+                  "n": 108,
+                  "total_ms": 213441.66127219796,
+                  "max_ms": 3502.80409026891,
+                  "p50_ms": 2069.9481102637947,
+                  "p95_ms": 3292.6579202990974
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              }
+            }
+          },
+          {
+            "round": 2,
+            "work_done_elapsed_s": 5.021832009777427,
+            "last_to_complete": "Qwen",
+            "branch_last_return_from_origin_s": {
+              "Qwen": 5.010695990175009,
+              "speech_campplus": 1.8537516696378589,
+              "emotion2vec": 3.6778711499646306
+            },
+            "finished_before_last_s": {
+              "Qwen": 0.0,
+              "speech_campplus": 3.15694432053715,
+              "emotion2vec": 1.3328248402103782
+            },
+            "models": {
+              "speech_campplus": {
+                "actual_calls": 128,
+                "original_call_first_to_last_span_s": 1.6942207897081971,
+                "through_CPU_capture_span_s": 1.6987376501783729,
+                "logical_last_return_from_origin_s": 1.8537516696378589,
+                "tail8_completion_counts_by_instance": {
+                  "speech_campplus[4]": 1,
+                  "speech_campplus[7]": 1,
+                  "speech_campplus[5]": 1,
+                  "speech_campplus[0]": 1,
+                  "speech_campplus[6]": 1,
+                  "speech_campplus[1]": 1,
+                  "speech_campplus[3]": 1,
+                  "speech_campplus[2]": 1
+                },
+                "tail8_completion_window_s": 0.07217102963477373,
+                "composite_queued_to_actual_call": {
+                  "n": 128,
+                  "total_ms": 111753.54516226798,
+                  "max_ms": 1615.9674702212214,
+                  "p50_ms": 864.0332547947764,
+                  "p95_ms": 1562.173067452386
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              },
+              "emotion2vec": {
+                "actual_calls": 108,
+                "original_call_first_to_last_span_s": 3.523347039707005,
+                "through_CPU_capture_span_s": 3.5236975997686386,
+                "logical_last_return_from_origin_s": 3.6778711499646306,
+                "tail8_completion_counts_by_instance": {
+                  "emotion2vec[1]": 1,
+                  "emotion2vec[0]": 1,
+                  "emotion2vec[3]": 1,
+                  "emotion2vec[5]": 1,
+                  "emotion2vec[7]": 1,
+                  "emotion2vec[2]": 1,
+                  "emotion2vec[6]": 1,
+                  "emotion2vec[4]": 1
+                },
+                "tail8_completion_window_s": 0.09793224930763245,
+                "composite_queued_to_actual_call": {
+                  "n": 108,
+                  "total_ms": 215382.40925688297,
+                  "max_ms": 3418.8301796093583,
+                  "p50_ms": 2113.637614995241,
+                  "p95_ms": 3275.3673340659584
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              }
+            }
+          },
+          {
+            "round": 3,
+            "work_done_elapsed_s": 5.036992140114307,
+            "last_to_complete": "Qwen",
+            "branch_last_return_from_origin_s": {
+              "Qwen": 5.024895149283111,
+              "speech_campplus": 1.826627129688859,
+              "emotion2vec": 3.3739239294081926
+            },
+            "finished_before_last_s": {
+              "Qwen": 0.0,
+              "speech_campplus": 3.198268019594252,
+              "emotion2vec": 1.6509712198749185
+            },
+            "models": {
+              "speech_campplus": {
+                "actual_calls": 128,
+                "original_call_first_to_last_span_s": 1.657697780057788,
+                "through_CPU_capture_span_s": 1.66332470998168,
+                "logical_last_return_from_origin_s": 1.826627129688859,
+                "tail8_completion_counts_by_instance": {
+                  "speech_campplus[7]": 1,
+                  "speech_campplus[0]": 1,
+                  "speech_campplus[2]": 1,
+                  "speech_campplus[3]": 1,
+                  "speech_campplus[1]": 1,
+                  "speech_campplus[6]": 1,
+                  "speech_campplus[5]": 1,
+                  "speech_campplus[4]": 1
+                },
+                "tail8_completion_window_s": 0.08857019990682602,
+                "composite_queued_to_actual_call": {
+                  "n": 128,
+                  "total_ms": 110190.2819937095,
+                  "max_ms": 1589.6142199635506,
+                  "p50_ms": 846.817634999752,
+                  "p95_ms": 1527.5990780442949
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              },
+              "emotion2vec": {
+                "actual_calls": 108,
+                "original_call_first_to_last_span_s": 3.2109868498519063,
+                "through_CPU_capture_span_s": 3.211301390081644,
+                "logical_last_return_from_origin_s": 3.3739239294081926,
+                "tail8_completion_counts_by_instance": {
+                  "emotion2vec[7]": 1,
+                  "emotion2vec[1]": 1,
+                  "emotion2vec[4]": 1,
+                  "emotion2vec[5]": 1,
+                  "emotion2vec[6]": 1,
+                  "emotion2vec[2]": 1,
+                  "emotion2vec[3]": 1,
+                  "emotion2vec[0]": 1
+                },
+                "tail8_completion_window_s": 0.04293438978493214,
+                "composite_queued_to_actual_call": {
+                  "n": 108,
+                  "total_ms": 201954.00587655604,
+                  "max_ms": 3082.3171101510525,
+                  "p50_ms": 2091.494919732213,
+                  "p95_ms": 3011.5786098875105
+                },
+                "exact_backpressure_wait_total_ms": null,
+                "exact_backpressure_wait_max_ms": null,
+                "actual_pool_queue_peak": null,
+                "unknown_reason": "Only before-load and after-close ModelPool counters saved; after-close resets0. Composite wait cannot isolate pool backpressure."
+              }
+            }
+          }
+        ],
+        "saved_steady_only_HBM_ranges": {
+          "sample_count": 3,
+          "device7_usage_pct": {
+            "n": 3,
+            "min": 60,
+            "max": 60
+          },
+          "parent_sampled_HBM_MB": {
+            "n": 3,
+            "min": 6781,
+            "max": 6887
+          },
+          "Qwen_sampled_HBM_MB": {
+            "n": 3,
+            "min": 16135,
+            "max": 16137
+          },
+          "CAM8_reported_process_sum_HBM_MB": {
+            "n": 3,
+            "min": 1738,
+            "max": 1742
+          },
+          "project_reported_process_sum_HBM_MB": {
+            "n": 3,
+            "min": 24654,
+            "max": 24766
+          },
+          "shared_HBM_MB": {
+            "n": 3,
+            "min": 11875,
+            "max": 11875
+          }
+        },
+        "saved_HBM_scope": "Three saved before-round npu-smi points, sequential per-process reads; not device peak or exact incremental prefetch HBM.",
+        "actual_pool_capacity": {
+          "speech_campplus": {
+            "instances": 8,
+            "configured_instances": 8,
+            "failed_instances": 0,
+            "prefetch_queue_depth": 5,
+            "waiting_capacity": 40,
+            "actual_batch_size": 1
+          },
+          "emotion2vec": {
+            "instances": 8,
+            "configured_instances": 8,
+            "failed_instances": 0,
+            "prefetch_queue_depth": 5,
+            "waiting_capacity": 40,
+            "actual_batch_size": 1
+          }
+        }
+      }
+    },
+    "definitions": {
+      "handoff": "same parent instance next call_started minus previous CPU_capture_completed, within one round",
+      "tail8": "last eight actual original-call completion events, per model and round",
+      "composite_wait": "NN branch queued to actual runner call_started; includes event-loop/pool/dispatch/CPU preparation, not isolated pool backpressure",
+      "NN_end": "enhanced member ended_monotonic_s after original pool inference returned; emo duration skips have no timestamp and are excluded",
+      "HBM_sample": "one saved before_parent_resources snapshot per round; its npu-smi commands are sequential, not a device peak trace"
+    },
+    "limits": [
+      "One warmup plus three steady component rounds per depth; no complete-audio dynamic matrix acceptance.",
+      "Waiting capacity0/8/40 is observed healthy-pool capacity, not a claim that the queue was filled to that level.",
+      "NN actual compute batch remains1; waiting depth is not tensor batch size.",
+      "Sequential jobs share the NPU host with the preserved external service; no exclusivity or causal kernel/GIL claim.",
+      "Precise ModelPool backpressure totals/max and actual queue peak were not saved per round. Post-close counters reset to0 and are not treated as zero workload wait.",
+      "Per-process npu-smi MB points, device aggregate integer percentages, and PyTorch last-RPC allocator peaks are different scopes and times; never sum their peaks.",
+      "Waiting capacity0/8/40 is not an observed queue peak; added HBM is unknown outside saved sample points.",
+      "Parallel per-instance wait/gap totals overlap; they are not whole-job time, kernel time or GIL evidence.",
+      "Per-job matching-round sample deltas are observed values, not exact causal prefetch overhead; device integer percentages cannot resolve sub-percent changes."
+    ]
+  },
+  "protected_HTTP_controlled_cancel": {
+    "artifacts": {
+      "controlled-cancel.json": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/controlled-cancel.json",
+        "sha256": "ba63c9f01e4d91124f8d90d80ac93157a505847887438e7f0a9375bc32710ef9",
+        "bytes": 58752
+      },
+      "preinterrupt-status.json": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/preinterrupt-status.json",
+        "sha256": "50d8b9bbc8b760e053d7d6afed72305b36021c9ea0201ee1ffeff235eed748cd",
+        "bytes": 258344
+      },
+      "harness/run.json": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/harness/run.json",
+        "sha256": "937e08e24f87de66dc2172bf00011e9711b413976d1df7ca469b426e7ae98cf9",
+        "bytes": 34542
+      },
+      "harness/summary.json": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/harness/summary.json",
+        "sha256": "86b1fa84e5cefc02c2c2413055d6bcb632ef82e6e125936332f694b675914c87",
+        "bytes": 16087
+      },
+      "harness/shutdown.json": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/harness/shutdown.json",
+        "sha256": "3c43c170aceb21affbe2cd23d39137729d299dd6b7e0e953ee247db39b35dd5a",
+        "bytes": 11224
+      },
+      "harness/ownership.json": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/harness/ownership.json",
+        "sha256": "85f648ac3d3349ea89bc428a6865ae9bebc8e30507f43fb30313a5f6f613c6e0",
+        "bytes": 6583
+      }
+    },
+    "outer_exit": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated-exit.json",
+      "sha256": "73dbcea0b4773b22168c98b4c1171897f74bdd9006d0d9c52c9410f4934d846e",
+      "bytes": 71
+    },
+    "status": "expected_interrupted",
+    "passed_for_controlled_cancel_scope": true,
+    "outer_elapsed_s": 290.2091137096286,
+    "outer_returncode": 0,
+    "signals": [
+      {
+        "target": {
+          "pid": 4129095,
+          "create_time": 1795028543.67
+        },
+        "signal": 2,
+        "monotonic": 7116463.16814628,
+        "argv_prefix": [
+          "/home/zhangs/conda-envs/asr/bin/python",
+          "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/scripts/benchmark_asr_throughput.py"
+        ],
+        "service_pid_excluded": 4139928
+      }
+    ],
+    "trigger": {
+      "completed_formal_generate": [
+        {
+          "telemetry_request_id": "c831337c-01c0-43e8-a8e4-65651de979c0",
+          "qwen_member_request_id": "1913f05b-5f99-45bf-9279-02505ca15e14_audio-b3f93e7aa4c7c11ae335.wav",
+          "processing_filename": "audio-b3f93e7aa4c7c11ae335.wav",
+          "manifest_source": {
+            "sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+            "sample_id": "full-1-b3f93e7aa4c7"
+          },
+          "correlation": "exclusive1B_manifest_filename_suffix; UUIDs remain distinct",
+          "batch_id": 2,
+          "attempt": 1,
+          "actual_members": 5,
+          "progress": {
+            "segments_total": 367,
+            "cut_done": 21,
+            "emo_done": 21,
+            "spk_done": 14,
+            "qwen_done": 5
+          }
+        }
+      ],
+      "exclusive_active_and_filename": true,
+      "telemetry_active_count": 1,
+      "processing_filenames": [
+        "audio-b3f93e7aa4c7c11ae335.wav"
+      ],
+      "qwen_busy": 1,
+      "running_members": 12,
+      "NN": {
+        "speech_campplus": {
+          "busy": 7,
+          "calls_since_warmup": 14
+        },
+        "emotion2vec": {
+          "busy": 0,
+          "calls_since_warmup": 18
+        }
+      },
+      "current_kernel_execution": "unknown; public busy is an ownership observation, not a kernel marker"
+    },
+    "driver_identity": {
+      "pid": 4129095,
+      "create_time": 1795028543.67
+    },
+    "driver_returncode": 2,
+    "owned_identity_count": 252,
+    "all_registered_births_gone_now": true,
+    "shutdown": {
+      "passed": true,
+      "exit_code": 0,
+      "forced": false,
+      "orphan_cleanup": false,
+      "temp_dir": "/tmp/asr-svc-gln686zd",
+      "cache_dir": "/tmp/asr-svc-gln686zd/seacraft_asr",
+      "remaining_cache_files": [],
+      "cache_scan_error": null,
+      "observe_s": 5.0,
+      "port_observations": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "term_to_parent_exit_s": 38.09594866074622
+    },
+    "remaining_owned": [],
+    "shared_preserved": true,
+    "source_unchanged_and_complete": true,
+    "formal_summary": {
+      "status": "incomplete",
+      "expected": 8,
+      "successful": 0,
+      "complete": false,
+      "batch_elapsed_s": 20.85844591911882
+    },
+    "performance_acceptance": false,
+    "limits": [
+      "No extra signal/KILL on observation deadline; remaining owners are reported as failure.",
+      "Normal exit and existing model ownership tests jointly support cleanup; public status does not prove current kernel timing.",
+      "Original harness summary remains incomplete; this is never N8 throughput acceptance."
+    ]
+  },
+  "historical_failures_preserved": {
+    "v11_cache_interference": {
+      "v11": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-v11/admission.json",
+        "sha256": "4614160a1c6900ace4fd8cf7f7283c3bfbe37a2e6654385688f89ccd599c4adb",
+        "bytes": 304629
+      },
+      "status": "failed",
+      "warmup_code": 4014,
+      "interference_evidence": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/http-admission-v11-cache-interference-readonly-audit.json",
+        "sha256": "ec20047a9a25bd55f530494981b576173c643c1254ec3fed016684fc7aaa2b8e",
+        "bytes": 1229
+      },
+      "causal_limit": "No unlink journal for this historical full exists; overlap + exact missing-path error chain support interference, not direct observed filename attribution.",
+      "CPU_overlap_start_UTC": "2026-11-18T17:57:12.860000+00:00",
+      "CPU_overlap_elapsed_s": 210.6053094100207,
+      "shared_cache_contract": "utils.audio_utils and resource_diagnostics both initialize from tempfile.gettempdir()/seacraft_asr",
+      "new_private_cache_source_so_CPU_proof": {
+        "path": "/tmp/asr-owned-tempdir-cpu-20261119/proof.json",
+        "sha256": "2e16572f29080403eef7d12059e34bd7c6d9f867790b86af0e643e46d693e99c",
+        "bytes": 5157
+      },
+      "new_readonly_cache_gate_CPU_proof": {
+        "path": "/tmp/asr-owned-cachegate-cpu-20261119/cache-gate-proof.json",
+        "sha256": "6f86da0f9016e77586f9309bd8d11ef078a17c28e2b94004e684616711390e81",
+        "bytes": 2189
+      },
+      "meaning": "Isolation regression passes without rewriting old4014; historical unlink was not directly journaled."
+    },
+    "v6_B8": {
+      "audit": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/full-v6-precheck-8B-bottleneck-audit.json",
+        "sha256": "df315ce84e1f3058ce83920cfa07ef3d438d7d64982403379367fa1912b391c0",
+        "bytes": 97618
+      },
+      "round_status": "diagnostic_aborted",
+      "successful_responses": 0,
+      "diagnostic_elapsed_s": 421.23804721981287,
+      "diagnostic_reason": "inflight_wall_timeout",
+      "performance_acceptance": false
+    },
+    "v10_partial_diagnostic": {
+      "audit": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/full-v10-partial-bottleneck-audit.json",
+        "sha256": "cd78cfea7b0aeb0c68aa76cb55976e23a93a2ecb13e7863c85d125205376cd0e",
+        "bytes": 49340
+      },
+      "performance_acceptance": false
+    },
+    "source_v10_controlled_helper_UUID_mismatch": {
+      "artifact": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-source-v10/controlled-cancel.json",
+        "sha256": "eb65ee8268b0f7ab61b10c53feb06dd25bcadd5934ae1f8f22f4e04a3bce1468",
+        "bytes": 161747
+      },
+      "note": "Original trigger failure retained. UUIDs differ; v2 uses exclusive manifest filename correlation and preserves both IDs."
+    },
+    "earlier_protected_Path_fixture_failures": {
+      "note": "Original v11 protected full failures retained by root; two test inputs Path→str only, no business assertions changed. v14 full results supersede only after explicit rerun."
+    }
+  },
+  "task_snapshot": {
+    "path": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-18-npu-asr-throughput-scheduling/tasks.md",
+    "sha256": "b987a3bdeed2cf85c37eb798372bd726f26bbf30842e4aa4526d6a63198b4230",
+    "bytes": 20835
+  },
+  "limits": [
+    "Fixed128 selected segments and 4.1-second admission clips cannot substitute complete-file1/2/4/8 matrix.",
+    "Exact preservation versus another implementation is not accuracy against human truth.",
+    "Current kernels, GIL causality, exact pool backpressure and exact extra HBM remain unknown where not recorded.",
+    "No host/NPU exclusivity: shared PID1601397 was preserved; sequential descriptive differences do not establish significance.",
+    "Warmup complete means model warmup completed; it does not assert every dynamic shape reached steady state."
+  ],
+  "stage_provenance": {
+    "stage": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91",
+    "compiled_runtime_modules": 35,
+    "fresh_source_inputs": 204,
+    "recompiled_for_v14": 0,
+    "all35_so_exact_reuse": true,
+    "artifacts": [
+      {
+        "path": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/freeze-manifest.json",
+        "sha256": "8fed70fb18c73425245093274e99bf3c9e61827827a6bfa1d401138b7ec5b686",
+        "bytes": 29333
+      },
+      {
+        "path": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/source-manifest.json",
+        "sha256": "0dc6420b68e77a1dc490e7ad5486767b45b4c2f75291715ec4343ca07bcff7a0",
+        "bytes": 20936
+      },
+      {
+        "path": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/protected-v14-repack-import-audit.json",
+        "sha256": "25023ff5343a7d81177f22830abb754342eddac239bee7cfbdedff92c77c6fcd",
+        "bytes": 7470
+      }
+    ]
+  },
+  "source_HTTP_controlled_cancel": {
+    "independent_audit": {
+      "path": "/tmp/asr-http-cancel-v2-draft-20261119/source-v11-independent-audit.json",
+      "sha256": "386bf06db4c4988520e5ded11277db81777d04fafe1983c7e32255e3ba6788e9",
+      "bytes": 41243
+    },
+    "scope": "Source real HTTP controlled cancel, expected interruption, not throughput acceptance."
+  },
+  "references": [
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/result.json",
+      "sha256": "36b705ba817f0f70c1681753a2c417079a2c02f347066c361b84b74b1ef8bdcd",
+      "bytes": 82581
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/freeze.json",
+      "sha256": "c8953c01da62c2a9b8a2dc5931e4b67a925d80e42be83b130daf36e8700cd3b4",
+      "bytes": 21452
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/owner.json",
+      "sha256": "4b9e6419b6368e16785936ac90768b4cc5e0d1ceebaca1c25e35df86d11177cf",
+      "bytes": 438
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/isolation-preflight.json",
+      "sha256": "40bed8e539a3e1a9fc65a134d946abae3318aa6cb29bc2558426567df62d4b4a",
+      "bytes": 2558
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/required-node-evidence.json",
+      "sha256": "ec525147acce75bb75d109d945dc3d3eaefcb4614fa28db73facc1247e418a85",
+      "bytes": 914
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/pytest.log",
+      "sha256": "0fcff600ced1f8148d9028114985504aecf33873a783da0b771861fd09568033",
+      "bytes": 1976
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/guard.log",
+      "sha256": "41b105c7ed20805e1a304000513e9bc97c7bb0e3c9c6da1ee08fbe2d39ae7422",
+      "bytes": 625
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v14-isolated/cache-guard.log",
+      "sha256": "14072f1a89d721182d70aef9eae7494e3f08fb317b1465b73225e2c77dc995e8",
+      "bytes": 7408
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/result.json",
+      "sha256": "79b7837597672b0efe0b851ab385d074a1e49d3db91dac285dafa0b692b9ad42",
+      "bytes": 74162
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/freeze.json",
+      "sha256": "f33630009233deb862861236acbe8405404e27ef8230790ab7c22657dd7b5bc2",
+      "bytes": 73256
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/owner.json",
+      "sha256": "173d837bfa6678c26cae7d26e35fffa19640fe8a7355eea86c27a5372d06fabd",
+      "bytes": 469
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/isolation-preflight.json",
+      "sha256": "fd90783c93ad84a3086484cd72fe7e072d693c4885ee8dad920260c336f075de",
+      "bytes": 2885
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/required-node-evidence.json",
+      "sha256": "d1d53813600155d4e04626eee496d62714e9668b639da4ad902377e514f7d73f",
+      "bytes": 5219
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/pytest.log",
+      "sha256": "5f9407dec09f5754d8231af2fb25f7196f2d9ecf7d655403e910f74bfc5c7605",
+      "bytes": 1965
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/guard.log",
+      "sha256": "2347f379e53e1cd869849a6d599cfdb5e24e33b6bfa5693f83fdf0c4a55f0134",
+      "bytes": 635
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/protected-full-cpu-cam-v14-isolated/cache-guard.log",
+      "sha256": "bf5737cb401c11e1f03be213ee41a0578002f2b77a94fa88003c20d0e7e858d6",
+      "bytes": 7428
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-admission-source-protected-v14-independent-audit.json",
+      "sha256": "55cf502ce256d43cd2601aef53bb64f61e937cd19bc87874a5855c895f32b2a7",
+      "bytes": 38708
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/formal-cam128-source-protected-v14-independent-audit.json",
+      "sha256": "cffec744908a5f2c774339e95c4d27c73ef84273335b947818a1a8e65b5d1fc9",
+      "bytes": 38379
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/formal-cam128-v11-independent-audit.json",
+      "sha256": "e60e7bac337c8b7dbde9a9a2603a04be19b5348d7512dec0293648de0d343545",
+      "bytes": 83197
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/formal-cam-prefetch-v11-independent-audit.json",
+      "sha256": "a69c4598cb4dabaa19089c45e7eba0b4b23bbd101d298183c755cf10e6f2e580",
+      "bytes": 25279
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/formal-cam-prefetch-v11-resources-tail-audit.json",
+      "sha256": "cfd1100cde8b7c7b9ff50dd16016cc168c928581b2a032869423efe52e407915",
+      "bytes": 234795
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/controlled-cancel.json",
+      "sha256": "ba63c9f01e4d91124f8d90d80ac93157a505847887438e7f0a9375bc32710ef9",
+      "bytes": 58752
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/preinterrupt-status.json",
+      "sha256": "50d8b9bbc8b760e053d7d6afed72305b36021c9ea0201ee1ffeff235eed748cd",
+      "bytes": 258344
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/harness/run.json",
+      "sha256": "937e08e24f87de66dc2172bf00011e9711b413976d1df7ca469b426e7ae98cf9",
+      "bytes": 34542
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/harness/summary.json",
+      "sha256": "86b1fa84e5cefc02c2c2413055d6bcb632ef82e6e125936332f694b675914c87",
+      "bytes": 16087
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/harness/shutdown.json",
+      "sha256": "3c43c170aceb21affbe2cd23d39137729d299dd6b7e0e953ee247db39b35dd5a",
+      "bytes": 11224
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated/harness/ownership.json",
+      "sha256": "85f648ac3d3349ea89bc428a6865ae9bebc8e30507f43fb30313a5f6f613c6e0",
+      "bytes": 6583
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-protected-v14-isolated-exit.json",
+      "sha256": "73dbcea0b4773b22168c98b4c1171897f74bdd9006d0d9c52c9410f4934d846e",
+      "bytes": 71
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v6-precheck-8B-bottleneck-audit.json",
+      "sha256": "df315ce84e1f3058ce83920cfa07ef3d438d7d64982403379367fa1912b391c0",
+      "bytes": 97618
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v10-partial-bottleneck-audit.json",
+      "sha256": "cd78cfea7b0aeb0c68aa76cb55976e23a93a2ecb13e7863c85d125205376cd0e",
+      "bytes": 49340
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/http-controlled-sigint-source-v10/controlled-cancel.json",
+      "sha256": "eb65ee8268b0f7ab61b10c53feb06dd25bcadd5934ae1f8f22f4e04a3bce1468",
+      "bytes": 161747
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-18-npu-asr-throughput-scheduling/tasks.md",
+      "sha256": "b987a3bdeed2cf85c37eb798372bd726f26bbf30842e4aa4526d6a63198b4230",
+      "bytes": 20835
+    },
+    {
+      "path": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/freeze-manifest.json",
+      "sha256": "8fed70fb18c73425245093274e99bf3c9e61827827a6bfa1d401138b7ec5b686",
+      "bytes": 29333
+    },
+    {
+      "path": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/source-manifest.json",
+      "sha256": "0dc6420b68e77a1dc490e7ad5486767b45b4c2f75291715ec4343ca07bcff7a0",
+      "bytes": 20936
+    },
+    {
+      "path": "/tmp/asr-throughput-cython-v14-20261119-gjlxoc91/protected-v14-repack-import-audit.json",
+      "sha256": "25023ff5343a7d81177f22830abb754342eddac239bee7cfbdedff92c77c6fcd",
+      "bytes": 7470
+    },
+    {
+      "path": "/tmp/asr-http-cancel-v2-draft-20261119/source-v11-independent-audit.json",
+      "sha256": "386bf06db4c4988520e5ded11277db81777d04fafe1983c7e32255e3ba6788e9",
+      "bytes": 41243
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B/c8-B-r1/summary.json",
+      "bytes": 565549,
+      "sha256": "134c6d684aa09631bd84b8221f127190b7a5321e743309af6c0ae45cf98d6397"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B/c8-B-r1/run.json",
+      "bytes": 30201,
+      "sha256": "1c060b244221c42972976c41e476ea55838da9ad7053dffd9f1da94050fdaee8"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B/c8-B-r1/shutdown.json",
+      "bytes": 12857,
+      "sha256": "0ed778c241466bf4a832f00c72679c49023cade0648fb99c3e9fcd16977b3289"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B/c8-B-r1/ownership.json",
+      "bytes": 7585,
+      "sha256": "0486572c8ccb0d5d683436eb26f99185a362a6754ceee4947c7214f1f5f2f2b0"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B/c8-B-r1/diagnostic-trigger.json",
+      "bytes": 4265,
+      "sha256": "a6d01019642445141f2dd64b847016539085b2724722e451faaeecc30d36b244"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B/c8-B-r1/diagnostic-status.json",
+      "bytes": 6589462,
+      "sha256": "fa8551f1bdfcebe195d88fff8eda60b1bf55a7f3f82e3b582e023577b8f28058"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B/c8-B-r1/warmup.json",
+      "bytes": 507980,
+      "sha256": "d26d365b728f3e9f2c0cf892fa053fa576a92fcd5854f67ceedd6bf0b01d0c93"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B-bottleneck-audit.json",
+      "bytes": 114213,
+      "sha256": "c4eee1a1f24554cc870bd1349e631f4c9b236a34c81a11f522690f2641f4d5ec"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B-exit.json",
+      "bytes": 71,
+      "sha256": "88aa6e81b7bb6cc3807e85e518331ba9a5b70a978edabba6ef59bba481d9b633"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/final-cam-process-v10-b8.toml",
+      "bytes": 5514,
+      "sha256": "57e76952a0511db393ffd20875b0932821639302885d2e520ed6e50de81658c5"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/final-cam-process-v10-b4.toml",
+      "bytes": 5514,
+      "sha256": "e497b880c8fa7a7b3fc9409c21b0251e2d22d613160411bc32a26946beacd878"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/full-eight-manifest.json",
+      "bytes": 6900,
+      "sha256": "02e741e8156df93653bbd73dbc548a779e6a4e269172a7c82f823cabd18d2f38"
+    },
+    {
+      "path": "/tmp/asr-v14-delivery-final-precheck-20261119-ol5as3iw/full-v14-precheck-8B-independent-shutdown-profile-audit.json",
+      "bytes": 23104,
+      "sha256": "b0264c4b8c690851f1f0c940f4c07c0841afb261cf0cd9ef3e80f710caac4b0c"
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/summary.json",
+      "sha256": "5b9203531dc043e0bb62ea18fef3ec26af3d7b21def517645317f7c3963392d0",
+      "bytes": 563095
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/run.json",
+      "sha256": "c1127380029dd3bfc5b99d762103c37611c520bc0da69a1d0b5817614f3caea3",
+      "bytes": 22936
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/shutdown.json",
+      "sha256": "bd1b80b45c4abc90f6b4b816910b25c957934d65e500812e7d75d9d3d1bf284a",
+      "bytes": 12014
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/ownership.json",
+      "sha256": "1ecba5269f34dd51d22f6980d87fd9eb1714787921475ff186d315eca2be7d1f",
+      "bytes": 7120
+    },
+    {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/config.toml",
+      "sha256": "c8328babd108c37e255f46ee5c4846af31614adbe8391f25d72f450c76949a04",
+      "bytes": 5514
+    }
+  ],
+  "full_B8_precheck_final": {
+    "created_utc": "2026-11-18T19:46:26.305627+00:00",
+    "audit_status": "passed",
+    "performance_acceptance": false,
+    "scope": "CPU-only read-only diagnostic/ownership/config verification; passing audit means evidence is consistent, not failed workload passed.",
+    "outcome": {
+      "status": "diagnostic_aborted",
+      "expected": 8,
+      "successful": 3,
+      "complete": false,
+      "batch_elapsed_s": 422.5672467695549,
+      "source_audio_seconds": 24059.776,
+      "source_audio_seconds_per_wall_second": null,
+      "temperature": "warmup_completed"
+    },
+    "status_counts": {
+      "completed": 3,
+      "cancelled": 5
+    },
+    "diagnostic_trigger": {
+      "reason": "inflight_wall_timeout",
+      "observed_s": 420.4631466399878,
+      "threshold_s": 420.0,
+      "request_id": "full-2-eccf9249245e",
+      "utc": "2026-11-18T19:21:13.883656+00:00"
+    },
+    "records": [
+      {
+        "sample_id": "full-1-b3f93e7aa4c7",
+        "sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+        "audio_seconds": 2422.4,
+        "status": "completed",
+        "http_status": 200,
+        "code": null,
+        "started_monotonic": 7116926.76882242,
+        "ended_monotonic": 7117161.0529211,
+        "elapsed_s": 234.28409867919981
+      },
+      {
+        "sample_id": "full-2-eccf9249245e",
+        "sha256": "eccf9249245ee86ef0299de774670d72eeb7e2347802d1c98306c1b28acf0d4e",
+        "audio_seconds": 3300.224,
+        "status": "cancelled",
+        "started_monotonic": 7116926.77026632,
+        "ended_monotonic": 7117348.82311521,
+        "elapsed_s": 422.0528488904238
+      },
+      {
+        "sample_id": "full-3-16cdf4a72578",
+        "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+        "audio_seconds": 3117.312,
+        "status": "cancelled",
+        "started_monotonic": 7116926.77142556,
+        "ended_monotonic": 7117348.82392181,
+        "elapsed_s": 422.0524962497875
+      },
+      {
+        "sample_id": "full-4-ce5a4529cd1c",
+        "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+        "audio_seconds": 3287.296,
+        "status": "cancelled",
+        "started_monotonic": 7116926.77259408,
+        "ended_monotonic": 7117348.82469306,
+        "elapsed_s": 422.05209897924215
+      },
+      {
+        "sample_id": "full-5-99195ce63638",
+        "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+        "audio_seconds": 2702.016,
+        "status": "completed",
+        "http_status": 200,
+        "code": null,
+        "started_monotonic": 7116926.77373381,
+        "ended_monotonic": 7117213.3033703,
+        "elapsed_s": 286.52963649015874
+      },
+      {
+        "sample_id": "full-6-25782e0ad459",
+        "sha256": "25782e0ad459d6be270188951da7343a6951a78126bd549e9ee5c69a476a2f0e",
+        "audio_seconds": 2615.808,
+        "status": "completed",
+        "http_status": 200,
+        "code": null,
+        "started_monotonic": 7116926.77486997,
+        "ended_monotonic": 7117174.92588339,
+        "elapsed_s": 248.15101341996342
+      },
+      {
+        "sample_id": "full-7-f5adfe2b880e",
+        "sha256": "f5adfe2b880e2064e4990ac87d8144bdd159faacb0deb4ee3829fdf45f553b4e",
+        "audio_seconds": 3306.432,
+        "status": "cancelled",
+        "started_monotonic": 7116926.77599531,
+        "ended_monotonic": 7117348.82540895,
+        "elapsed_s": 422.0494136400521
+      },
+      {
+        "sample_id": "full-8-44d6e78dbc4d",
+        "sha256": "44d6e78dbc4dffe2079e79ff9d6df96e3abf5fce98caa2f3290d3b104754ca19",
+        "audio_seconds": 3308.288,
+        "status": "cancelled",
+        "started_monotonic": 7116926.77715557,
+        "ended_monotonic": 7117348.82611556,
+        "elapsed_s": 422.048959990032
+      }
+    ],
+    "N8_latency_p50_p95_s": null,
+    "N8_throughput": null,
+    "successful_subset_note": "Three success latencies are diagnostic-only censored observations; no N8 percentile/extrapolated throughput.",
+    "source_identity": {
+      "root": "/home/zhangs/asr_nvidia",
+      "file_count": 43,
+      "current_mismatches": [],
+      "complete_unchanged": true
+    },
+    "profiles": {
+      "B8_sha256": "57e76952a0511db393ffd20875b0932821639302885d2e520ed6e50de81658c5",
+      "B4_sha256": "e497b880c8fa7a7b3fc9409c21b0251e2d22d613160411bc32a26946beacd878",
+      "only_delta": {
+        "qwen_asr.audio_spk_emo_concurrency": {
+          "B4": 4,
+          "B8": 8
+        }
+      }
+    },
+    "shutdown": {
+      "passed": true,
+      "exit_code": 0,
+      "forced": false,
+      "orphan_cleanup": false,
+      "remaining_pids": [],
+      "temp_dir": "/tmp/asr-svc-tinyxf6h",
+      "cache_dir": "/tmp/asr-svc-tinyxf6h/seacraft_asr",
+      "remaining_cache_files": [],
+      "cache_scan_error": null,
+      "observe_s": 5.0,
+      "port_observations": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "term_to_parent_exit_s": 40.62013021018356
+    },
+    "owned_identity_count": 250,
+    "remaining_owned_now": [],
+    "outer": {
+      "returncode": 2,
+      "elapsed_s": 700.3525436799973,
+      "child_pid": 3695922
+    },
+    "outer_time_scope": "startup/warmup + failed formal422.567s + diagnostic/cleanup; not inference700s",
+    "shared_identity": {
+      "pid": 1601397,
+      "create_time": 1791963491.5,
+      "same_birth_alive_now": true
+    },
+    "full_precheck_NN_pool_scalar_observations": {
+      "speech_campplus": {
+        "saved_status_n": 224,
+        "history_records": 225,
+        "unavailable_status_rows": [
+          {
+            "line": 171,
+            "reason": "KeyError",
+            "row_keys": [
+              "monotonic",
+              "status",
+              "utc"
+            ],
+            "error": null
+          }
+        ],
+        "sampled_ranges_not_exact_peaks": {
+          "instances": {
+            "n": 224,
+            "min": 8,
+            "max": 8
+          },
+          "configured_instances": {
+            "n": 224,
+            "min": 8,
+            "max": 8
+          },
+          "failed_instances": {
+            "n": 224,
+            "min": 0,
+            "max": 0
+          },
+          "busy": {
+            "n": 224,
+            "min": 0,
+            "max": 8
+          },
+          "waiting": {
+            "n": 224,
+            "min": 0,
+            "max": 72
+          },
+          "prefetch_waiting": {
+            "n": 224,
+            "min": 0,
+            "max": 0
+          },
+          "backpressure_waiting": {
+            "n": 224,
+            "min": 0,
+            "max": 72
+          },
+          "oldest_wait_ms": {
+            "n": 224,
+            "min": 0.0,
+            "max": 1812.667
+          },
+          "last_handoff_ms": {
+            "n": 224,
+            "min": 0.0,
+            "max": 32.034
+          }
+        },
+        "warmup_baseline": {
+          "calls": 1,
+          "wait_total_ms": 0.74,
+          "inference_total_ms": 4312.04,
+          "handoff_count": 0,
+          "handoff_total_ms": 0.0
+        },
+        "diagnostic_snapshot": {
+          "instances": 8,
+          "failed_instances": 0,
+          "busy": 0,
+          "waiting": 0,
+          "prefetch_waiting": 0,
+          "backpressure_waiting": 0,
+          "waiting_capacity": 0,
+          "prefetch_queue_depth": 0,
+          "actual_batch_size": 1,
+          "calls": 3686,
+          "wait_total_ms": 2123241.09,
+          "inference_total_ms": 631990.0,
+          "handoff_count": 3139,
+          "handoff_total_ms": 26747.068
+        },
+        "formal_counter_delta_at_diagnostic": {
+          "calls": 3685,
+          "wait_total_ms": 2123240.3499999996,
+          "inference_total_ms": 627677.96,
+          "handoff_count": 3139,
+          "handoff_total_ms": 26747.068
+        },
+        "formal_handoff_mean_ms": 8.520888180949347,
+        "handoff_max_and_p50_p95_all_calls_ms": null,
+        "isolated_backpressure_wait_total_or_max_ms": null,
+        "scope": "Valid model-status snapshots from225 saved formal records and warmup-subtracted cumulative counters; sampled maxima lower-bound instantaneous peaks. wait_total includes pool waiting, not isolated backpressure. Counter sums overlap across members and are not job wall/kernel time. No per-instance complete-call trace for full precheck tail/handoff quantiles; fixed128 trace supplies separate tail audit."
+      },
+      "emotion2vec": {
+        "saved_status_n": 224,
+        "history_records": 225,
+        "unavailable_status_rows": [
+          {
+            "line": 171,
+            "reason": "KeyError",
+            "row_keys": [
+              "monotonic",
+              "status",
+              "utc"
+            ],
+            "error": null
+          }
+        ],
+        "sampled_ranges_not_exact_peaks": {
+          "instances": {
+            "n": 224,
+            "min": 8,
+            "max": 8
+          },
+          "configured_instances": {
+            "n": 224,
+            "min": 8,
+            "max": 8
+          },
+          "failed_instances": {
+            "n": 224,
+            "min": 0,
+            "max": 0
+          },
+          "busy": {
+            "n": 224,
+            "min": 0,
+            "max": 8
+          },
+          "waiting": {
+            "n": 224,
+            "min": 0,
+            "max": 66
+          },
+          "prefetch_waiting": {
+            "n": 224,
+            "min": 0,
+            "max": 0
+          },
+          "backpressure_waiting": {
+            "n": 224,
+            "min": 0,
+            "max": 66
+          },
+          "oldest_wait_ms": {
+            "n": 224,
+            "min": 0.0,
+            "max": 5124.163
+          },
+          "last_handoff_ms": {
+            "n": 224,
+            "min": 0.0,
+            "max": 21.563
+          }
+        },
+        "warmup_baseline": {
+          "calls": 1,
+          "wait_total_ms": 0.21,
+          "inference_total_ms": 2811.6,
+          "handoff_count": 0,
+          "handoff_total_ms": 0.0
+        },
+        "diagnostic_snapshot": {
+          "instances": 8,
+          "failed_instances": 0,
+          "busy": 2,
+          "waiting": 0,
+          "prefetch_waiting": 0,
+          "backpressure_waiting": 0,
+          "waiting_capacity": 0,
+          "prefetch_queue_depth": 0,
+          "actual_batch_size": 1,
+          "calls": 3108,
+          "wait_total_ms": 4794768.87,
+          "inference_total_ms": 1361061.78,
+          "handoff_count": 2647,
+          "handoff_total_ms": 2951.987
+        },
+        "formal_counter_delta_at_diagnostic": {
+          "calls": 3107,
+          "wait_total_ms": 4794768.66,
+          "inference_total_ms": 1358250.18,
+          "handoff_count": 2647,
+          "handoff_total_ms": 2951.987
+        },
+        "formal_handoff_mean_ms": 1.1152198715527013,
+        "handoff_max_and_p50_p95_all_calls_ms": null,
+        "isolated_backpressure_wait_total_or_max_ms": null,
+        "scope": "Valid model-status snapshots from225 saved formal records and warmup-subtracted cumulative counters; sampled maxima lower-bound instantaneous peaks. wait_total includes pool waiting, not isolated backpressure. Counter sums overlap across members and are not job wall/kernel time. No per-instance complete-call trace for full precheck tail/handoff quantiles; fixed128 trace supplies separate tail audit."
+      }
+    },
+    "Qwen_readonly_rootcause_audit": {
+      "artifact": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/full-v14-precheck-8B-bottleneck-audit.json",
+        "bytes": 114213,
+        "sha256": "c4eee1a1f24554cc870bd1349e631f4c9b236a34c81a11f522690f2641f4d5ec"
+      },
+      "count_scope": {
+        "warmup_selected_batches_excluded": 1,
+        "observed_unique_batch_ids": 67,
+        "formal_observed_batch_records": 66,
+        "formal_physical_attempts_observed": 66,
+        "formal_generate_completed_attempts": 66,
+        "last_selected_batch_count_including_warmup_running": 67,
+        "worker_launch_count": 1,
+        "late_running_attempt_limit": "After final status/diagnostic capture some work drained during normalshutdown; absent final runtime timing is unknown, not0 physical execution"
+      },
+      "phase_wall_envelopes_once_per_observed_physical_attempt": {
+        "generate_s": {
+          "n": 66,
+          "sum": 346.6601997790858,
+          "median": 4.2372973947785795,
+          "min": 0.7202910799533129,
+          "max": 38.46106036007404
+        },
+        "processor_s": {
+          "n": 66,
+          "sum": 21.508603304624557,
+          "median": 0.29362412448972464,
+          "min": 0.020469210110604763,
+          "max": 0.5298072099685669
+        },
+        "transfer_s": {
+          "n": 66,
+          "sum": 0.36824336368590593,
+          "median": 0.005775799974799156,
+          "min": 0.0007505295798182487,
+          "max": 0.011601440608501434
+        },
+        "read_decode_s": {
+          "n": 66,
+          "sum": 0.2065169308334589,
+          "median": 0.002599854953587055,
+          "min": 0.0008524199947714806,
+          "max": 0.017062850296497345
+        },
+        "sync_s": {
+          "n": 66,
+          "sum": 0.17236261069774628,
+          "median": 0.0026190453208982944,
+          "min": 0.0006736107170581818,
+          "max": 0.0039723701775074005
+        },
+        "runtime_total_s": {
+          "n": 66,
+          "sum": 369.8547973399982,
+          "median": 4.590511210262775,
+          "min": 0.7438314594328403,
+          "max": 38.82521505933255
+        }
+      },
+      "generation_fraction_of_formal_batch_wall_observed_lower_bound": 0.8203669414258586,
+      "actual_batch_size_histogram": {
+        "3": 1,
+        "13": 1,
+        "16": 7,
+        "19": 1,
+        "29": 2,
+        "32": 2,
+        "44": 1,
+        "45": 20,
+        "64": 9,
+        "73": 1,
+        "83": 21
+      },
+      "new_generated_padded_width_histogram": {
+        "9": 1,
+        "27": 1,
+        "36": 3,
+        "38": 2,
+        "39": 2,
+        "40": 3,
+        "41": 6,
+        "42": 7,
+        "43": 5,
+        "44": 6,
+        "45": 6,
+        "46": 4,
+        "47": 3,
+        "48": 2,
+        "49": 3,
+        "50": 2,
+        "51": 2,
+        "52": 2,
+        "53": 2,
+        "54": 1,
+        "59": 1,
+        "256": 2
+      },
+      "width256": {
+        "batch_count": 2,
+        "generate_total_s": 54.67009096965194,
+        "fraction_observed_generate": 0.15770512739706272,
+        "per_step": {
+          "n": 2,
+          "sum": 0.21355504285020288,
+          "median": 0.10677752142510144,
+          "min": 0.06331652581866365,
+          "max": 0.15023851703153923
+        },
+        "batches": [
+          {
+            "batch_id": 6,
+            "actual_dispatched_size": 83,
+            "feature_frames": 900,
+            "prompt_padded_tokens": 120,
+            "generate_s": 16.209030609577894,
+            "new_generated_padded_width": 256,
+            "generate_s_per_new_step": 0.06331652581866365
+          },
+          {
+            "batch_id": 60,
+            "actual_dispatched_size": 64,
+            "feature_frames": 900,
+            "prompt_padded_tokens": 120,
+            "generate_s": 38.46106036007404,
+            "new_generated_padded_width": 256,
+            "generate_s_per_new_step": 0.15023851703153923
+          }
+        ]
+      },
+      "budgets": {
+        "configured_audio_frames": 115200,
+        "configured_estimated_tokens": 80000,
+        "all_observed_within_frame_budget": true,
+        "all_observed_within_token_budget": true,
+        "frame_utilization": {
+          "n": 66,
+          "sum": 28.1484375,
+          "median": 0.3515625,
+          "min": 0.0078125,
+          "max": 0.6484375
+        },
+        "token_utilization": {
+          "n": 66,
+          "sum": 28.16125,
+          "median": 0.3515625,
+          "min": 0.020625,
+          "max": 0.6484375
+        },
+        "oldest_member_wait_s": {
+          "n": 66,
+          "sum": 380.8686165213585,
+          "median": 4.716014159843326,
+          "min": 0.02002750989049673,
+          "max": 38.85523521061987
+        },
+        "wait_scope": "per-batch oldest member wait includes waiting for previous physical execution; overlapping waits must not be summed as wall"
+      },
+      "generation_semantics": {
+        "runtime_source": "core/qwen_asr_runtime.py:273-297",
+        "calculation": "generated=sequences[:,inputs[input_ids].shape[1]:]; width=int(generated.shape[1])",
+        "meaning": "new generated rectangular padded width, excludes input/prompt. 256 reaches configured new-token width boundary; not allmembers generated256 and exact EOS/truncation member/reason is not logged",
+        "runtime_override_max_new_tokens": 256,
+        "model_metadata_default_max_new_tokens": 512,
+        "no_per_member_eos_or_new_token_count_observed": true
+      },
+      "limits": [
+        "Incomplete3/8 is not a successful-subset performance score.",
+        "Scalar generation timings are CPU wall envelopes including internal waits, not pure device-kernel time.",
+        "Different inputs, output stepcounts, live refill and possible sharedcard interference prevent fixed1285s being a matched performance baseline.",
+        "No per-member raw/EOS trace, no human ground truth, no accuracy or truncation claim."
+      ]
+    },
+    "counts": {
+      "raw_text": 0,
+      "vectors": 0,
+      "score_lists": 0,
+      "PCM": 0
+    },
+    "limits": [
+      "66 observed physical attempts are deduplicated by the Qwen agent; this audit separately scans225 raw status records only for pool scalars and verifies the same historySHA; it does not repeat generation/member parsing.",
+      "Generate/processor/sync measurements are CPU wall envelopes, not pure NPU kernel time.",
+      "Two generated padded-width256 attempts do not prove every member has256 tokens or that any particular member was truncated.",
+      "Fixed128 component5s and full dynamic requests have different inputs/output lengths/refill. No matched5s whole-request expectation.",
+      "HBM residence of shared service does not establish live compute contention."
+    ],
+    "independent_cleanup_profile_audit": {
+      "path": "/tmp/asr-v14-delivery-final-precheck-20261119-ol5as3iw/full-v14-precheck-8B-independent-shutdown-profile-audit.json",
+      "bytes": 23104,
+      "sha256": "b0264c4b8c690851f1f0c940f4c07c0841afb261cf0cd9ef3e80f710caac4b0c"
+    },
+    "all_checks_true_count": 29,
+    "checks_failed": []
+  },
+  "v15_first_file_diagnostic": {
+    "scope": "original8 manifest validated then first only; diagnostic, not finalN8; no strict comparison versus old122.55s",
+    "status": "completed",
+    "expected": 1,
+    "successful": 1,
+    "formal_batch_wall_s": 103.51258307974786,
+    "request_HTTP_wall_s": 102.63060411065817,
+    "source_audio_s": 2422.4,
+    "source_SHA": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+    "source_changed": false,
+    "shutdown": {
+      "passed": true,
+      "exit_code": 0,
+      "remaining_cache_files": [],
+      "cache_scan_error": null,
+      "observe_s": 5.0,
+      "port_observations": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "forced": false,
+      "orphan_cleanup": false
+    },
+    "references": [
+      {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/summary.json",
+        "sha256": "5b9203531dc043e0bb62ea18fef3ec26af3d7b21def517645317f7c3963392d0",
+        "bytes": 563095
+      },
+      {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/run.json",
+        "sha256": "c1127380029dd3bfc5b99d762103c37611c520bc0da69a1d0b5817614f3caea3",
+        "bytes": 22936
+      },
+      {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/shutdown.json",
+        "sha256": "bd1b80b45c4abc90f6b4b816910b25c957934d65e500812e7d75d9d3d1bf284a",
+        "bytes": 12014
+      },
+      {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/ownership.json",
+        "sha256": "1ecba5269f34dd51d22f6980d87fd9eb1714787921475ff186d315eca2be7d1f",
+        "bytes": 7120
+      },
+      {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/diagnostic-full1-B-wait50-v15-r2/config.toml",
+        "sha256": "c8328babd108c37e255f46ee5c4846af31614adbe8391f25d72f450c76949a04",
+        "bytes": 5514
+      }
+    ]
+  }
+}

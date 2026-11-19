@@ -1,0 +1,25 @@
+{
+  "scope": "only after root archives original bytes/SHA; scratch only",
+  "files": [
+    {
+      "path": "scripts/qwen_process_candidate.py",
+      "before_sha256": "060aa26e43407f01adee763efecfaa9f2221bc8b0a9db2752c68e724ebc0eed3",
+      "draft_sha256": "34538fde136be7fb0d37873bb78a9e115549903ff5bb75c0e1e84842fcb08f15"
+    },
+    {
+      "path": "scripts/benchmark_qwen_process_candidate.py",
+      "before_sha256": "5aaae917ca14cf123ae786c7e6d0e167898333645133b657d88cb148d6f0da24",
+      "draft_sha256": "c5e6e931d7904fbaa994403c6dfd71e0dc06e337f739f8c5076d6fa77514d7d5"
+    },
+    {
+      "path": "tests/test_qwen_process_candidate.py",
+      "before_sha256": "bd5a75501ca5fcbed30614b0d5bb8cf2519bab2f287b62ca5afe154fb2542435",
+      "draft_sha256": "1a555e21252ba81dbe42b718311b64901cba347b9e98d1ccbd1124a8ebd35c8f"
+    },
+    {
+      "path": "tests/test_qwen_process_benchmark.py",
+      "before_sha256": "6e0e6405c4582ca7e804f55d9781e91bbb9bfe14aebc3554e5b48ffc9e5ac1ea",
+      "draft_sha256": "7735c05fe8e1162135e2af74f36c47d767d7a23c006137e0df0e0438f9280a65"
+    }
+  ]
+}

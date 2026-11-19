@@ -16,6 +16,15 @@ from scripts.benchmark_qwen_candidates import (
 )
 
 
+@pytest.fixture
+def local_model_metadata(tmp_path):
+    """CLI reporting tests use small owned metadata, never deployment model assets."""
+    directory = tmp_path / "cpu-model-metadata"
+    directory.mkdir()
+    (directory / "config.json").write_text('{"cpu_fixture": true}')
+    return directory
+
+
 def wav(frames, value=1):
     buffer = io.BytesIO()
     with wave.open(buffer, "wb") as writer:
@@ -229,7 +238,7 @@ def test_malformed_raw_output_keeps_evidence_and_reports_protocol_failure():
     assert report["records"][0]["outputs"][0]["raw_contract_ok"] is False
 
 
-def test_cli_repeated_stop_signals_preserve_report_and_close_before_exit(tmp_path, monkeypatch):
+def test_cli_repeated_stop_signals_preserve_report_and_close_before_exit(tmp_path, monkeypatch, local_model_metadata):
     import signal
     import scripts.benchmark_qwen_candidates as benchmark
     source = tmp_path / "source.wav"
@@ -251,7 +260,7 @@ def test_cli_repeated_stop_signals_preserve_report_and_close_before_exit(tmp_pat
     monkeypatch.delenv("ASCEND_VISIBLE_DEVICES", raising=False)
     monkeypatch.delenv("ASCEND_RT_VISIBLE_DEVICES", raising=False)
     previous = signal.getsignal(signal.SIGINT)
-    status = benchmark.main(["--manifest", str(manifest), "--output", str(output),
+    status = benchmark.main(["--model-dir", str(local_model_metadata), "--manifest", str(manifest), "--output", str(output),
                              "--candidate", "eager", "--warmup", "0", "--repeats", "1"])
     report = json.loads(output.read_text())
     assert status == 128 + signal.SIGINT
@@ -340,7 +349,7 @@ def test_attention_switch_happens_after_load_before_compile(monkeypatch):
 
 
 @pytest.mark.parametrize("mode", ["default", "eager"])
-def test_cli_routes_optional_attention_choice_only_to_candidate_runner(tmp_path, monkeypatch, mode):
+def test_cli_routes_optional_attention_choice_only_to_candidate_runner(tmp_path, monkeypatch, mode, local_model_metadata):
     import scripts.benchmark_qwen_candidates as benchmark
     source = tmp_path / "source.wav"
     source.write_bytes(wav(16000))
@@ -351,7 +360,7 @@ def test_cli_routes_optional_attention_choice_only_to_candidate_runner(tmp_path,
     monkeypatch.setattr(benchmark, "CandidateRunner", lambda *args: (seen.append(args), FakeRunner())[1])
     monkeypatch.delenv("ASCEND_VISIBLE_DEVICES", raising=False)
     monkeypatch.delenv("ASCEND_RT_VISIBLE_DEVICES", raising=False)
-    args = ["--manifest", str(manifest), "--output", str(output), "--warmup", "0", "--repeats", "1"]
+    args = ["--model-dir", str(local_model_metadata), "--manifest", str(manifest), "--output", str(output), "--warmup", "0", "--repeats", "1"]
     if mode == "eager":
         args += ["--attention", "eager"]
     assert benchmark.main(args) == 0

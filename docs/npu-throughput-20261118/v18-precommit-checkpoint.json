@@ -1,0 +1,79 @@
+{
+  "scope": "implementation checkpoint only; not final performance acceptance or archive",
+  "date": "2026-11-19",
+  "tasks": {
+    "complete": 41,
+    "total": 57
+  },
+  "v17_full8B": {
+    "audit_status": "evidence_consistent_failure_confirmed",
+    "normal_shutdown_passed": false,
+    "performance_acceptance": false,
+    "outcome": {
+      "status": "cleanup_failed",
+      "complete": false,
+      "expected": 8,
+      "successful": 3,
+      "batch_elapsed_s": 420.79396637994796,
+      "source_audio_seconds": 24059.776,
+      "source_audio_seconds_per_wall_second": null
+    },
+    "diagnostic_trigger": {
+      "reason": "inflight_wall_timeout",
+      "observed_s": 420.02747290953994,
+      "threshold_s": 420.0,
+      "request_id": "full-2-eccf9249245e",
+      "utc": "2026-11-18T21:35:13.702355+00:00"
+    },
+    "owned_count": 277,
+    "remaining_now": []
+  },
+  "v17_audit_file": "/tmp/asr-throughput-20261118-xvior99k/protected-v17-precheck-8B-independent-audit-final.json",
+  "v17_audit_sha256": "971a369e4d62b2c921f3fb22b48f577f9ba00c1406abb33802f32050223e4adb",
+  "multi_qwen_target_CPU": {
+    "passed": 112,
+    "subtests": 95,
+    "seconds": 26.23,
+    "NPU_tested": false
+  },
+  "precommit_full_CPU": {
+    "status": "passed",
+    "passed": 968,
+    "subtests": 281,
+    "skipped": 2,
+    "hardware_deselected": 1,
+    "pytest_seconds": 237.17,
+    "controller_elapsed_s": 240.0503638293594,
+    "source_changed": [],
+    "remaining_owned": [],
+    "global_cache_mutation_attempts": [],
+    "required_node_evidence_status": "passed",
+    "result_path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-precommit-20261119-095359/result.json",
+    "result_sha256": "e5c6739ac4cf14a536d2fd1e2b9082aaad2ad874c2a1e0b307497e49196dd9ce",
+    "freeze_sha256": "bf0bb66d48109db7e9262fa1aeb540e85234c870f0eb507b155813479fa01e15",
+    "guard_scope": "real torch_npu module execution is refused by Loader; optional backend discovery may attempt it; CPU FunASR classes and owned loopback are allowed",
+    "guard_blocked_backend_import_attempts": [
+      "BLOCK_IMPORT torch_npu"
+    ]
+  },
+  "default_candidate_promoted": false,
+  "final18_matrix_complete": false,
+  "assets_modified": false,
+  "generated_fusion": {
+    "backup": "/home/zhangs/asr_nvidia/logs/npu-throughput-20261118/precommit-20261119/fusion_result.generated.json",
+    "backup_sha256": "89090116f2e93e38be37c983694d386fb914c6f46f0c7c45bbfe0296d14a6e25",
+    "restored_HEAD_sha256": "3974b7c2da8b75fd5610f65abba33e8f01289a211b9ba5826c4723b75ba239e8"
+  },
+  "prior_report": {
+    "backup": "/home/zhangs/asr_nvidia/logs/npu-throughput-20261118/precommit-20261119/validation-before-precommit.md",
+    "sha256": "4ce3cee9e0026f24ced06e0942808f0c2c57b60bc594b385e9cc4542e476d32e"
+  },
+  "openspec_strict_validation": "passed",
+  "post_CPU_whitespace_only": {
+    "file": "tests/test_benchmark_cam_process.py",
+    "line": 296,
+    "before_sha256": "eb9b685977bf816d88d0608ea2cf71093a2745034ef0a8f80a6ff1d40fa905fe",
+    "after_sha256": "e08a58a83a9518df4beb934b18e274d3c477d23cc76e6eba82e9ae032faa72a9",
+    "AST_unchanged": true
+  }
+}

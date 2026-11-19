@@ -1,9 +1,8 @@
-import asyncio
-
 from fastapi import APIRouter, Request
+from fastapi.responses import JSONResponse
 
 from core.status import build_status_payload
-from core.resource_diagnostics import status_snapshot
+from core.resource_diagnostics import unknown_resource_snapshot
 from utils.asr_stats import read_stats, clear_processing_tasks
 
 router = APIRouter()
@@ -11,15 +10,20 @@ router = APIRouter()
 
 @router.get("/get_status")
 async def get_status(request: Request):
-    # npu-smi/procfs/cache扫描可能等待数秒；仅重采样进入线程，
-    # 模型池/准入等可变状态仍在主事件循环组装，避免跨线程访问竞态。
-    try:
-        resource = await asyncio.to_thread(status_snapshot)
-    except Exception as exc:
-        resource = {"available": False, "reason": f"资源采样失败: {type(exc).__name__}: {exc}"}
+    # 每app只维护一个TTL singleflight；首次快照unknown，GET永不等待重资源采样。
+    sampler = getattr(request.app.state, "resource_sampler", None)
+    if sampler is None:
+        resource = unknown_resource_snapshot("资源采样器尚未由app lifespan初始化")
+        resource["sampling"] = {"has_snapshot": False, "age_s": None, "in_progress": False,
+                                "last_error": None, "lifecycle": "not_initialized"}
+    else:
+        resource = sampler.snapshot()
     stats = read_stats()
     run_start_time = request.app.state.run_start_time
-    return build_status_payload(stats, run_start_time, resource_snapshot=resource)
+    payload = build_status_payload(stats, run_start_time, resource_snapshot=resource,
+                                   qwen_recent_batch_limit=8)
+    # payload只含JSON内建类型；直接render避免FastAPI再次递归编码完整诊断树。
+    return JSONResponse(content=payload)
 
 
 @router.delete("/clear_tasks_list")

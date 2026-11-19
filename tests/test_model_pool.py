@@ -2,6 +2,7 @@ import asyncio
 import unittest
 from unittest.mock import patch
 
+from core.config import settings
 from core.models import ModelPool, ModelUnavailableError, local_model_status
 
 
@@ -11,6 +12,13 @@ class _FakeModel:
 
 
 class ModelPoolTests(unittest.IsolatedAsyncioTestCase):
+    async def asyncSetUp(self):
+        # 本组验证父进程CPU/native替身，不让外部process profile绕过构造注入。
+        thread_pool = dict(settings._cfg.get("model_device_pool", {}), speech_campplus_execution_mode="thread")
+        mode = patch.dict(settings._cfg, {"model_device_pool": thread_pool})
+        mode.start()
+        self.addCleanup(mode.stop)
+
     async def test_asymmetric_pools_have_independent_capacity(self):
         active = {"cam": 0, "emo": 0}
         peak = {"cam": 0, "emo": 0}

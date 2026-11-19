@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -10,6 +11,7 @@ from core.models import close_v3_model_pools
 from core.vad_pool import start_vad_pool, stop_vad_pool
 from core.deployment import validate_npu_runtime
 from core.async_utils import await_completion
+from core.resource_diagnostics import ResourceSnapshotSampler
 from api.routes.asr_v3 import router as asr_v3_router
 from api.routes.asr_common import cleanup_stale_service_cache
 from api.routes.status import router as status_router
@@ -51,16 +53,45 @@ async def lifespan(app: FastAPI):
 
     # 4) 记录启动时刻
     app.state.run_start_time = datetime.utcnow()
+    # 只构造本app缓存，不启动NPU/procfs I/O；首个GET才发起一次后台采样。
+    sampler = ResourceSnapshotSampler(interval_s=settings.resource_sample_interval_s)
+    app.state.resource_sampler = sampler
 
     # 5) 预热 VAD worker 进程池：全部核心 worker 就绪后服务才对外就绪，
     #    避免第一个请求承担 FSMN-VAD 的模型加载延迟
     async def shutdown():
         failures = []
-        for close in (stop_vad_pool, close_v3_model_pools, close_qwen_client):
+        # 先发布closing，重资源I/O与模型收尾并行；不能等npu-smi/procfs才归还模型。
+        sampler_close = asyncio.create_task(sampler.aclose())
+        qwen_close = (asyncio.create_task(close_qwen_client())
+                      if settings.qwen_execution_mode == "process" else None)
+        models_close = (asyncio.create_task(close_v3_model_pools())
+                        if getattr(settings, "model_device_speech_campplus_execution_mode", "thread") == "process"
+                        else None)
+        try:
+            await asyncio.sleep(0)
+            closes = [stop_vad_pool]
+            if models_close is None:
+                closes.append(close_v3_model_pools)
+            if qwen_close is None:
+                closes.append(close_qwen_client)
+            for close in closes:
+                try:
+                    await close()
+                except Exception as exc:
+                    failures.append((close.__name__, str(exc)))
+            for name, task in (("close_qwen_client", qwen_close),
+                               ("close_v3_model_pools", models_close)):
+                if task is not None:
+                    try:
+                        await await_completion(task)
+                    except Exception as exc:
+                        failures.append((name, str(exc)))
+        finally:
             try:
-                await close()
+                await await_completion(sampler_close)
             except Exception as exc:
-                failures.append((close.__name__, str(exc)))
+                failures.append(("resource_sampler", str(exc)))
         if failures:
             raise RuntimeError(f"服务收尾失败: {failures}")
 
@@ -80,6 +111,7 @@ async def lifespan(app: FastAPI):
 def create_app() -> FastAPI:
     app = FastAPI(title="SeaCraftASR", lifespan=lifespan)
     app.state.shutdown_failed = False
+    app.state.resource_sampler = None
 
     # CORS
     app.add_middleware(

@@ -11,6 +11,10 @@ max_days = 7
 max_size_mb = 100
 
 # 模型路径配置（模型随镜像打包到 /app/model，只包含 v3 链路需要的三个模型）
+[status]
+# GET按需刷新资源缓存的最短间隔；无查询不采样，0.1～60秒，修改后重启。
+resource_sample_interval_s = 1.0
+
 [model_paths]
 vad_model_dir = "/app/model/speech_fsmn_vad_zh-cn-16k-common-pytorch"
 spk_model_dir = "/app/model/speech_campplus_sv_zh_en_16k-common_advanced"
@@ -35,6 +39,8 @@ failure_mode = "passthrough"
 
 # Qwen3-ASR 适配链路（/v3/seacraft_asr）
 [qwen_asr]
+execution_mode = "thread"             # thread兼容缺省；process为单HF模型worker，待审核后显式选择
+process_shutdown_grace_s = 30          # 只在显式关闭后等待；不改120秒推理timeout，不到grace不kill
 enabled = true
 model = ""  # 仅作本地模型标识，不发模型发现请求
 local_model_dir = "/app/qwen-model" # 从宿主只读挂载提供
@@ -97,5 +103,8 @@ repetition_min_unit = 4                  # 判定为循环的重复子串最小�
 repetition_min_times = 3                 # 判定为循环的最小连续重复次数
 
 [model_device_pool]
+speech_campplus_execution_mode = "thread" # 兼容安全缺省；process候选须完整矩阵/保护验收后选用
+speech_campplus_process_startup_timeout_s = 60 # 每worker READY启动期限；有限正数且不超过300秒
+speech_campplus_process_shutdown_grace_s = 30 # 仅显式关闭；不将普通请求取消改为kill
 speech_campplus_devices = ["npu:0","npu:0","npu:0"]
 emotion2vec_devices = ["npu:0"]

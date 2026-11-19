@@ -47,7 +47,7 @@ class NpuConfigTests(unittest.TestCase):
 
     def test_templates_use_npu_and_have_no_active_tensorrt_keys(self):
         for name in ['config.toml','docker/config.toml']:
-            cfg = Settings(config_path=name)
+            cfg = Settings(config_path=str(Path(__file__).resolve().parents[1] / name))
             cfg.validate_model_backends()
             self.assertFalse(any('tensorrt' in k for k in cfg._cfg.get('model_device_pool', {})))
             self.assertTrue(all(x == 'cpu' or x.startswith('npu:') for x in cfg.vad_device))

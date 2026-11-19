@@ -33,8 +33,16 @@ class CpuRuntime:
 
 
 def clip():
-    # Fake runtime consumes bytes directly; real CLI validates/decodes the WAV.
-    return Sample("fake-4.1s", "unused.wav", b"RIFFfake", 65600, None, "sourcehash", 0, 65600)
+    # 调度器校验真实PCM边界，CPU桩也不能用非法RIFF绕过输入契约。
+    import io
+    import wave
+    data = io.BytesIO()
+    with wave.open(data, 'wb') as handle:
+        handle.setnchannels(1)
+        handle.setsampwidth(2)
+        handle.setframerate(16000)
+        handle.writeframes(b'\0\0' * 65600)
+    return Sample("fake-4.1s", "unused.wav", data.getvalue(), 65600, None, "sourcehash", 0, 65600)
 
 
 def execute(runtime=CpuRuntime, report=None, checkpoint=None, should_stop=None):

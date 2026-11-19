@@ -281,7 +281,7 @@ class SpeakerClusteringTests(unittest.TestCase):
 
 
 class ShortSegmentSpeakerTests(unittest.TestCase):
-    """短片段（<1 秒）不跑 CAM++，但说话人标签仍按时间就近继承。"""
+    """0.3秒起实际CAM；失败embedding保持null，不再用旧短段继承掩盖失败。"""
 
     @staticmethod
     def _make_outcome(index, start_s, duration_s, embedding=None):
@@ -294,13 +294,13 @@ class ShortSegmentSpeakerTests(unittest.TestCase):
             embedding=embedding,
         )
 
-    def test_short_segment_inherits_nearest_speaker(self):
+    def test_failed_short_embedding_does_not_inherit_nearest_speaker(self):
         from api.routes.asr_qwen_common import cluster_speakers
 
         embedding = torch.ones(192)
         outcomes = [
             self._make_outcome(0, 0.0, 3.0, embedding),
-            self._make_outcome(1, 3.2, 0.6, None),   # 短片段：没有嵌入
+            self._make_outcome(1, 3.2, 0.6, None),   # CAM段级失败：没有嵌入
             self._make_outcome(2, 6.0, 3.0, embedding),
         ]
 
@@ -308,7 +308,7 @@ class ShortSegmentSpeakerTests(unittest.TestCase):
 
         self.assertEqual(labels[0], "spk_0")
         self.assertEqual(labels[2], "spk_0")
-        self.assertEqual(labels[1], "spk_0", "短片段应继承时间上最近的说话人")
+        self.assertNotIn(1, labels, "CAM失败保持null，不按旧短段规则伪造标签")
 
 
 class RequestConcurrencyTests(unittest.TestCase):
@@ -856,7 +856,8 @@ class FaultInjectionTests(unittest.TestCase):
         def _reader(path):
             # 把片段起始时间编码进数组，便于识别「哪一段损坏」
             start = float(path.split("_")[-1].replace(".wav", ""))
-            return np.full(1600, start, dtype="float32"), 16000
+            # 保持故障注入目标为CAM错误；实际PCM需满足0.3秒统一门限。
+            return np.full(16000, start, dtype="float32"), 16000
 
         async def _speaker(audio_array, sample_rate):
             if float(audio_array[0]) == 0.0:

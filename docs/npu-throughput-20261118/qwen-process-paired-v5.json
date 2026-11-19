@@ -1,0 +1,275 @@
+{
+  "scope": "Same-HF single Qwen model placement experiment; no full-audio claims; raw outputs retained in referenced run directories",
+  "cases": [
+    {
+      "run_dir": "/tmp/asr-throughput-20261118-xvior99k/qwen-process-pair-v5-16",
+      "summary_sha256": "ca13edc278d471f7c60faed6da8e829c8a859c132e1b8f147d2c9a23efbd3f11",
+      "status": "completed",
+      "source_sha256": {
+        "/home/zhangs/asr_nvidia/scripts/benchmark_qwen_process_candidate.py": "5aaae917ca14cf123ae786c7e6d0e167898333645133b657d88cb148d6f0da24",
+        "/home/zhangs/asr_nvidia/scripts/benchmark_qwen_batch_curve.py": "e6d43a11c3172de778b275c8c80967dbb553202efbf8cd890db023b954a0f324",
+        "/home/zhangs/asr_nvidia/scripts/qwen_process_candidate.py": "060aa26e43407f01adee763efecfaa9f2221bc8b0a9db2752c68e724ebc0eed3",
+        "/home/zhangs/asr_nvidia/scripts/benchmark_npu_stream_policy.py": "5110245b04c8de42b440f4035d850bd5fe9b1a7a2ad9ea894d3d5350b9861e19"
+      },
+      "config_sha256": "c1bb454c802adeb44f0ac168d1d9f84b59cda10146c6317f4d0db0fd8820d523",
+      "manifest_sha256": "0c6c26dbc53cd882a789b758cd2ff2c6abf8fe550d6805924dac6c1ca4f6ee32",
+      "rows": [
+        {
+          "transport": "thread",
+          "mode": "pure",
+          "warmup_work_done_s": [
+            5.90650696028024
+          ],
+          "steady_work_done_s": [
+            3.7599075697362423,
+            3.4621933503076434,
+            3.366546900011599
+          ],
+          "actual_batch_sizes": [
+            [
+              16
+            ],
+            [
+              16
+            ],
+            [
+              16
+            ],
+            [
+              16
+            ]
+          ],
+          "qwen_exact_all": true,
+          "nn_gate_all": true
+        },
+        {
+          "transport": "thread",
+          "mode": "B",
+          "warmup_work_done_s": [
+            8.627527980133891
+          ],
+          "steady_work_done_s": [
+            5.315550239756703,
+            5.309229440055788,
+            5.222320180386305
+          ],
+          "actual_batch_sizes": [
+            [
+              16
+            ],
+            [
+              16
+            ],
+            [
+              16
+            ],
+            [
+              16
+            ]
+          ],
+          "qwen_exact_all": true,
+          "nn_gate_all": true
+        },
+        {
+          "transport": "process",
+          "mode": "pure",
+          "warmup_work_done_s": [
+            5.629974380135536
+          ],
+          "steady_work_done_s": [
+            3.234000239521265,
+            3.374477650038898,
+            3.367383820004761
+          ],
+          "actual_batch_sizes": [
+            [
+              16
+            ],
+            [
+              16
+            ],
+            [
+              16
+            ],
+            [
+              16
+            ]
+          ],
+          "qwen_exact_all": true,
+          "nn_gate_all": true
+        },
+        {
+          "transport": "process",
+          "mode": "B",
+          "warmup_work_done_s": [
+            3.2759208604693413
+          ],
+          "steady_work_done_s": [
+            3.293591570109129,
+            3.1924067195504904,
+            3.2498285304754972
+          ],
+          "actual_batch_sizes": [
+            [
+              16
+            ],
+            [
+              16
+            ],
+            [
+              16
+            ],
+            [
+              16
+            ]
+          ],
+          "qwen_exact_all": true,
+          "nn_gate_all": true
+        }
+      ],
+      "cleanup_status": "passed",
+      "cleanup_errors": [],
+      "supervisor_cleanup": "passed",
+      "exit": {
+        "returncode": 0,
+        "elapsed_s": 183.22185237985104,
+        "child_pid": 1159264
+      }
+    },
+    {
+      "run_dir": "/tmp/asr-throughput-20261118-xvior99k/qwen-process-pair-v5-128",
+      "summary_sha256": "bba083ffdd6613f666dc2929a43b304dbca7bc5a85cd65c7472580178ec5b5e3",
+      "status": "completed",
+      "source_sha256": {
+        "/home/zhangs/asr_nvidia/scripts/benchmark_qwen_process_candidate.py": "5aaae917ca14cf123ae786c7e6d0e167898333645133b657d88cb148d6f0da24",
+        "/home/zhangs/asr_nvidia/scripts/benchmark_qwen_batch_curve.py": "e6d43a11c3172de778b275c8c80967dbb553202efbf8cd890db023b954a0f324",
+        "/home/zhangs/asr_nvidia/scripts/qwen_process_candidate.py": "060aa26e43407f01adee763efecfaa9f2221bc8b0a9db2752c68e724ebc0eed3",
+        "/home/zhangs/asr_nvidia/scripts/benchmark_npu_stream_policy.py": "5110245b04c8de42b440f4035d850bd5fe9b1a7a2ad9ea894d3d5350b9861e19"
+      },
+      "config_sha256": "c1bb454c802adeb44f0ac168d1d9f84b59cda10146c6317f4d0db0fd8820d523",
+      "manifest_sha256": "0c6c26dbc53cd882a789b758cd2ff2c6abf8fe550d6805924dac6c1ca4f6ee32",
+      "rows": [
+        {
+          "transport": "thread",
+          "mode": "pure",
+          "warmup_work_done_s": [
+            7.380000819452107
+          ],
+          "steady_work_done_s": [
+            5.2159828301519156,
+            5.233668699860573,
+            5.113089480437338
+          ],
+          "actual_batch_sizes": [
+            [
+              128
+            ],
+            [
+              128
+            ],
+            [
+              128
+            ],
+            [
+              128
+            ]
+          ],
+          "qwen_exact_all": true,
+          "nn_gate_all": true
+        },
+        {
+          "transport": "thread",
+          "mode": "B",
+          "warmup_work_done_s": [
+            21.574147869832814
+          ],
+          "steady_work_done_s": [
+            16.90993567928672,
+            16.87254342995584,
+            16.89927764981985
+          ],
+          "actual_batch_sizes": [
+            [
+              128
+            ],
+            [
+              128
+            ],
+            [
+              128
+            ],
+            [
+              128
+            ]
+          ],
+          "qwen_exact_all": true,
+          "nn_gate_all": true
+        },
+        {
+          "transport": "process",
+          "mode": "pure",
+          "warmup_work_done_s": [
+            6.899988819845021
+          ],
+          "steady_work_done_s": [
+            4.9992188503965735,
+            4.858781740069389,
+            4.904297810047865
+          ],
+          "actual_batch_sizes": [
+            [
+              128
+            ],
+            [
+              128
+            ],
+            [
+              128
+            ],
+            [
+              128
+            ]
+          ],
+          "qwen_exact_all": true,
+          "nn_gate_all": true
+        },
+        {
+          "transport": "process",
+          "mode": "B",
+          "warmup_work_done_s": [
+            11.377278609201312
+          ],
+          "steady_work_done_s": [
+            10.469333020038903,
+            11.388789390213788,
+            10.657855870202184
+          ],
+          "actual_batch_sizes": [
+            [
+              128
+            ],
+            [
+              128
+            ],
+            [
+              128
+            ],
+            [
+              128
+            ]
+          ],
+          "qwen_exact_all": true,
+          "nn_gate_all": true
+        }
+      ],
+      "cleanup_status": "passed",
+      "cleanup_errors": [],
+      "supervisor_cleanup": "passed",
+      "exit": {
+        "returncode": 0,
+        "elapsed_s": 327.39116649050266,
+        "child_pid": 1155247
+      }
+    }
+  ]
+}

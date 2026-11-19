@@ -103,3 +103,60 @@
 #### Scenario: 完整B配置的128容量
 - **WHEN** 纯Qwen环境实际128批通过且需要验证完整B配置容量
 - **THEN** 在八CAM++、八emo均已加载且实际工作的环境单独验证128，即使128不是最快档；未测或失败时明确该资源条件下容量未通过，不能以纯Qwen成功替代
+
+
+### Requirement: 实时状态计数不等待重资源采样
+状态接口 MUST 在主事件循环读取实时准入、各模型队列/实例及段进度，不等待npu-smi或完整procfs采样。资源采样 MUST 由每app/lifespan独立的按需TTL singleflight任务提供，无查询不永久轮询；首次无快照或采集失败 MUST 明示unknown，已有快照 MUST 携带age、采样耗时/在途与错误信息，不能充作实时值。采样间隔 MUST 类型化校验并说明重启语义。
+
+#### Scenario: 重采样慢于短音频推理
+- **WHEN** 资源collector仍在执行且多条GET查询实时并发/进度
+- **THEN** GET立即使用已有快照或unknown返回实时计数，最多一个collector在途，不因诊断查询等待而丢失并发观察或阻塞watchdog采样
+
+#### Scenario: 应用关闭和重复取消
+- **WHEN** 关闭应用时有已启动的collector线程或子进程，且关闭等待再次被取消
+- **THEN** 先禁止新采样并继续等待原owned工作实际收尾，不遗留后台任务或把取消Future当作资源结束；不同app/loop不共享采样所有权
+
+#### Scenario: 模型进程HBM归属
+- **WHEN** Qwen或CAM采用独立模型worker且资源快照包含多个NPU进程
+- **THEN** 以采样时OS出生身份及主循环缓存的worker PID/创建时间核对本项目模型进程，分列父进程、Qwen、CAM、外部及未验证行；资源age、worker allocator范围均保留，不把本项目worker归为共享外部或拿父进程零值替代
+
+
+#### Scenario: CAM进程未加载或采样时已退出
+- **WHEN** 状态查询发生在未请求CAM或旧资源快照仍含已退出/出生身份不符的CAM worker时
+- **THEN** 查询不spawn或发送RPC，未知或不匹配的进程不冒充当前本项目CAM容量/资源；进程模式的父allocator未知不改报worker零值，最后RPC峰值与整卡聚合另列
+
+
+### Requirement: 验证缓存具有独立所有权
+测试工具 MUST 为每次CPU回归和每个owned服务提供独立短TMPDIR，在Python导入前生效；上传、启动清扫与资源诊断 MUST 指向该进程实际私有缓存。测试 MUST NOT 无归属清扫真实共用缓存。服务进程/worker及端口关闭验证之后 MUST 只读确认该owned音频缓存为空；残留或未知视为验收失败，保留目录和证据，不用递归删除掩盖问题。
+
+#### Scenario: CPU回归与真实功能服务同时运行
+- **WHEN** CPU缓存清理测试与owned功能请求并发进行
+- **THEN** 两者使用不同的短TMPDIR和实际cache根，清理只影响自己的模拟文件；source和保护helper的路径及外部哨兵验证通过，不删除正在功能请求中使用的音频
+
+#### Scenario: 服务退出后仍有缓存或扫描失败
+- **WHEN** 本轮服务/worker已退出且端口连续至少5秒释放，但其私有音频缓存仍有文件或无法读取
+- **THEN** 记录剩余文件或unknown错误并令验收失败，不把端口释放当作全部收尾，也不删除文件将失败洗成成功
+
+
+### Requirement: 状态批历史有界且不重复递归编码
+HTTP状态查询 MUST 将Qwen历史限制为最近8个已发布完整批记录，先限制窗口再复制；MUST 保留所返回记录的全部成员、attempt、shape及计时，不以空数组冒充被省略数据。原实时计数与原状态字段保持语义，直接诊断快照默认最多64记录。HTTP MUST 显式报告历史范围、数量、截断与缺口检测口径，并避免对已隔离JSON数据进行重复递归编码；有限历史 MUST NOT 被宣称为无损执行日志。
+
+#### Scenario: 批历史达到64条后继续处理
+- **WHEN** 服务同时处理完整音频且HTTP查询Qwen状态
+- **THEN** HTTP仅复制最近8条完整记录并声明可用/返回范围，直接组件快照仍可取64条；计数保持实时，消费者按批ID去重并检查遗漏，不把采样缺失当执行0
+
+#### Scenario: 返回快照被调用者修改
+- **WHEN** 调用者修改返回记录内嵌的成员、shape或attempt
+- **THEN** 内部已发布历史不受影响，状态查询不触发推理/worker出生或改变取消及名额收尾
+
+
+### Requirement: 多Qwen暖身覆盖每个真实模型worker
+多Qwen性能验证 MUST 覆盖各真实worker的加载与forward后再开始正式负载。双份候选 MUST 使用有界的两次顺序真实clip、共用一次420秒及无进展闸门；单份保持原单次暖身。系统 MUST 联合每实例loaded、实际generate_completed/非空batch、PID出生及RPC计时验证覆盖，不只按请求次数或READY断言。暖身原件 MUST 分别保留，未覆盖则诊断，不将其混入正式N8或用大量HTTP撞准入凑模型并发。
+
+#### Scenario: 双份暖身完成
+- **WHEN** 2个顺序真实clip请求完成且两个不同worker均有真实forward与身份/RPC证据
+- **THEN** aggregate暖身才完成，正式批从暖身之后计时，两个暖身响应不覆盖彼此也不纳入正式性能分位数
+
+#### Scenario: 暖身覆盖缺失或超线
+- **WHEN** 两次之后仍仅一份forward，或aggregate420/无进展闸门触发
+- **THEN** 立即诊断并owned收尾，不继续无限暖身、不将两个请求各自420当840，也不开始完整性能轮次

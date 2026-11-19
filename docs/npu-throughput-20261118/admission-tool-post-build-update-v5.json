@@ -1,0 +1,18 @@
+{
+  "scope": "test-tool-only update after full source695/protected696 baseline; all34 runtime so and runtime source hashes unchanged",
+  "reason": "5s diagnostic GET caused cancellation after valid4017; separate non-gate snapshot failure from capacity/base/drain evidence; total420 unchanged",
+  "files": [
+    {
+      "path": "scripts/validate_http_audio_admission.py",
+      "before_sha256": "a44799b2a5929764bcae1f8c0202ab0574d665e618d189c37e004dec55a2e8d1",
+      "after_sha256": "7f855ce681d15e1faaf03749d49824607dcb4884e07116917c90467e604a62ba"
+    },
+    {
+      "path": "tests/test_http_audio_admission_tool.py",
+      "before_sha256": "247ed70050232719a972394c0c9b11d78d514405e40834e6afc4a1b23a04b0c0",
+      "after_sha256": "ca3aa64481185a9920612f3c480cb80897f03ee4da5b89b21414585ae2f9bd85"
+    }
+  ],
+  "cpu_agent": "9passed7subtests0.29s",
+  "backup": "/tmp/asr-throughput-20261118-xvior99k/admission-tool-statusfix-backup-v5"
+}

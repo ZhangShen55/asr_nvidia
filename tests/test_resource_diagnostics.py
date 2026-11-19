@@ -123,8 +123,9 @@ class ResourceDiagnosticsTests(unittest.TestCase):
                 patch("core.resource_diagnostics.npu_snapshot", return_value={"available": True, "compute_apps": [{"pid": 10}, {"pid": 99}]}), \
                 patch("core.resource_diagnostics.endpoint_health", return_value={"ok": True}) as health:
             result = collect_snapshot(backend_pid=10, include_process_tree=False)
-        self.assertEqual(result["npu"]["service_compute_apps"], [{"pid": 10}])
-        self.assertEqual(result["npu"]["other_compute_apps"], [{"pid": 99}])
+        self.assertEqual([row["pid"] for row in result["npu"]["service_compute_apps"]], [10])
+        self.assertIn("process_identity", result["npu"]["service_compute_apps"][0])
+        self.assertEqual([row["pid"] for row in result["npu"]["other_compute_apps"]], [99])
         self.assertEqual(health.call_count, 1)
         self.assertNotIn("qwen", result["health"])
 

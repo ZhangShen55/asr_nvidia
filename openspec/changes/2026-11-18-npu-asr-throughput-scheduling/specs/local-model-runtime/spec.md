@@ -44,3 +44,19 @@ CAM++与emo MUST 各自通过共享待执行队列或等价可迁移调度持续
 #### Scenario: 八份增强实例未全部加载成功
 - **WHEN** CAM++或emo配置八份NPU:7实例但仅部分健康
 - **THEN** 实际容量按健康实例报告，该轮不能标为八健康实例性能通过；未请求能力的音频仍不触发该模型加载
+
+
+### Requirement: CAM可选模型进程保持原生推理与实际所有权
+系统 MUST 支持CAM执行模式的兼容thread缺省及经验证的process候选。process模式每个设备数组元素对应一份owned原生FP32模型，仍通过原模型池调度，保持合法NPU索引、原输入与CPU float32 Tensor[1,192]输出契约，不增加HTTP服务或复制Qwen文本协议。未请求能力及状态查询 MUST NOT 启动worker。READY、每RPC及关闭 MUST 核对出生身份、实际代码/模型和输入/结果归属，资源按父与worker分别报告。
+
+#### Scenario: 进程模式正确返回短CAM结果
+- **WHEN** 请求CAM且实际段长不少于0.3秒，配置的NPU worker完成原模型推理、同步及结果读取
+- **THEN** 父runner在核对RPC与PCM身份后返回原FP32 Tensor[1,192]并参与聚类，不能返回未适配numpy结果或假冒父流执行
+
+#### Scenario: 取消与显式关闭同时发生
+- **WHEN** CAM RPC在途或worker出生尚未完成，调用者取消且模型池关闭
+- **THEN** 池在等待lease或loading前发布closing及独立grace，普通取消等待DONE；超grace仅回收精确owned worker，确认死亡前不归还名额，历史强制/坏ACK/非0退出不能被重复close改为正常
+
+#### Scenario: 容器NPU索引与状态读取
+- **WHEN** 配置合法宿主NPU索引或单卡容器逻辑npu:0，尚未请求CAM而查询状态
+- **THEN** 系统保持未加载且不spawn，实际请求时worker按配置设备核对参数与浮点buffer，拒绝未支持CPU组合，不静默CPU回退

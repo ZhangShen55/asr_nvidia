@@ -15,7 +15,7 @@ from typing import List
 import numpy as np
 
 from core.config import settings
-from core.vad_pool import get_vad_pool
+from core.vad_pool import get_vad_pool, get_last_detect_timing
 from core.vad_volume import filter_low_volume_segments
 
 logger = logging.getLogger(__name__)
@@ -68,7 +68,10 @@ def filter_short_segments(
 ) -> List[VadSegment]:
     """过滤掉时长过短的语音段。"""
     threshold = settings.vad_min_segment_duration_s if min_duration_s is None else min_duration_s
-    return [seg for seg in segments if seg.duration_s >= threshold]
+    # FSMN边界为毫秒、正式PCM为16k；按采样数比较防止0.3秒的浮点减法误差。
+    minimum_samples = max(round(0.3 * 16000), int(np.ceil(threshold * 16000)))
+    return [seg for seg in segments
+            if round(seg.end_s * 16000) - round(seg.start_s * 16000) >= minimum_samples]
 
 
 def _audio_duration_s(audio, sample_rate: int) -> float:
@@ -180,6 +183,7 @@ async def detect_segments(
         f"文件：{audio_path}"
     )
     _VAD_STATS.set({
+        **get_last_detect_timing(),
         "raw_segments": len(segments),
         "short_filtered": short_filtered_count,
         "low_volume_dropped": len(dropped),

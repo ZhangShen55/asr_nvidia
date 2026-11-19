@@ -6,6 +6,9 @@
 
 from __future__ import annotations
 
+import asyncio
+import copy
+import math
 import json
 import os
 import re
@@ -293,6 +296,33 @@ def parse_npu_smi(output: str) -> dict[str, Any]:
     return result
 
 
+def _process_start_identity(pid):
+    try:
+        fields = Path(f"/proc/{int(pid)}/stat").read_text().rsplit(")", 1)[1].split()
+        ticks = fields[19]
+        boot = next(int(line.split()[1]) for line in Path("/proc/stat").read_text().splitlines() if line.startswith("btime "))
+        return {"pid": int(pid), "start_ticks": ticks, "sid": int(fields[3]),
+                "create_time": boot + int(ticks) / os.sysconf("SC_CLK_TCK")}
+    except (OSError, TypeError, ValueError, IndexError, StopIteration):
+        return {"pid": pid, "available": False, "reason": "process identity unavailable at resource collection"}
+
+
+def _npu_process_sample(row: dict[str, Any]) -> dict[str, Any]:
+    """采样线程只读OS；核对读取RSS/PSS前后身份，不访问模型或发RPC。"""
+    pid = row.get("pid")
+    before = _process_start_identity(pid)
+    resources = process_snapshot(pid) if type(pid) is int else {"available": False, "reason": "invalid PID"}
+    after = _process_start_identity(pid)
+    same_birth = (before.get("start_ticks") is not None
+                  and before.get("start_ticks") == after.get("start_ticks")
+                  and before.get("create_time") == after.get("create_time"))
+    if not same_birth:
+        after = {"pid": pid, "available": False, "reason": "process disappeared or identity changed during OS sampling"}
+        resources = {"available": False, "pid": pid, "reason": after["reason"]}
+    return dict(row, process_identity=after, process_resource=resources,
+                process_resource_scope="OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks")
+
+
 def npu_snapshot() -> dict[str, Any]:
     try:
         result = subprocess.run(["npu-smi", "info"], capture_output=True, text=True, timeout=2, check=False)
@@ -387,14 +417,15 @@ def collect_snapshot(
     owned_pids = {row["pid"] for rows in services.values() for row in rows}
     owned_pids.update(row["pid"] for row in tree)
     npu = npu_snapshot()
-    apps = npu.get("compute_apps", [])
+    apps = [_npu_process_sample(row) for row in npu.get("compute_apps", [])]
+    npu["compute_apps"] = apps
     npu["service_compute_apps"] = [row for row in apps if row.get("pid") in owned_pids]
     npu["other_compute_apps"] = [row for row in apps if row.get("pid") not in owned_pids]
     result = {
         "timestamp": utc_timestamp(),
         "host": host_memory_snapshot(), "vmstat": vmstat_snapshot(),
         "backend": backend, "process_tree": tree, "services": services,
-        "qwen_execution": "embedded_in_backend", "npu": npu,
+        "qwen_execution": "unknown_without_model_status", "npu": npu,
         "cache": cache_snapshot(cache_dir), "status": service_status,
     }
     if include_health:
@@ -414,6 +445,108 @@ def status_snapshot(
         backend_pid=os.getpid() if backend_pid is None else backend_pid,
         cache_dir=cache_dir, include_health=False, include_process_tree=False,
     )
+
+
+def unknown_resource_snapshot(reason="资源快照尚未完成"):
+    return {"available": False, "reason": reason}
+
+
+class ResourceSnapshotSampler:
+    """app/loop独占的按需TTL缓存；GET不等待collector，不创建永久轮询任务。"""
+    def __init__(self, *, interval_s=1.0, collector=None, clock=time.monotonic):
+        if type(interval_s) not in (int, float) or not math.isfinite(interval_s) or not .1 <= interval_s <= 60:
+            raise ValueError("resource_sample_interval_s必须为0.1～60秒有限数")
+        self.interval_s = float(interval_s)
+        self._collector = collector or status_snapshot
+        self._clock = clock
+        self._loop = None
+        self._task = None
+        self._close_task = None
+        self._closing = False
+        self._closed = False
+        self._cached = None
+        self._completed_at = None
+        self._next_refresh_at = 0.0
+        self._in_progress = False
+        self._last_error = None
+        self._last_started = None
+        self._last_finished = None
+        self._last_elapsed = None
+        self._attempts = 0
+
+    def _bind_loop(self):
+        loop = asyncio.get_running_loop()
+        if self._loop is None:
+            self._loop = loop
+        elif self._loop is not loop:
+            raise RuntimeError("资源采样器不能跨app事件循环复用")
+        return loop
+
+    def snapshot(self):
+        loop = self._bind_loop()
+        now = self._clock()
+        if not self._closing and not self._in_progress and now >= self._next_refresh_at:
+            # 在create_task之前先占singleflight，多个GET不能给同一采样器叠加线程。
+            self._in_progress = True
+            self._attempts += 1
+            self._last_started = now
+            self._last_finished = self._last_elapsed = None
+            self._task = loop.create_task(self._refresh())
+        value = copy.deepcopy(self._cached) if self._cached is not None else unknown_resource_snapshot()
+        value["sampling"] = {
+            "mode": "on_demand_ttl_singleflight", "interval_s": self.interval_s,
+            "has_snapshot": self._cached is not None,
+            "age_s": max(0.0, now - self._completed_at) if self._completed_at is not None else None,
+            "in_progress": self._in_progress, "last_error": self._last_error,
+            "attempts": self._attempts, "closing": self._closing, "closed": self._closed,
+            "last_started_monotonic_s": self._last_started,
+            "last_finished_monotonic_s": self._last_finished, "last_elapsed_s": self._last_elapsed,
+            "last_attempt_timing_scope": "refresh submission through collector/cache completion; includes thread dispatch, not device kernel time",
+            "freshness_scope": "last completed resource collection; live model/admission counts assembled separately",
+        }
+        return value
+
+    async def _refresh(self):
+        from core.async_utils import await_completion
+        completed = False
+        try:
+            # 线程无法被协程取消；即便误取消refresh也要等底层真实结束，不能遗留采样。
+            value = await await_completion(asyncio.to_thread(self._collector))
+            if not isinstance(value, dict):
+                raise TypeError("资源collector必须返回dict")
+            self._cached = copy.deepcopy(value)
+            completed = True
+            self._last_error = None
+        except asyncio.CancelledError:
+            self._last_error = "CancelledError: collector ownership cancelled after actual completion"
+            raise
+        except Exception as exc:
+            # 保留上一完整快照及其age；错误不伪装为最新资源零值。
+            self._last_error = f"{type(exc).__name__}: {exc}"
+        finally:
+            finished = self._clock()
+            self._last_finished = finished
+            self._last_elapsed = max(0.0, finished - self._last_started)
+            if completed:
+                self._completed_at = finished
+            self._in_progress = False
+            self._next_refresh_at = finished + self.interval_s
+
+    async def _close(self):
+        from core.async_utils import await_completion
+        try:
+            if self._task is not None:
+                await await_completion(self._task)
+        finally:
+            self._closed = True
+
+    async def aclose(self):
+        from core.async_utils import await_completion
+        self._bind_loop()
+        self._closing = True
+        if self._close_task is None:
+            self._close_task = asyncio.create_task(self._close())
+        await await_completion(self._close_task)
 
 
 @dataclass
@@ -548,6 +681,8 @@ __all__ = [
     "process_tree",
     "service_processes",
     "status_snapshot",
+    "ResourceSnapshotSampler",
+    "unknown_resource_snapshot",
     "utc_timestamp",
     "vmstat_snapshot",
     "write_json_line",

@@ -75,3 +75,73 @@
 - 对交付候选执行相关CPU回归与实际保护构建staging中的关键批调度/取消/NPU稳态验证，真实仓库不剥离源码；实际Docker构建和上线保持后置。
 - 中文报告列完整矩阵、实际批容量与失败、A/B配对、最快档与128目标结论、多份回退触发/未触发依据、质量局限、420秒事件与关闭证据。无人工标注不宣称有效对话召回≥98%或绝对准确率；需要上线时该既有召回门槛仍须独立满足，本轮性能完成不冒充已上线。
 - 原始响应/必要日志以独立产物保留，通用遥测不存音频或转写正文。保留所有历史证据。验收后提交推送实现与报告，全部必需任务完成再独立同步规格并归档。
+
+
+## v6状态观测必要复验
+
+- 慢collector桩验证GET不等待、实时计数更新、首次unknown/旧快照age诚实、多查询单flight、失败退避、跨app/loop隔离和重复取消close等待实际线程。
+- OS出生身份与Qwen缓存PID相符才归本项目worker，不符或缺失单列未验证；不相加不同进程不同时刻allocator峰值。
+- 保留4.1秒容量未观察轮与120秒真实片段诊断GET5秒超时轮；后者已有4017单项证据但不是完整准入通过。新实现需重新观测4B及8总、4017/双满4013、base成功及drain，观察端口释放≥5秒；实时GET延迟与资源采样耗时分列。
+- 420秒测试闸门不变，非门槛额外诊断快照缺失标unknown，不代替关键容量及最终drain观察。
+
+
+## v6长负载执行顺序补充
+
+在最终固定ABBA十八格矩阵之前，先对同八完整文件执行一次总8/B8的B类供给预检。该轮预先定义为额外诊断轮，不计入最终两轮暖态，也不因快慢选择性替换正式轮；原始结果完整保留并另列。理由是尽早暴露八源VAD就绪错位、PCM反压、真实批供给及420秒卡点，避免先花费低并发完整轮次后再发现需改变运行时。预检若触发诊断先定位/小范围复验，不原样重复；通过后仍按正式十八格执行并独立审计。
+
+## 诊断收尾补充计划：owned测试HTTP drain与设备收尾分离
+
+`full-v6-precheck-8B`原始421秒中止后，服务仍等待Uvicorn缺省180秒request drain再取消HTTP任务，额外继续完整音频工作；该原始失败与正常关闭记录保留，不算N8性能通过。
+
+- 测试harness新增`--owned-request-drain-grace-s`，整数1～180、兼容缺省180；正式`main.py`、生产配置/业务超时和模型关闭grace不改。根代理后续受控验证先显式10秒，不预先认定5或10秒已合格。
+- 420秒检测、独立cleanup deadline240秒及端口观察至少5秒保持；第一次TERM只交给本轮owned服务。禁止为加速关闭而发送第二次SIGINT跳过lifespan；设备工作与结果读取必须实际DONE后归还，超期强制回收保留失败。
+- 先用纯CPU验证参数、`python main.py`命令传递、旧Namespace180兼容、run.json记录实际grace/cleanup、TERM至parent exit观测时间；这些时间不称设备kernel耗时。
+- 再执行loopback gated dummy（等待根代理NPU任务退出后）：临时CPU-only服务保持HTTP与已启动CPU工作，短grace取消HTTP后必须进入lifespan，实际CPU gate未释放前owned close不得完成；释放后正常exit0，端口空闲5秒，另session sentinel保留。以事件顺序验证，不靠长sleep猜测。
+- 最后由根代理单卡串行做真实NPU受控取消：确认Qwen/CAM/emo已有实际在途任务，只向harness发一次SIGINT，观察harness finally对服务单次TERM与10秒HTTP drain；等待原工作DONE、模型worker正常exit0、无forced/orphan、接口释放及共享PID身份保留。它是取消功能smoke，不计完整八文件性能验收。
+
+CLI/命令/计时CPU单测7项通过。loopback gated dummy已执行：单次TERM约1.10秒后取消HTTP并进入lifespan；CPU gate仍持有时父进程和close均未结束，真实DONE后正常exit0，端口连续5秒空闲，无关sentinel保留。证据`/tmp/asr-owned-drain-loopback-20261118/result.json`；该取消桩HTTP500是预期，不是业务成功。真实NPU受控取消尚未执行，不提前勾选该验收。
+
+## 16段参考输入一致性修正
+
+旧16段辅助实验计划用`end_s-start_s`浮点时长排序，实际读取用整数采样长度；同长并列可选出不同成员。首次独立CAM进程验证因此在加载模型前被严格参考门槛拒绝，旧母参考及失败记录保留，不将其用作新的合格冻结输入。共享`selected_rows`改为同一整数采样数算法，严格核对已有sample_count/端点/实际PCM，paired与NN工具在load前再核对实际IDs与计划。真实WAV浮点并列反例及实际源码30项CPU通过，fresh母16必须重建。128档始终全量128且输入顺序不变；旧128实测仍按原源码SHA与实际成员记录解释，不改写历史。
+
+
+## CAM进程正式候选追加验证
+
+private16/128已经精确成对验证，只作为设计依据。新增正式runner后，必须先通过无NPU导入、配置/容器0、Tensor[1,192]、8实例池租约与启动/关闭竞争、RPC错误/超时/ACK/重复取消的CPU测试；正常与异常收尾独立判定。真实NPU:7重测正式thread/process同输入、short CAM、B128及每worker资源；入选前复测预取0/1/5与交接间隙，低负载16的Qwen尾部不能替代128或全音频判断。保护staging增加新模块并实际spawn其.so入口/原factory，重新核数值、关闭与全CPU。
+
+正式pipeline采用单Qwen、CAM8process候选、emo8父NPU及VAD8CPU时，最终同八文件A/B两暖轮1/2/4/8及默认B4混合/交换仍全量执行。新profile与旧profile分别冻结；任何420或无进展诊断必须保留未完成记录并先定位、小规模复验，不提前归档。
+
+
+## 验证进程和缓存目录同时隔离（实施v14）
+
+- 每次CPU full在Python导入前设置短私有TMPDIR，每个owned服务另建独占短TMPDIR；freeze/owner/shutdown保存TMPDIR、实际service cache和解释器/模块来源。不能只隔离cwd、PID和端口而继续共享缓存。
+- cache生命周期单测仅清理每case私有目录；source与真实.so helper均核upload、startup cleanup与resource cache定位同一私有根。使用PRIVATE模拟其它服务的同前缀哨兵，证明清扫不越界；禁止在真实共用缓存上做删除复现。CPU审计钩子拒绝对真实共用缓存的写删，原r4设备/权重保护不放松。
+- owned服务正常退出、worker出生身份全部gone且端口至少5秒空闲后，只读扫描该服务cache；残留文件或扫描未知使shutdown.passed=false，不删除证据。TMPDIR其它compiler/runtime文件不混作音频cache残留，目录保留。
+- 原4014及其CPU重叠窗口、无逐文件unlink日志的限制均保留；先完成隔离哨兵与路径/缓存空闸门的CPU验证，再复验相同WAV/profile的真实预热和准入。新CPU/功能并行只有在各自私有TMPDIR及实际source/so路径已核对后允许。
+
+
+### v16 状态历史有界与主循环开销复验
+
+- 同一真实已脱敏64批历史离线比较完整路径与8条完整窗口：断言每条保留字段/成员/attempt/shape等价、仅JSON内建类型，记录copy/render范围，不伪装网络延迟。
+- source与实际so测试默认direct64不变、HTTP8及显式ID范围/截断/缺口、嵌套修改隔离、线程读、取消排空和旧getter默认调用兼容；真实FastAPI路由不经递归encoder。
+- 私有TMPDIR完整CPU与当前保护stage复验；实机先小规模完整音频，记录状态响应时长/事件循环与实际批补位，再按420闸门恢复8B。计入所有失败，不以出现128作为整轮通过。
+
+
+### v17 编码快速路径与真实补位复验
+
+- 用原`sf.write(BytesIO, format=WAV, subtype=PCM_16)`作独立参考，覆盖全部65536格点、+1/-1/0/empty、合法采样率/反向视图；其他dtype/非格点/非finite/非mono/非法参数保持fallback与原异常行为，输入不变。
+- 真实128段全部逐字节/原manifest SHA一致，源PCM与八完整源SHA不变；源码与实际Cython.so均实际执行，不以导入代替功能等价。
+- 真实extract+encode两个owned线程await、8×16/global128、有界PCM、32线程executor与OMP4，对每owner64逻辑段作ABBA两旧两新，记录ready与排队/工作/回loop，取消/收尾全0。假250ms模型不作NPU性能数据；仅采用实测可达的候选100ms，不能以配置值当填满证明。
+- 对最终合入source及marked stage完整CPU回归；随后NPU:7实机使用同原八完整源恢复B8，验证真实批、旧v3结构/时间轴及owned关闭，未完成仍未完成。最终18轮标准不减。
+
+- 参数类型兼容按真实旧入口分别验证：source对非int采样率沿原int转换/SF结果或异常；实际.so原`sample_rate:int`已拒绝的None/float/str/np.int64/bool仍同TypeError且不进入SF。保留首次fixture误判失败记录，不统一或放宽原边界。
+
+
+### v18 双owned Qwen资格验证
+
+- CPU：1/2/4/8合法配置及原非法类型/范围；8个并发discover不各持部分死锁，coldpartial不发布、重复取消等全部加载DONE，discover与drain同锁；正常CLOSE并发且只在原lease drain后，聚合坏ACK/非0/forced历史。实际CPU spawn证明共享队列空闲接力、逐attempt实例归属、16/128归零、warm2→fatal1→新discover健康接单及全坏4011。
+- source/protected完整回归，旧single行为保留；count2真实顺序两次clip暖身，一次420总deadline，按两worker各自last_batch_timings/身份/RPC核真实forward覆盖，缺覆盖即诊断。
+- NPU7小规模同canonical128、同64shape参考、一暖三稳，证明两个实际64批及物理重叠、逐成员raw/parsed/language与PCM不串；原权重/精度不变，不把1×128与2×64差异当准确率结论。各worker allocator/RSS/OS进程HBM、设备总量和共享进程分列，不相加异时峰。
+- 当前source及actual.so至少覆盖多成员取消、超时、重复aclose、一个owned worker失效后另一继续与显式关闭；普通取消仍等实际DONE。120显式关闭grace须真实正常关闭，故障注入按预期异常保留，不操作共享服务。
+- 小规模合格后同八完整源8B，再最终1/2/4/8同源A/B两暖轮+混合/swap。2不足再评估4/8，每次有新诊断/小复验，不用无限重跑或降低256/放宽420求过。

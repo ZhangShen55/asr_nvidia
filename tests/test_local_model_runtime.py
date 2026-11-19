@@ -37,7 +37,13 @@ class StatusContractTests(unittest.TestCase):
         self.assertEqual(payload["processingTaskList"], [])
 
     def test_status_contains_local_model_details(self):
-        payload = self._status()
+        # This fixture tests ordered 3/1 capacity serialization, independent of
+        # the production profile's valid 8/8 deployment choice.
+        with patch.dict(settings._cfg, {"model_device_pool": {
+            "speech_campplus_devices": ["npu:7"] * 3,
+            "emotion2vec_devices": ["npu:7"],
+        }}):
+            payload = self._status()
         models = payload["localModels"]
         self.assertEqual(set(models.keys()), {"speech_campplus", "emotion2vec"})
         for entry in models.values():

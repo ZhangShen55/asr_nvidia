@@ -1,0 +1,160 @@
+{
+  "scope": "Real mixed128 segments, same HF/BF16 Qwen and 8+8 FP32 NN, actual NN batch1; sequential shared-card experiments, not full-audio or exhaustive optimality",
+  "rows": [
+    {
+      "prefetch_depth": 0,
+      "transport": "thread",
+      "steady_elapsed_s": [
+        15.005527880042791,
+        14.972006780095398,
+        15.144094670191407
+      ],
+      "median_s": 15.005527880042791,
+      "actual_batch_sizes": [
+        [
+          128
+        ],
+        [
+          128
+        ],
+        [
+          128
+        ]
+      ],
+      "source_dir": "/tmp/asr-throughput-20261118-xvior99k/qwen-process-pair-v5-depth0-128",
+      "source_sha256": "1203d5ffb1261a859e7e0dc0a7667617e0113c20e926bc085adb9a63d9838a54",
+      "cleanup": "passed"
+    },
+    {
+      "prefetch_depth": 0,
+      "transport": "process",
+      "steady_elapsed_s": [
+        9.902791650034487,
+        9.78703725989908,
+        10.379376459866762
+      ],
+      "median_s": 9.902791650034487,
+      "actual_batch_sizes": [
+        [
+          128
+        ],
+        [
+          128
+        ],
+        [
+          128
+        ]
+      ],
+      "source_dir": "/tmp/asr-throughput-20261118-xvior99k/qwen-process-pair-v5-depth0-128",
+      "source_sha256": "1203d5ffb1261a859e7e0dc0a7667617e0113c20e926bc085adb9a63d9838a54",
+      "cleanup": "passed"
+    },
+    {
+      "prefetch_depth": 1,
+      "transport": "thread",
+      "steady_elapsed_s": [
+        16.720144210383296,
+        15.693275979720056,
+        15.221157879568636
+      ],
+      "median_s": 15.693275979720056,
+      "actual_batch_sizes": [
+        [
+          128
+        ],
+        [
+          128
+        ],
+        [
+          128
+        ]
+      ],
+      "source_dir": "/tmp/asr-throughput-20261118-xvior99k/qwen-process-pair-v5-depth1-128",
+      "source_sha256": "671891a097e10cd537703d5cfc7d41735d2498501581c69689348d793df9ec82",
+      "cleanup": "passed"
+    },
+    {
+      "prefetch_depth": 1,
+      "transport": "process",
+      "steady_elapsed_s": [
+        11.081012919545174,
+        11.071621510200202,
+        10.113394010812044
+      ],
+      "median_s": 11.071621510200202,
+      "actual_batch_sizes": [
+        [
+          128
+        ],
+        [
+          128
+        ],
+        [
+          128
+        ]
+      ],
+      "source_dir": "/tmp/asr-throughput-20261118-xvior99k/qwen-process-pair-v5-depth1-128",
+      "source_sha256": "671891a097e10cd537703d5cfc7d41735d2498501581c69689348d793df9ec82",
+      "cleanup": "passed"
+    },
+    {
+      "prefetch_depth": 5,
+      "transport": "thread",
+      "steady_elapsed_s": [
+        16.90993567928672,
+        16.87254342995584,
+        16.89927764981985
+      ],
+      "median_s": 16.89927764981985,
+      "actual_batch_sizes": [
+        [
+          128
+        ],
+        [
+          128
+        ],
+        [
+          128
+        ]
+      ],
+      "source_dir": "/tmp/asr-throughput-20261118-xvior99k/qwen-process-pair-v5-128",
+      "source_sha256": "bba083ffdd6613f666dc2929a43b304dbca7bc5a85cd65c7472580178ec5b5e3",
+      "cleanup": "passed"
+    },
+    {
+      "prefetch_depth": 5,
+      "transport": "process",
+      "steady_elapsed_s": [
+        10.469333020038903,
+        11.388789390213788,
+        10.657855870202184
+      ],
+      "median_s": 10.657855870202184,
+      "actual_batch_sizes": [
+        [
+          128
+        ],
+        [
+          128
+        ],
+        [
+          128
+        ]
+      ],
+      "source_dir": "/tmp/asr-throughput-20261118-xvior99k/qwen-process-pair-v5-128",
+      "source_sha256": "bba083ffdd6613f666dc2929a43b304dbca7bc5a85cd65c7472580178ec5b5e3",
+      "cleanup": "passed"
+    }
+  ],
+  "selected_candidate": {
+    "execution_mode": "process",
+    "model_instances": 1,
+    "prefetch_depth": 0,
+    "reason": "lowest median in current qualified three-depth process experiment; zero waiting prefetch still has eight independent running NN slots and shared FIFO backpressure",
+    "full_audio_verification_pending": true
+  },
+  "limits": [
+    "External shared-card load and sequential experiment order are not controlled; small timing differences do not establish universal optimality",
+    "Keep original profiles and run outputs; final-process-b4/b8 are new files"
+  ]
+}

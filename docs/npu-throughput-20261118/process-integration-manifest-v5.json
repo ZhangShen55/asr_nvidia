@@ -1,0 +1,64 @@
+{
+  "scope": "scratch only; not pushed",
+  "files": [
+    {
+      "path": "core/qwen_asr_process.py",
+      "before_sha256": null,
+      "draft_sha256": "38e7a22f4a85113fafabe8d887c7fe6f87e2c4c70fff9264fb5d155c0a3b76e1"
+    },
+    {
+      "path": "core/qwen_asr_client.py",
+      "before_sha256": "54ae5146ffdc016a3ed394369feea4b76729ebf043ca83326a5d805aec420d6a",
+      "draft_sha256": "969e9c6483bf67d5f5a6e77222785b9dc31fa5ce51bad821a43595cdc42f8976"
+    },
+    {
+      "path": "core/config.py",
+      "before_sha256": "6e062d09fbd0fc579bec35963afe52795ad68f556c1244477228088869b83fc9",
+      "draft_sha256": "540c6cbaa39de6c4927c577d9c72110140d0eed50780733ff7a2940daa9fb1df"
+    },
+    {
+      "path": "main.py",
+      "before_sha256": "7f596a1661c01ed3c2e5641a7224ed1d2ac39a84798a8d0126e7df74e2bb53c2",
+      "draft_sha256": "1daf5ca1ba452f239aede6c29ccd6e4dff893fc9cbf355b9d9918c80040bf52f"
+    },
+    {
+      "path": "config.toml",
+      "before_sha256": "6b1540f4242241e1e673f078c993baf401eb3a8220b026e66d91f2da2d03f3ca",
+      "draft_sha256": "01262eaf59a34770c4b6596d6aaccdf1af28f7bbd1810691954281ade58f2a25"
+    },
+    {
+      "path": "docker/config.toml",
+      "before_sha256": "a7a6e5e0ac323e06dec2bc6f9a6c6845203bbc8ad7c1e7a107b83d82a944b665",
+      "draft_sha256": "81daee045566de5bd7c134b9d41ca93e6ff3f1cc30e434497c5bc4dfddd838fd"
+    },
+    {
+      "path": "tests/test_local_qwen_process.py",
+      "before_sha256": null,
+      "draft_sha256": "55ec1f3dc0c3c97d26cf8f0da6ebac7ef1163fef10ee8253c8adf5441e045b24"
+    },
+    {
+      "path": "tests/test_qwen_process_shutdown.py",
+      "before_sha256": null,
+      "draft_sha256": "958c6ca693bcf6ce1b71b6cdaedceaa2a820fe99154edad393131f61c29f4328"
+    },
+    {
+      "path": "tests/test_config_contract.py",
+      "before_sha256": "0423871c0e4dbddaf0a50cdf866bd244a2aea4a8d1190b7b394618b3e4f716b9",
+      "draft_sha256": "49d3b2e94d393a2f129125d12ea978d37e74188bc12cff718f4b061d70edb6a1"
+    },
+    {
+      "path": "tests/test_qwen_client_snapshot.py",
+      "before_sha256": "e6461c4bbd6a799799f13420ca0c0ee7989e5281c23041fa984911e7ae8c1eae",
+      "draft_sha256": "1d79b08e258475bb7d02545268eccdccd919e28d7c50eec5733f181ac7347b55"
+    }
+  ],
+  "cpu_validation": "78 passed, 51 subtests passed in18.19s; no NPU",
+  "birth_validation": "before-birth successful abort prevents spawn; paused real spawn abort waits+reaps; birth coordination timeout never says pidNone reaped",
+  "explicitly_excluded": [
+    "all API files",
+    "core/__init__.py test overlay shim",
+    "core/qwen_asr_runtime.py unchanged support copy",
+    "all prototype scripts/tests/history",
+    "setup_cython.py unchanged auto-glob"
+  ]
+}

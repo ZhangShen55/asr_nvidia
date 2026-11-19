@@ -13,11 +13,63 @@ from copy import deepcopy
 from collections import deque
 from datetime import datetime, timezone
 from typing import Any, Mapping
+from contextvars import ContextVar
 
 
 _MAX_EVENTS = 4096
 _LOCK = threading.RLock()
 _EVENTS: deque[dict[str, Any]] = deque(maxlen=_MAX_EVENTS)
+_ACTIVE: dict[str, dict[str, Any]] = {}
+_REQUEST_ID: ContextVar[str | None] = ContextVar("active_asr_request", default=None)
+_MAX_ACTIVE = 256
+_ACTIVE_STAGES = {"admission", "decode", "model_loading", "vad", "segments", "cluster", "itn", "cleanup"}
+_PROGRESS_KEYS = {"segments_total", "segments_done", "qwen_done", "spk_done", "emo_done", "cut_done"}
+
+
+def begin_request(request_id: str, started_at: float) -> None:
+    _REQUEST_ID.set(request_id)
+    now = time.perf_counter()
+    with _LOCK:
+        # 正常准入上限远小于此值；即使遭遇大量并发拒绝也不创建无界诊断记录。
+        if len(_ACTIVE) >= _MAX_ACTIVE:
+            oldest = next(iter(_ACTIVE))
+            _ACTIVE.pop(oldest, None)
+        _ACTIVE[request_id] = {"request_id": request_id, "received_utc": datetime.now(timezone.utc).isoformat(),
+                               "started_monotonic": started_at, "updated_monotonic": now,
+                               "stage": "admission", "progress": {}}
+
+
+def update_active(stage: str | None = None, *, increment: str | None = None, **progress) -> None:
+    request_id = _REQUEST_ID.get()
+    if request_id is None:
+        return
+    with _LOCK:
+        entry = _ACTIVE.get(request_id)
+        if entry is None:
+            return
+        if stage in _ACTIVE_STAGES:
+            entry["stage"] = stage
+        if increment in _PROGRESS_KEYS:
+            entry["progress"][increment] = entry["progress"].get(increment, 0) + 1
+        for key, value in progress.items():
+            if key in _PROGRESS_KEYS and type(value) is int and value >= 0:
+                entry["progress"][key] = value
+        entry["updated_monotonic"] = time.perf_counter()
+
+
+def end_request(request_id: str) -> None:
+    with _LOCK:
+        _ACTIVE.pop(request_id, None)
+
+
+def active_snapshot() -> dict:
+    now = time.perf_counter()
+    with _LOCK:
+        active = deepcopy(list(_ACTIVE.values()))
+    for entry in active:
+        entry["age_s"] = max(0.0, now - entry["started_monotonic"])
+        entry["no_progress_s"] = max(0.0, now - entry["updated_monotonic"])
+    return {"limit": _MAX_ACTIVE, "count": len(active), "requests": active}
 _ADMISSION_REASONS = (
     "total_full", "spk_emo_full", "waiting_full", "wait_timeout",
     "role_disabled", "emotion_disabled", "both_disabled", "cancelled", "qwen_disabled",
@@ -105,6 +157,7 @@ def snapshot(*, include_events: bool = True) -> dict[str, Any]:
         "available": True,
         "buffer_limit": _MAX_EVENTS,
         "events": len(events),
+        "active": active_snapshot(),
         "completed": len(completed),
         "failed": len(failed),
         "duration_ms": {
@@ -117,7 +170,8 @@ def snapshot(*, include_events: bool = True) -> dict[str, Any]:
             for key in (
                 "audio_wait_ms", "vad_ms", "cut_sum_ms", "cut_wall_ms", "segment_ms", "qwen_wait_ms",
                 "qwen_ms", "spk_wait_ms", "spk_ms", "emo_wait_ms", "emo_ms",
-                "cluster_ms", "itn_ms", "cleanup_ms",
+                "cluster_ms", "itn_ms", "cleanup_ms", "cut_cpu_ms", "cut_dispatch_wait_ms", "pending_wait_ms",
+                "vad_wait_ms", "vad_worker_ms", "low_volume_filter_ms",
             )
         },
         "last_error": failed[len(failed) - 1].get("error") if failed else None,
@@ -145,6 +199,8 @@ def snapshot(*, include_events: bool = True) -> dict[str, Any]:
 def reset_for_tests() -> None:
     with _LOCK:
         _EVENTS.clear()
+        _ACTIVE.clear()
 
 
-__all__ = ["new_request_id", "record_request", "reset_for_tests", "snapshot"]
+__all__ = ["new_request_id", "record_request", "reset_for_tests", "snapshot", "begin_request",
+           "update_active", "end_request", "active_snapshot"]

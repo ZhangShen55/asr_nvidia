@@ -1,0 +1,149 @@
+{
+  "scope": "v16 checkpoint; functional/CPU/source-status observations only; no final matrix accepted",
+  "tasks": "42/54; 8.8 remains pending current protected NPU/final candidate qualification",
+  "runtime_changes": {
+    "core/qwen_batch_scheduler.py": "bc1196e92eee38c4b3536d0d847ad1f3c9ff8a0374a90f2d5aeff5df3ed0bf94",
+    "core/qwen_asr_client.py": "07ceb6a7759da53480d4a6b844a73c109a41f2d8bde8d72aa35fe1ceedefba44",
+    "core/status.py": "4ac95ee0355e1c984dce09132e88d8003eaec0502095cde0c39cda0b4d3f223f",
+    "api/routes/status.py": "492598502f0707775be7ae5a3b502f829bc6b6d31ff9790d6d6fd4db83f15394"
+  },
+  "source_cpu": {
+    "status": "passed",
+    "count": 919,
+    "subtests": 281,
+    "skips": 2,
+    "hardware_excluded": 1,
+    "elapsed_s": 230.87040220946074,
+    "remaining_owned": [],
+    "source_changed": [],
+    "global_cache_mutation_attempts": []
+  },
+  "protected_cpu": {
+    "status": "passed",
+    "count": 921,
+    "subtests": 281,
+    "skips": 0,
+    "hardware_excluded": 1,
+    "elapsed_s": 233.8862737296149,
+    "stage": "/tmp/asr-throughput-cython-v16-20261119-8hxw03bc",
+    "compiled": 4,
+    "reused": 31,
+    "modules": 35,
+    "frozen_files": 205,
+    "auditSHA": "05a9f78ba28fc307353c5e6297bb76e64d587d91452513298000c88ac36ebb5f",
+    "remaining_owned": [],
+    "source_stage_changed": [],
+    "global_cache_mutation_attempts": []
+  },
+  "source_first_full_B": {
+    "status": "completed1/1",
+    "batch_elapsed_s": 109.06268715020269,
+    "name": "diagnostic-full1-B-status8-v16",
+    "cleanup_passed": true,
+    "source_changes": [],
+    "scope": "diagnosticonlyfirstfull, notmatrix/no strictspeedup"
+  },
+  "batch63_isolated": {
+    "status": "passed",
+    "name": "batch63-isolated-profile-v16",
+    "steady_call_s": [
+      3.3642269205302,
+      3.4287790497764945,
+      3.418557840399444
+    ],
+    "steady_gen_s": [
+      3.25536,
+      3.32127,
+      3.30913
+    ],
+    "prefill_s": "~0.18",
+    "decode_forward_total_s": "~3.0 per49, threadCPU~2.96..3.03",
+    "members": 16,
+    "EOS": 16,
+    "caps": 0,
+    "normalclose": true,
+    "shared_preserved": true,
+    "actual_attn": "sdpa(audio/text)",
+    "jit_compile_false": true,
+    "offlineauditSHA": "176dfaf4dba899b97cf9969cc0c6e9085637a8a11f4a9d959da0d6f707ad34b9",
+    "limits": "isolatedNN0 notoldservicematched, profileonlywarm6.79s extraoverhead; CPUwarm1.1sCANNcompile notHFtorch.compile; GPUrecordedtaskcoverage14% notutilization"
+  },
+  "early_B8": {
+    "complete": false,
+    "successful": 0,
+    "expected": 8,
+    "batch_elapsed_s": 326.46847322024405,
+    "controlled_signal_at_active_age_s": 321.55210759025067,
+    "controlled_signal_count": 1,
+    "signal_target": "owned benchmark CLI3137466/create1795033504.41, never service/shared PID",
+    "420_trigger": false,
+    "failure": "CancelledError expected after controlled diagnostic stop",
+    "notes": "summary has no cancellation-path warmup/shutdown decoration; warmup.json complete true and shutdown.json passed true audited separately",
+    "cleanup": {
+      "passed": true,
+      "main_exit": 0,
+      "term_to_parent_exit_s": 40.894839310087264,
+      "forced": false,
+      "remaining_owned": [],
+      "remaining_cache_files": [],
+      "cache_scan_error": null,
+      "port_observe_s": 5,
+      "shared_pid": 1601397,
+      "shared_create_time": 1791963491.5
+    },
+    "audit_sha256": "c367805564dde1b3e2cdf876e8005e436afc1473d1c2f089cea8048fd5b32f45"
+  },
+  "extra_status_observer": {
+    "rate_hz_max": 0.2,
+    "formal_before_signal": {
+      "n": 62,
+      "errors": 0,
+      "p50_ms": 82.11576,
+      "p95_ms": 159.886827,
+      "max_ms": 227.188,
+      "scope": "HTTP GET+body read+JSON decode; not event-loop handler or model latency"
+    },
+    "post_signal_errors": {
+      "n": 3,
+      "types": [
+        "ReadTimeout",
+        "ReadError/reset",
+        "ConnectError/refused"
+      ],
+      "retained": true,
+      "not_used_in_pre_signal_quantiles": true
+    },
+    "history": {
+      "returned_rows": "1..8 complete records",
+      "available_rows": "1..40",
+      "truncated_responses": 51,
+      "observed_id_union": "1..40",
+      "detected_gap": false,
+      "last_selected_count": 41,
+      "not_lossless_event_stream": true
+    },
+    "resource_cache_age_s": {
+      "p50": 2.785379,
+      "p95": 7.126016,
+      "max": 9.635024,
+      "scope": "cached OS resource sample age, separate from HTTP latency"
+    },
+    "sampler_actions_on_service": []
+  },
+  "pending": [
+    "CPU actual-crop refill latency and bounded-wait calibration",
+    "conditional multiple-Qwen decision (draft only)",
+    "final18 full audio paired matrix",
+    "final defaults/commit/push/spec sync/archive"
+  ],
+  "raw_root": "/tmp/asr-throughput-20261118-xvior99k",
+  "raw_references": [
+    "source-full-cpu-v16-isolated/result.json",
+    "protected-full-cpu-cam-v16-isolated/independent-final-cpu-audit.json",
+    "batch63-isolated-profile-v16/offline-profile-audit.json",
+    "diagnostic-full1-B-status8-v16/summary.json",
+    "diagnostic-full8-B-status8-v16/controlled-early-diagnostic-stop.json",
+    "diagnostic-full8-B-status8-v16/c8-B-r1/shutdown.json",
+    "diagnostic-full8-B-status8-v16-get-observer/independent-observer-case-audit.json"
+  ]
+}

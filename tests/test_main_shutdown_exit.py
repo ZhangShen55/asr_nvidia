@@ -25,7 +25,7 @@ async def stop_vad():
     if mode=='failed':raise RuntimeError('synthetic CPU shutdown failure')
 async def close_models():event('close_models')
 async def close_qwen():event('close_qwen')
-main.settings=SimpleNamespace(qwen_audio_spk_emo_concurrency=1,validate_model_backends=lambda:None,log_path=str(output/'unused.log'))
+main.settings=SimpleNamespace(resource_sample_interval_s=1.0,qwen_execution_mode="thread",qwen_audio_spk_emo_concurrency=1,validate_model_backends=lambda:None,log_path=str(output/'unused.log'))
 main.validate_npu_runtime=lambda *_: {'checked':False,'cpu_fixture':True}
 main._set_process_name=lambda:None
 main.setup_logging=lambda *_:None

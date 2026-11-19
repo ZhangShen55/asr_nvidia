@@ -8,6 +8,7 @@ import numpy as np
 
 from core.async_utils import run_in_thread
 from core.local_inference import InferenceRunner, InstanceFailure, backend_for_device, generate_local
+from core.config import settings
 from core.models import ModelPool, ModelUnavailableError, _resolve_device, local_model_status
 
 
@@ -74,6 +75,13 @@ class BackendSelectionTests(unittest.TestCase):
 
 
 class BackendPoolTests(unittest.IsolatedAsyncioTestCase):
+    async def asyncSetUp(self):
+        # 本组验证父进程CPU/native替身，不让外部process profile绕过构造注入。
+        thread_pool = dict(settings._cfg.get("model_device_pool", {}), speech_campplus_execution_mode="thread")
+        mode = patch.dict(settings._cfg, {"model_device_pool": thread_pool})
+        mode.start()
+        self.addCleanup(mode.stop)
+
     async def test_four_cpu_npu_combinations_preserve_route_outputs(self):
         import torch
         from api.routes import asr_qwen_common as route

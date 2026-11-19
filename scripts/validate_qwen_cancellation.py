@@ -93,6 +93,8 @@ def observed_runtime(base, observer):
                     observer.load_finished.set()
 
         def transcribe(self, audio_bytes, language=None):
+            if callable(getattr(base, "transcribe_batch", None)):
+                return self.transcribe_batch([audio_bytes], [language])[0]
             call_id, raw, error = observer.begin(), None, None
             try:
                 raw = super().transcribe(audio_bytes, language)
@@ -102,6 +104,22 @@ def observed_runtime(base, observer):
                 raise
             finally:
                 # LocalQwenRuntime returns/raises only after its synchronize.
+                observer.end(call_id, raw, error)
+
+        def transcribe_batch(self, audio_list, languages=None):
+            if len(audio_list) != 1:
+                raise ValueError("该工具验证单实例单批取消；真正大批取消由批调度验证覆盖")
+            if not callable(getattr(base, "transcribe_batch", None)):
+                return [self.transcribe(audio_list[0], (languages or [None])[0])]
+            call_id, raw, error = observer.begin(), None, None
+            try:
+                values = super().transcribe_batch(audio_list, languages)
+                raw = values[0]
+                return values
+            except BaseException as exc:
+                error = error_details(exc)
+                raise
+            finally:
                 observer.end(call_id, raw, error)
 
         def close(self):
@@ -147,7 +165,8 @@ async def run_validation(sample, *, model_dir, device="npu:7", dtype="bfloat16",
     client = QwenAsrClient(local_model_dir=model_dir, local_device=device, local_dtype=dtype,
                            local_instance_count=1, max_new_tokens=max_new_tokens,
                            request_timeout_s=request_timeout_s, retry_count=0,
-                           runtime_factory=observed_runtime(runtime_base, observer))
+                           max_inference_batch_size=1,
+                           execution_mode="thread", runtime_factory=observed_runtime(runtime_base, observer))
     tasks = []
     report.update({"phases": [], "status": "running", "cleanup": {"status": "pending"},
                    "precision_policy": "production LocalQwenRuntime process helper; no independent HF32 override"})

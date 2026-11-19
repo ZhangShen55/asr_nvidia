@@ -57,6 +57,7 @@ class SegmentClipLifecycleTests(unittest.TestCase):
 
     def setUp(self):
         self.created = []
+        self.clip_durations = {}
         features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
         features.start()
         self.addCleanup(features.stop)
@@ -66,6 +67,7 @@ class SegmentClipLifecycleTests(unittest.TestCase):
         handle.write(b"0" * 2048)
         handle.close()
         self.created.append(handle.name)
+        self.clip_durations[handle.name] = _duration
         return handle.name
 
     def _run(self, ctx, transcribe, emotion=None, raise_after_cut=False):
@@ -92,7 +94,7 @@ class SegmentClipLifecycleTests(unittest.TestCase):
             stack.enter_context(
                 patch(
                     "api.routes.asr_qwen_common.read_audio_array",
-                    lambda _p: (np.zeros(1600, dtype="float32"), 16000),
+                    lambda path: (np.zeros(round(self.clip_durations[path] * 16000), dtype="float32"), 16000),
                 )
             )
             stack.enter_context(

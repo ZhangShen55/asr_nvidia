@@ -25,6 +25,8 @@ from core.qwen_asr_client import (
     get_qwen_client,
 )
 from core.qwen_asr_queue import get_request_concurrency
+from core.segment_pipeline import get_pending_budget, run_bounded_segments, gather_owned_branches
+from core.request_telemetry import update_active
 from core.vad import VadSegment, detect_segments, get_vad_stats
 from utils.audio_utils import (
     extract_audio_clip,
@@ -68,8 +70,8 @@ logger = logging.getLogger(__name__)
 EMOTION_MIN_DURATION_S = 1.0
 EMOTION_MAX_DURATION_S = 10.0
 
-# 说话人嵌入过短时（秒）判定不可靠，归并到时间上最近的说话人
-SHORT_SPEAKER_SEGMENT_S = 1.0
+# 统一最短有效段；0.3～不足1秒CAM仍推理，emo保留原1秒下界。
+SHORT_SPEAKER_SEGMENT_S = 0.3
 
 # 分阶段耗时统计：按请求隔离（子任务继承请求上下文，统计字典为同一对象），
 # 用于定位端到端时延的构成
@@ -123,6 +125,7 @@ def reset_phase_stats() -> Dict[str, float]:
         "spk_wait_ms", "spk_ms", "spk_calls", "emo_wait_ms", "emo_ms", "emo_calls",
         "qwen_wait_ms", "qwen_ms", "qwen_calls", "vad_ms", "cut_sum_ms", "cut_wall_ms",
         "segment_ms", "cluster_ms", "itn_ms", "cleanup_ms", "audio_wait_ms",
+        "cut_cpu_ms", "cut_dispatch_wait_ms", "pending_wait_ms",
     )}
     _PHASE_STATS.set(stats)
     return stats
@@ -210,19 +213,51 @@ async def _apply_repetition_guard(text: str, duration_s: float) -> str:
     return fixed if changed else text
 
 
-async def _transcribe_segment(clip_bytes, language, concurrency, filename="segment.wav"):
+class _QwenCredit:
+    """单段Qwen逻辑名额，前置裁剪后可转交；所有退出路径只归还一次。"""
+    def __init__(self, concurrency, segment_semaphore):
+        self.concurrency = concurrency
+        self.segment_semaphore = segment_semaphore
+        self.held = True
+
+    async def release(self):
+        if not self.held:
+            return
+        self.held = False
+        if self.segment_semaphore is None:
+            await await_completion(self.concurrency.release_global())
+        else:
+            await await_completion(self.concurrency.release(self.segment_semaphore))
+
+
+async def _transcribe_segment(
+    clip_bytes, language, concurrency, filename="segment.wav", *,
+    segment_semaphore=None, request_id=None, segment_index=None, qwen_credit=None,
+):
     """请求 Qwen 转写一个内存 WAV 片段，并剥离原生前缀。"""
-    client = await get_qwen_client()
     stats = _phase_stats()
-    wait_started = time.perf_counter()
-    await concurrency.acquire_global()
-    stats["qwen_wait_ms"] += (time.perf_counter() - wait_started) * 1000
+    client = None
+    if qwen_credit is None:
+        # 直接调用保留原接口：没有前置credit时自行拿名额。
+        client = await get_qwen_client()
+        wait_started = time.perf_counter()
+        if segment_semaphore is None:
+            await concurrency.acquire_global()
+        else:
+            await concurrency.acquire(segment_semaphore)
+        qwen_credit = _QwenCredit(concurrency, segment_semaphore)
+        stats["qwen_wait_ms"] += (time.perf_counter() - wait_started) * 1000
     call_started = time.perf_counter()
     try:
+        # 已有credit时发现客户端失败/取消也在finally立刻释放，不等增强join。
+        if client is None:
+            client = await get_qwen_client()
         transcribe_bytes = getattr(client, "transcribe_bytes", None)
         if callable(transcribe_bytes):
+            metadata = ({"request_id": request_id, "segment_index": segment_index}
+                        if getattr(client, "supports_batch_metadata", False) else {})
             raw_text = await transcribe_bytes(
-                clip_bytes, language=language, filename=filename
+                clip_bytes, language=language, filename=filename, **metadata
             )
         else:
             # 兼容迁移期间的旧客户端/测试桩。正式 QwenAsrClient 提供
@@ -248,7 +283,8 @@ async def _transcribe_segment(clip_bytes, language, concurrency, filename="segme
                     except OSError as exc:
                         logger.warning("删除 Qwen 兼容段缓存失败: %s, 错误: %s", compat_path, exc)
     finally:
-        await concurrency.release_global()
+        await qwen_credit.release()
+        update_active(increment="qwen_done")
         stats["qwen_ms"] += (time.perf_counter() - call_started) * 1000
         stats["qwen_calls"] += 1
 
@@ -300,7 +336,8 @@ async def _speaker_embedding(audio_array, sample_rate):
 async def _segment_emotion(audio_array, sample_rate, duration_s):
     """推断片段情绪；超出 1~10 秒的片段记为平淡。"""
     validate_v3_capabilities(need_emotion=True)
-    if duration_s < EMOTION_MIN_DURATION_S or duration_s > EMOTION_MAX_DURATION_S:
+    samples = len(audio_array)
+    if samples < round(EMOTION_MIN_DURATION_S * sample_rate) or samples > round(EMOTION_MAX_DURATION_S * sample_rate):
         return "平淡"
 
     def _run(model, device):
@@ -336,6 +373,19 @@ async def _segment_emotion(audio_array, sample_rate, duration_s):
             stats["emo_calls"] += 1
 
 
+async def _segment_branch_with_progress(branch, *args, completion_field):
+    """已进入分支的终态计一次：返回、失败、时长skip或取消，非NN成功次数。
+
+    已进入但仍等待pool时取消也计终态；Task尚未进入本协程即取消则不计。
+    branch在此调用才创建，未启动取消不会遗留未await的模型协程。
+    原helper的run_in_thread会等已启动线程真实DONE/同步后才传播取消。
+    """
+    try:
+        return await branch(*args)
+    finally:
+        update_active(increment=completion_field)
+
+
 def _normalize_embedding(embedding):
     """归一化说话人嵌入，返回单位向量。"""
     norm = torch.linalg.norm(embedding)
@@ -349,7 +399,7 @@ def _assign_short_speakers(outcomes, usable, labels):
     short_segments = [
         o
         for o in outcomes
-        if o.segment.duration_s < SHORT_SPEAKER_SEGMENT_S
+        if round(o.segment.duration_s * 16000) < round(SHORT_SPEAKER_SEGMENT_S * 16000)
     ]
     for outcome in short_segments:
         if not usable:
@@ -378,7 +428,7 @@ def cluster_speakers(outcomes, threshold=None):
         o
         for o in outcomes
         if o.embedding is not None
-        and o.segment.duration_s >= SHORT_SPEAKER_SEGMENT_S
+        and round(o.segment.duration_s * 16000) >= round(SHORT_SPEAKER_SEGMENT_S * 16000)
     ]
     if not usable:
         return {}
@@ -503,11 +553,13 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     need_role = capabilities.need_role
     need_emotion = capabilities.need_emotion
 
+    update_active("model_loading")
     await load_v3_models_if_needed(
         need_role=need_role,
         need_emotion=need_emotion,
     )
 
+    update_active("vad")
     vad_started = time.perf_counter()
     # 音频已在 prepare_asr_context 中加载；低音量过滤在裁剪和 Qwen 请求前完成。
     # 保持无张量的单测/兼容调用仍使用原有单参数接口。
@@ -524,6 +576,16 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     segments, vad_stats = await await_completion(_detect_with_stats())
     phase["vad_ms"] = (time.perf_counter() - vad_started) * 1000
     stats["vad_ms"] = phase["vad_ms"]
+    for key in ("vad_wait_ms", "vad_worker_ms", "low_volume_filter_ms"):
+        value = vad_stats.get(key)
+        if isinstance(value, (int, float)):
+            stats[key] = value
+    # 采样点判定避免浮点相减把恰好0.3秒误删，响应两位小数不参与判断。
+    sr = int(getattr(ctx, "sample_rate", None) or 16000)
+    minimum_samples = max(round(0.3 * sr), int(np.ceil(settings.vad_min_segment_duration_s * sr)))
+    segments = [seg for seg in segments
+                if round(seg.end_s * sr) - round(seg.start_s * sr) >= minimum_samples]
+    update_active("segments", segments_total=len(segments))
     if not segments:
         update_fail_task()
         return {"msg": "音频文件为空或未检测到任何人声", "code": 4008}
@@ -532,21 +594,30 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
     segment_semaphore = concurrency.new_segment_semaphore()
 
     progress = None
+    pending_budget = get_pending_budget()
 
     async def _cut(segment: VadSegment):
         """从已加载张量裁剪，返回 CAM/emo 数组和内存 WAV 字节。"""
+        def timed(function, *args):
+            began = time.perf_counter()
+            value = function(*args)
+            return value, (time.perf_counter() - began) * 1000
+
+        work_ms = 0.0
         if ctx.audio_tensor is not None and ctx.sample_rate:
-            array, sample_rate = await run_in_thread(
-                extract_audio_clip_array,
+            (array, sample_rate), slice_ms = await run_in_thread(
+                timed, extract_audio_clip_array,
                 ctx.audio_tensor,
                 ctx.sample_rate,
                 segment.start_s,
                 segment.duration_s,
             )
-            clip_bytes = await run_in_thread(
-                encode_audio_clip_wav, array, sample_rate
+            clip_bytes, encode_ms = await run_in_thread(
+                timed, encode_audio_clip_wav, array, sample_rate
             )
+            work_ms = slice_ms + encode_ms
         else:
+            compat_began = time.perf_counter()
             # 兼容尚未预加载张量的旧调用方。正常 v3 请求总是走上面的
             # 内存张量分支；这里只为旧客户端/测试保留一次兼容裁剪，并
             # 在读取后立即登记并删除生成的路径。
@@ -578,29 +649,50 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
                             ctx.tmp_paths.remove(clip_path)
                         except ValueError:
                             pass
-        return clip_bytes, array, sample_rate
+            work_ms = (time.perf_counter() - compat_began) * 1000
+        return clip_bytes, array, sample_rate, work_ms
 
     async def _process(index: int, segment: VadSegment) -> SegmentOutcome:
         outcome = SegmentOutcome(index=index, segment=segment)
-        # 段级名额限制在途内存片段数量，避免长音频一次性创建全部任务。
-        acquired = False
+        # 汇合/PCM预算独立于Qwen窗口，增强不再持有已完成Qwen的名额。
+        pending_lease = None
+        qwen_credit = None
         segment_failed = False
-        cut_started = time.perf_counter()
         try:
-            await segment_semaphore.acquire()
-            acquired = True
+            # 先per-audio16再global128，首文件不能预切256 PCM挡住后ready文件。
+            qwen_wait_started = time.perf_counter()
+            await concurrency.acquire(segment_semaphore)
+            qwen_credit = _QwenCredit(concurrency, segment_semaphore)
+            stats["qwen_wait_ms"] += (time.perf_counter() - qwen_wait_started) * 1000
+            # cut_sum保留原口径(pending+裁剪)，不混入前置Qwen credit等待。
+            cut_started = time.perf_counter()
+            # 正式输入已标准化16k单声道，包含float32数组、PCM16 WAV及头部。
+            reserved_bytes = max(1, round(segment.duration_s * 16000)) * 6 + 4096
+            pending_lease = await pending_budget.acquire(reserved_bytes)
+            stats["pending_wait_ms"] += (time.perf_counter() - cut_started) * 1000
+            pure_cut_started = time.perf_counter()
+            cut_work_ms = 0.0
             try:
                 now = time.perf_counter()
                 if phase["cut_wall_started"] is None:
                     phase["cut_wall_started"] = now
-                clip_bytes, audio_array, sample_rate = await _cut(segment)
+                clip_bytes, audio_array, sample_rate, cut_work_ms = await _cut(segment)
                 phase["cut_wall_ended"] = time.perf_counter()
+                update_active(increment="cut_done")
             except Exception as exc:
                 logger.error(f"[V3] 音频裁剪失败: {exc}")
                 segment_failed = True
                 raise SegmentCutError(f"音频分块失败: {exc}") from exc
             finally:
                 phase["cut_sum_ms"] += (time.perf_counter() - cut_started) * 1000
+                cut_wall_ms = (time.perf_counter() - pure_cut_started) * 1000
+                stats["cut_cpu_ms"] += cut_work_ms
+                stats["cut_dispatch_wait_ms"] += max(0.0, cut_wall_ms - cut_work_ms)
+
+            # EOF或裁剪后的实际PCM才是三模型共同阈值；不足0.3秒无推理/无响应。
+            if len(audio_array) < max(round(0.3 * sample_rate),
+                                      int(np.ceil(settings.vad_min_segment_duration_s * sample_rate))):
+                return outcome
 
             tasks = [
                 _transcribe_segment(
@@ -608,19 +700,25 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
                     request.language,
                     concurrency,
                     filename=f"{getattr(ctx, 'task_id', 'audio')}-{index}.wav",
+                    segment_semaphore=segment_semaphore,
+                    request_id=str(getattr(ctx, "task_id", "audio")), segment_index=index,
+                    qwen_credit=qwen_credit,
                 )
             ]
-            # 短于 1 秒的片段不参与聚类（特征不可靠），其说话人标签由
-            # _assign_short_speakers 按时间就近继承，这里直接跳过 CAM++ 调用，
-            # 长音频里这类片段约占 9%，省下的都是 GPU 与 GIL 时间。
-            if need_role and segment.duration_s >= SHORT_SPEAKER_SEGMENT_S:
-                tasks.append(_speaker_embedding(audio_array, sample_rate))
+            # 短CAM成功embedding同样参与聚类，emo在助手内按1～10秒判断。
+            if need_role:
+                tasks.append(_segment_branch_with_progress(
+                    _speaker_embedding, audio_array, sample_rate, completion_field="spk_done",
+                ))
             if need_emotion:
                 tasks.append(
-                    _segment_emotion(audio_array, sample_rate, segment.duration_s)
+                    _segment_branch_with_progress(
+                        _segment_emotion, audio_array, sample_rate, segment.duration_s,
+                        completion_field="emo_done",
+                    )
                 )
 
-            results = await asyncio.gather(*tasks, return_exceptions=True)
+            results = await gather_owned_branches(tasks)
 
             text_result = results[0]
             if isinstance(text_result, BaseException):
@@ -631,7 +729,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             outcome.text = await _apply_repetition_guard(outcome.text, segment.duration_s)
 
             cursor = 1
-            if need_role and segment.duration_s >= SHORT_SPEAKER_SEGMENT_S:
+            if need_role:
                 embedding = results[cursor]
                 if isinstance(embedding, BaseException):
                     segment_failed = True
@@ -655,17 +753,25 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             # 一个段的 Qwen、CAM++、emotion2vec 全部结束后统一推进一次。
             if progress is not None:
                 progress.update(failed=segment_failed)
-            if acquired:
-                segment_semaphore.release()
+            update_active(increment="segments_done")
+            # 裁剪错误、EOF短段、分支未启动时兜底；Qwen已归还则为空操作。
+            try:
+                if qwen_credit is not None:
+                    await qwen_credit.release()
+            finally:
+                if pending_lease is not None:
+                    await await_completion(pending_budget.release(pending_lease))
 
     segment_started = time.perf_counter()
     progress = create_audio_progress(
         len(segments), f"{getattr(ctx, 'filename', 'audio')} 有效段"
     )
     try:
-        outcomes = await asyncio.gather(
-            *[_process(i, seg) for i, seg in enumerate(segments)],
-            return_exceptions=True,
+        outcomes = await run_bounded_segments(
+            segments, _process,
+            # 每音频只预建有限元任务；PCM/实际分支开工仍由全局段和字节预算控制。
+            # 总8音频时最多8*pending_limit元任务，不将它误报为全局PCM活动数。
+            settings.qwen_pending_segment_limit,
         )
     finally:
         progress.close()
@@ -700,6 +806,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
 
     # 说话人聚类（整段音频统一聚类）
     if need_role:
+        update_active("cluster")
         cluster_started = time.perf_counter()
         speaker_labels = cluster_speakers(valid)
         for outcome in valid:
@@ -735,6 +842,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
 
     itn_language = _itn_language(detected_language)
     config = getattr(settings, "itn_config", ItnConfig())
+    update_active("itn")
     itn_started = time.perf_counter()
     output_segments, normalized_text, _ = normalize_segments(
         output_segments, itn_language, config

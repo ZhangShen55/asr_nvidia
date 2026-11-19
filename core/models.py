@@ -2,6 +2,7 @@
 
 import asyncio
 import logging
+import threading
 import time
 from collections import deque
 from contextlib import asynccontextmanager
@@ -20,6 +21,7 @@ logger = logging.getLogger(__name__)
 # 延迟导入 FunASR，便于状态接口和配置单测在没有音频后端时启动；测试可以
 # patch 这个模块属性替换真实模型构造器。
 AutoModel = None
+CamProcessRunner = None
 
 _model_spk_v3 = None
 _model_emotion_v3 = None
@@ -157,7 +159,7 @@ class ModelPool:
     """按设备数组加载模型副本；每个句柄同一时刻只服务一个任务。"""
 
     def __init__(self, name: str, model_dir: str, device_getter=None, count_getter=None,
-                 *, devices_getter=None, fp16=False, enabled_getter=None):
+                 *, devices_getter=None, fp16=False, enabled_getter=None, prefetch_depth_getter=None):
         self.name = name
         self.model_dir = model_dir
         self.device_getter = device_getter
@@ -166,6 +168,12 @@ class ModelPool:
         self._return_device = devices_getter is not None
         self.fp16 = fp16
         self.enabled_getter = enabled_getter
+        self.prefetch_depth_getter = prefetch_depth_getter
+        self._admission_waiters = {}
+        self._last_released = []
+        self.handoff_total_ms = 0.0
+        self.handoff_count = 0
+        self.last_handoff_ms = 0.0
         self._closing = False
         self.models: list[Any] = []
         self.devices: list[str | None] = []
@@ -173,6 +181,11 @@ class ModelPool:
         self.failures: list[str | None] = []
         self._unclosed_instances: dict[int, Any] = {}
         self._load_lock = asyncio.Lock()
+        self._close_lock = asyncio.Lock()
+        # lazy代理必须在ensure_loaded出生之前登记；关闭和登记共享此线程锁。
+        self._ownership_lock = threading.Lock()
+        self._process_runners = {}
+        self._health_cache = {}
         self._condition = asyncio.Condition()
         self._waiters = deque()
         self._next_instance = 0
@@ -197,23 +210,129 @@ class ModelPool:
             devices = [self.device_getter()] * count
         return devices
 
+    @property
+    def execution_mode(self) -> str:
+        if self.name != "speech_campplus":
+            return "thread"
+        return getattr(settings, "model_device_speech_campplus_execution_mode", "thread")
+
+    @staticmethod
+    def _process_snapshot(model):
+        try:
+            return model.snapshot()
+        except Exception as exc:
+            return {"loaded": False, "worker_alive": None,
+                    "snapshot_error": f"{type(exc).__name__}: {exc}"}
+
+    def _is_healthy(self, model) -> bool:
+        if model is None or not getattr(model, "healthy", True):
+            return False
+        if getattr(model, "execution_mode", "thread") != "process":
+            return True
+        # Condition谓词只读缓存，避免notify_all把128等待者放大成反复OS扫描。
+        return self._health_cache.get(id(model), False)
+
+    @staticmethod
+    def _healthy_process_state(model, state):
+        return bool(getattr(model, "healthy", True) and state.get("loaded")
+                    and state.get("worker_alive") is True
+                    and not state.get("closing") and not state.get("closed"))
+
+    def _validate_process_candidate(self, model):
+        if getattr(model, "execution_mode", "thread") != "process":
+            return self._is_healthy(model)
+        state = self._process_snapshot(model)
+        self._health_cache[id(model)] = self._healthy_process_state(model, state)
+        return self._health_cache[id(model)]
+
+    def _owned_process_entries(self):
+        with self._ownership_lock:
+            return list(self._process_runners.values())
+
+    def _process_entry(self, model):
+        with self._ownership_lock:
+            return self._process_runners.get(id(model))
+
+    def _request_process_close(self, entry):
+        if entry["close_requested"]:
+            return
+        entry["close_requested"] = True
+        try:
+            # 同步发布绝对deadline；不等线程池排队后才启动新的grace。
+            entry["runner"].request_close()
+        except Exception as exc:
+            entry["close_error"] = entry["close_error"] or f"request_close: {type(exc).__name__}: {exc}"
+
+    async def _close_process_entry(self, entry):
+        model = entry["runner"]
+        self._request_process_close(entry)
+        before = self._process_snapshot(model)
+        if (before.get("forced_cleanup") or before.get("normal_exit_ok") is False
+                or before.get("worker_exitcode") not in (None, 0)
+                or (before.get("loaded") and before.get("worker_alive") is False
+                    and not before.get("resource_reaped"))):
+            entry["close_error"] = entry["close_error"] or "CAM worker prior abnormal cleanup"
+        try:
+            await run_in_thread(model.close)
+        except Exception as exc:
+            entry["close_error"] = entry["close_error"] or f"{type(exc).__name__}: {exc}"
+        # 正式runner只在DONE或确认死亡后返回；即使坏替身违反契约也不提前归还。
+        while not self._process_snapshot(model).get("resource_reaped"):
+            await asyncio.sleep(0.01)
+        state = self._process_snapshot(model)
+        if (state.get("forced_cleanup") or state.get("normal_exit_ok") is False
+                or state.get("worker_exitcode") not in (None, 0)):
+            entry["close_error"] = entry["close_error"] or "CAM worker abnormal confirmed-death cleanup"
+        entry["close_completed"] = True
+        entry["last_state"] = state
+
+    def _ensure_process_close_task(self, entry):
+        self._request_process_close(entry)
+        if entry["close_task"] is None:
+            entry["close_task"] = asyncio.create_task(self._close_process_entry(entry))
+        return entry["close_task"]
+
     def _check_enabled(self) -> None:
         if self._closing:
             raise ModelUnavailableError(self.name, reason="closing")
         if self.enabled_getter is not None and not self.enabled_getter():
             raise ModelUnavailableError(self.name)
 
-    async def ensure_loaded(self) -> None:
+    async def ensure_loaded(self, *, observe_process: bool = True) -> None:
         self._check_enabled()
         async with self._load_lock:
             self._check_enabled()
             if len(self.models) >= self.configured_instances:
-                self.refresh_status()
+                self.refresh_status(observe_process=observe_process)
                 return
             # 包住整个登记过程，取消不能遗失刚在线程中创建的运行器。
             await await_completion(self._load_instances())
 
     def _build_instance(self, configured_device):
+        if self.execution_mode == "process":
+            # 子进程验证实际可见卡号；父进程不能为CAM分配器探测而初始化NPU。
+            device = configured_device.strip().lower() if isinstance(configured_device, str) else configured_device
+            if backend_for_device(device) != "torch_npu":
+                raise ValueError("CAM process execution requires a configured npu:N device")
+            global CamProcessRunner
+            if CamProcessRunner is None:
+                from core.cam_process import CamProcessRunner as ProcessRunner
+                CamProcessRunner = ProcessRunner
+            with self._ownership_lock:
+                if self._closing:
+                    raise ModelUnavailableError(self.name, reason="closing")
+                model = CamProcessRunner(
+                    self.model_dir, device,
+                    startup_timeout_s=getattr(settings, "model_device_speech_campplus_process_startup_timeout_s", 60),
+                    shutdown_grace_s=getattr(settings, "model_device_speech_campplus_process_shutdown_grace_s", 30),
+                )
+                self._process_runners[id(model)] = {
+                    "runner": model, "index": len(self.models), "device": device,
+                    "close_requested": False, "close_task": None,
+                    "close_completed": False, "close_error": None, "last_state": None,
+                }
+            model.ensure_loaded()
+            return model, device, None
         device = _resolve_device(configured_device)
         backend = backend_for_device(device)
         before = device_allocated_mb(device)
@@ -236,6 +355,7 @@ class ModelPool:
     async def _load_instances(self):
         devices = self.configured_devices
         while len(self.models) < len(devices):
+            self._check_enabled()
             configured_device = devices[len(self.models)]
             model, device, allocated, failure = None, configured_device, 0.0, None
             try:
@@ -243,40 +363,168 @@ class ModelPool:
             except Exception as exc:  # noqa: BLE001
                 failure = str(exc)
                 logger.exception("[模型池] %s %s 副本加载失败", self.name, configured_device)
+            if self._closing and self.execution_mode == "process":
+                # loading线程刚返回也不能晚发布READY或继续构建后面的实例。
+                for entry in self._owned_process_entries():
+                    await await_completion(self._ensure_process_close_task(entry))
+                raise ModelUnavailableError(self.name, reason="closing")
             self.models.append(model)
             self.devices.append(device)
             self.locks.append(asyncio.Lock())
+            self._last_released.append(None)
             self.failures.append(failure)
+            if self.execution_mode == "process":
+                allocated = None
             self.memory_complete = self.memory_complete and allocated is not None
             self.total_allocated_mb += allocated or 0.0
             self.refresh_status()
+            if self._closing:
+                raise ModelUnavailableError(self.name, reason="closing")
 
-    def refresh_status(self) -> None:
+    @property
+    def prefetch_depth(self) -> int:
+        return self.prefetch_depth_getter() if self.prefetch_depth_getter is not None else 5
+
+    @property
+    def waiting_capacity(self) -> int:
+        return sum(self._is_healthy(model) for model in self.models) * self.prefetch_depth
+
+    def _mark_grant(self, index: int) -> None:
+        # 只统计有待执行任务的交接，不把无负载时的空闲时间当调度开销。
+        if index < len(self._last_released) and self._last_released[index] is not None:
+            self.last_handoff_ms = max(0.0, (time.perf_counter() - self._last_released[index]) * 1000)
+            self.handoff_total_ms += self.last_handoff_ms
+            self.handoff_count += 1
+            self._last_released[index] = None
+
+    def _refresh_hot_status(self) -> None:
+        """调度转换只更新轻量计数；完整worker证据由显式status观察刷新。"""
+        for model in self.models:
+            if model is None or getattr(model, "execution_mode", "thread") != "process":
+                continue
+            cached_health = getattr(model, "cached_health", None)
+            if cached_health is not None:
+                state = cached_health()
+                if (not state.get("loaded") or state.get("closing") or state.get("closed")
+                        or state.get("healthy") is False):
+                    self._health_cache[id(model)] = False
+            # 不把旧READY/缓存alive当作新证据：OS已判dead的false一直保留，
+            # 只有真实selected验证或显式refresh_status才可更新该观察。
+        healthy = sum(self._is_healthy(model) for model in self.models)
+        busy = sum(lock.locked() for lock in self.locks)
+        now = time.perf_counter()
+        oldest = min([t for _, t in self._waiters] + list(self._admission_waiters.values()), default=now)
+        local_model_status[self.name].update({
+            "instances": healthy,
+            "available_instances": 0 if self._closing else max(0, healthy - busy),
+            "busy": busy,
+            "waiting": self.waiting + len(self._admission_waiters),
+            "prefetch_waiting": self.waiting,
+            "waiting_capacity": self.waiting_capacity,
+            "backpressure_waiting": len(self._admission_waiters),
+            "oldest_wait_ms": round(max(0.0, (now - oldest) * 1000), 3),
+            "handoff_count": self.handoff_count,
+            "last_handoff_ms": round(self.last_handoff_ms, 3),
+            "handoff_total_ms": round(self.handoff_total_ms, 3),
+            "wait_total_ms": round(self.wait_total_ms, 2),
+            "inference_total_ms": round(self.inference_total_ms, 2),
+            "calls": self.calls,
+            "last_wait_ms": round(self.last_wait_ms, 2),
+            "waiting_summary": {
+                "current": self.waiting + len(self._admission_waiters),
+                "total_ms": round(self.wait_total_ms, 2),
+                "average_ms": round(self.wait_total_ms / max(1, self.calls), 2),
+            },
+        })
+
+    def refresh_status(self, *, observe_process: bool = True) -> None:
+        if not observe_process and self.execution_mode == "process":
+            self._refresh_hot_status()
+            return
         entry = local_model_status[self.name]
-        loaded = [model for model in self.models if model is not None]
-        failed = [failure for failure in self.failures if failure]
+        owned_entries = self._owned_process_entries()
+        states = {id(owned["runner"]): self._process_snapshot(owned["runner"])
+                  for owned in owned_entries}
+        for model in self.models:
+            if model is not None and getattr(model, "execution_mode", "thread") == "process":
+                if id(model) not in states:
+                    states[id(model)] = self._process_snapshot(model)
+                self._health_cache[id(model)] = self._healthy_process_state(model, states[id(model)])
+        loaded = [model for model in self.models if self._is_healthy(model)]
         configured_devices = self.configured_devices
         busy = sum(lock.locked() for lock in self.locks)
         details = []
+        owned_by_index = {entry["index"]: entry for entry in owned_entries}
+        worker_states = []
+        for owned in owned_entries:
+            state = states[id(owned["runner"])]
+            worker_states.append(dict(state, pool_instance_index=owned["index"],
+                                      configured_device=owned["device"], close_error=owned["close_error"]))
         for index, device in enumerate(configured_devices):
             model = self.models[index] if index < len(self.models) else None
-            attempted = index < len(self.models)
+            owned = owned_by_index.get(index)
+            attempted = index < len(self.models) or owned is not None
+            recorded_failure = self.failures[index] if index < len(self.failures) else None
+            if owned and owned["close_error"]:
+                recorded_failure = recorded_failure or owned["close_error"]
             backend = backend_for_device(device)
+            observed = model if model is not None else (owned["runner"] if owned else None)
+            healthy = self._is_healthy(model)
+            process_state = states.get(id(observed), {})
+            is_process = getattr(observed, "execution_mode", "thread") == "process"
+            if not recorded_failure and is_process:
+                if process_state.get("failure"):
+                    recorded_failure = process_state["failure"]
+                elif (process_state.get("forced_cleanup") or process_state.get("normal_exit_ok") is False
+                      or process_state.get("worker_exitcode") not in (None, 0)):
+                    recorded_failure = "worker abnormal cleanup"
+                elif (process_state.get("healthy") is False or not getattr(observed, "healthy", True)
+                      or (process_state.get("loaded") and process_state.get("worker_alive") is False
+                          and not process_state.get("resource_reaped"))):
+                    recorded_failure = "worker unavailable"
+            elif (not recorded_failure and model is not None
+                  and not getattr(model, "healthy", True)):
+                recorded_failure = "worker unavailable"
+            if recorded_failure:
+                health = "close_failed" if self._closing else "failed"
+            elif is_process:
+                if process_state.get("closed") and process_state.get("resource_reaped"):
+                    health = "closed"
+                elif self._closing or process_state.get("closing"):
+                    health = "closing"
+                elif index >= len(self.models):
+                    health = "loading"
+                else:
+                    health = "healthy" if healthy else "unknown"
+            elif self._closing and attempted:
+                health = "closed"
+            else:
+                health = "healthy" if healthy else ("failed" if attempted else "not_loaded")
             details.append({
                 "configured_device": device, "configured_backend": backend,
-                "effective_backend": getattr(model, "effective_backend", None),
-                "actual_precision": getattr(model, "actual_precision", None),
-                "math_mode": getattr(model, "math_mode", None),
-                "operator_adaptations": getattr(model, "operator_adaptations", None),
-                "health": (("close_failed" if self.failures[index] else "closed") if self._closing and attempted
-                           else ("healthy" if model is not None else ("failed" if attempted else "not_loaded"))),
-                "failure": self.failures[index] if attempted else None,
-                "memory": getattr(model, "memory", None),
+                "busy": index < len(self.locks) and self.locks[index].locked(),
+                "execution_mode": getattr(observed, "execution_mode", "thread"),
+                "effective_backend": getattr(observed, "effective_backend", None),
+                "actual_precision": getattr(observed, "actual_precision", None),
+                "math_mode": getattr(observed, "math_mode", None),
+                "operator_adaptations": getattr(observed, "operator_adaptations", None),
+                "health": health,
+                "failure": recorded_failure,
+                "memory": (states.get(id(observed)) if getattr(observed, "execution_mode", "thread") == "process"
+                           else getattr(observed, "memory", None)),
             })
+        failed = [detail["failure"] for detail in details if detail["failure"]]
+        now = time.perf_counter()
+        oldest = min([t for _, t in self._waiters] + list(self._admission_waiters.values()), default=now)
         entry.update({
-            "loaded": bool(loaded),
+            "execution_mode": self.execution_mode,
+            "model_workers": worker_states,
+            "loaded": (any(model is not None and getattr(model, "execution_mode", "thread") != "process"
+                           for model in self.models) or
+                       any(state.get("loaded") and state.get("worker_alive") is True
+                           for state in states.values())),
             "device": next((device for model, device in zip(self.models, self.devices)
-                             if model is not None), None),
+                             if self._is_healthy(model)), None),
             "devices": list(self.devices) if self.models else configured_devices,
             "allocated_mb": round(self.total_allocated_mb, 2) if self.memory_complete else None,
             "torch_allocated_mb": round(self.total_allocated_mb, 2) if self.memory_complete else None,
@@ -287,17 +535,30 @@ class ModelPool:
             "configured_instances": self.configured_instances,
             "available_instances": 0 if self._closing else max(0, len(loaded) - busy),
             "closing": self._closing,
-            "pending_close_instances": len(loaded) + len(self._unclosed_instances) if self._closing else len(self._unclosed_instances),
+            "pending_close_instances": (sum(owned["close_requested"] and not owned["close_completed"]
+                                            for owned in owned_entries)
+                                        + len(self._unclosed_instances)
+                                        + (sum(model is not None and getattr(model, "execution_mode", "thread") != "process"
+                                               for model in self.models) if self._closing else 0)),
             "failed_instances": len(failed),
             "busy": busy,
-            "waiting": self.waiting,
+            "waiting": self.waiting + len(self._admission_waiters),
+            "prefetch_waiting": self.waiting,
+            "prefetch_queue_depth": self.prefetch_depth,
+            "waiting_capacity": self.waiting_capacity,
+            "backpressure_waiting": len(self._admission_waiters),
+            "oldest_wait_ms": round(max(0.0, (now - oldest) * 1000), 3),
+            "actual_batch_size": 1,
+            "handoff_count": self.handoff_count,
+            "last_handoff_ms": round(self.last_handoff_ms, 3),
+            "handoff_total_ms": round(self.handoff_total_ms, 3),
             "failure": failed[len(failed) - 1] if failed else None,
             "wait_total_ms": round(self.wait_total_ms, 2),
             "inference_total_ms": round(self.inference_total_ms, 2),
             "calls": self.calls,
             "last_wait_ms": round(self.last_wait_ms, 2),
             "waiting_summary": {
-                "current": self.waiting,
+                "current": self.waiting + len(self._admission_waiters),
                 "total_ms": round(self.wait_total_ms, 2),
                 "average_ms": round(self.wait_total_ms / max(1, self.calls), 2),
             },
@@ -310,14 +571,15 @@ class ModelPool:
             return None
         for offset in range(count):
             index = (self._next_instance + offset) % count
-            if self.models[index] is not None and not self.locks[index].locked():
+            if (self._is_healthy(self.models[index]) and not self.locks[index].locked()
+                    and self._validate_process_candidate(self.models[index])):
                 self._next_instance = (index + 1) % count
                 return index
         return None
 
     async def _dispatch_waiters(self) -> None:
         """在条件锁内按 FIFO 发放租约；取消的等待者会被跳过。"""
-        if self._closing or not any(model is not None for model in self.models):
+        if self._closing or not any(self._is_healthy(model) for model in self.models):
             while self._waiters:
                 future, _ = self._waiters.popleft()
                 self.waiting = max(0, self.waiting - 1)
@@ -332,41 +594,66 @@ class ModelPool:
                 continue
             index = self._available_index()
             if index is None:
+                if not any(self._is_healthy(model) for model in self.models):
+                    await self._dispatch_waiters()
                 return
             await self.locks[index].acquire()
+            self._mark_grant(index)
             self._waiters.popleft()
             self.waiting = max(0, self.waiting - 1)
             wait_ms = (time.perf_counter() - enqueued_at) * 1000
             future.set_result((index, self.models[index], wait_ms))
+        if not self._waiters and not self._admission_waiters:
+            for index, lock in enumerate(self.locks):
+                if not lock.locked():
+                    self._last_released[index] = None
 
     @asynccontextmanager
     async def lease(self):
         self._check_enabled()
-        await self.ensure_loaded()
-        if not any(model is not None for model in self.models):
+        # 每完整音频的显式ensure_loaded仍做OS健康预检；每段只在选中实例时验证。
+        await self.ensure_loaded(observe_process=False)
+        if not any(self._is_healthy(model) for model in self.models):
             raise ModelUnavailableError(self.name)
         selected = None
         future = None
+        token = object()
+        enqueued_at = time.perf_counter()
         try:
             async with self._condition:
-                # 有排队者时，新请求必须排在队尾，保证 FIFO。
+                # 共享预取队列只存健康实例数×depth个待执行任务，溢出在生产端反压。
+                # depth=0只等待空闲实例，绝不解释成无限队列。
+                self._admission_waiters[token] = enqueued_at
+                self.refresh_status(observe_process=False)
+                await self._condition.wait_for(lambda: self._closing
+                    or not any(self._is_healthy(model) for model in self.models)
+                    or (next(iter(self._admission_waiters), None) is token
+                        and ((not self._waiters and self._has_available())
+                             or len(self._waiters) < self.waiting_capacity)))
+                self._check_enabled()
+                if not any(self._is_healthy(model) for model in self.models):
+                    raise ModelUnavailableError(self.name)
+                self._admission_waiters.pop(token, None)
                 if not self._waiters:
                     index = self._available_index()
                     if index is not None:
                         await self.locks[index].acquire()
-                        selected = (index, self.models[index], 0.0)
+                        self._mark_grant(index)
+                        selected = (index, self.models[index], (time.perf_counter() - enqueued_at) * 1000)
                 if selected is None:
                     future = asyncio.get_running_loop().create_future()
-                    self._waiters.append((future, time.perf_counter()))
+                    self._waiters.append((future, enqueued_at))
                     self.waiting += 1
                     await self._dispatch_waiters()
-                    self.refresh_status()
+                self.refresh_status(observe_process=False)
+                self._condition.notify_all()
             if selected is None:
-                selected = await future
+                # 取消只撤回本等待者；若已授予则由撤回路径归还，不让Future被隐式取消。
+                selected = await asyncio.shield(future)
             index, model, wait_ms = selected
             self.wait_total_ms += wait_ms
             self.last_wait_ms = wait_ms
-            self.refresh_status()
+            self.refresh_status(observe_process=False)
             try:
                 if self._return_device:
                     yield model, self.devices[index]
@@ -375,45 +662,65 @@ class ModelPool:
             except InstanceFailure as exc:
                 self.failures[index] = str(exc)
                 self.models[index] = None
-                close = getattr(model, "close", None)
-                if close is not None:
-                    try:
-                        await run_in_thread(close)
-                    except Exception as close_error:
-                        # Quarantine it from leasing, but retain ownership for
-                        # an explicit close retry and visible failure reporting.
-                        self._unclosed_instances[index] = model
-                        self.failures[index] = f"{exc}; close failed: {close_error}"
-                        self.memory_complete = False
-                        logger.exception("[模型池] 故障实例清理失败: %s", self.name)
+                entry = self._process_entry(model)
+                if entry is not None:
+                    await await_completion(self._ensure_process_close_task(entry))
+                else:
+                    close = getattr(model, "close", None)
+                    if close is not None:
+                        try:
+                            await run_in_thread(close)
+                        except Exception as close_error:
+                            # Quarantine it from leasing, but retain ownership for
+                            # an explicit close retry and visible failure reporting.
+                            self._unclosed_instances[index] = model
+                            self.failures[index] = f"{exc}; close failed: {close_error}"
+                            self.memory_complete = False
+                            logger.exception("[模型池] 故障实例清理失败: %s", self.name)
                 raise
             finally:
                 await await_completion(self._release(index))
         except asyncio.CancelledError:
-            async with self._condition:
-                if future is not None and not future.done():
-                    try:
-                        self._waiters.remove(next(item for item in self._waiters if item[0] is future))
-                    except (StopIteration, ValueError):
-                        pass
-                    else:
-                        self.waiting = max(0, self.waiting - 1)
-                elif future is not None and future.done() and not future.cancelled() and selected is None:
-                    index, _model, _wait_ms = future.result()
-                    self.locks[index].release()
-                await self._dispatch_waiters()
-                self.refresh_status()
-                self._condition.notify_all()
+            await await_completion(self._withdraw_waiter(token, future, selected))
             raise
         except Exception:
-            self.refresh_status()
+            await await_completion(self._withdraw_waiter(token, future, selected))
             raise
+
+    def _has_available(self) -> bool:
+        return any(self._is_healthy(model) and not lock.locked()
+                   for model, lock in zip(self.models, self.locks))
+
+    async def _withdraw_waiter(self, token, future, selected):
+        async with self._condition:
+            self._admission_waiters.pop(token, None)
+            if future is not None and selected is None:
+                item = next((item for item in self._waiters if item[0] is future), None)
+                if item is not None:
+                    self._waiters.remove(item)
+                    self.waiting = max(0, self.waiting - 1)
+                    future.cancel()
+                elif future.done() and not future.cancelled():
+                    error = future.exception()
+                    if error is None:
+                        index, _, _ = future.result()
+                        self.locks[index].release()
+                        self._last_released[index] = time.perf_counter() if self._waiters or self._admission_waiters else None
+            await self._dispatch_waiters()
+            self.refresh_status(observe_process=False)
+            self._condition.notify_all()
 
     async def _release(self, index):
         async with self._condition:
             self.locks[index].release()
+            self._last_released[index] = time.perf_counter() if self._waiters or self._admission_waiters else None
             await self._dispatch_waiters()
-            self.refresh_status()
+            # 故障关闭期间的重复取消也必须经由本次真实release发布失败。
+            # 正常交接仍只更新轻量计数，不做整池OS观察。
+            if self.failures[index] is not None:
+                self.refresh_status()
+            else:
+                self.refresh_status(observe_process=False)
             self._condition.notify_all()
 
     def record_inference(self, wait_ms: float, inference_ms: float) -> None:
@@ -421,21 +728,42 @@ class ModelPool:
         self.calls += 1
         self.inference_total_ms += max(0.0, float(inference_ms))
         self.last_wait_ms = max(0.0, float(wait_ms))
-        self.refresh_status()
+        self.refresh_status(observe_process=False)
 
     async def close(self) -> None:
         await await_completion(self._close())
 
     async def _close(self):
-        self._closing = True
+        async with self._close_lock:
+            await self._close_locked()
+
+    async def _close_locked(self):
+        with self._ownership_lock:
+            self._closing = True
+            process_entries = list(self._process_runners.values())
+        for entry in process_entries:
+            self._request_process_close(entry)
+        process_tasks = [self._ensure_process_close_task(entry) for entry in process_entries]
+        # 看护先运行；不得先等loading/lease再轮到进程grace。
+        if process_tasks:
+            await asyncio.sleep(0)
         async with self._load_lock:
             async with self._condition:
                 await self._dispatch_waiters()
+                self._condition.notify_all()
                 await self._condition.wait_for(lambda: not any(lock.locked() for lock in self.locks))
-            errors = []
+            if process_tasks:
+                await await_completion(asyncio.gather(*process_tasks))
+            errors = [(entry["index"], RuntimeError(entry["close_error"]))
+                      for entry in process_entries if entry["close_error"]]
             owned = [(index, model) for index, model in enumerate(self.models) if model is not None]
             owned += list(self._unclosed_instances.items())
             for index, model in owned:
+                if self._process_entry(model) is not None:
+                    entry = self._process_entry(model)
+                    if not entry["close_error"]:
+                        self.models[index] = None
+                    continue
                 close = getattr(model, "close", None)
                 try:
                     if close is not None:
@@ -458,6 +786,7 @@ class ModelPool:
             self.models.clear()
             self.devices.clear()
             self.locks.clear()
+            self._last_released.clear()
             self.failures.clear()
             self._unclosed_instances.clear()
             self.total_allocated_mb = 0.0
@@ -467,11 +796,15 @@ class ModelPool:
             self.inference_total_ms = 0.0
             self.calls = 0
             self.last_wait_ms = 0.0
+            self.handoff_total_ms = 0.0
+            self.handoff_count = 0
+            self.last_handoff_ms = 0.0
             for future, _ in self._waiters:
                 if not future.done():
                     future.cancel()
             self._waiters.clear()
-            self._closing = False
+            # process池关闭后保持终态；旧CPU/thread池保留显式重载兼容行为。
+            self._closing = bool(process_entries) or self.execution_mode == "process"
             self.refresh_status()
 
 
@@ -480,12 +813,14 @@ _MODEL_POOLS = {
         "speech_campplus", settings.spk_model_dir,
         devices_getter=lambda: settings.model_device_speech_campplus_devices,
         enabled_getter=lambda: settings.open_v2_role,
+        prefetch_depth_getter=lambda: getattr(settings, "speech_campplus_prefetch_queue_depth", 0),
         fp16=True,
     ),
     "emotion2vec": ModelPool(
         "emotion2vec", settings.emotion_model_dir,
         devices_getter=lambda: settings.model_device_emotion2vec_devices,
         enabled_getter=lambda: settings.open_v2_emotion,
+        prefetch_depth_getter=lambda: getattr(settings, "emotion2vec_prefetch_queue_depth", 0),
         fp16=True,
     ),
 }
@@ -498,14 +833,18 @@ async def load_v3_models_if_needed(need_role: bool = False, need_emotion: bool =
     async with _model_lock:
         if need_role:
             await _MODEL_POOLS["speech_campplus"].ensure_loaded()
-            if not any(model is not None for model in _MODEL_POOLS["speech_campplus"].models):
+            if not any(_MODEL_POOLS["speech_campplus"]._is_healthy(model)
+                       for model in _MODEL_POOLS["speech_campplus"].models):
                 raise ModelUnavailableError("speech_campplus")
-            _model_spk_v3 = next((model for model in _MODEL_POOLS["speech_campplus"].models if model), None)
+            _model_spk_v3 = next((model for model in _MODEL_POOLS["speech_campplus"].models
+                                  if _MODEL_POOLS["speech_campplus"]._is_healthy(model)), None)
         if need_emotion:
             await _MODEL_POOLS["emotion2vec"].ensure_loaded()
-            if not any(model is not None for model in _MODEL_POOLS["emotion2vec"].models):
+            if not any(_MODEL_POOLS["emotion2vec"]._is_healthy(model)
+                       for model in _MODEL_POOLS["emotion2vec"].models):
                 raise ModelUnavailableError("emotion2vec")
-            _model_emotion_v3 = next((model for model in _MODEL_POOLS["emotion2vec"].models if model), None)
+            _model_emotion_v3 = next((model for model in _MODEL_POOLS["emotion2vec"].models
+                                      if _MODEL_POOLS["emotion2vec"]._is_healthy(model)), None)
 
 
 def get_model_pool(name: str) -> ModelPool:

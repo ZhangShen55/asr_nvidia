@@ -3,6 +3,9 @@ import uuid
 import asyncio
 import time
 import logging
+import math
+import struct
+import numpy as np
 import torch
 from io import BytesIO
 import soundfile as sf
@@ -79,17 +82,37 @@ async def preprocess_audio(audio_bytes: bytes, suffix: str, force_resample: bool
     logger.info(f"[音频预处理] 耗时：{duration:.2f}ms")
     return result
 
-# 分割音频
-def crop_audio(audio_data:torch.Tensor, start_time, end_time, sample_rate):
-    start_sample = int(start_time * sample_rate / 1000)  # 转换为样本数
-    end_sample = int(end_time * sample_rate / 1000)  # 转换为样本数
-    return audio_data[:,start_sample:end_sample]
+def audio_sample_bounds(start_time: float, end_time: float, sample_rate: int, total_samples: int):
+    """将秒端点分别round到采样格后限制到源范围；与VAD/路由门限口径一致。
+
+    必须分别round起止，不能int截断，也不能用round(duration*sr)替代端点差；
+    毫秒格点转浮点秒会出现1.001*16000略小于整数的表示误差。EOF只裁短，绝不补零。
+    """
+    start, end = float(start_time), float(end_time)
+    if not math.isfinite(start) or not math.isfinite(end):
+        raise ValueError("裁剪端点必须是有限秒值")
+    if sample_rate <= 0 or total_samples < 0:
+        raise ValueError("采样率必须为正且源样本数非负")
+    left = max(0, min(total_samples, round(start * sample_rate)))
+    right = max(0, min(total_samples, round(end * sample_rate)))
+    if right <= left:
+        raise ValueError("裁剪区间为空")
+    return left, right
+
+
+# 旧调用方的毫秒端点接口与正式内存裁剪使用同一采样边界。
+def crop_audio(audio_data: torch.Tensor, start_time, end_time, sample_rate):
+    left, right = audio_sample_bounds(start_time / 1000, end_time / 1000,
+                                     sample_rate, audio_data.shape[len(audio_data.shape) - 1])
+    return audio_data[:, left:right]
 
 
 
 def extract_audio_clip(input_path: str, start_time: float, duration: float, suffix=".wav") -> str:
     """
-    用 ffmpeg 截取一段音频片段，返回新文件路径
+    旧FFmpeg兼容通道：按秒转码并返回路径，正式v3使用下方内存采样格裁剪。
+
+    压缩文件/非WAV转码不保证逐样本等长；不为此旧通道逐段重读并标准化整条大文件。
     """
     output_file = tempfile.NamedTemporaryFile(delete=False, suffix=suffix).name
     command = [
@@ -135,6 +158,37 @@ def save_audio_clip_array(array, sample_rate: int) -> str:
 
 def encode_audio_clip_wav(array, sample_rate: int) -> bytes:
     """把单声道 float32 样本编码为内存中的 PCM16 WAV。"""
+    # PCM16源的样本在float32里精确落于1/32768格点；该分支不近似量化。
+    # 非格点/非原生dtype/非单声道及特殊采样率继续使用原libsndfile路径。
+    if (
+        type(array) is np.ndarray
+        and array.ndim == 1
+        and array.dtype == np.dtype("float32")
+        and array.dtype.isnative
+        and type(sample_rate) is int
+        and 0 < sample_rate <= 0x7FFFFFFF
+        and array.size * 2 <= 0xFFFFFFFF - 36
+        and np.isfinite(array).all()
+        and (array >= -1).all()
+        and (array <= 1).all()
+    ):
+        scaled = array * np.float32(32768)
+        integral = scaled.astype(np.int32)
+        exact_grid = np.array_equal(scaled, integral)
+        del scaled
+        if exact_grid:
+            # +1与libsndfile一致映射至32767；不修改调用方的CAM/emo原数组。
+            np.clip(integral, -32768, 32767, out=integral)
+            pcm = integral.astype("<i2").tobytes()
+            del integral
+            data_size = len(pcm)
+            header = struct.pack(
+                "<4sI4s4sIHHIIHH4sI", b"RIFF", 36 + data_size,
+                b"WAVE", b"fmt ", 16, 1, 1, sample_rate,
+                sample_rate * 2, 2, 16, b"data", data_size,
+            )
+            return header + pcm
+        del integral
     if getattr(array, "ndim", 1) != 1:
         array = array.reshape(-1)
     buffer = BytesIO()
@@ -143,20 +197,19 @@ def encode_audio_clip_wav(array, sample_rate: int) -> bytes:
 
 
 def extract_audio_clip_array(audio_tensor, sample_rate: int, start_time: float, duration: float):
-    """从已加载的音频张量裁剪出一段，返回 (float32 numpy 数组, 采样率)。
+    """从已加载的tensor或numpy数组裁剪，返回(float32 numpy数组, 采样率)。
 
     本地模型（CAM++）直接吃 numpy 数组，比走文件路径快约 2 倍：
     funasr 的文件分支里还包含一次额外的音频读取与重采样开销。
     """
-    start_sample = max(0, int(start_time * sample_rate))
     # Cython 的 boundscheck=False 会把部分动态序列的负索引优化成越界访问；
     # 显式取最后一个维度，保证源码和扩展运行时一致。
     shape = getattr(audio_tensor, "shape", ())
     if not shape:
         raise ValueError("音频张量缺少 shape")
-    end_sample = min(shape[len(shape) - 1], int((start_time + duration) * sample_rate))
-    if end_sample <= start_sample:
-        raise ValueError("裁剪区间为空")
+    start_sample, end_sample = audio_sample_bounds(
+        start_time, start_time + duration, sample_rate, shape[len(shape) - 1]
+    )
 
     tensor = audio_tensor
     if getattr(tensor, "ndim", 0) == 1:
@@ -164,10 +217,13 @@ def extract_audio_clip_array(audio_tensor, sample_rate: int, start_time: float, 
     elif getattr(tensor, "ndim", 0) == 2:
         # torchaudio 使用 [channels, samples]；裁剪后统一折叠为单声道，
         # 避免立体声张量在 torchaudio.save 中变成三维 [1, C, T]。
-        clipped = tensor[:, start_sample:end_sample].mean(dim=0)
+        channels = tensor[:, start_sample:end_sample]
+        clipped = channels.mean(dim=0) if hasattr(channels, "detach") else channels.mean(axis=0)
     else:
         raise ValueError(f"音频张量必须是 1D 或 2D，实际维度为 {getattr(tensor, 'ndim', None)}")
-    array = clipped.detach().cpu().numpy().reshape(-1).astype("float32")
+    if hasattr(clipped, "detach"):
+        clipped = clipped.detach().cpu().numpy()
+    array = clipped.reshape(-1).astype("float32")
     return array, sample_rate
 
 

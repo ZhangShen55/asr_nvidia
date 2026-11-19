@@ -1,0 +1,19 @@
+{
+  "scope": "separate small patch; frozen10 files unmodified; not pushed",
+  "files": [
+    {
+      "path": "core/qwen_asr_process.py",
+      "before_sha256": "38e7a22f4a85113fafabe8d887c7fe6f87e2c4c70fff9264fb5d155c0a3b76e1",
+      "authority_current_sha256": "38e7a22f4a85113fafabe8d887c7fe6f87e2c4c70fff9264fb5d155c0a3b76e1",
+      "draft_sha256": "ae85af3e67cfedb7095e1d814b417baec2926692e7d69359478bbd9c73921a55"
+    },
+    {
+      "path": "tests/test_local_qwen_process.py",
+      "before_sha256": "55ec1f3dc0c3c97d26cf8f0da6ebac7ef1163fef10ee8253c8adf5441e045b24",
+      "authority_current_sha256": "55ec1f3dc0c3c97d26cf8f0da6ebac7ef1163fef10ee8253c8adf5441e045b24",
+      "draft_sha256": "a6d40d100d0d1f19610bebb06277ade50a6722a54c7cdc1c9c664216b716c11f"
+    }
+  ],
+  "cpu": "31 actual-spawn tests passed in10.79s; no NPU",
+  "fault_injection": "parent endpoint FD externally closed while child forward/load gate active; first reap unconfirmed simulation keeps actual lease until child DONE+exit or explicit shutdown reaps"
+}

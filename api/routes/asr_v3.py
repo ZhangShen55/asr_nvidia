@@ -14,7 +14,7 @@ from core.async_utils import await_completion
 from core.config import settings
 from core.models import ModelUnavailableError, validate_v3_capabilities
 from core.qwen_asr_queue import QueueFullError, QueueTimeoutError, get_slot_manager
-from core.request_telemetry import new_request_id, record_request
+from core.request_telemetry import new_request_id, record_request, begin_request, update_active, end_request
 from core.vad_pool import VadPoolError
 from entity.data import AsrRequestParams, get_asr_params
 from utils.asr_stats import add_processing_task, remove_processing_task, update_fail_task
@@ -41,6 +41,7 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
     slots = get_slot_manager()
     admission = {"category": capabilities.category, "outcome": "not_attempted",
                  "reason": None, "snapshot": slots.snapshot()}
+    begin_request(request_id, request_started)
     try:
         if not settings.qwen_asr_enabled:
             admission.update(outcome="rejected", reason="qwen_disabled")
@@ -75,6 +76,7 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
             return response
 
         try:
+            update_active("decode")
             err, ctx = await prepare_asr_context(request, unique_tmp=True)
             if err:
                 response = err
@@ -94,6 +96,7 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
         finally:
             try:
                 if ctx is not None:
+                    update_active("cleanup")
                     cleanup_started = time.perf_counter()
                     try:
                         cleanup_temp_files(ctx.tmp_paths)
@@ -122,6 +125,7 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
         failed = True
         raise
     finally:
+        end_request(request_id)
         payload = response if isinstance(response, dict) else {}
         phases = get_phase_stats()
         phases["audio_wait_ms"] = audio_wait_ms

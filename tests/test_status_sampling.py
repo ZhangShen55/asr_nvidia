@@ -54,63 +54,6 @@ def assert_business_fields(payload):
     assert payload["resourceDiagnostics"]["backend"]["npu_allocator"]["reason"] == "npu_not_initialized"
 
 
-async def _slow_http_sampling_runs_in_thread_while_loop_heartbeat_and_assembly_progress():
-    loop_thread = threading.get_ident()
-    sampling_started, sampling_finished = threading.Event(), threading.Event()
-    release_sample = threading.Event()
-    heartbeat_during_sampling = asyncio.Event()
-    def sample():
-        assert threading.get_ident() != loop_thread
-        sampling_started.set()
-        time.sleep(.03)
-        assert release_sample.wait(2), "event loop heartbeat could not run during resource sampling"
-        sampling_finished.set()
-        return RESOURCE
-    async def heartbeat():
-        while not sampling_started.is_set():
-            await asyncio.sleep(.001)
-        # This task must run while the resource sampling worker is still busy.
-        if not sampling_finished.is_set():
-            heartbeat_during_sampling.set()
-        release_sample.set()
-    with ExitStack() as stack:
-        patch_assembly(stack, loop_thread)
-        stack.enter_context(patch.object(route, "read_stats", return_value=STATS))
-        sampler = stack.enter_context(patch.object(route, "status_snapshot", side_effect=sample))
-        # Pre-sampled HTTP calls must not invoke the synchronous compatibility path.
-        sync_sampler = stack.enter_context(patch.object(status, "status_snapshot", side_effect=AssertionError("duplicate heavy sampling")))
-        pulse = asyncio.create_task(heartbeat())
-        async with AsyncClient(transport=ASGITransport(app=app()), base_url="http://fixture") as client:
-            response = await client.get("/get_status")
-        await pulse
-    assert response.status_code == 200
-    assert heartbeat_during_sampling.is_set()
-    assert sampling_finished.is_set()
-    sampler.assert_called_once_with()
-    sync_sampler.assert_not_called()
-    payload = response.json()
-    assert_business_fields(payload)
-    assert payload["resourceDiagnostics"]["available"] is True
-    assert payload["resourceDiagnostics"]["timestamp"] == "test-time"
-    assert payload["resourceDiagnostics"]["processes"] == {"backend": {"count": 1, "pids": [123]}}
-    assert RESOURCE["backend"] == {"available": True, "pid": 123}  # no mutation of caller snapshot
-
-
-async def _http_sampling_failure_remains_diagnostic_and_preserves_business_fields():
-    with ExitStack() as stack:
-        patch_assembly(stack, threading.get_ident())
-        stack.enter_context(patch.object(route, "read_stats", return_value=STATS))
-        stack.enter_context(patch.object(route, "status_snapshot", side_effect=RuntimeError("controlled npu-smi failure")))
-        async with AsyncClient(transport=ASGITransport(app=app()), base_url="http://fixture") as client:
-            response = await client.get("/get_status")
-    assert response.status_code == 200
-    payload = response.json()
-    assert_business_fields(payload)
-    assert payload["resourceDiagnostics"]["available"] is False
-    assert "controlled npu-smi failure" in payload["resourceDiagnostics"]["reason"]
-    assert payload["resourceDiagnostics"]["npu"]["available"] is False
-
-
 def test_direct_sync_assembly_keeps_sampler_compatibility_and_accepts_empty_snapshot():
     with ExitStack() as stack:
         patch_assembly(stack, threading.get_ident())
@@ -134,9 +77,17 @@ def test_direct_sync_sampler_failure_is_reported_without_losing_business_fields(
     assert "/proc unavailable" in payload["resourceDiagnostics"]["reason"]
 
 
-def test_slow_http_sampling_runs_in_thread_while_loop_heartbeat_and_assembly_progress():
-    asyncio.run(_slow_http_sampling_runs_in_thread_while_loop_heartbeat_and_assembly_progress())
 
-
-def test_http_sampling_failure_remains_diagnostic_and_preserves_business_fields():
-    asyncio.run(_http_sampling_failure_remains_diagnostic_and_preserves_business_fields())
+def test_http_without_lifespan_returns_honest_unknown_without_starting_sampler():
+    async def scenario():
+        with ExitStack() as stack:
+            patch_assembly(stack, threading.get_ident())
+            stack.enter_context(patch.object(route, "read_stats", return_value=STATS))
+            stack.enter_context(patch.object(status, "status_snapshot", side_effect=AssertionError("GET sampled heavy resources")))
+            async with AsyncClient(transport=ASGITransport(app=app()), base_url="http://fixture") as client:
+                response = await client.get("/get_status")
+        payload = response.json()
+        assert_business_fields(payload)
+        assert payload["resourceDiagnostics"]["available"] is False
+        assert payload["resourceDiagnostics"]["sampling"]["lifecycle"] == "not_initialized"
+    asyncio.run(scenario())

@@ -1,0 +1,1276 @@
+{
+  "scope": "v9 point-in-time component and CPU evidence; not final full-audio acceptance",
+  "component": {
+    "status": "passed",
+    "scope": "fixed fulltime128 component comparison, 1warm+3steady; text agreement only, not transcription accuracy or full-audio acceptance",
+    "inputs": {
+      "manifest_sha256": "f21a6557972f99bf1df40363c48697f4fec019501d1944949fb8ea5b15ece5f9",
+      "member_count": 128,
+      "owners": 8,
+      "per_owner": 16,
+      "same_pcm_wav_samples": true
+    },
+    "checks": [
+      {
+        "name": "same_ordered_selected_ids",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "same_wav_pcm_sample_identity",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "same_manifest_sha",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "same_frozen_sources",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "all_inputs_sample_threshold",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "baseline_CAM_inputs_match_manifest_PCM",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "baseline_emo_eligible_inputs_match",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_observation_lossless",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_round_0",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_round_1",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_round_2",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_round_3",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_outer_cleanup",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_no_source_drift",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_nn_counts_drained",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_qwen_closed",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_qwen_BF16_dev7",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_qwen_actual_parameter_and_artifact_identity",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "thread_emo8_FP32_NPU7_healthy",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_observation_lossless",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_round_0",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_round_1",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_round_2",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_round_3",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_outer_cleanup",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_no_source_drift",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_nn_counts_drained",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_qwen_closed",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_qwen_BF16_dev7",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_qwen_actual_parameter_and_artifact_identity",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_emo8_FP32_NPU7_healthy",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "config_only_CAM_mode_diff",
+        "passed": true,
+        "detail": {
+          "removed": [
+            "speech_campplus_execution_mode = \"thread\""
+          ],
+          "added": [
+            "speech_campplus_execution_mode = \"process\""
+          ]
+        }
+      },
+      {
+        "name": "process_cam_worker_0",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_cam_worker_1",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_cam_worker_2",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_cam_worker_3",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_cam_worker_4",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_cam_worker_5",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_cam_worker_6",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "process_cam_worker_7",
+        "passed": true,
+        "detail": null
+      },
+      {
+        "name": "current_source_matches_frozen",
+        "passed": true,
+        "detail": []
+      },
+      {
+        "name": "live_owned_identity_residual_none",
+        "passed": true,
+        "detail": []
+      },
+      {
+        "name": "process_round_0_eight_actual_CAM_workers",
+        "passed": true
+      },
+      {
+        "name": "process_round_1_eight_actual_CAM_workers",
+        "passed": true
+      },
+      {
+        "name": "process_round_2_eight_actual_CAM_workers",
+        "passed": true
+      },
+      {
+        "name": "process_round_3_eight_actual_CAM_workers",
+        "passed": true
+      }
+    ],
+    "rounds": [
+      {
+        "mode": "thread",
+        "round": 0,
+        "warmup": true,
+        "passed": true,
+        "work_done_elapsed_s": 15.47766382060945,
+        "qwen": {
+          "members": 128,
+          "missing_or_extra_ids": 0,
+          "diff_counts": {
+            "raw": 0,
+            "parsed": 0,
+            "language": 0
+          },
+          "empty_text_count": 10,
+          "actual_batches": [
+            128
+          ],
+          "processor_shapes": {
+            "input_ids": [
+              128,
+              120
+            ],
+            "attention_mask": [
+              128,
+              120
+            ],
+            "input_features": [
+              128,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              128,
+              900
+            ]
+          },
+          "generate_wall_ms": 5623.542059212923
+        },
+        "nn": {
+          "counts": {
+            "speech_campplus": 128,
+            "emotion2vec": 108
+          },
+          "instance_coverage": {
+            "speech_campplus": [
+              "speech_campplus[0]",
+              "speech_campplus[1]",
+              "speech_campplus[2]",
+              "speech_campplus[3]",
+              "speech_campplus[4]",
+              "speech_campplus[5]",
+              "speech_campplus[6]",
+              "speech_campplus[7]"
+            ],
+            "emotion2vec": [
+              "emotion2vec[0]",
+              "emotion2vec[1]",
+              "emotion2vec[2]",
+              "emotion2vec[3]",
+              "emotion2vec[4]",
+              "emotion2vec[5]",
+              "emotion2vec[6]",
+              "emotion2vec[7]"
+            ]
+          },
+          "key_diff_count": 0,
+          "multiplicity_diff_count": 0,
+          "vector_maxabs": 0.0,
+          "nonfinite_or_dimension_errors": 0,
+          "label_diff_count": 0,
+          "actual_CAM_DONE_identity_errors": 0,
+          "dimensions": {
+            "('speech_campplus', 192)": 128,
+            "('emotion2vec', 7)": 108
+          }
+        }
+      },
+      {
+        "mode": "thread",
+        "round": 1,
+        "warmup": false,
+        "passed": true,
+        "work_done_elapsed_s": 10.884754659608006,
+        "qwen": {
+          "members": 128,
+          "missing_or_extra_ids": 0,
+          "diff_counts": {
+            "raw": 0,
+            "parsed": 0,
+            "language": 0
+          },
+          "empty_text_count": 10,
+          "actual_batches": [
+            128
+          ],
+          "processor_shapes": {
+            "input_ids": [
+              128,
+              120
+            ],
+            "attention_mask": [
+              128,
+              120
+            ],
+            "input_features": [
+              128,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              128,
+              900
+            ]
+          },
+          "generate_wall_ms": 3758.3026802167296
+        },
+        "nn": {
+          "counts": {
+            "emotion2vec": 108,
+            "speech_campplus": 128
+          },
+          "instance_coverage": {
+            "emotion2vec": [
+              "emotion2vec[0]",
+              "emotion2vec[1]",
+              "emotion2vec[2]",
+              "emotion2vec[3]",
+              "emotion2vec[4]",
+              "emotion2vec[5]",
+              "emotion2vec[6]",
+              "emotion2vec[7]"
+            ],
+            "speech_campplus": [
+              "speech_campplus[0]",
+              "speech_campplus[1]",
+              "speech_campplus[2]",
+              "speech_campplus[3]",
+              "speech_campplus[4]",
+              "speech_campplus[5]",
+              "speech_campplus[6]",
+              "speech_campplus[7]"
+            ]
+          },
+          "key_diff_count": 0,
+          "multiplicity_diff_count": 0,
+          "vector_maxabs": 0.0,
+          "nonfinite_or_dimension_errors": 0,
+          "label_diff_count": 0,
+          "actual_CAM_DONE_identity_errors": 0,
+          "dimensions": {
+            "('emotion2vec', 7)": 108,
+            "('speech_campplus', 192)": 128
+          }
+        }
+      },
+      {
+        "mode": "thread",
+        "round": 2,
+        "warmup": false,
+        "passed": true,
+        "work_done_elapsed_s": 10.411927449516952,
+        "qwen": {
+          "members": 128,
+          "missing_or_extra_ids": 0,
+          "diff_counts": {
+            "raw": 0,
+            "parsed": 0,
+            "language": 0
+          },
+          "empty_text_count": 10,
+          "actual_batches": [
+            128
+          ],
+          "processor_shapes": {
+            "input_ids": [
+              128,
+              120
+            ],
+            "attention_mask": [
+              128,
+              120
+            ],
+            "input_features": [
+              128,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              128,
+              900
+            ]
+          },
+          "generate_wall_ms": 3831.2572399154305
+        },
+        "nn": {
+          "counts": {
+            "emotion2vec": 108,
+            "speech_campplus": 128
+          },
+          "instance_coverage": {
+            "emotion2vec": [
+              "emotion2vec[0]",
+              "emotion2vec[1]",
+              "emotion2vec[2]",
+              "emotion2vec[3]",
+              "emotion2vec[4]",
+              "emotion2vec[5]",
+              "emotion2vec[6]",
+              "emotion2vec[7]"
+            ],
+            "speech_campplus": [
+              "speech_campplus[0]",
+              "speech_campplus[1]",
+              "speech_campplus[2]",
+              "speech_campplus[3]",
+              "speech_campplus[4]",
+              "speech_campplus[5]",
+              "speech_campplus[6]",
+              "speech_campplus[7]"
+            ]
+          },
+          "key_diff_count": 0,
+          "multiplicity_diff_count": 0,
+          "vector_maxabs": 0.0,
+          "nonfinite_or_dimension_errors": 0,
+          "label_diff_count": 0,
+          "actual_CAM_DONE_identity_errors": 0,
+          "dimensions": {
+            "('emotion2vec', 7)": 108,
+            "('speech_campplus', 192)": 128
+          }
+        }
+      },
+      {
+        "mode": "thread",
+        "round": 3,
+        "warmup": false,
+        "passed": true,
+        "work_done_elapsed_s": 10.00899241026491,
+        "qwen": {
+          "members": 128,
+          "missing_or_extra_ids": 0,
+          "diff_counts": {
+            "raw": 0,
+            "parsed": 0,
+            "language": 0
+          },
+          "empty_text_count": 10,
+          "actual_batches": [
+            128
+          ],
+          "processor_shapes": {
+            "input_ids": [
+              128,
+              120
+            ],
+            "attention_mask": [
+              128,
+              120
+            ],
+            "input_features": [
+              128,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              128,
+              900
+            ]
+          },
+          "generate_wall_ms": 3694.0254801884294
+        },
+        "nn": {
+          "counts": {
+            "emotion2vec": 108,
+            "speech_campplus": 128
+          },
+          "instance_coverage": {
+            "emotion2vec": [
+              "emotion2vec[0]",
+              "emotion2vec[1]",
+              "emotion2vec[2]",
+              "emotion2vec[3]",
+              "emotion2vec[4]",
+              "emotion2vec[5]",
+              "emotion2vec[6]",
+              "emotion2vec[7]"
+            ],
+            "speech_campplus": [
+              "speech_campplus[0]",
+              "speech_campplus[1]",
+              "speech_campplus[2]",
+              "speech_campplus[3]",
+              "speech_campplus[4]",
+              "speech_campplus[5]",
+              "speech_campplus[6]",
+              "speech_campplus[7]"
+            ]
+          },
+          "key_diff_count": 0,
+          "multiplicity_diff_count": 0,
+          "vector_maxabs": 0.0,
+          "nonfinite_or_dimension_errors": 0,
+          "label_diff_count": 0,
+          "actual_CAM_DONE_identity_errors": 0,
+          "dimensions": {
+            "('emotion2vec', 7)": 108,
+            "('speech_campplus', 192)": 128
+          }
+        }
+      },
+      {
+        "mode": "process",
+        "round": 0,
+        "warmup": true,
+        "passed": true,
+        "work_done_elapsed_s": 15.215090809389949,
+        "qwen": {
+          "members": 128,
+          "missing_or_extra_ids": 0,
+          "diff_counts": {
+            "raw": 0,
+            "parsed": 0,
+            "language": 0
+          },
+          "empty_text_count": 10,
+          "actual_batches": [
+            128
+          ],
+          "processor_shapes": {
+            "input_ids": [
+              128,
+              120
+            ],
+            "attention_mask": [
+              128,
+              120
+            ],
+            "input_features": [
+              128,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              128,
+              900
+            ]
+          },
+          "generate_wall_ms": 5676.767659373581
+        },
+        "nn": {
+          "counts": {
+            "emotion2vec": 108,
+            "speech_campplus": 128
+          },
+          "instance_coverage": {
+            "emotion2vec": [
+              "emotion2vec[0]",
+              "emotion2vec[1]",
+              "emotion2vec[2]",
+              "emotion2vec[3]",
+              "emotion2vec[4]",
+              "emotion2vec[5]",
+              "emotion2vec[6]",
+              "emotion2vec[7]"
+            ],
+            "speech_campplus": [
+              "speech_campplus[0]",
+              "speech_campplus[1]",
+              "speech_campplus[2]",
+              "speech_campplus[3]",
+              "speech_campplus[4]",
+              "speech_campplus[5]",
+              "speech_campplus[6]",
+              "speech_campplus[7]"
+            ]
+          },
+          "key_diff_count": 0,
+          "multiplicity_diff_count": 0,
+          "vector_maxabs": 0.0,
+          "nonfinite_or_dimension_errors": 0,
+          "label_diff_count": 0,
+          "actual_CAM_DONE_identity_errors": 0,
+          "dimensions": {
+            "('emotion2vec', 7)": 108,
+            "('speech_campplus', 192)": 128
+          },
+          "actual_CAM_worker_identity_count": 8,
+          "model_instance_to_worker_identity_mismatches": 0
+        }
+      },
+      {
+        "mode": "process",
+        "round": 1,
+        "warmup": false,
+        "passed": true,
+        "work_done_elapsed_s": 11.865873510017991,
+        "qwen": {
+          "members": 128,
+          "missing_or_extra_ids": 0,
+          "diff_counts": {
+            "raw": 0,
+            "parsed": 0,
+            "language": 0
+          },
+          "empty_text_count": 10,
+          "actual_batches": [
+            128
+          ],
+          "processor_shapes": {
+            "input_ids": [
+              128,
+              120
+            ],
+            "attention_mask": [
+              128,
+              120
+            ],
+            "input_features": [
+              128,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              128,
+              900
+            ]
+          },
+          "generate_wall_ms": 3643.126609735191
+        },
+        "nn": {
+          "counts": {
+            "speech_campplus": 128,
+            "emotion2vec": 108
+          },
+          "instance_coverage": {
+            "speech_campplus": [
+              "speech_campplus[0]",
+              "speech_campplus[1]",
+              "speech_campplus[2]",
+              "speech_campplus[3]",
+              "speech_campplus[4]",
+              "speech_campplus[5]",
+              "speech_campplus[6]",
+              "speech_campplus[7]"
+            ],
+            "emotion2vec": [
+              "emotion2vec[0]",
+              "emotion2vec[1]",
+              "emotion2vec[2]",
+              "emotion2vec[3]",
+              "emotion2vec[4]",
+              "emotion2vec[5]",
+              "emotion2vec[6]",
+              "emotion2vec[7]"
+            ]
+          },
+          "key_diff_count": 0,
+          "multiplicity_diff_count": 0,
+          "vector_maxabs": 0.0,
+          "nonfinite_or_dimension_errors": 0,
+          "label_diff_count": 0,
+          "actual_CAM_DONE_identity_errors": 0,
+          "dimensions": {
+            "('speech_campplus', 192)": 128,
+            "('emotion2vec', 7)": 108
+          },
+          "actual_CAM_worker_identity_count": 8,
+          "model_instance_to_worker_identity_mismatches": 0
+        }
+      },
+      {
+        "mode": "process",
+        "round": 2,
+        "warmup": false,
+        "passed": true,
+        "work_done_elapsed_s": 11.660812030546367,
+        "qwen": {
+          "members": 128,
+          "missing_or_extra_ids": 0,
+          "diff_counts": {
+            "raw": 0,
+            "parsed": 0,
+            "language": 0
+          },
+          "empty_text_count": 10,
+          "actual_batches": [
+            128
+          ],
+          "processor_shapes": {
+            "input_ids": [
+              128,
+              120
+            ],
+            "attention_mask": [
+              128,
+              120
+            ],
+            "input_features": [
+              128,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              128,
+              900
+            ]
+          },
+          "generate_wall_ms": 3580.817219801247
+        },
+        "nn": {
+          "counts": {
+            "speech_campplus": 128,
+            "emotion2vec": 108
+          },
+          "instance_coverage": {
+            "speech_campplus": [
+              "speech_campplus[0]",
+              "speech_campplus[1]",
+              "speech_campplus[2]",
+              "speech_campplus[3]",
+              "speech_campplus[4]",
+              "speech_campplus[5]",
+              "speech_campplus[6]",
+              "speech_campplus[7]"
+            ],
+            "emotion2vec": [
+              "emotion2vec[0]",
+              "emotion2vec[1]",
+              "emotion2vec[2]",
+              "emotion2vec[3]",
+              "emotion2vec[4]",
+              "emotion2vec[5]",
+              "emotion2vec[6]",
+              "emotion2vec[7]"
+            ]
+          },
+          "key_diff_count": 0,
+          "multiplicity_diff_count": 0,
+          "vector_maxabs": 0.0,
+          "nonfinite_or_dimension_errors": 0,
+          "label_diff_count": 0,
+          "actual_CAM_DONE_identity_errors": 0,
+          "dimensions": {
+            "('speech_campplus', 192)": 128,
+            "('emotion2vec', 7)": 108
+          },
+          "actual_CAM_worker_identity_count": 8,
+          "model_instance_to_worker_identity_mismatches": 0
+        }
+      },
+      {
+        "mode": "process",
+        "round": 3,
+        "warmup": false,
+        "passed": true,
+        "work_done_elapsed_s": 12.050195209681988,
+        "qwen": {
+          "members": 128,
+          "missing_or_extra_ids": 0,
+          "diff_counts": {
+            "raw": 0,
+            "parsed": 0,
+            "language": 0
+          },
+          "empty_text_count": 10,
+          "actual_batches": [
+            128
+          ],
+          "processor_shapes": {
+            "input_ids": [
+              128,
+              120
+            ],
+            "attention_mask": [
+              128,
+              120
+            ],
+            "input_features": [
+              128,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              128,
+              900
+            ]
+          },
+          "generate_wall_ms": 3718.2067995890975
+        },
+        "nn": {
+          "counts": {
+            "speech_campplus": 128,
+            "emotion2vec": 108
+          },
+          "instance_coverage": {
+            "speech_campplus": [
+              "speech_campplus[0]",
+              "speech_campplus[1]",
+              "speech_campplus[2]",
+              "speech_campplus[3]",
+              "speech_campplus[4]",
+              "speech_campplus[5]",
+              "speech_campplus[6]",
+              "speech_campplus[7]"
+            ],
+            "emotion2vec": [
+              "emotion2vec[0]",
+              "emotion2vec[1]",
+              "emotion2vec[2]",
+              "emotion2vec[3]",
+              "emotion2vec[4]",
+              "emotion2vec[5]",
+              "emotion2vec[6]",
+              "emotion2vec[7]"
+            ]
+          },
+          "key_diff_count": 0,
+          "multiplicity_diff_count": 0,
+          "vector_maxabs": 0.0,
+          "nonfinite_or_dimension_errors": 0,
+          "label_diff_count": 0,
+          "actual_CAM_DONE_identity_errors": 0,
+          "dimensions": {
+            "('speech_campplus', 192)": 128,
+            "('emotion2vec', 7)": 108
+          },
+          "actual_CAM_worker_identity_count": 8,
+          "model_instance_to_worker_identity_mismatches": 0
+        }
+      }
+    ],
+    "cam_workers": [
+      {
+        "index": 0,
+        "identity": {
+          "pid": 2191927,
+          "start_ticks": "710780179",
+          "create_time": 1795020127.79,
+          "sid": 2157732
+        },
+        "device": "npu:7",
+        "precision": "fp32",
+        "entry": {
+          "module": "core.cam_process",
+          "qualname": "_worker",
+          "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+          "module_sha256": "0e6893b287f02633ad5f6d33ab509d8c03100d3127c33049563dbe9fbc0c93cb"
+        },
+        "factory": {
+          "module": "core.local_inference",
+          "qualname": "TorchNpuRunner",
+          "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+          "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+        },
+        "normal_exit_ok": true,
+        "exitcode": 0,
+        "passed": true
+      },
+      {
+        "index": 1,
+        "identity": {
+          "pid": 2314566,
+          "start_ticks": "710781769",
+          "create_time": 1795020143.69,
+          "sid": 2157732
+        },
+        "device": "npu:7",
+        "precision": "fp32",
+        "entry": {
+          "module": "core.cam_process",
+          "qualname": "_worker",
+          "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+          "module_sha256": "0e6893b287f02633ad5f6d33ab509d8c03100d3127c33049563dbe9fbc0c93cb"
+        },
+        "factory": {
+          "module": "core.local_inference",
+          "qualname": "TorchNpuRunner",
+          "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+          "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+        },
+        "normal_exit_ok": true,
+        "exitcode": 0,
+        "passed": true
+      },
+      {
+        "index": 2,
+        "identity": {
+          "pid": 2402520,
+          "start_ticks": "710783377",
+          "create_time": 1795020159.77,
+          "sid": 2157732
+        },
+        "device": "npu:7",
+        "precision": "fp32",
+        "entry": {
+          "module": "core.cam_process",
+          "qualname": "_worker",
+          "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+          "module_sha256": "0e6893b287f02633ad5f6d33ab509d8c03100d3127c33049563dbe9fbc0c93cb"
+        },
+        "factory": {
+          "module": "core.local_inference",
+          "qualname": "TorchNpuRunner",
+          "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+          "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+        },
+        "normal_exit_ok": true,
+        "exitcode": 0,
+        "passed": true
+      },
+      {
+        "index": 3,
+        "identity": {
+          "pid": 2502993,
+          "start_ticks": "710784977",
+          "create_time": 1795020175.77,
+          "sid": 2157732
+        },
+        "device": "npu:7",
+        "precision": "fp32",
+        "entry": {
+          "module": "core.cam_process",
+          "qualname": "_worker",
+          "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+          "module_sha256": "0e6893b287f02633ad5f6d33ab509d8c03100d3127c33049563dbe9fbc0c93cb"
+        },
+        "factory": {
+          "module": "core.local_inference",
+          "qualname": "TorchNpuRunner",
+          "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+          "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+        },
+        "normal_exit_ok": true,
+        "exitcode": 0,
+        "passed": true
+      },
+      {
+        "index": 4,
+        "identity": {
+          "pid": 2617649,
+          "start_ticks": "710786573",
+          "create_time": 1795020191.73,
+          "sid": 2157732
+        },
+        "device": "npu:7",
+        "precision": "fp32",
+        "entry": {
+          "module": "core.cam_process",
+          "qualname": "_worker",
+          "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+          "module_sha256": "0e6893b287f02633ad5f6d33ab509d8c03100d3127c33049563dbe9fbc0c93cb"
+        },
+        "factory": {
+          "module": "core.local_inference",
+          "qualname": "TorchNpuRunner",
+          "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+          "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+        },
+        "normal_exit_ok": true,
+        "exitcode": 0,
+        "passed": true
+      },
+      {
+        "index": 5,
+        "identity": {
+          "pid": 2767593,
+          "start_ticks": "710788173",
+          "create_time": 1795020207.73,
+          "sid": 2157732
+        },
+        "device": "npu:7",
+        "precision": "fp32",
+        "entry": {
+          "module": "core.cam_process",
+          "qualname": "_worker",
+          "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+          "module_sha256": "0e6893b287f02633ad5f6d33ab509d8c03100d3127c33049563dbe9fbc0c93cb"
+        },
+        "factory": {
+          "module": "core.local_inference",
+          "qualname": "TorchNpuRunner",
+          "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+          "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+        },
+        "normal_exit_ok": true,
+        "exitcode": 0,
+        "passed": true
+      },
+      {
+        "index": 6,
+        "identity": {
+          "pid": 2908471,
+          "start_ticks": "710789760",
+          "create_time": 1795020223.6,
+          "sid": 2157732
+        },
+        "device": "npu:7",
+        "precision": "fp32",
+        "entry": {
+          "module": "core.cam_process",
+          "qualname": "_worker",
+          "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+          "module_sha256": "0e6893b287f02633ad5f6d33ab509d8c03100d3127c33049563dbe9fbc0c93cb"
+        },
+        "factory": {
+          "module": "core.local_inference",
+          "qualname": "TorchNpuRunner",
+          "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+          "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+        },
+        "normal_exit_ok": true,
+        "exitcode": 0,
+        "passed": true
+      },
+      {
+        "index": 7,
+        "identity": {
+          "pid": 3016888,
+          "start_ticks": "710791354",
+          "create_time": 1795020239.54,
+          "sid": 2157732
+        },
+        "device": "npu:7",
+        "precision": "fp32",
+        "entry": {
+          "module": "core.cam_process",
+          "qualname": "_worker",
+          "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+          "module_sha256": "0e6893b287f02633ad5f6d33ab509d8c03100d3127c33049563dbe9fbc0c93cb"
+        },
+        "factory": {
+          "module": "core.local_inference",
+          "qualname": "TorchNpuRunner",
+          "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+          "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+        },
+        "normal_exit_ok": true,
+        "exitcode": 0,
+        "passed": true
+      }
+    ],
+    "parent_event_gaps": {
+      "thread-0": {
+        "event_names": [
+          "CPU_capture_completed",
+          "call_finished_after_original_sync",
+          "call_started"
+        ],
+        "gap_count": 120,
+        "gap_median_s": 0.003280294593423605,
+        "gap_max_s": 0.028285599313676357,
+        "call_envelope_median_s": 0.4864352196455002
+      },
+      "thread-1": {
+        "event_names": [
+          "CPU_capture_completed",
+          "call_finished_after_original_sync",
+          "call_started"
+        ],
+        "gap_count": 120,
+        "gap_median_s": 0.0031528593972325325,
+        "gap_max_s": 0.13197501935064793,
+        "call_envelope_median_s": 0.48885953007265925
+      },
+      "thread-2": {
+        "event_names": [
+          "CPU_capture_completed",
+          "call_finished_after_original_sync",
+          "call_started"
+        ],
+        "gap_count": 120,
+        "gap_median_s": 0.003239789977669716,
+        "gap_max_s": 0.0320674292743206,
+        "call_envelope_median_s": 0.495911514852196
+      },
+      "thread-3": {
+        "event_names": [
+          "CPU_capture_completed",
+          "call_finished_after_original_sync",
+          "call_started"
+        ],
+        "gap_count": 120,
+        "gap_median_s": 0.003353489562869072,
+        "gap_max_s": 0.07917884085327387,
+        "call_envelope_median_s": 0.4786843699403107
+      },
+      "process-0": {
+        "event_names": [
+          "CPU_capture_completed",
+          "call_finished_after_original_sync",
+          "call_started"
+        ],
+        "gap_count": 120,
+        "gap_median_s": 0.43698741495609283,
+        "gap_max_s": 0.5888523999601603,
+        "call_envelope_median_s": 0.07195378001779318
+      },
+      "process-1": {
+        "event_names": [
+          "CPU_capture_completed",
+          "call_finished_after_original_sync",
+          "call_started"
+        ],
+        "gap_count": 120,
+        "gap_median_s": 0.49099795520305634,
+        "gap_max_s": 0.5528470203280449,
+        "call_envelope_median_s": 0.07021673489362001
+      },
+      "process-2": {
+        "event_names": [
+          "CPU_capture_completed",
+          "call_finished_after_original_sync",
+          "call_started"
+        ],
+        "gap_count": 120,
+        "gap_median_s": 0.4816238898783922,
+        "gap_max_s": 0.5585864596068859,
+        "call_envelope_median_s": 0.06890978012233973
+      },
+      "process-3": {
+        "event_names": [
+          "CPU_capture_completed",
+          "call_finished_after_original_sync",
+          "call_started"
+        ],
+        "gap_count": 120,
+        "gap_median_s": 0.4977919803932309,
+        "gap_max_s": 0.6265870202332735,
+        "call_envelope_median_s": 0.07047116523608565
+      }
+    },
+    "steady_median_s": {
+      "thread": 10.411927449516952,
+      "process": 11.865873510017991
+    },
+    "memory_scope": "Child allocator is worker scoped; no sum of asynchronous parent/child peaks; peaks not independently recomputed here.",
+    "limitations": [
+      "No ground truth; exact agreement does not establish accuracy.",
+      "Component128 is not full1/2/4/8-audio performance acceptance.",
+      "Handoff timing is CPU envelope correlation, not kernel timing."
+    ],
+    "audit_completed_unix": 1795021240.644,
+    "source_current_check_scope": "Point-in-time source check before authorized hot-status merge; formal per-job frozen sources remain attached in original summaries. Later authorized candidate edits are outside this audit."
+  },
+  "full_CPU_r4": {
+    "status": "passed",
+    "returncode": 0,
+    "elapsed_s": 210.49545738007873,
+    "source_changed": [],
+    "config_changed": false,
+    "initial_remaining_owned": [],
+    "post_exit_observe_s": 1.2693926692008972e-06,
+    "remaining_owned": [],
+    "config_path": "/tmp/asr-throughput-20261118-xvior99k/final-cam-process-v9-b4.toml",
+    "excluded_hardware_node": "test_status_snapshot_marks_health_as_skipped",
+    "guard_blocked_backend_import_attempts": [
+      "BLOCK_IMPORT torch_npu"
+    ],
+    "guard_scope": "real torch_npu module execution is refused by Loader; optional backend discovery may attempt it; CPU FunASR classes and owned loopback are allowed"
+  },
+  "CPU_hotstatus_before": {
+    "workload": "CPU fake8 runners/128 tasks; real CamProcessRunner.snapshot on current process PID with actual formal ready-cache schema; fake inference sleep1ms; no model/NPU/child start",
+    "tasks": 128,
+    "snapshots": 6272,
+    "snapshot_calls_by_path": {
+      "<dictcomp>": 6144,
+      "_validate_process_candidate": 128
+    },
+    "snapshot_ms_by_path": {
+      "<dictcomp>": 8371.671608649194,
+      "_validate_process_candidate": 180.18035404384136
+    },
+    "elapsed_s": 8.884148039855063,
+    "process_cpu_s": 8.849015239999998,
+    "pool_calls": 128,
+    "handoff_count": 120,
+    "handoff_total_ms": 14117.304920218885,
+    "last_handoff_ms": 12.88704015314579,
+    "source_sha256": {
+      "core/models.py": "1c888cab255528ee9a7be0a11f69de0f13a57b8061bfb748ac29de1071d0526f",
+      "core/cam_process.py": "0e6893b287f02633ad5f6d33ab509d8c03100d3127c33049563dbe9fbc0c93cb"
+    }
+  },
+  "CPU_hotstatus_after": {
+    "workload": "CPU fake8 runners/128 tasks; real CamProcessRunner.snapshot on current process PID with actual formal ready-cache schema; fake inference sleep1ms; no model/NPU/child start",
+    "tasks": 128,
+    "snapshots": 128,
+    "snapshot_calls_by_path": {
+      "_validate_process_candidate": 128
+    },
+    "snapshot_ms_by_path": {
+      "_validate_process_candidate": 75.64102672040462
+    },
+    "elapsed_s": 0.16454006917774677,
+    "process_cpu_s": 0.16413084000000033,
+    "pool_calls": 128,
+    "handoff_count": 120,
+    "handoff_total_ms": 309.05547365546227,
+    "handoff_median_ms": 2.2544399835169315,
+    "handoff_max_ms": 6.371479481458664,
+    "handoff_mean_ms": 2.5754622804621854,
+    "handoff_scope": "release->grant per-instance, overlaps across instances; never sum as wall",
+    "source_sha256": {
+      "core/models.py": "796dc63a0740d2d498350b468c1990cbe28b54495e66f04010c6dc4dece3de25",
+      "core/cam_process.py": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+    }
+  },
+  "postclose_device": {
+    "observed_utc_s": 1795020772.6469698,
+    "shared_pid": 1601397,
+    "create_time": 1791963491.5,
+    "cwd": "/app",
+    "npu7_proc_mem": "\tNPU ID                         : 7\n\tChip Count                     : 1\n\n\tProcess id:1601397 Process name:uvicorn           Process memory(MB):11875\n\tChip ID                        : 0\n\n",
+    "expected_only_shared": true
+  },
+  "raw_paths": [
+    "/tmp/asr-throughput-20261118-xvior99k/formal-cam128-v9-independent-audit.json",
+    "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-cam-v9-r4/result.json"
+  ],
+  "original_audit_sha256": "26b5de60edfc82308ef703647e9a6c2de03bc7714e70d5b06646298149946dfd",
+  "limits": [
+    "CPU replay is not an NPU gain measurement",
+    "source hotstatus fix needs fresh NPU pairing",
+    "No full N8 audio matrix completed"
+  ]
+}

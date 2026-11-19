@@ -40,6 +40,13 @@ class Settings:
     def is_npu_profile(self) -> bool:
         return self.deployment_profile == "npu-910b"
 
+    @property
+    def resource_sample_interval_s(self) -> float:
+        value = self._cfg.get("status", {}).get("resource_sample_interval_s", 1.0)
+        if type(value) not in (int, float) or not math.isfinite(value) or not .1 <= value <= 60:
+            raise ValueError("status.resource_sample_interval_s必须为0.1～60秒有限数")
+        return float(value)
+
     # 日志配置
     @property
     def log_path(self) -> str:
@@ -167,6 +174,21 @@ class Settings:
         return value
 
     @property
+    def qwen_execution_mode(self) -> str:
+        value = self._cfg.get("qwen_asr", {}).get("execution_mode", "thread")
+        if not isinstance(value, str) or value not in {"thread", "process"}:
+            raise ValueError("[qwen_asr].execution_mode 必须是 thread 或 process")
+        return value
+
+    @property
+    def qwen_process_shutdown_grace_s(self) -> float:
+        # 只约束显式关闭后的宽限期，不改变单次推理timeout及取消的收尾语义。
+        value = self._cfg.get("qwen_asr", {}).get("process_shutdown_grace_s", 30)
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not 0 < value <= 300:
+            raise ValueError("[qwen_asr].process_shutdown_grace_s 必须是0~300秒内正有限数")
+        return float(value)
+
+    @property
     def qwen_local_model_dir(self) -> str:
         value = self._cfg.get("qwen_asr", {}).get("local_model_dir", "/home/model/Qwen3-ASR-1.7B-hf")
         if not isinstance(value, str) or not value.strip():
@@ -193,15 +215,55 @@ class Settings:
     def qwen_max_new_tokens(self) -> int:
         return self._qwen_positive_int("max_new_tokens", 256)
 
+    def _qwen_bounded_int(self, key: str, default: int, lower: int, upper: int) -> int:
+        value = self._cfg.get("qwen_asr", {}).get(key, default)
+        if type(value) is not int or not lower <= value <= upper:
+            raise ValueError(f"[qwen_asr].{key} 必须是 {lower}~{upper} 范围内的整数")
+        return value
+
+    @property
+    def qwen_max_inference_batch_size(self) -> int:
+        # 缺省先保留兼容单批；128由独立验证profile请求，交付值以实机结果定案。
+        return self._qwen_bounded_int("max_inference_batch_size", 1, 1, 128)
+
+    @property
+    def qwen_batch_wait_timeout_ms(self) -> int:
+        return self._qwen_bounded_int("batch_wait_timeout_ms", 10, 0, 1000)
+
+    @property
+    def qwen_batch_max_duration_ratio(self) -> float:
+        value = self._cfg.get("qwen_asr", {}).get("batch_max_duration_ratio", 4.0)
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not 1 <= value <= 64:
+            raise ValueError("[qwen_asr].batch_max_duration_ratio 必须是1~64范围内有限数")
+        return float(value)
+
+    @property
+    def qwen_max_batch_audio_frames(self) -> int:
+        """padding后100Hz音频特征帧预算，单位为批成员数乘最长帧数。"""
+        return self._qwen_bounded_int("max_batch_audio_frames", 102400, 1, 10000000)
+
+    @property
+    def qwen_max_batch_tokens(self) -> int:
+        """保守估计批token预算；实际processor输入形状另行观测。"""
+        return self._qwen_bounded_int("max_batch_tokens", 78336, 1, 10000000)
+
+    @property
+    def qwen_pending_segment_limit(self) -> int:
+        return self._qwen_bounded_int("pending_segment_limit", 256, 1, 4096)
+
+    @property
+    def qwen_pending_audio_bytes_limit(self) -> int:
+        return self._qwen_bounded_int("pending_audio_bytes_limit", 268435456, 1048576, 4294967296)
+
     @property
     def qwen_segment_concurrency(self) -> int:
-        """单音频在途段数；完整课堂对照选择1，模型仍为单实例。"""
-        return max(1, int(self._cfg.get("qwen_asr", {}).get("segment_concurrency", 1)))
+        """单音频Qwen逻辑在途窗口；不包含已完成Qwen的增强等待。"""
+        return self._qwen_bounded_int("segment_concurrency", 1, 1, 128)
 
     @property
     def qwen_request_concurrency(self) -> int:
         """全局在途本地转写数；与模型实例执行容量分别计数。"""
-        return max(1, int(self._cfg.get("qwen_asr", {}).get("request_concurrency", 1)))
+        return self._qwen_bounded_int("request_concurrency", 1, 1, 4096)
 
     @property
     def qwen_audio_concurrency(self) -> int:
@@ -466,17 +528,29 @@ class Settings:
     def validate_model_backends(self) -> None:
         """只校验配置，硬件及文件检查由启动预检处理，懒加载不会被触发。"""
         _ = self.deployment_profile
+        _ = self.resource_sample_interval_s
         _ = self.vad_device
         for name in ("speech_campplus", "emotion2vec"):
             self._model_pool_devices(name)
+            self._model_pool_queue_value(name, "prefetch_queue_depth", 0, 0, 64)
+            self._model_pool_queue_value(name, "batch_size", 1, 1, 1)
+        _ = (self.model_device_speech_campplus_execution_mode,
+             self.model_device_speech_campplus_process_startup_timeout_s,
+             self.model_device_speech_campplus_process_shutdown_grace_s)
         pool = self._cfg.get("model_device_pool", {})
         obsolete = [key for key in pool if key.endswith(("_use_tensorrt", "_tensorrt_precision"))]
         if obsolete and not getattr(self, "_trt_warning_emitted", False):
             logger.warning("[配置迁移] 已忽略废弃 TensorRT 参数: %s", ", ".join(sorted(obsolete)))
             self._trt_warning_emitted = True
         if self.qwen_asr_enabled:
-            _ = (self.qwen_local_model_dir, self.qwen_local_device, self.qwen_local_dtype,
-                 self.qwen_local_instance_count, self.qwen_max_new_tokens)
+            _ = (self.qwen_execution_mode, self.qwen_process_shutdown_grace_s,
+                 self.qwen_local_model_dir, self.qwen_local_device, self.qwen_local_dtype,
+                 self.qwen_local_instance_count, self.qwen_max_new_tokens,
+                 self.qwen_segment_concurrency, self.qwen_request_concurrency,
+                 self.qwen_max_inference_batch_size, self.qwen_batch_wait_timeout_ms,
+                 self.qwen_batch_max_duration_ratio,
+                 self.qwen_max_batch_audio_frames, self.qwen_max_batch_tokens,
+                 self.qwen_pending_segment_limit, self.qwen_pending_audio_bytes_limit)
         legacy = self._cfg.get("qwen_asr", {})
         if any(legacy.get(k) for k in ("base_url", "connect_timeout_s")) and not getattr(self, "_qwen_http_warning", False):
             logger.warning("[配置迁移] 本地 Qwen 不再使用 base_url/connect_timeout_s")
@@ -499,6 +573,32 @@ class Settings:
     def model_device_speech_campplus_devices(self) -> list[str]:
         """CAM++ 模型池实例设备；数组长度即实例数。"""
         return self._model_pool_devices("speech_campplus")
+
+    @property
+    def model_device_speech_campplus_execution_mode(self) -> str:
+        value = self._cfg.get("model_device_pool", {}).get("speech_campplus_execution_mode", "thread")
+        if not isinstance(value, str) or value not in {"thread", "process"}:
+            raise ValueError("[model_device_pool].speech_campplus_execution_mode 必须是 thread 或 process")
+        if value == "process" and any(
+            not device.startswith("npu:") for device in self.model_device_speech_campplus_devices
+        ):
+            raise ValueError("[model_device_pool].speech_campplus_execution_mode=process 仅支持 NPU 设备数组")
+        return value
+
+    def _campplus_process_seconds(self, key: str, default: float) -> float:
+        value = self._cfg.get("model_device_pool", {}).get(key, default)
+        if type(value) not in (int, float) or not math.isfinite(value) or not 0 < value <= 300:
+            raise ValueError(f"[model_device_pool].{key} 必须是0~300秒内正有限数")
+        return float(value)
+
+    @property
+    def model_device_speech_campplus_process_startup_timeout_s(self) -> float:
+        return self._campplus_process_seconds("speech_campplus_process_startup_timeout_s", 60)
+
+    @property
+    def model_device_speech_campplus_process_shutdown_grace_s(self) -> float:
+        # 只用于显式关闭；请求取消仍等待已开始的真实模型工作完成。
+        return self._campplus_process_seconds("speech_campplus_process_shutdown_grace_s", 30)
 
     @property
     def local_model_pool_emotion2vec_devices(self) -> list[str]:
@@ -526,6 +626,29 @@ class Settings:
     @property
     def model_pool_emotion2vec_instances(self) -> int:
         return self.local_model_pool_emotion2vec_instances
+
+    def _model_pool_queue_value(self, name, key, default, lower, upper):
+        field = f"{name}_{key}"
+        value = self._cfg.get("model_device_pool", {}).get(field, default)
+        if type(value) is not int or not lower <= value <= upper:
+            raise ValueError(f"[model_device_pool].{field} 必须是 {lower}~{upper} 范围内的整数")
+        return value
+
+    @property
+    def speech_campplus_prefetch_queue_depth(self) -> int:
+        return self._model_pool_queue_value("speech_campplus", "prefetch_queue_depth", 0, 0, 64)
+
+    @property
+    def emotion2vec_prefetch_queue_depth(self) -> int:
+        return self._model_pool_queue_value("emotion2vec", "prefetch_queue_depth", 0, 0, 64)
+
+    @property
+    def speech_campplus_batch_size(self) -> int:
+        return self._model_pool_queue_value("speech_campplus", "batch_size", 1, 1, 1)
+
+    @property
+    def emotion2vec_batch_size(self) -> int:
+        return self._model_pool_queue_value("emotion2vec", "batch_size", 1, 1, 1)
 
     def _model_pool_devices(self, name: str) -> list[str]:
         pool = self._cfg.get("model_device_pool", {})

@@ -23,6 +23,7 @@ with patch.object(hf_utils, "is_torch_npu_available", return_value=False), \
 
 from core.local_inference import load_native_network, TorchRunner, validate_fp32_network
 from core.model_loading import model_loading_guard
+from core.config import settings
 from core.models import ModelPool
 
 
@@ -139,7 +140,10 @@ class NativeLoadingDtypeTests(unittest.TestCase):
         def load():
             attempting.set()
             return pool._build_instance("cpu")
-        with patch("core.models.AutoModel", side_effect=factory):
+        # 这里只测真实CPU工厂与HF dtype锁，明确选择原thread构造路径。
+        thread_pool = dict(settings._cfg.get("model_device_pool", {}), speech_campplus_execution_mode="thread")
+        with patch.dict(settings._cfg, {"model_device_pool": thread_pool}), \
+                patch("core.models.AutoModel", side_effect=factory):
             with held_hf_bf16_window() as release, ThreadPoolExecutor(max_workers=1) as executor:
                 pending = executor.submit(load)
                 self.assertTrue(attempting.wait(2))

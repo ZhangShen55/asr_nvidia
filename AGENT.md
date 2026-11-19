@@ -30,8 +30,8 @@
 **SeaCraftASR**：面向课堂录音的离线语音转写服务（FastAPI）。
 
 - 当前**只有 v3 一条链路**：`POST /v3/seacraft_asr`。v1.1.8（SeACo-Paraformer + PUNC + Whisper）和 v2 路由已下线，代码与模型均已清理，不要"顺手恢复"。
-- FSMN-VAD 是固定 spawn 进程池；CAM++ / emotion2vec 是主进程内的懒加载模型池。
-- **Qwen3-ASR 是本地懒加载原始权重**，BF16 / npu:7，单实例串行执行；正式后端选择以实测报告为准。
+- FSMN-VAD是固定spawn进程池；CAM++懒加载池可选thread/process（安全默认thread），emotion2vec保持主进程runner。
+- **Qwen3-ASR是本地懒加载原始权重**，BF16 / npu:7；支持独立段物理批执行，单实例同一时刻只持有一个物理执行。当前安全缺省仍batch1、段/全局1/1，候选16/128尚在本轮标定。
 - 对外只有三个接口：`POST /v3/seacraft_asr`、`GET /get_status`、`DELETE /clear_tasks_list`。
 
 ### 业务目标（容易理解错，先看这段）
@@ -67,16 +67,17 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
       ② vad_snr_thres                      段级 SNR
       ③ vad_low_volume_rms_dbfs_thres      段级 RMS dBFS
   ↓
-每段 1 个 Qwen 本地任务（内存 WAV 字节，segment_concurrency 控制单音频内并发）
-  ├─ 并行：CAM++ 声纹 → 全音频层次聚类（阈值 speaker_similarity_threshold）→ teacher / studentN
-  └─ 并行：emotion2vec 情绪（1~10s 之外记"平淡"）
+每段1个Qwen逻辑任务（内存WAV，单音频/全局窗口独立计数，多个独立段可组成物理批）
+  ├─ 独立队列：CAM++声纹（从0.3秒实际推理）→ 全音频聚类；仅showRoleIdentify需要时作教师/学生判定
+  └─ 独立队列：emotion2vec情绪（1～10s闭区间外记"平淡"）
+Qwen完成即还自身名额，增强队列/汇合受段数和PCM字节预算反压；按原段汇合后继续后处理
   ↓
 复读修复 → ITN → 标点卫生（纯标点段删除、去段首标点）→ 语速 / 语种占比
 ```
 
 **核心不变量**（改代码时最容易踩坏的地方）：
 
-1. **1 个 VAD 段 = 1 个 Qwen 请求 = 1 个响应分段**。绝不合并相邻段，`bg` / `ed` 直接取 VAD 边界。
+1. **一个有效VAD段对应一个独立Qwen逻辑任务及至多一个有效响应分段**。允许物理批执行，不合并相邻段、不拼PCM；`bg`/`ed`取原VAD边界，既有空文本/标点过滤仍可能删除响应段。
 2. **分段音频在内存流转**，不新增段级临时 WAV；整段上传沿用服务专属缓存供VAD worker读取，请求finally清理。
 3. **VAD 池是静态的**：启动时一次性预热，任务 FIFO 分派，运行期不扩缩容。数组长度就是并发上限。
 4. **NPU 加载失败禁止静默走 CPU**；预检/加载错误必须按阶段暴露。
@@ -99,7 +100,7 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 | 文件                              | 职责                                  |
 | ------------------------------- | ----------------------------------- |
 | `api/routes/asr_v3.py`          | `/v3/seacraft_asr` 路由与参数校验          |
-| `api/routes/asr_qwen_common.py` | **v3 主链路**（807 行）：VAD → 并发转写 → 响应封装 |
+| `api/routes/asr_qwen_common.py` | v3主链路：VAD → 有界独立分支 → 原段汇合及响应 |
 | `api/routes/asr_common.py`      | 请求上下文构建、情绪标签映射、临时文件清理               |
 | `api/routes/status.py`          | `/get_status` 路由                    |
 | `entity/data.py`                | `AsrRequestParams` 请求数据类            |
@@ -109,11 +110,16 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 | 文件                             | 职责                                                             |
 | ------------------------------ | -------------------------------------------------------------- |
 | `core/vad.py`                  | VAD 切分配置组装                                                     |
-| `core/vad_pool.py`             | 固定设备数组的 FSMN-VAD 进程池（564 行）                                    |
+| `core/vad_pool.py`             | 固定spawn VAD池，完整音频FIFO、任一完成即补位与排队/worker包络计时 |
 | `core/vad_volume.py`           | 段级声音特征（RMS / SNR / dBFS）与低音量过滤，**运行时与标定脚本共用同一套口径**             |
 | `core/qwen_asr_queue.py`       | 三层并发闸门：音频准入分类 + 段级/全局请求信号量                                     |
-| `core/qwen_asr_client.py`      | Qwen 异步客户端：本地推理、串行实例、重试                                          |
-| `core/models.py`               | CAM++ / emotion2vec 懒加载、模型池调度、HBM 分配估计登记                             |
+| `core/qwen_asr_client.py`      | 本地Qwen实例租约、批执行/重试与批遥测 |
+| `core/qwen_asr_runtime.py`     | 列表音频、逐成员语言/mask/输出及实际processor shape |
+| `core/qwen_asr_process.py` | 单Qwen spawn模型进程、READY/RPC归属、独立资源与显式关闭grace；CPU状态不触发加载 |
+| `core/qwen_batch_scheduler.py` | 公平共享队列、长度分桶、有限等待及估算帧/token预算 |
+| `core/segment_pipeline.py`    | 每音频有限元worker、独立全局段数/PCM预算、取消安全汇合及异常链脱离 |
+| `core/models.py`               | CAM++/emo懒加载、共享有界预取、FIFO反压、即时交接、HBM/忙闲状态 |
+| `core/cam_process.py` | CAM原生FP32模型spawn worker、READY/RPC出生归属、Tensor[1,192]与显式关闭 |
 | `core/local_inference.py`      | 设备 → 后端映射（`pytorch_cpu` / `torch_npu`） |
 | `core/deployment.py`           | 昇腾 profile 启动前环境与资产校验                                 |
 | `core/status.py`               | 状态接口响应组装                                                       |
@@ -131,7 +137,7 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 | `utils/repetition.py`       | 生成复读（幻觉循环）检测与折叠                            |
 | `utils/text_postprocess.py` | 标点卫生、语气词处理等确定性规则                           |
 | `utils/qwen_response.py`    | Qwen 返回解析：`language X<asr_text>` 前缀剥离、语种占比 |
-| `utils/audio_utils.py`      | 音频解码、内存 WAV、服务缓存目录                         |
+| `utils/audio_utils.py`      | 音频解码、共用round端点裁剪/EOF clamp、内存WAV、服务缓存目录 |
 | `utils/asr_stats.py`        | `asr_stats.json` 原子读写（带文件锁）                |
 | `utils/feature_utils.py`    | 说话人角色判定（教师关键词等）                            |
 
@@ -160,7 +166,7 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 | Qwen 请求 | `segment_concurrency` / `request_concurrency`     | 单音频内段并发 / 全局段并发               | 1 / 1（完整课堂对照；单Qwen实例）            |
 | 本地模型池   | `speech_campplus_devices` / `emotion2vec_devices` | 数组长度 = 实例数 = 段级推理并发           | 3×npu:7 / 1×npu:7 |
 
-音频准入、段任务闸门与模型实例容量分别限流；增加等待任务不会增加单实例执行并发。压测结论见 `docs/cam*`、`docs/vad-pool*`。
+音频准入、Qwen逻辑窗口、物理批大小与模型实例容量分别计数；增加等待任务不增加模型实际计算容量。表中当前值是前次配置快照，新增吞吐候选与实施状态见下一节；历史压测见`docs/cam*`、`docs/vad-pool*`。
 
 **错误码契约不可随意改号**（客户端已按此判断）：完整定义分散在  
 `core/qwen_asr_queue.py`、`core/qwen_asr_client.py`、`core/models.py`、`core/vad_pool.py` 的异常类 `code` 属性；  
@@ -171,6 +177,44 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 - **能力开关校验早于容量检查**；两项容量同时满时优先返回 `4013`
 
 ---
+
+## 4.1 当前吞吐调度变更（2026-11-18）
+
+`2026-11-18-npu-asr-throughput-scheduling`处于apply，尚未完成性能验收或归档；前次`2026-11-17-npu-910b-local-qwen-asr`已完成并归档，历史实测结果不因本轮候选改写。以当前change的tasks、design和test-plan跟踪必需验收。
+
+- 当前安全缺省：单Qwen、batch1、每音频/全局窗口1/1；现有`config.toml`的混合四VAD及CAM三/emo一属于前次交付配置。本轮独立候选profile为`/tmp/asr-throughput-20261118-xvior99k/candidate128.toml`，定义VAD八CPU、CAM/emo各八NPU:7、Qwen每音频16/全局128、批上限128、预取5、总8/B4；纯B8另配profile。配置校验不等于真实容量/吞吐通过，最终值须按实测更新本文件与README。
+- 新`[qwen_asr]`字段：`max_inference_batch_size`缺省1（1～128）、`batch_wait_timeout_ms`缺省10（0～1000ms）、`max_batch_audio_frames`缺省102400、`max_batch_tokens`缺省78336、`pending_segment_limit`缺省256、`pending_audio_bytes_limit`缺省268435456（256MiB）。完整类型/范围见README和`core/config.py`，修改后重启。帧估计为最长100Hz帧数×B，token估计为`(ceil(max_frames/8)+max_new_tokens+256)×B`；processor实际shape另存，估计不保证显存容量。
+- 新`[model_device_pool]`的`speech_campplus_prefetch_queue_depth`、`emotion2vec_prefetch_queue_depth`缺省0（0～64，0无预取），各`*_batch_size`仅支持1。数组长度=实例数；每健康实例等待深度=预取；batch=实际计算。八实例深度5为40等待+最多8运行，不是batch5。共享任务源不将未执行段锁死在忙副本，空闲即补位，反压等待另计。
+- 每条完整音频最多占一个VAD worker。8条/4worker时任一FINISHED即分派下一条，不等最初四条或下游；VAD租约与整音频租约分开归还。Qwen完成即释放自己的段窗口，CAM/emo各自归还，最终仍按请求/段标识汇合；段数/PCM预算满时明确反压，不无限堆积future或PCM。
+- 每音频元任务worker至多`min(段数,pending_segment_limit)`，缺省256；总八音频至多2048个元任务，不是全局future最多256。真正切片和分支开工另受全局256段/256MiB PCM预算限制，预算满则worker等待，必要分支全部收尾才归还；Qwen逻辑窗口独立释放。响应文本/embedding不计作在途PCM。
+- 每次物理attempt独立记录输入成员、真实有效成员、状态及runtime包络；重试排除等待中已取消成员，批summary仅代表最后attempt，不能把上轮有效索引映射到新的幸存列表。传给结果future或汇合结果的异常脱离traceback/cause/context，保留类型/code/message，避免异常链滞留PCM与活动worker frame。
+- 正式tensor/NumPy/毫秒裁剪共用起止端点分别round后的采样格并clamp至源范围，EOF不padding、不改原VAD bg/ed；实际裁剪不足0.3秒在三模型前丢弃，emo的1/10秒边界同样依据实际样本。旧FFmpeg秒级转码路径保持兼容，不为此逐段重读完整大音频。
+- 本轮候选最短段0.3秒，三项服务能量过滤均false，`vad_decibel_thres=-100`、`after_start=-1`、`before_end=-1`；-1/-1仅不限位置，不能充当关闭开关。FSMN实际绑定/四层证据不变。不足0.3秒在三模型分发前移除；0.3至不足1秒CAM实际推理且embedding参与聚类，emo直接“平淡”；emo仅[1,10]秒推理，未请求能力仍null，roleIdentify本轮不传/false但保留原可选能力。
+- 必测同组八条完整SHA去重音频的1/2/4/8并发和同源A/B，冷/暖态分列；默认B4与B8profile分列。单Qwen128必须区分纯Qwen与八CAM/八emo已加载且实际工作的容量，不能互相替代。单份有问题先诊断，再有条件试2/4/8副本与段级均衡。
+- 完成P50/P95或任一在途完整请求墙钟超过420秒，下一监测周期（默认1秒）停止追加，捕获准入/VAD/三个模型/汇合/后处理及资源卡点，有界取证并关闭owned资源，记录diagnostic_aborted/未完成。不得原样无限重跑或只报成功快请求；不改变业务HTTP或单Qwen超时。阶段无进展提前告警，定位后先小规模复验。
+- 每轮finally按PID和创建时间关闭本轮服务/worker，等待设备和读取完成，验证无孤儿和测试监听释放至少5秒；既有服务保留。内部切片/排队/批等待/CPU前端/传输/generate/同步分开，批包络只计一次，原`gpu_time_ms`不改义。真实Docker构建和上线仍后置。
+
+### CAM-only模型进程候选（吞吐变更v9）
+
+- `[model_device_pool].speech_campplus_execution_mode`支持thread/process，缺省和宿主/容器模板均保持thread；process仅支持合法NPU设备数组（含容器npu:0），数组长度仍是唯一实例数来源，空数组禁用。新增`speech_campplus_process_startup_timeout_s=60`、`speech_campplus_process_shutdown_grace_s=30`均要求真实有限数、0<值≤300，拒bool/字符串；就绪前配置校验不加载模型。
+- 每CAM worker保持原torch_npu、FP32及CPU float32 Tensor[1,192]输出；emo留父进程、Qwen独立配置，不新开HTTP端口、不换格式/权重或升级依赖。尚未请求CAM和查询状态不spawn/RPC。普通取消等真实DONE，只有显式关闭启用grace并按PID/出生身份回收；强制、坏ACK或非0退出为失败，确认死亡前不还真实容量。
+- 主循环读取ModelPool的`model_workers`缓存与每实例memory（含loading/retired），资源collector仅只读OS。父/Qwen/CAM/外部/未验证进程分开，CAM只按出生身份吻合且未退出归属；worker allocator/lastRPC峰值、OS RSS/PSS、IPC额外副本及设备HBM各自保留，不用父0代worker0、不加不同时刻峰值。保持状态singleflight/age语义。
+- 原型组件结果不等于正式TorchTensor聚类、动态全语料或完整音频矩阵通过。每worker约16秒启动、八进程原型约272秒全程是冷启动/装载/执行/关闭成本，不能当暖态推理耗时。最终默认只有完整矩阵及源/保护版本验收后才推广，当前安全配置其他值不变。
+
+### 单模型进程与多文件公平供给（吞吐变更v5）
+
+- 新`execution_mode`支持thread/process，当前安全缺省thread；process支持经校验1～8配置实例（实际NPU合格数量另列），每子进程加载一份同HF Qwen，父进程不重复加载，不增加HTTP服务或更改引擎/精度。设备直接沿用宿主npu:7/容器逻辑npu:0。模式更改需重启，最终默认待整音频验收。
+- 新`process_shutdown_grace_s`缺省30，有限正数≤300秒，仅显式关闭生效，不将单请求120秒timeout改为kill；超期按worker PID/创建时间有界终止/join且关闭失败。服务shutdown入口提前启动Qwen关闭看护，避免增强关闭先阻塞。状态查询不懒启动、不等待RPC；worker与父进程的allocator/峰值/RSS分开，IPC副本不伪称受主PCM256MiB覆盖。
+- 已完成固定128段batch1/8/16/32/64/128每档三轮稳态及独立质量复算，文本差异不作准确率结论。单模型process在16/128段B配对比同进程更快，所有Qwen/CAM/emo对照及owned关闭通过。process预取0/1/5三档实测当前0中位最低；新候选`final-process-b4.toml`及`final-process-b8.toml`保留旧候选不覆盖，整音频矩阵仍待验收。证据见`docs/npu-throughput-20261118/qwen-process-paired-v5.json`、`process-prefetch-selection-v5.json`。
+- 先获取每音频/全局Qwen credit再占PCM预算，保证八个VAD-ready文件可共同供给128。Qwen实际收尾即释放，剪切错误/EOF/取消幂等归还。等待PCM的预留credit不等于实际执行段，真实缓冲耗尽仍反压。
+
+### Qwen独立前端与批预算（吞吐变更v2）
+
+- 每成员在FP32 guard中独立调用processor，再把有效tokens左补齐、完整single features/mask额外右补齐；不得先把不同PCM补齐再STFT。保留single自带的无效尾部特征上下文，batch1不重排。未知processor键/shape/dtype明确失败，不改site-packages或权重。
+- 当前锁定processor为`hop_length=160`、`min_length=8000`、`n_window=50`。调度估计`frames=floor(max(samples,8000)/160)`，完整特征补至`100*ceil(frames/100)`；帧预算必须计入这100帧补齐。token预算仍是8:1音频估计加生成上限和256提示预留，不当作真实token数/HBM保证。模型/processor版本改变先复验这些属性。
+- 新`[qwen_asr].batch_max_duration_ratio`缺省4.0，接受1～64有限数，布尔/字符串/NaN/Inf就绪前拒绝。它控制有效STFT帧最长/最短比，含原0.5秒前端下限；32.0仅为候选。与实例数、单音频/全局窗口和批上限独立，修改后重启。
+- 越过不兼容队首取尾成员需要防饥饿：每批公平锚点选全局最老等待队首，再在兼容集合中按请求轮转。不能仅凭成员轮转声称旧长段必有机会。
+- CPU真实128段前端等价证据见`docs/npu-throughput-20261118/qwen-frontend-equivalence-v2.json`；原差异及HOL诊断见`qwen-quality-initial.json`。CPU等价及配置校验不表示NPU文本一致、完整并发矩阵或默认性能已经验收。
 
 ## 5. 配置体系
 
@@ -190,7 +234,7 @@ VAD 固定进程池（vad_device 数组，每元素一个进程）
 
 宿主仅使用物理 `npu:7`，不调度其他卡。`ASCEND_VISIBLE_DEVICES` 指定宿主物理卡号，容器内设备编号从 0 重新映射；仅映射物理 7 时模板使用逻辑 `npu:0`。
 NPU runtime/设备/IPC 参数放 Compose/宿主入口，`docker/start.sh` 只管理容器内环境、预检与进程。
-`instance_count=1`；增加进程或 Qwen 实例意味着复制权重，重新标定后才调整。
+`instance_count=1`；增加完整HTTP服务进程或Qwen实例会复制权重，重新标定后才调整。模型process执行是把每份副本放入独立worker，父进程不重复加载，不能与服务多进程混为一谈。
 测试启动的服务、代理、候选引擎、worker 必须 finally 关闭，核对 PID 树退出和端口释放，保存证据；保留卡 7 既有服务。
 
 ## 7. openspec 工作流
@@ -332,3 +376,31 @@ openspec/changes/archive/<change>/       历史上的每次变更（proposal / d
 
 > **本文件的维护**：新增能力、修改接口字段、调整默认配置时，同步更新本文件对应章节。
 > 发现本文件与代码不符，先改本文件再改代码注释——不要让第三个人再踩一次。
+
+
+### v6状态资源采样约定（2026-11-18）
+
+- 新`[status].resource_sample_interval_s`缺省1.0秒，严格0.1～60有限数（拒bool/string/NaN/Inf），修改需重启。按需TTL singleflight，不维护无人查询的永久NPU轮询；每app/loop独立拥有者。
+- GET实时计数不等待重资源collector；缓存首次unknown，旧值带`resourceDiagnostics.sampling`的age/in_progress/last_error和last attempt起止/elapsed。elapsed含线程派发，非核时；cache age与失败attempt耗时分别记录。
+- shutdown入口先发布sampler closing，与模型收尾并行，finally等待实际线程结束；重复取消不丢在途任务。采样后台线程只读OS，模型/准入可变状态仍主事件循环获取。
+- Qwen独立worker的HBM按PID及出生身份核对，backend/Qwen/external/unverified分列。父进程0不是worker0；资源快照age与worker allocator的最后RPC口径不能混为实时值。
+- 实机已发现旧GET约2秒且诊断读取5秒超时：两轮准入未通过均保留，新增本change任务2.8；v5源码695/保护696及NPU模型验证原证据不改写，v6状态改动须重新CPU/保护/实机及完整矩阵验收。
+
+
+### 吞吐变更v16的状态历史窗口（apply中）
+
+`/get_status`的Qwen `batch_scheduler.recent_batches`改为最近8条完整记录；保留全部成员/attempt/shape/计时，`history`明确可用/返回ID范围、截断和缺口提示，实时计数不截断。直接客户端/调度器`snapshot()`默认仍最多64条。HTTP直接渲染隔离的JSON数据，避免完整历史重复递归编码阻塞推理调度；这是有界快照，不是无损日志，审计必须去重并检测采样遗漏。CPU候选开销降低不等于完整音频性能已验收，仍须实机420秒闸门和最终矩阵；模型精度、生成上限及v3业务响应未改。
+
+
+### 吞吐变更v17：内存WAV补位（apply中）
+
+段级编码增加经原SoundFile逐字节验证的PCM16格点快速路径：仅原生一维native float32、有限[-1,1]且值落在16bit格点、采样率合法时直接序列化同一PCM16 WAV；其他输入保留原SF分支，不改变CAM/emo原PCM。128真实段及全部65536格点须源/实际so等价。CPU真实裁剪ABBA支持100ms组批等待候选，50ms仍碎；假模型结果不代表NPU速度，正式默认仍待完整NPU矩阵。NumPy/bytes临时工作buffer与pending PCM预算分开统计。模型仍原HF/BF16与原生FP32 torch_npu，不改模型格式/依赖或生成上限。
+
+
+### v18 Qwen多owner条件验证（当前apply）
+
+v17单份8B仍420诊断3/8且30秒显式关闭宽限触发inner abort/main1，不能以资源已回收判正常。当前进入process2×batch64、16/128逻辑窗口候选，保持一HTTP和原八VAD/八CAM/八emo/精度/源资产。process1～8配置范围不代表4/8实测；首次全体发现、发现与drain同锁、缓存后健康降级、全部坏4011、原drain后并发CLOSE与每attempt实例身份均须source/实际so测试。关闭候选grace120独立于业务timeout120/测试420，旧失败保留。双份顺序两个真实clip合用420总暖身，必须各index真实forward+PID出生/RPC覆盖；READY不算完成。先小规模同64参考、2×64真实并行/数值/HBM/取消关闭，再完整8B和最终18；正式默认未推广。
+
+### 2026-11-19必要代码阶段提交
+
+用户要求保存并推送当前必要实现。清单仍41/57，未归档、不推广候选默认；当前源码隔离完整CPU968项/281子测试通过、2保护专属skip、1硬件探针排除，237.17秒；源码/profile稳定、owned归零、共享cache写删尝试0。双份NPU及最终1/2/4/8完整音频矩阵待验收，v17的420秒/3of8及关闭main1失败保留。当前权威检查点为docs/npu-throughput-20261118/v18-precommit-checkpoint.json，历史章节只代表各冻结版本。

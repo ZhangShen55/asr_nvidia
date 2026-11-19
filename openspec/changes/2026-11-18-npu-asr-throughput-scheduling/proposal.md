@@ -33,4 +33,11 @@
 - 后续实施涉及 `api/routes/asr_qwen_common.py`、`core/qwen_asr_queue.py`、`core/qwen_asr_client.py`、`core/qwen_asr_runtime.py`、`core/models.py`、`core/local_inference.py`、`core/vad_pool.py`、`core/request_telemetry.py`、配置加载及性能脚本/测试；按实际设计拆出批调度模块。
 - 配置变更同步 `core/config.py`、`config.toml`、`docker/config.toml`、README和AGENT；变更需重启测试服务，实际镜像构建与上线仍后置。
 - `/v3/seacraft_asr` 字段、类型、错误码、既有 `gpu_time_ms` 计时口径不变；新增诊断放内部遥测/兼容状态扩展，不把7分钟变成业务HTTP超时。
-- 使用 xjtu910b7 的 conda asr，仅占用物理NPU:7；保留共享既有服务和所有权重、原始音频、历史报告/日志。当前仅制定方案，不修改运行配置或启动模型。完成实施及验收后中文提交推送，再独立同步规格并归档。
+- 使用 xjtu910b7 的 conda asr，仅占用物理NPU:7；保留共享既有服务和所有权重、原始音频、历史报告/日志。当前已进入apply；候选配置独立验证，只有完成验收后才更新交付默认值。完成实施及验收后中文提交推送，再独立同步规格并归档。
+
+
+## 实施范围补充（v5）
+
+按组件证据增加单Qwen模型进程隔离候选（`execution_mode`及独立关闭grace）：仍为同HF引擎、同权重与精度、单HTTP服务、单Qwen副本，新增core模型worker及ownership/IPC/保护构建验证。另将Qwen逻辑credit前置裁剪，避免首文件垄断PCM预算而饿住其它VAD-ready文件；完整音频与最终配置验收要求不减。
+
+实施排障追加：完整8B触发420秒闸门后，CAM-only owned模型进程的同精度原型128段中位10.089→5.185秒且输出精确一致，支持进入正式候选实现。补充CAM模式/关闭与资源契约、保护版及全矩阵复验任务；仍保持单HTTP、单Qwen优先与原FP32模型，不将原型作为完整验收或提前改变缺省。

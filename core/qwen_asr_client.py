@@ -2,12 +2,15 @@
 from __future__ import annotations
 
 import asyncio
+from concurrent.futures import ThreadPoolExecutor
 import logging
+import time
 from pathlib import Path
 from typing import Optional
 
 from core.async_utils import await_completion
 from core.config import settings
+from core.qwen_batch_scheduler import BatchScheduler
 from core.qwen_asr_runtime import LocalQwenRuntime, LocalModelUnavailable, LocalUnsupportedLanguage
 
 logger = logging.getLogger(__name__)
@@ -44,10 +47,14 @@ def normalize_language_param(language: Optional[str]) -> Optional[str]:
 
 
 class QwenAsrClient:
+    supports_batch_metadata = True
     def __init__(self, base_url: str = "", model: str = "", request_timeout_s: float = 120.0,
                  connect_timeout_s: float = 10.0, retry_count: int = 1, *,
                  local_model_dir=None, local_device=None, local_dtype=None,
-                 local_instance_count=None, max_new_tokens=None, runtime_factory=None):
+                 local_instance_count=None, max_new_tokens=None, runtime_factory=None,
+                 max_inference_batch_size=None, batch_wait_timeout_ms=None,
+                 max_batch_audio_frames=None, max_batch_tokens=None, batch_max_duration_ratio=None,
+                 execution_mode=None):
         # 旧参数仍可被现有调用者传入，但不再创建HTTP连接池或发模型发现请求。
         self.base_url = str(base_url).rstrip("/")
         self.model = (model or "").strip()
@@ -62,7 +69,18 @@ class QwenAsrClient:
         tokens = int(max_new_tokens if max_new_tokens is not None else getattr(settings, "qwen_max_new_tokens", 256))
         if count < 1 or tokens < 1 or self.request_timeout_s <= 0:
             raise ValueError("Qwen 实例数、生成长度与请求超时必须为正数")
-        factory = runtime_factory or LocalQwenRuntime
+        self.execution_mode = settings.qwen_execution_mode if execution_mode is None else execution_mode
+        if not isinstance(self.execution_mode, str) or self.execution_mode not in {"thread", "process"}:
+            raise ValueError("execution_mode must be thread or process")
+        if runtime_factory is not None:
+            factory = runtime_factory
+        elif self.execution_mode == "process":
+            from core.qwen_asr_process import LocalQwenProcessRuntime
+            factory = LocalQwenProcessRuntime
+        else:
+            factory = LocalQwenRuntime
+        self._shutdown_state = {"phase": "open", "forced_cleanup": False}
+        self._drain_task = None
         self._runtimes = [factory(self.local_model_dir, self.local_device, self.local_dtype, tokens) for _ in range(count)]
         self._available = asyncio.Queue(maxsize=count)
         for index in range(count):
@@ -73,7 +91,24 @@ class QwenAsrClient:
         self._closing = False
         self._close_task = None
         self._discovered_model = None
+        self._discovery_lock = asyncio.Lock()
+        self._discovering_all = False
         self._execution_failures = 0
+        self._batch_scheduler = BatchScheduler(
+            self._execute_batch, workers=count,
+            batch_size=int(max_inference_batch_size if max_inference_batch_size is not None else
+                           (getattr(settings, "qwen_max_inference_batch_size", 1) if
+                            all(hasattr(r, "transcribe_batch") for r in self._runtimes) else 1)),
+            wait_ms=float(batch_wait_timeout_ms if batch_wait_timeout_ms is not None else
+                          getattr(settings, "qwen_batch_wait_timeout_ms", 10)),
+            audio_frame_budget=int(max_batch_audio_frames if max_batch_audio_frames is not None else
+                                   getattr(settings, "qwen_max_batch_audio_frames", 102400)),
+            token_budget=int(max_batch_tokens if max_batch_tokens is not None else
+                             getattr(settings, "qwen_max_batch_tokens", 78336)),
+            duration_ratio=(batch_max_duration_ratio if batch_max_duration_ratio is not None else
+                            getattr(settings, "qwen_batch_max_duration_ratio", 4.0)),
+            max_new_tokens=tokens, capacity=int(getattr(settings, "qwen_pending_segment_limit", 256)),
+        )
         if self.base_url:
             logger.info("[配置迁移] qwen_asr.base_url/connect_timeout_s 仅兼容读取，本地推理不发起HTTP调用")
 
@@ -108,6 +143,9 @@ class QwenAsrClient:
                 self._changed.clear()
                 if self._closing or all(runtime.failure for runtime in self._runtimes):
                     raise QwenAsrUnavailableError()
+                if self._discovering_all:
+                    await self._changed.wait()
+                    continue
                 for _ in range(self._available.qsize()):
                     index = self._available.get_nowait()
                     if not self._runtimes[index].failure:
@@ -118,6 +156,8 @@ class QwenAsrClient:
             self._waiting -= 1
 
     async def discover_model(self):
+        if self.execution_mode == "process" and len(self._runtimes) > 1:
+            return await self._discover_all_process_runtimes()
         if self.model:
             return self.model
         if self._discovered_model:
@@ -142,30 +182,153 @@ class QwenAsrClient:
             self._available.put_nowait(index)
             self._changed.set()
 
+    async def _discover_all_process_runtimes(self):
+        # 一位发现者取得全部租约；其它发现者先等锁，不能各持一份后互等。
+        async with self._discovery_lock:
+            if self._closing:
+                raise QwenAsrUnavailableError()
+            if self._discovered_model:
+                # 冷启动已全体验证；之后允许健康已加载副本继续服务，不重启失败者。
+                if any(runtime.loaded and not runtime.failure for runtime in self._runtimes):
+                    return self._discovered_model
+                raise QwenAsrUnavailableError()
+            if any(runtime.failure for runtime in self._runtimes):
+                raise QwenAsrUnavailableError()
+            if all(runtime.loaded for runtime in self._runtimes):
+                self._discovered_model = self.model or Path(self.local_model_dir).name
+                return self._discovered_model
+            acquired = []
+            self._discovering_all = True
+            self._waiting += 1
+            try:
+                # 不用只发健康实例的_lease：部分失败也必须取回并归还全部登记索引。
+                for _ in self._runtimes:
+                    index = await self._available.get()
+                    acquired.append(index)
+                    self._busy[index] = True
+                    if self._closing or self._runtimes[index].failure:
+                        raise QwenAsrUnavailableError()
+                outcomes = await await_completion(asyncio.gather(
+                    *(self._run_owned(self._runtimes[index].ensure_loaded) for index in acquired),
+                    return_exceptions=True,
+                ))
+                if (self._closing or any(isinstance(value, BaseException) for value in outcomes)
+                        or not all(runtime.loaded and not runtime.failure for runtime in self._runtimes)):
+                    raise QwenAsrUnavailableError()
+                self._discovered_model = self.model or Path(self.local_model_dir).name
+                return self._discovered_model
+            except (QwenAsrError, asyncio.CancelledError):
+                raise
+            except Exception as exc:
+                raise QwenAsrUnavailableError() from exc
+            finally:
+                for index in acquired:
+                    self._busy[index] = False
+                    self._available.put_nowait(index)
+                self._waiting -= 1
+                self._discovering_all = False
+                self._changed.set()
+
+    def _runtime_attempt_identity(self, index, runtime):
+        # 仅复制本实例已有快照，不加载、不发RPC；诊断失败不能覆盖业务结果。
+        identity = {"instance_index": index, "execution_mode": self.execution_mode}
+        snapshot = getattr(runtime, "snapshot", None)
+        if not callable(snapshot):
+            identity["metadata_available"] = False
+            return identity
+        try:
+            state = snapshot()
+            worker = state.get("model_worker", {})
+            identity.update({key: worker.get(key) for key in (
+                "worker_pid", "worker_create_time", "worker_start_ticks", "launch_id",
+                "runtime_kind", "ready_verified", "worker_entry_module_file",
+                "resource_reaped", "normal_exit_ok", "forced_cleanup", "worker_exitcode",
+            )})
+            identity["last_rpc_id"] = getattr(runtime, "_rpc_id", None)
+            identity["metadata_available"] = bool(worker)
+        except Exception as exc:
+            identity["metadata_available"] = False
+            identity["snapshot_error_type"] = type(exc).__name__
+        return identity
+
     async def transcribe_bytes(self, audio_bytes: bytes, language: Optional[str] = None,
-                               filename: str = "segment.wav") -> str:
+                               filename: str = "segment.wav", *, request_id=None,
+                               segment_index=None) -> str:
+        if self._closing:
+            raise QwenAsrUnavailableError()
+        try:
+            return await self._batch_scheduler.submit(
+                audio_bytes, normalize_language_param(language),
+                request_id=request_id, segment_index=segment_index)
+        except LocalUnsupportedLanguage as exc:
+            raise QwenAsrUnsupportedLanguageError() from exc
+        except (QwenAsrError, asyncio.CancelledError):
+            raise
+        except Exception as exc:
+            raise QwenAsrCallError() from exc
+
+    async def _execute_batch(self, members, batch_id):
         index = await self._lease()
         self._busy[index] = True
         runtime = self._runtimes[index]
+        active = [member for member in members if not member.cancelled]
+        self._batch_scheduler.record_dispatch(batch_id, active)
         try:
-            if self._closing:
-                raise QwenAsrUnavailableError()
+            if not active:
+                return [None] * len(members)
             for attempt in range(self.retry_count + 1):
+                # backoff期间可单独取消成员；新物理attempt不得再次执行其音频。
+                active = [member for member in members if not member.cancelled]
+                if attempt:
+                    self._batch_scheduler.record_retry_cancellations(batch_id,
+                        [member for member in members if member.cancelled], attempt + 1)
+                if not active:
+                    return [None] * len(members)
+                if attempt:
+                    self._batch_scheduler.record_dispatch(batch_id, active)
+                # 明确每次物理attempt的timings归属，不能把旧batch的有效索引套到幸存成员。
+                if hasattr(runtime, "last_batch_timings"):
+                    runtime.last_batch_timings = None
+                attempt_status, attempt_error = "failed", None
                 try:
-                    return await self._run_owned(runtime.transcribe, audio_bytes, normalize_language_param(language))
+                    if hasattr(runtime, "transcribe_batch"):
+                        values = await self._run_owned(runtime.transcribe_batch,
+                            [m.audio for m in active], [m.language for m in active])
+                        if len(values) != len(active):
+                            raise RuntimeError("Qwen batch result cardinality mismatch")
+                        by_member = dict(zip((id(m) for m in active), values))
+                        attempt_status = "completed"
+                        return [by_member.get(id(member)) for member in members]
+                    if len(active) != 1:
+                        raise RuntimeError("当前运行器不支持真实批执行，不能逐段冒充批推理")
+                    value = await self._run_owned(runtime.transcribe, active[0].audio, active[0].language)
+                    attempt_status = "completed"
+                    return [value if member is active[0] else None for member in members]
                 except LocalModelUnavailable as exc:
+                    attempt_error = type(exc).__name__
                     logger.error("[Qwen] 本地模型不可用: %s", exc)
                     raise QwenAsrUnavailableError() from exc
                 except LocalUnsupportedLanguage as exc:
+                    attempt_error = type(exc).__name__
                     raise QwenAsrUnsupportedLanguageError() from exc
                 except asyncio.CancelledError:
+                    attempt_status, attempt_error = "cancelled", "CancelledError"
                     raise
                 except Exception as exc:
+                    attempt_error = type(exc).__name__
                     self._execution_failures += 1
-                    logger.warning("[Qwen] 本地推理失败 attempt=%d type=%s detail=%s", attempt + 1, type(exc).__name__, exc)
+                    logger.warning("[Qwen] batch=%s size=%s attempt=%d type=%s detail=%s",
+                                   batch_id, len(active), attempt+1, type(exc).__name__, exc)
                     if attempt == self.retry_count:
                         raise QwenAsrCallError() from exc
-                    await asyncio.sleep(2 ** attempt)
+                finally:
+                    self._batch_scheduler.record_runtime_timings(batch_id,
+                        getattr(runtime, "last_batch_timings", None),
+                        status=attempt_status, error_type=attempt_error)
+                    self._batch_scheduler.record_runtime_instance(
+                        batch_id, self._runtime_attempt_identity(index, runtime))
+                # 失败attempt的归属/包络已落盘；等待期间取消不会污染其有效成员索引。
+                await asyncio.sleep(2 ** attempt)
         finally:
             self._busy[index] = False
             self._available.put_nowait(index)
@@ -175,16 +338,25 @@ class QwenAsrClient:
         data = await asyncio.to_thread(Path(audio_path).read_bytes)
         return await self.transcribe_bytes(data, language=language, filename=Path(audio_path).name)
 
-    def snapshot(self):
+    def snapshot(self, *, recent_batch_limit=None):
         details = [dict(runtime.snapshot(), index=index, busy=self._busy[index]) for index, runtime in enumerate(self._runtimes)]
+        batch_snapshot = (self._batch_scheduler.snapshot() if recent_batch_limit is None else
+                          self._batch_scheduler.snapshot(recent_limit=recent_batch_limit))
         return {
+            "execution_mode": self.execution_mode,
+            "memory_process_scope": "model_worker" if self.execution_mode == "process" else "service_process",
+            "configured_model_workers": len(details) if self.execution_mode == "process" else 0,
+            "model_workers": [dict(item["model_worker"], index=item["index"])
+                              for item in details if "model_worker" in item],
+            "shutdown": dict(self._shutdown_state),
             "backend": "transformers_torch_npu", "model_dir": self.local_model_dir,
             "device": self.local_device, "dtype": self.local_dtype,
             "loaded": any(x["loaded"] for x in details),
             "loading": any(x.get("loading") for x in details),
             "configured_instances": len(details),
             "capacity": sum(x["loaded"] and not x.get("failure") for x in details),
-            "busy": sum(self._busy), "waiting": self._waiting,
+            "busy": sum(self._busy), "waiting": self._waiting + batch_snapshot["waiting"],
+            "batch_scheduler": batch_snapshot,
             "failed_instances": sum(bool(x.get("failure")) for x in details),
             "execution_failures": self._execution_failures, "closing": self._closing,
             "memory_allocated_mb": sum(x.get("memory_allocated_mb", 0) for x in details),
@@ -192,9 +364,18 @@ class QwenAsrClient:
             "memory_source": "pytorch_load_delta_estimate", "instances": details,
         }
 
-    async def _close(self):
+    async def _drain(self):
         self._closing = True
         self._changed.set()
+        await self._batch_scheduler.close(QwenAsrUnavailableError())
+        if self.execution_mode == "process" and len(self._runtimes) > 1:
+            # discovery和drain都要持全体索引，不能各持一部分后互等。
+            async with self._discovery_lock:
+                await self._drain_runtimes()
+        else:
+            await self._drain_runtimes()
+
+    async def _drain_runtimes(self):
         acquired = []
         try:
             for _ in self._runtimes:
@@ -204,7 +385,77 @@ class QwenAsrClient:
             for index in acquired:
                 self._available.put_nowait(index)
 
+    async def _close(self):
+        if self.execution_mode != "process":
+            self._shutdown_state.update(phase="draining")
+            try:
+                result = await self._drain()
+            except BaseException:
+                self._shutdown_state.update(phase="failed")
+                raise
+            self._shutdown_state.update(phase="closed")
+            return result
+
+        # 显式aclose才启动独立宽限期；普通推理timeout不会触发worker终止。
+        grace = settings.qwen_process_shutdown_grace_s
+        self._shutdown_state.update(
+            phase="grace", grace_s=grace, started_monotonic_s=time.monotonic()
+        )
+        self._drain_task = asyncio.create_task(self._drain())
+
+        def observe_drain(task):
+            # 关闭已失败时也保留后台拥有者；将来的异常需要被观察，不能取消或假归还名额。
+            if not task.cancelled():
+                task.exception()
+
+        self._drain_task.add_done_callback(observe_drain)
+        done, _ = await asyncio.wait({self._drain_task}, timeout=grace)
+        if done:
+            try:
+                result = self._drain_task.result()
+            except BaseException:
+                self._shutdown_state.update(phase="failed")
+                raise
+            self._shutdown_state.update(phase="closed")
+            return result
+
+        self._shutdown_state.update(phase="owned_abort", forced_cleanup=True)
+        outcomes = await asyncio.gather(
+            *(asyncio.to_thread(runtime.abort_owned, "explicit shutdown grace exceeded")
+              for runtime in self._runtimes),
+            return_exceptions=True,
+        )
+        errors = [str(outcome) for outcome in outcomes if isinstance(outcome, BaseException)]
+        if errors:
+            self._shutdown_state.update(phase="failed", abort_errors=errors)
+            # 未确认实际死亡时，不取消reader/drain，也不提前归还仍有设备工作的租约。
+            raise RuntimeError("Qwen owned shutdown could not confirm worker death")
+
+        done, _ = await asyncio.wait({self._drain_task}, timeout=5)
+        self._shutdown_state.update(phase="failed")
+        if not done:
+            raise RuntimeError("Qwen worker reaped but parent owned drain did not finish")
+        # 强制路径必须保留失败，即使资源已回收也不能伪装成正常关闭。
+        try:
+            self._drain_task.result()
+        except BaseException as exc:
+            raise RuntimeError("Qwen forced shutdown cleanup failed") from exc
+        raise RuntimeError("Qwen worker was forcibly reaped during shutdown")
+
     def _close_runtimes(self):
+        if self.execution_mode == "process" and len(self._runtimes) > 1:
+            # 原drain已持有全部归还的租约。并发CLOSE不把正常收尾串成N倍deadline。
+            errors = []
+            with ThreadPoolExecutor(max_workers=len(self._runtimes)) as executor:
+                closes = [executor.submit(runtime.close) for runtime in self._runtimes]
+                for index, close in enumerate(closes):
+                    try:
+                        close.result()
+                    except Exception as exc:
+                        errors.append((index, exc))
+            if errors:
+                raise RuntimeError(f"Qwen 多实例关闭失败: {errors}")
+            return
         errors = []
         for runtime in self._runtimes:
             try:
@@ -218,6 +469,11 @@ class QwenAsrClient:
         if self._close_task is None:
             self._closing = True
             self._changed.set()
+            if self.execution_mode == "process":
+                for runtime in self._runtimes:
+                    begin = getattr(runtime, "begin_closing", None)
+                    if begin is not None:
+                        begin()
             self._close_task = asyncio.create_task(self._close())
         await await_completion(self._close_task)
 
@@ -240,14 +496,21 @@ async def get_qwen_client() -> QwenAsrClient:
     return _client_instance
 
 
-def get_qwen_status():
+def get_qwen_status(*, recent_batch_limit=None):
     if _client_instance is not None:
-        return _client_instance.snapshot()
+        if recent_batch_limit is None:
+            return _client_instance.snapshot()
+        return _client_instance.snapshot(recent_batch_limit=recent_batch_limit)
     # 构造运行器无权重加载，但状态查询连运行器都不必创建。
     count = int(getattr(settings, "qwen_local_instance_count", 1))
     device = getattr(settings, "qwen_local_device", "npu:7")
     dtype = getattr(settings, "qwen_local_dtype", "bfloat16")
+    mode = settings.qwen_execution_mode
     return {
+        "execution_mode": mode,
+        "memory_process_scope": "model_worker" if mode == "process" else "service_process",
+        "configured_model_workers": count if mode == "process" else 0,
+        "model_workers": [], "shutdown": {"phase": "open", "forced_cleanup": False},
         "backend": "transformers_torch_npu", "model_dir": getattr(settings, "qwen_local_model_dir", "/home/model/Qwen3-ASR-1.7B-hf"),
         "device": device, "dtype": dtype, "loaded": False, "loading": False,
         "configured_instances": count, "capacity": 0, "busy": 0, "waiting": 0,

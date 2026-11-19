@@ -1,0 +1,2017 @@
+{
+  "scope": "CPU-only independent JSON/log verification of completed v8 experiments; no model/NPU execution by this auditor; no production adoption or complete-audio acceptance",
+  "source_run_directory": "/tmp/asr-throughput-20261118-xvior99k",
+  "canonical_selection": {
+    "proof": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/canonical-selection-v8-cpu-proof.json",
+      "sha256": "ce36c3d8294472a6383d4ed172660b537e76e4b5c69673d5e0d3859d33655050",
+      "bytes": 4578
+    },
+    "source_cpu": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/canonical-selection-target-source-v8b.json",
+      "sha256": "26c1ec14b7751c75a9cb6a70910d939706dd8ef027c4988875beb463bc6c2295",
+      "bytes": 1684
+    },
+    "old_plan_runtime_symmetric_difference_ids": [
+      "full-1-b3f93e7aa4c7-fulltime-149",
+      "full-1-b3f93e7aa4c7-fulltime-316",
+      "full-3-16cdf4a72578-fulltime-329",
+      "full-3-16cdf4a72578-fulltime-504",
+      "full-4-ce5a4529cd1c-fulltime-112",
+      "full-4-ce5a4529cd1c-fulltime-492",
+      "full-5-99195ce63638-fulltime-0",
+      "full-5-99195ce63638-fulltime-105",
+      "full-5-99195ce63638-fulltime-193",
+      "full-5-99195ce63638-fulltime-235",
+      "full-6-25782e0ad459-fulltime-0",
+      "full-6-25782e0ad459-fulltime-108",
+      "full-6-25782e0ad459-fulltime-252",
+      "full-6-25782e0ad459-fulltime-295"
+    ],
+    "canonical_plan_ids": [
+      "full-1-b3f93e7aa4c7-fulltime-125",
+      "full-1-b3f93e7aa4c7-fulltime-149",
+      "full-2-eccf9249245e-fulltime-212",
+      "full-2-eccf9249245e-fulltime-347",
+      "full-3-16cdf4a72578-fulltime-285",
+      "full-3-16cdf4a72578-fulltime-329",
+      "full-4-ce5a4529cd1c-fulltime-0",
+      "full-4-ce5a4529cd1c-fulltime-112",
+      "full-5-99195ce63638-fulltime-0",
+      "full-5-99195ce63638-fulltime-105",
+      "full-6-25782e0ad459-fulltime-0",
+      "full-6-25782e0ad459-fulltime-108",
+      "full-7-f5adfe2b880e-fulltime-421",
+      "full-7-f5adfe2b880e-fulltime-471",
+      "full-8-44d6e78dbc4d-fulltime-94",
+      "full-8-44d6e78dbc4d-fulltime-349"
+    ],
+    "canonical_actual_read_ids": [
+      "full-1-b3f93e7aa4c7-fulltime-125",
+      "full-1-b3f93e7aa4c7-fulltime-149",
+      "full-2-eccf9249245e-fulltime-212",
+      "full-2-eccf9249245e-fulltime-347",
+      "full-3-16cdf4a72578-fulltime-285",
+      "full-3-16cdf4a72578-fulltime-329",
+      "full-4-ce5a4529cd1c-fulltime-0",
+      "full-4-ce5a4529cd1c-fulltime-112",
+      "full-5-99195ce63638-fulltime-0",
+      "full-5-99195ce63638-fulltime-105",
+      "full-6-25782e0ad459-fulltime-0",
+      "full-6-25782e0ad459-fulltime-108",
+      "full-7-f5adfe2b880e-fulltime-421",
+      "full-7-f5adfe2b880e-fulltime-471",
+      "full-8-44d6e78dbc4d-fulltime-94",
+      "full-8-44d6e78dbc4d-fulltime-349"
+    ],
+    "canonical_actual_wav_sha256": {
+      "full-1-b3f93e7aa4c7-fulltime-125": "b027b7455890fe921598fd221a70602f8a343c3842d732fc6276262c2b2e4633",
+      "full-1-b3f93e7aa4c7-fulltime-149": "8f379ebd41dc5fb89a156d2e0127f876a7eee29e713e2ef7cea1940505028833",
+      "full-2-eccf9249245e-fulltime-212": "79746558a6016e79d6c2bf312ddb009ff990d4a0785854475659cd43b3f92c4c",
+      "full-2-eccf9249245e-fulltime-347": "3384f04b82247c23b534e64073955e4d304e82cd188144f75c2edeb3ff1ea012",
+      "full-3-16cdf4a72578-fulltime-285": "a4cd59d346d0fe8e3167435f72d7391133bbfb7fe3accd4baae6a31bb625ad21",
+      "full-3-16cdf4a72578-fulltime-329": "21bb950ab695b9cf6158d66abcbad603ba4584e2361a5a0c823252f47aefead2",
+      "full-4-ce5a4529cd1c-fulltime-0": "23779aed10c2dadad33bb8f16953c75603366e16c06aa00ed351cbff82d608ac",
+      "full-4-ce5a4529cd1c-fulltime-112": "a4176b1cfd5e988a3d344987b9f1a603b42d1a969b0e41d84911a8fac0d6065f",
+      "full-5-99195ce63638-fulltime-0": "85f4af5d5e96a2bf181131e96216ca1281a1450f46deaf95b1472734660220a3",
+      "full-5-99195ce63638-fulltime-105": "735da0bc0a8d321bbe223eb8e21a24c903513fade23f2dc273bc1b5e443e0875",
+      "full-6-25782e0ad459-fulltime-0": "872c9ced2db2896d3152b4d8e8593c3289492db6c903deda0a649a51709fbb20",
+      "full-6-25782e0ad459-fulltime-108": "9461ea2495114f7d44c71014ab5f8d09d247fee0de47dd2909c26350ced710a5",
+      "full-7-f5adfe2b880e-fulltime-421": "52165441d114a5dd60ecc171295a2318655d5d750217f4cb48fe7d50b8101f63",
+      "full-7-f5adfe2b880e-fulltime-471": "54e360e26ac868232d7e55edde22d23337e465518356f43db1794af711f42e50",
+      "full-8-44d6e78dbc4d-fulltime-94": "ccbb480afb2a67d914ba48d5d31c2b0f23cef4bdff74bb5ef4d19ce8c9e493fa",
+      "full-8-44d6e78dbc4d-fulltime-349": "b7bdef99613b6fe4c05361bb6530685dae2a27dae0164f3fc8a27977320f634b"
+    },
+    "plan_runtime_exact_order_equal": true,
+    "CPU_target_result": {
+      "passed": 30,
+      "skipped": 1,
+      "pytest_elapsed_s": 19.6,
+      "runner_elapsed_s": 21.246369750238955,
+      "source_changed": false,
+      "remaining_owned": [],
+      "log_path": "/tmp/asr-throughput-20261118-xvior99k/canonical-selection-target-source-v8b.log"
+    },
+    "historical_rejected_before_model_load": {
+      "summary": {
+        "path": "/tmp/asr-throughput-20261118-xvior99k/cam-process16-v8/summary.json",
+        "sha256": "d3fe6ba2dcebd1354c72d5e6e2c29eeeb854a88d17f70cc3bfafc2eef500db99",
+        "bytes": 26383
+      },
+      "status": "failed",
+      "error": "ValueError: reference input WAV/PCM identity differs",
+      "exit": {
+        "returncode": 1,
+        "elapsed_s": 7.565976439975202,
+        "child_pid": 335320
+      },
+      "interpretation": "Metadata selection order drift was rejected; PCM files were not changed and the failed candidate is not quality/performance acceptance."
+    }
+  },
+  "CAM_process16": {
+    "audit": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/cam-process16-v8b-independent-audit.json",
+      "sha256": "a1a251b328ec9d5c9311a7ed8c780736dc1cd3ea8afc6aa1c074f1429549ab58",
+      "bytes": 37397
+    },
+    "tail_audit": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/cam-process16-v8b-tail-audit.json",
+      "sha256": "5cfb4a8f50101bda0d23a1128eafb40287c3d2f07ad87c1583a5caa81636d687",
+      "bytes": 12962
+    },
+    "original_summary_identity_and_exit": {
+      "nn-parent-reference16-v8b": {
+        "summary_sha256": "835b3f60b792a8d3ec738cc2ed0fa09f4badb27113a9c17bc9ae48a1355b6e2a",
+        "bytes": 1461691,
+        "status": "completed",
+        "source_changed_during_job": false,
+        "supervisor": {
+          "returncode": 0,
+          "elapsed_s": 104.18813326954842,
+          "term_sent": false,
+          "forced_kill": false,
+          "residual_owned_pids": [],
+          "cleanup_status": "passed"
+        },
+        "round_scalars": [
+          {
+            "round": 0,
+            "warmup": true,
+            "status": "completed"
+          },
+          {
+            "round": 1,
+            "warmup": false,
+            "status": "completed"
+          },
+          {
+            "round": 2,
+            "warmup": false,
+            "status": "completed"
+          },
+          {
+            "round": 3,
+            "warmup": false,
+            "status": "completed"
+          }
+        ]
+      },
+      "cam-process16-v8b": {
+        "summary_sha256": "a1b060e62809040379a201776acbb338c9e21ba667e6e8d2efc9ef67c4feaccd",
+        "bytes": 1588967,
+        "status": "completed",
+        "source_changed_during_job": false,
+        "supervisor": {
+          "returncode": 0,
+          "elapsed_s": 271.76019613072276,
+          "term_sent": false,
+          "forced_kill": false,
+          "residual_owned_pids": [],
+          "cleanup_status": "passed"
+        },
+        "round_scalars": [
+          {
+            "round": 0,
+            "warmup": true,
+            "status": "completed"
+          },
+          {
+            "round": 1,
+            "warmup": false,
+            "status": "completed"
+          },
+          {
+            "round": 2,
+            "warmup": false,
+            "status": "completed"
+          },
+          {
+            "round": 3,
+            "warmup": false,
+            "status": "completed"
+          }
+        ]
+      }
+    },
+    "identity": {
+      "same_config": true,
+      "same_manifest": true,
+      "same_actual_PCM_identity": true,
+      "same_plan_and_runtime_ids": true,
+      "same_original_sources": true,
+      "extra_experiment_sources": {
+        "/tmp/asr-cam-process-cpu-draft-20261118-cyntsw1i/scripts/benchmark_cam_process_experiment.py": "ea6784b1bb7794f0ffc3937b75ebe12e3e7afae636fd433435cbee9d1e2c8f53"
+      }
+    },
+    "performance": {
+      "mother_steady_s": [
+        2.8110650898888707,
+        2.9050275096669793,
+        2.8812036998569965
+      ],
+      "CAM_process_steady_s": [
+        2.6616818802431226,
+        2.7539297193288803,
+        2.7215146897360682
+      ],
+      "mother_median_s": 2.8812036998569965,
+      "CAM_process_median_s": 2.7215146897360682,
+      "relative_median_change": -0.05542440825299999
+    },
+    "rounds": [
+      {
+        "round": 0,
+        "warmup": true,
+        "wall_s": 4.968827090226114,
+        "models": {
+          "speech_campplus": {
+            "instance_calls": {
+              "speech_campplus[0]": 1,
+              "speech_campplus[1]": 1,
+              "speech_campplus[2]": 2,
+              "speech_campplus[3]": 3,
+              "speech_campplus[4]": 1,
+              "speech_campplus[5]": 2,
+              "speech_campplus[6]": 1,
+              "speech_campplus[7]": 5
+            },
+            "all8_called": true,
+            "calls": 16,
+            "completed_envelopes": 16,
+            "span_s": 4.16277874,
+            "parallel_envelope_sum_s": 32.52113914
+          },
+          "emotion2vec": {
+            "instance_calls": {
+              "emotion2vec[0]": 2,
+              "emotion2vec[1]": 2,
+              "emotion2vec[2]": 2,
+              "emotion2vec[3]": 2,
+              "emotion2vec[4]": 2,
+              "emotion2vec[5]": 2,
+              "emotion2vec[6]": 2,
+              "emotion2vec[7]": 2
+            },
+            "all8_called": true,
+            "calls": 16,
+            "completed_envelopes": 16,
+            "span_s": 2.87638642,
+            "parallel_envelope_sum_s": 22.73352471
+          }
+        },
+        "quality": {
+          "Qwen_raw_and_parsed_exact": true,
+          "Qwen_diff_count": 0,
+          "nn_strict_pass": true,
+          "nn_failed_differences": 0,
+          "nn_any_numeric_difference_count": 0,
+          "result_counts": {
+            "emotion2vec": 16,
+            "speech_campplus": 16
+          }
+        },
+        "Qwen": {
+          "model_worker_pid": 2550881,
+          "actual_batches": 1,
+          "actual_batch_size": 16,
+          "generate_wall_s": 4.732711649499834,
+          "total_wall_s": 4.935292389243841,
+          "sync_wall_s": 0.002734510228037834
+        },
+        "resources": {
+          "parent_pid": 1489597,
+          "parent_allocator_allocated_bytes": 5295357440,
+          "parent_allocator_reserved_bytes": 5895094272,
+          "actual_smi_process_HBM_MB": {
+            "2300944": 157,
+            "2550881": 4409,
+            "1601397": 11875,
+            "2429622": 157,
+            "2384489": 157,
+            "2151385": 158,
+            "1541900": 157,
+            "1489597": 5735,
+            "2430430": 157,
+            "1976303": 157,
+            "1758623": 157
+          },
+          "own_CAM8_present": true,
+          "own_Qwen_present": true,
+          "own_HBM_MB_sum": 11401,
+          "shared_or_other_HBM_MB": {
+            "1601397": 11875
+          }
+        }
+      },
+      {
+        "round": 1,
+        "warmup": false,
+        "wall_s": 2.6616818802431226,
+        "models": {
+          "speech_campplus": {
+            "instance_calls": {
+              "speech_campplus[0]": 2,
+              "speech_campplus[1]": 2,
+              "speech_campplus[2]": 2,
+              "speech_campplus[3]": 2,
+              "speech_campplus[4]": 2,
+              "speech_campplus[5]": 2,
+              "speech_campplus[6]": 2,
+              "speech_campplus[7]": 2
+            },
+            "all8_called": true,
+            "calls": 16,
+            "completed_envelopes": 16,
+            "span_s": 0.24466107,
+            "parallel_envelope_sum_s": 1.27273841
+          },
+          "emotion2vec": {
+            "instance_calls": {
+              "emotion2vec[0]": 2,
+              "emotion2vec[1]": 2,
+              "emotion2vec[2]": 2,
+              "emotion2vec[3]": 2,
+              "emotion2vec[4]": 2,
+              "emotion2vec[5]": 2,
+              "emotion2vec[6]": 2,
+              "emotion2vec[7]": 2
+            },
+            "all8_called": true,
+            "calls": 16,
+            "completed_envelopes": 16,
+            "span_s": 0.47372255,
+            "parallel_envelope_sum_s": 3.563798399999999
+          }
+        },
+        "quality": {
+          "Qwen_raw_and_parsed_exact": true,
+          "Qwen_diff_count": 0,
+          "nn_strict_pass": true,
+          "nn_failed_differences": 0,
+          "nn_any_numeric_difference_count": 0,
+          "result_counts": {
+            "speech_campplus": 16,
+            "emotion2vec": 16
+          }
+        },
+        "Qwen": {
+          "model_worker_pid": 2550881,
+          "actual_batches": 1,
+          "actual_batch_size": 16,
+          "generate_wall_s": 2.4764980198815465,
+          "total_wall_s": 2.624706469476223,
+          "sync_wall_s": 0.002699879929423332
+        },
+        "resources": {
+          "parent_pid": 1489597,
+          "parent_allocator_allocated_bytes": 5377281536,
+          "parent_allocator_reserved_bytes": 7224688640,
+          "actual_smi_process_HBM_MB": {
+            "2300944": 211,
+            "2550881": 5969,
+            "1601397": 11875,
+            "2429622": 211,
+            "2384489": 211,
+            "2151385": 212,
+            "1541900": 211,
+            "1489597": 7103,
+            "2430430": 213,
+            "1976303": 211,
+            "1758623": 211
+          },
+          "own_CAM8_present": true,
+          "own_Qwen_present": true,
+          "own_HBM_MB_sum": 14763,
+          "shared_or_other_HBM_MB": {
+            "1601397": 11875
+          }
+        }
+      },
+      {
+        "round": 2,
+        "warmup": false,
+        "wall_s": 2.7539297193288803,
+        "models": {
+          "speech_campplus": {
+            "instance_calls": {
+              "speech_campplus[0]": 2,
+              "speech_campplus[1]": 2,
+              "speech_campplus[2]": 2,
+              "speech_campplus[3]": 2,
+              "speech_campplus[4]": 2,
+              "speech_campplus[5]": 2,
+              "speech_campplus[6]": 2,
+              "speech_campplus[7]": 2
+            },
+            "all8_called": true,
+            "calls": 16,
+            "completed_envelopes": 16,
+            "span_s": 0.19552356,
+            "parallel_envelope_sum_s": 1.21559831
+          },
+          "emotion2vec": {
+            "instance_calls": {
+              "emotion2vec[0]": 2,
+              "emotion2vec[1]": 2,
+              "emotion2vec[2]": 2,
+              "emotion2vec[3]": 2,
+              "emotion2vec[4]": 2,
+              "emotion2vec[5]": 2,
+              "emotion2vec[6]": 2,
+              "emotion2vec[7]": 2
+            },
+            "all8_called": true,
+            "calls": 16,
+            "completed_envelopes": 16,
+            "span_s": 0.54095043,
+            "parallel_envelope_sum_s": 4.13903333
+          }
+        },
+        "quality": {
+          "Qwen_raw_and_parsed_exact": true,
+          "Qwen_diff_count": 0,
+          "nn_strict_pass": true,
+          "nn_failed_differences": 0,
+          "nn_any_numeric_difference_count": 0,
+          "result_counts": {
+            "speech_campplus": 16,
+            "emotion2vec": 16
+          }
+        },
+        "Qwen": {
+          "model_worker_pid": 2550881,
+          "actual_batches": 1,
+          "actual_batch_size": 16,
+          "generate_wall_s": 2.56065770983696,
+          "total_wall_s": 2.7035806300118566,
+          "sync_wall_s": 0.0026100100949406624
+        },
+        "resources": {
+          "parent_pid": 1489597,
+          "parent_allocator_allocated_bytes": 5377281536,
+          "parent_allocator_reserved_bytes": 7224688640,
+          "actual_smi_process_HBM_MB": {
+            "2300944": 211,
+            "2550881": 5969,
+            "1601397": 11875,
+            "2429622": 213,
+            "2384489": 211,
+            "2151385": 212,
+            "1541900": 211,
+            "1489597": 7103,
+            "2430430": 213,
+            "1976303": 211,
+            "1758623": 211
+          },
+          "own_CAM8_present": true,
+          "own_Qwen_present": true,
+          "own_HBM_MB_sum": 14765,
+          "shared_or_other_HBM_MB": {
+            "1601397": 11875
+          }
+        }
+      },
+      {
+        "round": 3,
+        "warmup": false,
+        "wall_s": 2.7215146897360682,
+        "models": {
+          "speech_campplus": {
+            "instance_calls": {
+              "speech_campplus[0]": 2,
+              "speech_campplus[1]": 2,
+              "speech_campplus[2]": 2,
+              "speech_campplus[3]": 2,
+              "speech_campplus[4]": 2,
+              "speech_campplus[5]": 2,
+              "speech_campplus[6]": 2,
+              "speech_campplus[7]": 2
+            },
+            "all8_called": true,
+            "calls": 16,
+            "completed_envelopes": 16,
+            "span_s": 0.19325054,
+            "parallel_envelope_sum_s": 1.2140028999999999
+          },
+          "emotion2vec": {
+            "instance_calls": {
+              "emotion2vec[0]": 2,
+              "emotion2vec[1]": 2,
+              "emotion2vec[2]": 2,
+              "emotion2vec[3]": 2,
+              "emotion2vec[4]": 2,
+              "emotion2vec[5]": 2,
+              "emotion2vec[6]": 2,
+              "emotion2vec[7]": 2
+            },
+            "all8_called": true,
+            "calls": 16,
+            "completed_envelopes": 16,
+            "span_s": 0.50178421,
+            "parallel_envelope_sum_s": 3.74582151
+          }
+        },
+        "quality": {
+          "Qwen_raw_and_parsed_exact": true,
+          "Qwen_diff_count": 0,
+          "nn_strict_pass": true,
+          "nn_failed_differences": 0,
+          "nn_any_numeric_difference_count": 0,
+          "result_counts": {
+            "speech_campplus": 16,
+            "emotion2vec": 16
+          }
+        },
+        "Qwen": {
+          "model_worker_pid": 2550881,
+          "actual_batches": 1,
+          "actual_batch_size": 16,
+          "generate_wall_s": 2.5299754505977035,
+          "total_wall_s": 2.6773226195946336,
+          "sync_wall_s": 0.0024071605876088142
+        },
+        "resources": {
+          "parent_pid": 1489597,
+          "parent_allocator_allocated_bytes": 5377281536,
+          "parent_allocator_reserved_bytes": 7224688640,
+          "actual_smi_process_HBM_MB": {
+            "2300944": 211,
+            "2550881": 5969,
+            "1601397": 11875,
+            "2429622": 213,
+            "2384489": 211,
+            "2151385": 212,
+            "1541900": 211,
+            "1489597": 7103,
+            "2430430": 213,
+            "1976303": 211,
+            "1758623": 211
+          },
+          "own_CAM8_present": true,
+          "own_Qwen_present": true,
+          "own_HBM_MB_sum": 14765,
+          "shared_or_other_HBM_MB": {
+            "1601397": 11875
+          }
+        }
+      }
+    ],
+    "workers": [
+      {
+        "identity": {
+          "pid": 1541900,
+          "start_ticks": "709945860",
+          "create_time": 1795011784.6,
+          "sid": 1489597
+        },
+        "actual_actor": {
+          "available": true,
+          "pid": 1541900,
+          "native_thread_id": 1541900,
+          "device_index": 7,
+          "stream_id": 0,
+          "npu_stream_handle": 187652009462240,
+          "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+        },
+        "precision": "fp32",
+        "math_mode": "fp32_ops_hf32_disabled",
+        "storage": {
+          "available": true,
+          "dtype_device_counts": {
+            "parameter": {
+              "torch.float32@npu:7": 571
+            },
+            "buffer": {
+              "torch.float32@npu:7": 244,
+              "torch.int64@npu:7": 122
+            }
+          },
+          "all_floating_fp32": true,
+          "all_parameters_npu7": true,
+          "all_floating_buffers_npu7": true,
+          "scope": "storage metadata only; no values read and no new tensor compute"
+        },
+        "model_identity": {
+          "directory": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+          "sha256": {
+            "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+            "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+          }
+        },
+        "factory_module_file": "/home/zhangs/asr_nvidia/core/local_inference.py",
+        "ready_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 1541900,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_DONE_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 1541900,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53350912,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_DONE_call_wall_s": 0.055782560259103775,
+        "last_DONE_calling_thread_cpu_s": 0.055543079999999634,
+        "last_parent_rpc_wall_s": 0.0598708800971508,
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "worker_exitcode": 0,
+        "pid_currently_exists": false
+      },
+      {
+        "identity": {
+          "pid": 1758623,
+          "start_ticks": "709947487",
+          "create_time": 1795011800.87,
+          "sid": 1489597
+        },
+        "actual_actor": {
+          "available": true,
+          "pid": 1758623,
+          "native_thread_id": 1758623,
+          "device_index": 7,
+          "stream_id": 0,
+          "npu_stream_handle": 187651479535104,
+          "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+        },
+        "precision": "fp32",
+        "math_mode": "fp32_ops_hf32_disabled",
+        "storage": {
+          "available": true,
+          "dtype_device_counts": {
+            "parameter": {
+              "torch.float32@npu:7": 571
+            },
+            "buffer": {
+              "torch.float32@npu:7": 244,
+              "torch.int64@npu:7": 122
+            }
+          },
+          "all_floating_fp32": true,
+          "all_parameters_npu7": true,
+          "all_floating_buffers_npu7": true,
+          "scope": "storage metadata only; no values read and no new tensor compute"
+        },
+        "model_identity": {
+          "directory": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+          "sha256": {
+            "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+            "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+          }
+        },
+        "factory_module_file": "/home/zhangs/asr_nvidia/core/local_inference.py",
+        "ready_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 1758623,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_DONE_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 1758623,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53350912,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_DONE_call_wall_s": 0.06246417015790939,
+        "last_DONE_calling_thread_cpu_s": 0.06181680999999983,
+        "last_parent_rpc_wall_s": 0.06601271033287048,
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "worker_exitcode": 0,
+        "pid_currently_exists": false
+      },
+      {
+        "identity": {
+          "pid": 1976303,
+          "start_ticks": "709949106",
+          "create_time": 1795011817.06,
+          "sid": 1489597
+        },
+        "actual_actor": {
+          "available": true,
+          "pid": 1976303,
+          "native_thread_id": 1976303,
+          "device_index": 7,
+          "stream_id": 0,
+          "npu_stream_handle": 187651740253088,
+          "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+        },
+        "precision": "fp32",
+        "math_mode": "fp32_ops_hf32_disabled",
+        "storage": {
+          "available": true,
+          "dtype_device_counts": {
+            "parameter": {
+              "torch.float32@npu:7": 571
+            },
+            "buffer": {
+              "torch.float32@npu:7": 244,
+              "torch.int64@npu:7": 122
+            }
+          },
+          "all_floating_fp32": true,
+          "all_parameters_npu7": true,
+          "all_floating_buffers_npu7": true,
+          "scope": "storage metadata only; no values read and no new tensor compute"
+        },
+        "model_identity": {
+          "directory": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+          "sha256": {
+            "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+            "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+          }
+        },
+        "factory_module_file": "/home/zhangs/asr_nvidia/core/local_inference.py",
+        "ready_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 1976303,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_DONE_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 1976303,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53350912,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_DONE_call_wall_s": 0.05835692957043648,
+        "last_DONE_calling_thread_cpu_s": 0.0572430699999984,
+        "last_parent_rpc_wall_s": 0.06207964010536671,
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "worker_exitcode": 0,
+        "pid_currently_exists": false
+      },
+      {
+        "identity": {
+          "pid": 2151385,
+          "start_ticks": "709950735",
+          "create_time": 1795011833.35,
+          "sid": 1489597
+        },
+        "actual_actor": {
+          "available": true,
+          "pid": 2151385,
+          "native_thread_id": 2151385,
+          "device_index": 7,
+          "stream_id": 0,
+          "npu_stream_handle": 187651781632144,
+          "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+        },
+        "precision": "fp32",
+        "math_mode": "fp32_ops_hf32_disabled",
+        "storage": {
+          "available": true,
+          "dtype_device_counts": {
+            "parameter": {
+              "torch.float32@npu:7": 571
+            },
+            "buffer": {
+              "torch.float32@npu:7": 244,
+              "torch.int64@npu:7": 122
+            }
+          },
+          "all_floating_fp32": true,
+          "all_parameters_npu7": true,
+          "all_floating_buffers_npu7": true,
+          "scope": "storage metadata only; no values read and no new tensor compute"
+        },
+        "model_identity": {
+          "directory": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+          "sha256": {
+            "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+            "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+          }
+        },
+        "factory_module_file": "/home/zhangs/asr_nvidia/core/local_inference.py",
+        "ready_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2151385,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_DONE_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2151385,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53350912,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_DONE_call_wall_s": 0.0624989103525877,
+        "last_DONE_calling_thread_cpu_s": 0.06185019000000125,
+        "last_parent_rpc_wall_s": 0.07155577000230551,
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "worker_exitcode": 0,
+        "pid_currently_exists": false
+      },
+      {
+        "identity": {
+          "pid": 2300944,
+          "start_ticks": "709952359",
+          "create_time": 1795011849.59,
+          "sid": 1489597
+        },
+        "actual_actor": {
+          "available": true,
+          "pid": 2300944,
+          "native_thread_id": 2300944,
+          "device_index": 7,
+          "stream_id": 0,
+          "npu_stream_handle": 187652369648448,
+          "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+        },
+        "precision": "fp32",
+        "math_mode": "fp32_ops_hf32_disabled",
+        "storage": {
+          "available": true,
+          "dtype_device_counts": {
+            "parameter": {
+              "torch.float32@npu:7": 571
+            },
+            "buffer": {
+              "torch.float32@npu:7": 244,
+              "torch.int64@npu:7": 122
+            }
+          },
+          "all_floating_fp32": true,
+          "all_parameters_npu7": true,
+          "all_floating_buffers_npu7": true,
+          "scope": "storage metadata only; no values read and no new tensor compute"
+        },
+        "model_identity": {
+          "directory": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+          "sha256": {
+            "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+            "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+          }
+        },
+        "factory_module_file": "/home/zhangs/asr_nvidia/core/local_inference.py",
+        "ready_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2300944,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_DONE_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2300944,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53350912,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_DONE_call_wall_s": 0.06492394953966141,
+        "last_DONE_calling_thread_cpu_s": 0.06471002999999875,
+        "last_parent_rpc_wall_s": 0.06867159996181726,
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "worker_exitcode": 0,
+        "pid_currently_exists": false
+      },
+      {
+        "identity": {
+          "pid": 2384489,
+          "start_ticks": "709953933",
+          "create_time": 1795011865.33,
+          "sid": 1489597
+        },
+        "actual_actor": {
+          "available": true,
+          "pid": 2384489,
+          "native_thread_id": 2384489,
+          "device_index": 7,
+          "stream_id": 0,
+          "npu_stream_handle": 187651066741264,
+          "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+        },
+        "precision": "fp32",
+        "math_mode": "fp32_ops_hf32_disabled",
+        "storage": {
+          "available": true,
+          "dtype_device_counts": {
+            "parameter": {
+              "torch.float32@npu:7": 571
+            },
+            "buffer": {
+              "torch.float32@npu:7": 244,
+              "torch.int64@npu:7": 122
+            }
+          },
+          "all_floating_fp32": true,
+          "all_parameters_npu7": true,
+          "all_floating_buffers_npu7": true,
+          "scope": "storage metadata only; no values read and no new tensor compute"
+        },
+        "model_identity": {
+          "directory": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+          "sha256": {
+            "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+            "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+          }
+        },
+        "factory_module_file": "/home/zhangs/asr_nvidia/core/local_inference.py",
+        "ready_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2384489,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_DONE_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2384489,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53350912,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_DONE_call_wall_s": 0.06064615026116371,
+        "last_DONE_calling_thread_cpu_s": 0.06035626999999977,
+        "last_parent_rpc_wall_s": 0.0664538899436593,
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "worker_exitcode": 0,
+        "pid_currently_exists": false
+      },
+      {
+        "identity": {
+          "pid": 2429622,
+          "start_ticks": "709955550",
+          "create_time": 1795011881.5,
+          "sid": 1489597
+        },
+        "actual_actor": {
+          "available": true,
+          "pid": 2429622,
+          "native_thread_id": 2429622,
+          "device_index": 7,
+          "stream_id": 0,
+          "npu_stream_handle": 187651950294512,
+          "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+        },
+        "precision": "fp32",
+        "math_mode": "fp32_ops_hf32_disabled",
+        "storage": {
+          "available": true,
+          "dtype_device_counts": {
+            "parameter": {
+              "torch.float32@npu:7": 571
+            },
+            "buffer": {
+              "torch.float32@npu:7": 244,
+              "torch.int64@npu:7": 122
+            }
+          },
+          "all_floating_fp32": true,
+          "all_parameters_npu7": true,
+          "all_floating_buffers_npu7": true,
+          "scope": "storage metadata only; no values read and no new tensor compute"
+        },
+        "model_identity": {
+          "directory": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+          "sha256": {
+            "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+            "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+          }
+        },
+        "factory_module_file": "/home/zhangs/asr_nvidia/core/local_inference.py",
+        "ready_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2429622,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_DONE_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2429622,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 50487808,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_DONE_call_wall_s": 0.0754109499976039,
+        "last_DONE_calling_thread_cpu_s": 0.07469283000000004,
+        "last_parent_rpc_wall_s": 0.07844016049057245,
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "worker_exitcode": 0,
+        "pid_currently_exists": false
+      },
+      {
+        "identity": {
+          "pid": 2430430,
+          "start_ticks": "709957124",
+          "create_time": 1795011897.24,
+          "sid": 1489597
+        },
+        "actual_actor": {
+          "available": true,
+          "pid": 2430430,
+          "native_thread_id": 2430430,
+          "device_index": 7,
+          "stream_id": 0,
+          "npu_stream_handle": 187651976781760,
+          "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+        },
+        "precision": "fp32",
+        "math_mode": "fp32_ops_hf32_disabled",
+        "storage": {
+          "available": true,
+          "dtype_device_counts": {
+            "parameter": {
+              "torch.float32@npu:7": 571
+            },
+            "buffer": {
+              "torch.float32@npu:7": 244,
+              "torch.int64@npu:7": 122
+            }
+          },
+          "all_floating_fp32": true,
+          "all_parameters_npu7": true,
+          "all_floating_buffers_npu7": true,
+          "scope": "storage metadata only; no values read and no new tensor compute"
+        },
+        "model_identity": {
+          "directory": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+          "sha256": {
+            "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+            "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+          }
+        },
+        "factory_module_file": "/home/zhangs/asr_nvidia/core/local_inference.py",
+        "ready_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2430430,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_DONE_allocator": {
+          "scope": "CAM worker allocator, excludes runtime/non-PyTorch allocations",
+          "pid": 2430430,
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53350912,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_DONE_call_wall_s": 0.060616590082645416,
+        "last_DONE_calling_thread_cpu_s": 0.06029763999999993,
+        "last_parent_rpc_wall_s": 0.06621084082871675,
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "worker_exitcode": 0,
+        "pid_currently_exists": false
+      }
+    ],
+    "Qwen_worker_final": {
+      "worker_pid": 2550881,
+      "worker_create_time": 1795011955.61,
+      "worker_alive": false,
+      "resource_reaped": true,
+      "normal_exit_ok": true,
+      "forced_cleanup": false,
+      "worker_exitcode": 0
+    },
+    "cleanup": {
+      "status": "passed",
+      "supervisor_returncode": 0,
+      "no_TERM_KILL": true,
+      "residual_owned_pids": [],
+      "all_CAM8_reaped_normal": true,
+      "Qwen_reaped_normal": true,
+      "source_changed_during_job": false
+    },
+    "tail": [
+      {
+        "job": "nn-parent-reference16-v8b",
+        "rounds": [
+          {
+            "round": 0,
+            "warmup": true,
+            "job_wall_s": 7.316038909368217,
+            "models": {
+              "speech_campplus": {
+                "span_s": 7.28021049,
+                "parallel_envelope_sum_s": 57.562440470000006,
+                "calling_thread_CPU_sum_s": 2.51104693,
+                "max_call_wall_s": 6.95375259,
+                "instances": 8
+              },
+              "emotion2vec": {
+                "span_s": 6.9424779,
+                "parallel_envelope_sum_s": 55.22093254,
+                "calling_thread_CPU_sum_s": 1.0010059399999998,
+                "max_call_wall_s": 6.62469187,
+                "instances": 8
+              }
+            },
+            "last_result_source": "speech_campplus_end_s",
+            "finished_before_last_s": {
+              "Qwen_parent_result_end_s": 2.3887246903032064,
+              "speech_campplus_end_s": 0.0,
+              "emotion2vec_end_s": 0.33758135978132486
+            }
+          },
+          {
+            "round": 1,
+            "warmup": false,
+            "job_wall_s": 2.8110650898888707,
+            "models": {
+              "speech_campplus": {
+                "span_s": 1.28984984,
+                "parallel_envelope_sum_s": 9.839974159999997,
+                "calling_thread_CPU_sum_s": 1.95456882,
+                "max_call_wall_s": 0.88325826,
+                "instances": 8
+              },
+              "emotion2vec": {
+                "span_s": 0.71353679,
+                "parallel_envelope_sum_s": 5.43128908,
+                "calling_thread_CPU_sum_s": 0.6481450599999999,
+                "max_call_wall_s": 0.41128816,
+                "instances": 8
+              }
+            },
+            "last_result_source": "Qwen_parent_result_end_s",
+            "finished_before_last_s": {
+              "Qwen_parent_result_end_s": 0.0,
+              "speech_campplus_end_s": 1.4953434206545353,
+              "emotion2vec_end_s": 2.071194000542164
+            }
+          },
+          {
+            "round": 2,
+            "warmup": false,
+            "job_wall_s": 2.9050275096669793,
+            "models": {
+              "speech_campplus": {
+                "span_s": 1.57328576,
+                "parallel_envelope_sum_s": 12.04922603,
+                "calling_thread_CPU_sum_s": 2.03893088,
+                "max_call_wall_s": 1.0648794,
+                "instances": 8
+              },
+              "emotion2vec": {
+                "span_s": 0.84541044,
+                "parallel_envelope_sum_s": 6.52664393,
+                "calling_thread_CPU_sum_s": 0.6894923199999999,
+                "max_call_wall_s": 0.5251689,
+                "instances": 8
+              }
+            },
+            "last_result_source": "Qwen_parent_result_end_s",
+            "finished_before_last_s": {
+              "Qwen_parent_result_end_s": 0.0,
+              "speech_campplus_end_s": 1.3056486891582608,
+              "emotion2vec_end_s": 2.033102539367974
+            }
+          },
+          {
+            "round": 3,
+            "warmup": false,
+            "job_wall_s": 2.8812036998569965,
+            "models": {
+              "speech_campplus": {
+                "span_s": 1.43416773,
+                "parallel_envelope_sum_s": 10.953215759999999,
+                "calling_thread_CPU_sum_s": 1.91709741,
+                "max_call_wall_s": 1.010277,
+                "instances": 8
+              },
+              "emotion2vec": {
+                "span_s": 0.81507196,
+                "parallel_envelope_sum_s": 6.30474771,
+                "calling_thread_CPU_sum_s": 0.6468676200000001,
+                "max_call_wall_s": 0.45825287,
+                "instances": 8
+              }
+            },
+            "last_result_source": "Qwen_parent_result_end_s",
+            "finished_before_last_s": {
+              "Qwen_parent_result_end_s": 0.0,
+              "speech_campplus_end_s": 1.42184204980731,
+              "emotion2vec_end_s": 2.039395079948008
+            }
+          }
+        ]
+      },
+      {
+        "job": "cam-process16-v8b",
+        "rounds": [
+          {
+            "round": 0,
+            "warmup": true,
+            "job_wall_s": 4.968827090226114,
+            "models": {
+              "speech_campplus": {
+                "span_s": 4.16277874,
+                "parallel_envelope_sum_s": 32.52113914,
+                "calling_thread_CPU_sum_s": null,
+                "max_call_wall_s": 4.16277874,
+                "instances": 8
+              },
+              "emotion2vec": {
+                "span_s": 2.87638642,
+                "parallel_envelope_sum_s": 22.73352471,
+                "calling_thread_CPU_sum_s": null,
+                "max_call_wall_s": 2.65324064,
+                "instances": 8
+              }
+            },
+            "last_result_source": "Qwen_parent_result_end_s",
+            "finished_before_last_s": {
+              "Qwen_parent_result_end_s": 0.0,
+              "speech_campplus_end_s": 0.767886939458549,
+              "emotion2vec_end_s": 2.0527151599526405
+            }
+          },
+          {
+            "round": 1,
+            "warmup": false,
+            "job_wall_s": 2.6616818802431226,
+            "models": {
+              "speech_campplus": {
+                "span_s": 0.24466107,
+                "parallel_envelope_sum_s": 1.27273841,
+                "calling_thread_CPU_sum_s": null,
+                "max_call_wall_s": 0.14033171,
+                "instances": 8
+              },
+              "emotion2vec": {
+                "span_s": 0.47372255,
+                "parallel_envelope_sum_s": 3.563798399999999,
+                "calling_thread_CPU_sum_s": null,
+                "max_call_wall_s": 0.31306026,
+                "instances": 8
+              }
+            },
+            "last_result_source": "Qwen_parent_result_end_s",
+            "finished_before_last_s": {
+              "Qwen_parent_result_end_s": 0.0,
+              "speech_campplus_end_s": 2.3864580895751715,
+              "emotion2vec_end_s": 2.156577560119331
+            }
+          },
+          {
+            "round": 2,
+            "warmup": false,
+            "job_wall_s": 2.7539297193288803,
+            "models": {
+              "speech_campplus": {
+                "span_s": 0.19552356,
+                "parallel_envelope_sum_s": 1.21559831,
+                "calling_thread_CPU_sum_s": null,
+                "max_call_wall_s": 0.10318613,
+                "instances": 8
+              },
+              "emotion2vec": {
+                "span_s": 0.54095043,
+                "parallel_envelope_sum_s": 4.13903333,
+                "calling_thread_CPU_sum_s": null,
+                "max_call_wall_s": 0.32226859,
+                "instances": 8
+              }
+            },
+            "last_result_source": "Qwen_parent_result_end_s",
+            "finished_before_last_s": {
+              "Qwen_parent_result_end_s": 0.0,
+              "speech_campplus_end_s": 2.5257374197244644,
+              "emotion2vec_end_s": 2.179112069308758
+            }
+          },
+          {
+            "round": 3,
+            "warmup": false,
+            "job_wall_s": 2.7215146897360682,
+            "models": {
+              "speech_campplus": {
+                "span_s": 0.19325054,
+                "parallel_envelope_sum_s": 1.2140028999999999,
+                "calling_thread_CPU_sum_s": null,
+                "max_call_wall_s": 0.09687528,
+                "instances": 8
+              },
+              "emotion2vec": {
+                "span_s": 0.50178421,
+                "parallel_envelope_sum_s": 3.74582151,
+                "calling_thread_CPU_sum_s": null,
+                "max_call_wall_s": 0.32509594,
+                "instances": 8
+              }
+            },
+            "last_result_source": "Qwen_parent_result_end_s",
+            "finished_before_last_s": {
+              "Qwen_parent_result_end_s": 0.0,
+              "speech_campplus_end_s": 2.4966042898595333,
+              "emotion2vec_end_s": 2.184808080084622
+            }
+          }
+        ],
+        "CAM_child_last_RPC_only": [
+          {
+            "pid": 1541900,
+            "last_generate_rpc_number": 7,
+            "last_call_wall_s": 0.055782560259103775,
+            "calling_thread_CPU_s": 0.055543079999999634,
+            "parent_RPC_wall_s": 0.0598708800971508,
+            "actor": {
+              "available": true,
+              "pid": 1541900,
+              "native_thread_id": 1541900,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187652009462240,
+              "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+            }
+          },
+          {
+            "pid": 1758623,
+            "last_generate_rpc_number": 7,
+            "last_call_wall_s": 0.06246417015790939,
+            "calling_thread_CPU_s": 0.06181680999999983,
+            "parent_RPC_wall_s": 0.06601271033287048,
+            "actor": {
+              "available": true,
+              "pid": 1758623,
+              "native_thread_id": 1758623,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187651479535104,
+              "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+            }
+          },
+          {
+            "pid": 1976303,
+            "last_generate_rpc_number": 8,
+            "last_call_wall_s": 0.05835692957043648,
+            "calling_thread_CPU_s": 0.0572430699999984,
+            "parent_RPC_wall_s": 0.06207964010536671,
+            "actor": {
+              "available": true,
+              "pid": 1976303,
+              "native_thread_id": 1976303,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187651740253088,
+              "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+            }
+          },
+          {
+            "pid": 2151385,
+            "last_generate_rpc_number": 9,
+            "last_call_wall_s": 0.0624989103525877,
+            "calling_thread_CPU_s": 0.06185019000000125,
+            "parent_RPC_wall_s": 0.07155577000230551,
+            "actor": {
+              "available": true,
+              "pid": 2151385,
+              "native_thread_id": 2151385,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187651781632144,
+              "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+            }
+          },
+          {
+            "pid": 2300944,
+            "last_generate_rpc_number": 7,
+            "last_call_wall_s": 0.06492394953966141,
+            "calling_thread_CPU_s": 0.06471002999999875,
+            "parent_RPC_wall_s": 0.06867159996181726,
+            "actor": {
+              "available": true,
+              "pid": 2300944,
+              "native_thread_id": 2300944,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187652369648448,
+              "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+            }
+          },
+          {
+            "pid": 2384489,
+            "last_generate_rpc_number": 8,
+            "last_call_wall_s": 0.06064615026116371,
+            "calling_thread_CPU_s": 0.06035626999999977,
+            "parent_RPC_wall_s": 0.0664538899436593,
+            "actor": {
+              "available": true,
+              "pid": 2384489,
+              "native_thread_id": 2384489,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187651066741264,
+              "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+            }
+          },
+          {
+            "pid": 2429622,
+            "last_generate_rpc_number": 7,
+            "last_call_wall_s": 0.0754109499976039,
+            "calling_thread_CPU_s": 0.07469283000000004,
+            "parent_RPC_wall_s": 0.07844016049057245,
+            "actor": {
+              "available": true,
+              "pid": 2429622,
+              "native_thread_id": 2429622,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187651950294512,
+              "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+            }
+          },
+          {
+            "pid": 2430430,
+            "last_generate_rpc_number": 11,
+            "last_call_wall_s": 0.060616590082645416,
+            "calling_thread_CPU_s": 0.06029763999999993,
+            "parent_RPC_wall_s": 0.06621084082871675,
+            "actor": {
+              "available": true,
+              "pid": 2430430,
+              "native_thread_id": 2430430,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187651976781760,
+              "scope": "child process/device stream namespace; never compare bare handles across PIDs"
+            }
+          }
+        ],
+        "CAM_child_total_generate_RPCs_confirmed_from_last_sequence": 64
+      }
+    ],
+    "launcher_elapsed_including_startup_warmup_rounds_close": {
+      "returncode": 0,
+      "elapsed_s": 272.13797189015895,
+      "child_pid": 1487100
+    },
+    "limitations": [
+      "Parallel envelope sums overlap and are not job wall/device compute. Child last_DONE timing is only each worker last RPC, not per-round total.",
+      "Each child allocator excludes its CANN/runtime allocations; npu-smi per-PID HBM includes those, parent allocator excludes child allocations.",
+      "Experimental numpy FP32[192] IPC does not exercise official TorchTensor embedding/clustering or complete dynamic4369-segment workload.",
+      "CAM child bare stream handles are process-scoped and never compared with parent streams as shared identity.",
+      "Parallel envelope/threadCPU sums are not elapsed/device compute.",
+      "Only the final child DONE timing is retained by this prototype, not all64 child calls; do not claim child per-round CPU totals."
+    ]
+  },
+  "CAM_serial128": {
+    "audit": {
+      "path": "/tmp/asr-throughput-20261118-xvior99k/cam-serial128-v8-independent-audit.json",
+      "sha256": "06f00541164d80870fdbe308796c9e5d9ec76b383e04897e53d329a17215e002",
+      "bytes": 11208
+    },
+    "strict_identity": {
+      "manifest_sha256": "f21a6557972f99bf1df40363c48697f4fec019501d1944949fb8ea5b15ece5f9",
+      "config_sha256": "35d47d9081e329e3f757a4c6a43976fc81bc953588a3645d0223b28984ef5d8c",
+      "input_identity_all128_wav_pcm_ids_order_equal": true,
+      "source_unchanged_during_job": true,
+      "original_hf_model_dtype": "bfloat16",
+      "cam_emo_loaded_instances": [
+        8,
+        8
+      ],
+      "device": "npu:7",
+      "generation_and_precision_unchanged": true,
+      "verified_nn_load_health": {
+        "speech_campplus": {
+          "healthy_instances": 8,
+          "actual_precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "devices": [
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7"
+          ]
+        },
+        "emotion2vec": {
+          "healthy_instances": 8,
+          "actual_precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "devices": [
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7",
+            "npu:7"
+          ]
+        }
+      },
+      "qwen_actual_parameter_dtype_check": {
+        "expected_dtype": "torch.bfloat16",
+        "floating_parameter_dtype_counts": {
+          "torch.bfloat16": 707
+        },
+        "nonfloating_parameter_count": 0,
+        "buffers_cast_or_checked": false
+      },
+      "qwen_precision_policy": {
+        "mode": "fp32_ops_hf32_disabled",
+        "conv_allow_hf32": false,
+        "matmul_allow_hf32": false
+      }
+    },
+    "rounds": [
+      {
+        "round": 0,
+        "warmup": true,
+        "status": "completed",
+        "whole_work_done_elapsed_s": 18.069610940292478,
+        "qwen": {
+          "passed": true,
+          "expected_members": 128,
+          "differences": [],
+          "scope": "same-input raw/parsed agreement, not transcription accuracy"
+        },
+        "nn": {
+          "passed": true,
+          "atol": 1e-05,
+          "rtol": 1e-05,
+          "result_counts": {
+            "speech_campplus": 128,
+            "emotion2vec": 108
+          },
+          "numeric_difference_rows": 0,
+          "max_abs_difference": 0,
+          "labels_exact": true,
+          "scope": "original returned CPU CAM192/emotion7; labels exact, atol=rtol=1e-5"
+        },
+        "actual_qwen_batches": [
+          128
+        ],
+        "all8_cam_forward_counts": {
+          "speech_campplus[0]": 16,
+          "speech_campplus[1]": 17,
+          "speech_campplus[2]": 15,
+          "speech_campplus[3]": 16,
+          "speech_campplus[4]": 16,
+          "speech_campplus[5]": 16,
+          "speech_campplus[6]": 16,
+          "speech_campplus[7]": 16
+        },
+        "all8_emo_forward_counts": {
+          "emotion2vec[0]": 14,
+          "emotion2vec[1]": 14,
+          "emotion2vec[2]": 13,
+          "emotion2vec[3]": 13,
+          "emotion2vec[4]": 13,
+          "emotion2vec[5]": 13,
+          "emotion2vec[6]": 14,
+          "emotion2vec[7]": 14
+        },
+        "serial_intervals_count": 128,
+        "serial_peak_recomputed_from_intervals": 1,
+        "original_wrapped_cam_wall_sum_s": 17.60040859,
+        "original_wrapped_cam_calling_cpu_sum_s": 9.3965274,
+        "lock_wait_sum_s_not_wall": 120.96859825,
+        "cam_execution_span_s": 17.63022482
+      },
+      {
+        "round": 1,
+        "warmup": false,
+        "status": "completed",
+        "whole_work_done_elapsed_s": 12.162797450087965,
+        "qwen": {
+          "passed": true,
+          "expected_members": 128,
+          "differences": [],
+          "scope": "same-input raw/parsed agreement, not transcription accuracy"
+        },
+        "nn": {
+          "passed": true,
+          "atol": 1e-05,
+          "rtol": 1e-05,
+          "result_counts": {
+            "emotion2vec": 108,
+            "speech_campplus": 128
+          },
+          "numeric_difference_rows": 0,
+          "max_abs_difference": 0,
+          "labels_exact": true,
+          "scope": "original returned CPU CAM192/emotion7; labels exact, atol=rtol=1e-5"
+        },
+        "actual_qwen_batches": [
+          128
+        ],
+        "all8_cam_forward_counts": {
+          "speech_campplus[0]": 16,
+          "speech_campplus[1]": 16,
+          "speech_campplus[2]": 16,
+          "speech_campplus[3]": 16,
+          "speech_campplus[4]": 16,
+          "speech_campplus[5]": 16,
+          "speech_campplus[6]": 16,
+          "speech_campplus[7]": 16
+        },
+        "all8_emo_forward_counts": {
+          "emotion2vec[1]": 13,
+          "emotion2vec[2]": 13,
+          "emotion2vec[4]": 14,
+          "emotion2vec[3]": 14,
+          "emotion2vec[5]": 13,
+          "emotion2vec[6]": 14,
+          "emotion2vec[7]": 13,
+          "emotion2vec[0]": 14
+        },
+        "serial_intervals_count": 128,
+        "serial_peak_recomputed_from_intervals": 1,
+        "original_wrapped_cam_wall_sum_s": 12.00418434,
+        "original_wrapped_cam_calling_cpu_sum_s": 9.11872897,
+        "lock_wait_sum_s_not_wall": 81.89711279,
+        "cam_execution_span_s": 12.04249402
+      },
+      {
+        "round": 2,
+        "warmup": false,
+        "status": "completed",
+        "whole_work_done_elapsed_s": 12.272301729768515,
+        "qwen": {
+          "passed": true,
+          "expected_members": 128,
+          "differences": [],
+          "scope": "same-input raw/parsed agreement, not transcription accuracy"
+        },
+        "nn": {
+          "passed": true,
+          "atol": 1e-05,
+          "rtol": 1e-05,
+          "result_counts": {
+            "emotion2vec": 108,
+            "speech_campplus": 128
+          },
+          "numeric_difference_rows": 0,
+          "max_abs_difference": 0,
+          "labels_exact": true,
+          "scope": "original returned CPU CAM192/emotion7; labels exact, atol=rtol=1e-5"
+        },
+        "actual_qwen_batches": [
+          128
+        ],
+        "all8_cam_forward_counts": {
+          "speech_campplus[0]": 16,
+          "speech_campplus[1]": 16,
+          "speech_campplus[2]": 16,
+          "speech_campplus[3]": 16,
+          "speech_campplus[4]": 16,
+          "speech_campplus[5]": 16,
+          "speech_campplus[6]": 16,
+          "speech_campplus[7]": 16
+        },
+        "all8_emo_forward_counts": {
+          "emotion2vec[7]": 14,
+          "emotion2vec[0]": 14,
+          "emotion2vec[1]": 14,
+          "emotion2vec[2]": 14,
+          "emotion2vec[3]": 12,
+          "emotion2vec[6]": 13,
+          "emotion2vec[5]": 13,
+          "emotion2vec[4]": 14
+        },
+        "serial_intervals_count": 128,
+        "serial_peak_recomputed_from_intervals": 1,
+        "original_wrapped_cam_wall_sum_s": 12.10857062,
+        "original_wrapped_cam_calling_cpu_sum_s": 9.05380876,
+        "lock_wait_sum_s_not_wall": 82.37166282,
+        "cam_execution_span_s": 12.13784818
+      },
+      {
+        "round": 3,
+        "warmup": false,
+        "status": "completed",
+        "whole_work_done_elapsed_s": 12.177026060409844,
+        "qwen": {
+          "passed": true,
+          "expected_members": 128,
+          "differences": [],
+          "scope": "same-input raw/parsed agreement, not transcription accuracy"
+        },
+        "nn": {
+          "passed": true,
+          "atol": 1e-05,
+          "rtol": 1e-05,
+          "result_counts": {
+            "emotion2vec": 108,
+            "speech_campplus": 128
+          },
+          "numeric_difference_rows": 0,
+          "max_abs_difference": 0,
+          "labels_exact": true,
+          "scope": "original returned CPU CAM192/emotion7; labels exact, atol=rtol=1e-5"
+        },
+        "actual_qwen_batches": [
+          128
+        ],
+        "all8_cam_forward_counts": {
+          "speech_campplus[0]": 16,
+          "speech_campplus[1]": 16,
+          "speech_campplus[2]": 16,
+          "speech_campplus[3]": 16,
+          "speech_campplus[4]": 16,
+          "speech_campplus[5]": 16,
+          "speech_campplus[6]": 16,
+          "speech_campplus[7]": 16
+        },
+        "all8_emo_forward_counts": {
+          "emotion2vec[6]": 14,
+          "emotion2vec[7]": 13,
+          "emotion2vec[0]": 13,
+          "emotion2vec[1]": 13,
+          "emotion2vec[3]": 14,
+          "emotion2vec[4]": 14,
+          "emotion2vec[5]": 14,
+          "emotion2vec[2]": 13
+        },
+        "serial_intervals_count": 128,
+        "serial_peak_recomputed_from_intervals": 1,
+        "original_wrapped_cam_wall_sum_s": 12.00261488,
+        "original_wrapped_cam_calling_cpu_sum_s": 8.93322183,
+        "lock_wait_sum_s_not_wall": 81.85414794,
+        "cam_execution_span_s": 12.0338922
+      }
+    ],
+    "performance": {
+      "default_parallel_cam8_steady_work_done_s": [
+        11.448721440508962,
+        12.018751389347017,
+        12.740683279931545
+      ],
+      "serial_active1_cam8_loaded_steady_work_done_s": [
+        12.162797450087965,
+        12.272301729768515,
+        12.177026060409844
+      ],
+      "default_median_s": 12.018751389347017,
+      "serial_median_s": 12.177026060409844,
+      "serial_median_relative_to_default": 1.0131689778692914,
+      "interpretation": "No demonstrated whole-workload speedup from limiting CAM active generate to1; not a production recommendation. Three separate job samples overlap in range and are not a significance test."
+    },
+    "bounded_evidence": {
+      "event_dropped": 0,
+      "result_dropped": 0,
+      "serial_dropped": 0,
+      "serial_reported_peak": 1,
+      "serial_final_active": 0
+    },
+    "normal_cleanup": {
+      "passed": true,
+      "supervisor_returncode": 0,
+      "forced_kill": false,
+      "term_sent": false,
+      "residual_owned_pids": [],
+      "wrappers_restored": true,
+      "nn_both_unloaded_and_idle": true,
+      "qwen_worker": {
+        "worker_pid": 2145719,
+        "worker_create_time": 1795009130.07,
+        "worker_alive": false,
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "worker_exitcode": 0,
+        "cleanup_status": "passed"
+      },
+      "ports_started": false
+    },
+    "original_summary_identity_and_exit": {
+      "summary_sha256": "4275954aa49b1348afac92a29c24b96d075013c352921d57c787370749384c40",
+      "bytes": 9936846,
+      "status": "completed",
+      "source_changed_during_job": false,
+      "supervisor": {
+        "returncode": 0,
+        "elapsed_s": 149.29657712951303,
+        "term_sent": false,
+        "forced_kill": false,
+        "residual_owned_pids": [],
+        "cleanup_status": "passed"
+      },
+      "round_scalars": [
+        {
+          "round": 0,
+          "warmup": true,
+          "status": "completed"
+        },
+        {
+          "round": 1,
+          "warmup": false,
+          "status": "completed"
+        },
+        {
+          "round": 2,
+          "warmup": false,
+          "status": "completed"
+        },
+        {
+          "round": 3,
+          "warmup": false,
+          "status": "completed"
+        }
+      ]
+    },
+    "limitations": [
+      "All8 CAM weights remain loaded and all8 are actually used; this is an active-generate concurrency probe, not a single-model-memory/replica experiment.",
+      "The outer lock includes original runner context, feature extraction, forward/readback, original synchronization and base observation capture. It changes scheduling of the entire CAM call; it does not isolate GIL, FP32 guard, feature extraction, host enqueue or NPU arithmetic separately.",
+      "Emo8 and the single Qwen child remain concurrent; same NPU7 shared contention and external process conditions still apply.",
+      "Serial calling-thread CPU sums are ~9s vs prior parallel~17s, but calling-thread CPU excludes intraop workers and cannot be used as total host CPU or kernel time. Reduced calling CPU did not produce an elapsed benefit here.",
+      "Sum of queued outer-lock waits overlaps across8 model leases and must never be added to wall time.",
+      "Vector agreement uses original CAM192/emo7 outputs+exact labels at atol=rtol1e-5; Qwen raw/parsed exact. No transcript truth or accuracy score.",
+      "Fixed128 scope excludes full4369 dynamic arrivals/backpressure; this result does not settle full-audio B8 scheduling throughput."
+    ]
+  },
+  "owned_drain": {
+    "change_scope": "Only test-owned HTTP request graceful drain; main/core/config business timeouts, 420-second watchdog, outer resource cleanup and port observation remain separate.",
+    "CLI": "--owned-request-drain-grace-s",
+    "default_and_legacy_Namespace_s": 180,
+    "accepted_integer_range_s": [
+      1,
+      180
+    ],
+    "planned_NPU_value_s": 10,
+    "CPU_units": {
+      "passed": 7,
+      "deselected": 24,
+      "elapsed_s": 0.44,
+      "scope": "pure mocks: CLI, legacy Namespace, command/run.json and one-TERM observed-exit timestamps; no service/model/NPU"
+    },
+    "loopback": {
+      "artifact": {
+        "path": "/tmp/asr-owned-drain-loopback-20261118/result.json",
+        "sha256": "5b9f5510d36b4910942ac0b74ec8393e90ae84a5caee1e4504c98e0f1a3e433b",
+        "bytes": 2735
+      },
+      "scope": "CPU loopback cancellation/lifespan ownership only; no ASR/NPU",
+      "sentinel_identity": [
+        2811508,
+        1795011431.08
+      ],
+      "gate_held_evidence": {
+        "http_cancelled_monotonic": 7099109.30194173,
+        "lifespan_entered_monotonic": 7099109.30230771,
+        "parent_still_alive": true,
+        "close_still_pending": true,
+        "actual_cpu_work_not_done": true,
+        "sentinel_alive_and_listening": true
+      },
+      "passed": true,
+      "shutdown": {
+        "owned": true,
+        "identities": [
+          [
+            2811530,
+            1795011431.08
+          ]
+        ],
+        "forced": false,
+        "exit_code": 0,
+        "expected_exit_codes": [
+          0
+        ],
+        "exit_code_ok": true,
+        "remaining_pids": [],
+        "port_observations": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "observe_s": 5,
+        "orphan_cleanup": false,
+        "term_sent_monotonic": 7099108.19993703,
+        "parent_exit_observed_monotonic": 7099109.66106512,
+        "term_to_parent_exit_s": 1.4611280905082822,
+        "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+        "passed": true
+      },
+      "http_status": 500,
+      "sentinel_preserved": true,
+      "events": [
+        {
+          "event": "lifespan_startup",
+          "monotonic": 7099105.78406324,
+          "pid": 2811530
+        },
+        {
+          "event": "cpu_work_started",
+          "monotonic": 7099107.89889394,
+          "pid": 2811530
+        },
+        {
+          "event": "uvicorn_signal",
+          "monotonic": 7099108.19996477,
+          "pid": 2811530,
+          "signum": 15
+        },
+        {
+          "event": "http_cancelled",
+          "monotonic": 7099109.30194173,
+          "pid": 2811530
+        },
+        {
+          "event": "lifespan_shutdown_entered",
+          "monotonic": 7099109.30230771,
+          "pid": 2811530
+        },
+        {
+          "event": "driver_release_gate",
+          "monotonic": 7099109.3196628,
+          "pid": 2809216
+        },
+        {
+          "event": "cpu_work_done",
+          "monotonic": 7099109.32731689,
+          "pid": 2811530
+        },
+        {
+          "event": "http_actual_work_drained",
+          "monotonic": 7099109.32818651,
+          "pid": 2811530
+        },
+        {
+          "event": "lifespan_shutdown_done",
+          "monotonic": 7099109.33449802,
+          "pid": 2811530
+        },
+        {
+          "event": "python_term_replay",
+          "monotonic": 7099109.33502202,
+          "pid": 2811530,
+          "signum": 15
+        }
+      ],
+      "no_model_imports": true,
+      "request_drain_grace_s": 1,
+      "sentinel_cleanup_exit_code": -15,
+      "remaining_owned_pids": [],
+      "sentinel_gone": true
+    },
+    "NPU_controlled_cancellation": "pending; CPU loopback is not NPU DONE/stream/device cleanup proof",
+    "future_controlled_NPU_options": [
+      "--owned-request-drain-grace-s",
+      "10",
+      "--shutdown-timeout-s",
+      "240"
+    ],
+    "no_task_checked_by_this_update": true
+  },
+  "excluded_inflight": "cam-process128-v8c remains outside this report until its separate audit and close are complete; no preliminary values copied."
+}

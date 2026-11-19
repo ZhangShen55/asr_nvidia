@@ -21,6 +21,8 @@ import time
 import traceback
 from collections import deque
 from dataclasses import dataclass
+from dataclasses import field
+from contextvars import ContextVar
 from typing import Any, Callable, Deque, Dict, Optional, Tuple
 
 from core.config import settings
@@ -36,6 +38,25 @@ _MSG_FINISHED = "finished"
 _STOP_POLL_INTERVAL_S = 0.5
 _MONITOR_INTERVAL_S = 1.0
 _DEFAULT_STARTUP_TIMEOUT_S = 300.0
+_LAST_DETECT_TIMING: ContextVar[dict] = ContextVar("vad_pool_timing", default={})
+
+
+def get_last_detect_timing() -> dict:
+    return dict(_LAST_DETECT_TIMING.get())
+
+
+def get_effective_vad_options(model) -> dict:
+    """只读模型构造后的真实选项；不把nested声明冒充构造覆盖。"""
+    target = getattr(model, "model", model)
+    options = getattr(target, "vad_opts", None)
+    if options is None:
+        return {"available": False, "reason": "运行器未暴露vad_opts"}
+    values = {}
+    for key in ("max_single_segment_time", "max_end_silence_time", "speech_noise_thres",
+                "decibel_thres", "snr_thres"):
+        value = getattr(options, key, None)
+        values[key] = value if type(value) in (int, float, bool, str) else None
+    return {"available": True, "source": "loaded_model.model.vad_opts", "values": values}
 
 
 class VadPoolError(RuntimeError):
@@ -142,11 +163,13 @@ def _worker_main(
             except OSError:
                 pass
         allocated_mb = _worker_memory_mb(device)
+        effective_options = get_effective_vad_options(model)
     except BaseException:  # noqa: BLE001
         result_queue.put((_MSG_IDLE, worker_id, worker_id, "error", traceback.format_exc()))
         return
 
-    result_queue.put((_MSG_IDLE, worker_id, worker_id, "ok", {"allocated_mb": allocated_mb}))
+    result_queue.put((_MSG_IDLE, worker_id, worker_id, "ok", {"allocated_mb": allocated_mb,
+                                                          "effective_options": effective_options}))
     try:
         while not stop_event.is_set():
             try:
@@ -186,6 +209,8 @@ class _Worker:
     busy_task_id: Optional[int] = None
     last_finished_at: Optional[float] = None
     allocated_mb: Optional[float] = 0.0
+    effective_options: Optional[dict] = None
+    pid: Optional[int] = None
 
 
 @dataclass
@@ -195,6 +220,8 @@ class _PendingTask:
     started: asyncio.Event
     finished: asyncio.Future
     worker_id: Optional[int] = None
+    queued_at: float = field(default_factory=time.monotonic)
+    began_at: Optional[float] = None
 
 
 class VadPool:
@@ -364,6 +391,14 @@ class VadPool:
         except asyncio.CancelledError:
             await self._discard(task_id)
             raise
+        finally:
+            ended = time.monotonic()
+            began = pending.began_at
+            _LAST_DETECT_TIMING.set({
+                "vad_wait_ms": ((began or ended) - pending.queued_at) * 1000,
+                "vad_worker_ms": (ended - began) * 1000 if began is not None else 0.0,
+                "scope": "queue/dispatch and worker wall envelope including IPC, not kernel time",
+            })
 
     def stats(self) -> Dict[str, Any]:
         workers = list(self._workers.values())
@@ -384,6 +419,12 @@ class VadPool:
             "failures": failed,
             "busy": busy,
             "waiting": len(self._queue),
+            "oldest_wait_s": max([time.monotonic() - pending.queued_at
+                                   for pending in self._tasks.values() if pending.began_at is None] or [0.0]),
+            "worker_details": [{"worker_id": worker.worker_id, "pid": getattr(worker, "pid", None),
+                                "device": worker.device, "ready": worker.ready,
+                                "busy": worker.busy_task_id is not None,
+                                "effective_options": getattr(worker, "effective_options", None)} for worker in workers],
         }
 
     def _spawn_worker(self, device: str) -> _Worker:
@@ -416,6 +457,7 @@ class VadPool:
             )
             self._workers[worker_id] = worker
             process.start()
+            worker.pid = process.pid
             logger.info("[VAD 池] 拉起固定 worker#%d（设备=%s）", worker_id, device)
             return worker
 
@@ -550,6 +592,7 @@ class VadPool:
             if payload:
                 value = payload.get("allocated_mb")
                 worker.allocated_mb = float(value) if value is not None else None
+                worker.effective_options = payload.get("effective_options")
             self._refresh_vad_status()
             self._dispatch()
             return
@@ -558,6 +601,7 @@ class VadPool:
                 worker.busy_task_id = task_id
             pending = self._tasks.get(task_id)
             if pending is not None:
+                pending.began_at = time.monotonic()
                 pending.started.set()
             return
         if kind != _MSG_FINISHED:

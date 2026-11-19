@@ -91,7 +91,10 @@ class AudioLifecycleTests(unittest.IsolatedAsyncioTestCase):
             return {"segments": []}
 
         ctx = SimpleNamespace(request=request, tmp_paths=[], filename="a.wav")
-        with patch.object(route, "get_slot_manager", return_value=manager), \
+        # 此unit注入父进程AutoModel；独立于候选profile的CAM process选择。
+        thread_pool = dict(settings._cfg.get("model_device_pool", {}), speech_campplus_execution_mode="thread")
+        with patch.dict(settings._cfg, {"model_device_pool": thread_pool}), \
+                patch.object(route, "get_slot_manager", return_value=manager), \
                 patch.object(route, "prepare_asr_context", new=AsyncMock(return_value=(None, ctx))), \
                 patch.object(route, "run_qwen_asr", side_effect=run), \
                 patch.object(pipeline, "get_model_pool", return_value=pool), \

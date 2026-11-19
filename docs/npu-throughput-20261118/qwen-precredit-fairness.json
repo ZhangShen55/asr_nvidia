@@ -1,0 +1,206 @@
+{
+  "original": {
+    "first_only": {
+      "pending_by_request": {
+        "r0": 256
+      },
+      "qwen_offered_by_request": {
+        "r0": 16
+      },
+      "qwen_done_by_request": {},
+      "global_qwen_credit_available": 112,
+      "pending": {
+        "limit": 256,
+        "byte_limit": 33554432,
+        "active": 256,
+        "audio_bytes": 25624576,
+        "waiting": 0,
+        "peak": 256,
+        "peak_audio_bytes": 25624576
+      },
+      "vad_ready": [
+        "r0"
+      ]
+    },
+    "eight_vad_ready_qwen_blocked": {
+      "pending_by_request": {
+        "r0": 256
+      },
+      "qwen_offered_by_request": {
+        "r0": 16
+      },
+      "qwen_done_by_request": {},
+      "global_qwen_credit_available": 112,
+      "pending": {
+        "limit": 256,
+        "byte_limit": 33554432,
+        "active": 256,
+        "audio_bytes": 25624576,
+        "waiting": 1792,
+        "peak": 256,
+        "peak_audio_bytes": 25624576
+      },
+      "vad_ready": [
+        "r0",
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5",
+        "r6",
+        "r7"
+      ]
+    },
+    "qwen_released_cam_still_slow": {
+      "pending_by_request": {
+        "r0": 256
+      },
+      "qwen_offered_by_request": {
+        "r0": 256
+      },
+      "qwen_done_by_request": {
+        "r0": 256
+      },
+      "global_qwen_credit_available": 128,
+      "pending": {
+        "limit": 256,
+        "byte_limit": 33554432,
+        "active": 256,
+        "audio_bytes": 25624576,
+        "waiting": 1792,
+        "peak": 256,
+        "peak_audio_bytes": 25624576
+      },
+      "vad_ready": [
+        "r0",
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5",
+        "r6",
+        "r7"
+      ]
+    }
+  },
+  "candidate": {
+    "first_only": {
+      "pending_by_request": {
+        "r0": 16
+      },
+      "qwen_offered_by_request": {
+        "r0": 16
+      },
+      "qwen_done_by_request": {},
+      "global_qwen_credit_available": 112,
+      "pending": {
+        "limit": 256,
+        "byte_limit": 33554432,
+        "active": 16,
+        "audio_bytes": 1601536,
+        "waiting": 0,
+        "peak": 16,
+        "peak_audio_bytes": 1601536
+      },
+      "vad_ready": [
+        "r0"
+      ]
+    },
+    "eight_vad_ready_qwen_blocked": {
+      "pending_by_request": {
+        "r0": 16,
+        "r1": 16,
+        "r2": 16,
+        "r3": 16,
+        "r4": 16,
+        "r5": 16,
+        "r6": 16,
+        "r7": 16
+      },
+      "qwen_offered_by_request": {
+        "r0": 16,
+        "r1": 16,
+        "r2": 16,
+        "r3": 16,
+        "r4": 16,
+        "r5": 16,
+        "r6": 16,
+        "r7": 16
+      },
+      "qwen_done_by_request": {},
+      "global_qwen_credit_available": 0,
+      "pending": {
+        "limit": 256,
+        "byte_limit": 33554432,
+        "active": 128,
+        "audio_bytes": 12812288,
+        "waiting": 0,
+        "peak": 128,
+        "peak_audio_bytes": 12812288
+      },
+      "vad_ready": [
+        "r0",
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5",
+        "r6",
+        "r7"
+      ]
+    },
+    "qwen_released_cam_still_slow": {
+      "pending_by_request": {
+        "r0": 32,
+        "r1": 32,
+        "r2": 32,
+        "r3": 32,
+        "r4": 32,
+        "r5": 32,
+        "r6": 32,
+        "r7": 32
+      },
+      "qwen_offered_by_request": {
+        "r0": 32,
+        "r1": 32,
+        "r2": 32,
+        "r3": 32,
+        "r4": 32,
+        "r5": 32,
+        "r6": 32,
+        "r7": 32
+      },
+      "qwen_done_by_request": {
+        "r0": 32,
+        "r1": 32,
+        "r2": 32,
+        "r3": 32,
+        "r4": 32,
+        "r5": 32,
+        "r6": 32,
+        "r7": 32
+      },
+      "global_qwen_credit_available": 0,
+      "pending": {
+        "limit": 256,
+        "byte_limit": 33554432,
+        "active": 256,
+        "audio_bytes": 25624576,
+        "waiting": 128,
+        "peak": 256,
+        "peak_audio_bytes": 25624576
+      },
+      "vad_ready": [
+        "r0",
+        "r1",
+        "r2",
+        "r3",
+        "r4",
+        "r5",
+        "r6",
+        "r7"
+      ]
+    }
+  },
+  "scope": "CPU API mocks; actual RequestConcurrency and PendingSegmentBudget; no NPU/model execution"
+}
