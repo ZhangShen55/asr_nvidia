@@ -462,3 +462,7 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 已有纯Qwen组件384是固定原128段各3份：中位7.415秒、同期128×3为11.389秒，峰allocated21.69GiB，27/384原始输出SHA不同，未验准确率。512首次暖身在Conv2D分配额外11.72GiB时OOM；该结论限当时共享卡/缓存条件。384在八CAM/八emo共驻和八完整音频上的稳定性、OOM、输出质量及吞吐尚未验收，不能以纯组件成绩推广正式默认。基于100ms/900帧的预算是供给/拆批门槛，不能当作HBM容量保证。
 
 - 2026-11-19配置48/384补充完成：根/容器显式释放预算但旧值保持；test/config.qwen384{,-b8}.toml为候选，当前源码CPU1023/281子测试通过，正式source client/process实际四轮1×384（八owner各48）与正常关闭/parent后全birth退出通过，中位8.521633秒。44/60，完整/B共驻/保护仍待测。音频已由用户迁移为test/test_audio，引用8源SHA一致，仅临时清单刷新路径，原件与失败保留。证据docs/npu-throughput-20261118/config384-validation-20261119.json。
+
+### 910B 依赖清单整理（2026-11-19）
+
+运行依赖统一在根目录 `requirements.txt`，原四份运行子清单已合并；版本和依赖集合不变。开发/构建清单保留，完整 Conda/pip 参考锁移至 `environment/910b/`，重建脚本同步引用。av/pynini 仍由 Conda 提供；历史报告与模型原始文件不改。本次仅整理交付文件，不修改业务行为、配置字段和现用环境，不代表重建环境、镜像或 NPU 验收。

@@ -87,7 +87,7 @@ CONFIG_PATH=./config.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 正式入口为 `python main.py`（支持 --host/--port/--workers 1）。关闭时向本次父进程发送 TERM，先完成 lifespan 再走 Python atexit；当前 NPU 运行时可能接管 INT，不能仅以 Ctrl+C 判断退出。等待 NPU 工作及 VAD worker 退出。测试必须记录自身 PID/进程树和端口，统一 finally 收尾并核对端口解除监听；不要按名称或端口批量终止既有服务。
 启动预检校验依赖、设备及三个小模型资产，VAD 固定进程池预热后才就绪；Qwen、CAM++、emotion2vec 在首次需要时加载。Qwen 目录默认 `/home/model/Qwen3-ASR-1.7B-hf`，不再依赖外部 HTTP 服务。
 
-依赖分为 `requirements-pip-runtime.txt`（通用运行）、`requirements-npu.txt`（与 CANN 配套的 NPU 栈）、`requirements-dev.txt`、`requirements-build.txt`。环境重建使用 `scripts/rebuild_npu_env.sh` 的独立前缀，不原地升级当前 `asr`。
+运行依赖统一为 `requirements.txt`，仅面向昇腾 910B；开发测试使用 `requirements-dev.txt`，独立构建工具使用 `requirements-build.txt`。完整 Conda/pip 参考锁位于 `environment/910b/`。环境重建使用 `scripts/rebuild_npu_env.sh` 的独立前缀，不原地升级当前 `asr`；av/pynini 仍由 Conda 提供。
 
 ### 模型内存压力诊断
 

@@ -20,7 +20,7 @@ ASR_CANN_ENV="${ASR_CANN_ENV:-/usr/local/Ascend/ascend-toolkit/set_env.sh}"
 set +u
 source "$ASR_CANN_ENV"
 set -u
-"$ASR_CONDA_EXE" create --yes --prefix "$ASR_TARGET_PREFIX" --file "$ASR_REPO_ROOT/requirements-conda-linux-aarch64.txt"
+"$ASR_CONDA_EXE" create --yes --prefix "$ASR_TARGET_PREFIX" --file "$ASR_REPO_ROOT/environment/910b/requirements-conda-linux-aarch64.txt"
 ASR_PYTHON="$ASR_TARGET_PREFIX/bin/python"
 ASR_PIP_SOURCE=()
 if [[ -n "${ASR_WHEELHOUSE:-}" ]]; then
@@ -30,7 +30,7 @@ fi
 # pip元数据操作只看独立环境，避免CANN PYTHONPATH暴露外部te/op-compile-tool发行元数据。
 # 当前shell仍完整保留CANN PYTHONPATH，后续真实import/forward不可清空。
 # conda 提供 av=14.2.0/pynini=2.1.7 及二进制库；pip 不接管这些包，不解析漂移依赖。
-env -u PYTHONPATH "$ASR_PYTHON" -m pip install "${ASR_PIP_SOURCE[@]}" --no-deps --report "$ASR_TARGET_PREFIX/asr-pip-install-report.json" -r "$ASR_REPO_ROOT/requirements-lock-npu.txt"
+env -u PYTHONPATH "$ASR_PYTHON" -m pip install "${ASR_PIP_SOURCE[@]}" --no-deps --report "$ASR_TARGET_PREFIX/asr-pip-install-report.json" -r "$ASR_REPO_ROOT/environment/910b/requirements-lock-npu.txt"
 if [[ "${ASR_WITH_DEV_TOOLS:-0}" == 1 ]]; then
   env -u PYTHONPATH "$ASR_PYTHON" -m pip install "${ASR_PIP_SOURCE[@]}" --no-deps -r "$ASR_REPO_ROOT/requirements-dev.txt"
 fi

@@ -6,12 +6,11 @@
 
 宿主开发使用 `/home/zhangs/conda-envs/asr/bin/python`、物理 `npu:7`。不要原地升级现有环境，也不要把其site-packages通过PYTHONPATH叠加到系统Python。
 
-- `requirements-pip.txt`：通用业务依赖；`requirements-pip-runtime.txt`：进程/进度依赖。
-- `requirements-npu.txt`：torch/torch-npu/torchaudio 2.5.1、transformers 5.13.0等目标版本。emotion2vec的NPU实例使用该torch-npu提供的GELU V2 `npu_gelu(..., approximate="none")`，保持CPU原始GELU/erf语义；目标wheel必须保留此算子schema，不能静默回退默认tanh近似。该适配不新增pip依赖；HF32设置与模型数值一致性仍需真实设备验证。
-- `requirements-pip-extra.txt`：ITN；先由conda安装av=14.2.0、pynini=2.1.7。
-- `requirements-dev.txt`：测试客户端和pytest；`requirements-build.txt`：独立构建环境工具。
+- `requirements.txt`：唯一运行依赖入口，包含业务、进程/进度、NPU 栈和 ITN；仅支持 Linux aarch64 / Python 3.10 / CANN 8.1.RC1 的 910B 环境。
+- `requirements-dev.txt`：测试客户端和 pytest；`requirements-build.txt`：独立构建环境工具。
+- `environment/910b/requirements-conda-linux-aarch64.txt` 与 `environment/910b/requirements-lock-npu.txt`：完整 Conda/pip 参考锁，内容保持原样；迁移报告中的 `environment-reference.json` 保留原位置。rebuild 脚本使用这两份锁并严格比较 pip list。
 
-`requirements-conda-linux-aarch64.txt`和`requirements-lock-npu.txt`记录本轮参考环境的完整conda/pip来源；`environment-reference.json`保存pip元数据基线。rebuild脚本使用显式conda清单与pip-owned锁，避免接管conda的av/pynini，并严格比较pip list。
+av=14.2.0、pynini=2.1.7 及二进制库先由 Conda 提供，pip-owned 锁使用 `--no-deps` 安装，不以直接 pip 解析替代锁定重建。NPU 栈维持 torch/torch-npu/torchaudio 2.5.1 和 transformers 5.13.0。emotion2vec 继续要求 GELU V2 `npu_gelu(..., approximate="none")`，保持 CPU 原始 GELU/erf 语义，不能静默回退 tanh 近似；HF32 与模型数值一致性仍需真实设备验证。
 
 创建不存在的独立前缀（会安装软件）：
 

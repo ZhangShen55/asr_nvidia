@@ -1,3 +1,0 @@
-# conda 先安装 pynini=2.1.7；本清单按 --no-deps 安装，最后执行 pip check。
-WeTextProcessing==1.2.0
-importlib_resources==7.1.0
