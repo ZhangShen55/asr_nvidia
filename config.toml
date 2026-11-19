@@ -45,6 +45,16 @@ queue_max_size = 64                     # A+B 共享等待队列容量
 queue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排队等待
 request_timeout_s = 120                 # 单次 Qwen 请求超时
 retry_count = 2                         # Qwen 请求失败重试次数
+# 以下分别限制真实物理批、组批等待及输入预算；缺省值显式列出，不改变现有行为。
+# 48/384候选在test/config.qwen384.toml，根配置不因组件测试自动升级。
+max_inference_batch_size = 1          # 1～384；不是完整音频HTTP并发
+batch_wait_timeout_ms = 10           # 0～1000ms；到期处理已有段，不强等凑满
+batch_max_duration_ratio = 4.0       # 1～64；控制同批最长/最短有效特征帧比
+max_batch_audio_frames = 102400      # padding最长100Hz帧数×成员数；非HBM字节
+max_batch_tokens = 78336             # 输入+生成的保守估计token预算；非实际生成总量
+pending_segment_limit = 256          # 全服务活动PCM段预算；要供384批不能仍只给256
+pending_audio_bytes_limit = 268435456 # 原PCM预算256MiB，不含模型/前端/IPC临时buffer
+
 speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）
 
 [vad]

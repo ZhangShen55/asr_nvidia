@@ -183,7 +183,7 @@ Qwen完成即还自身名额，增强队列/汇合受段数和PCM字节预算反
 `2026-11-18-npu-asr-throughput-scheduling`处于apply，尚未完成性能验收或归档；前次`2026-11-17-npu-910b-local-qwen-asr`已完成并归档，历史实测结果不因本轮候选改写。以当前change的tasks、design和test-plan跟踪必需验收。
 
 - 当前安全缺省：单Qwen、batch1、每音频/全局窗口1/1；现有`config.toml`的混合四VAD及CAM三/emo一属于前次交付配置。本轮独立候选profile为`/tmp/asr-throughput-20261118-xvior99k/candidate128.toml`，定义VAD八CPU、CAM/emo各八NPU:7、Qwen每音频16/全局128、批上限128、预取5、总8/B4；纯B8另配profile。配置校验不等于真实容量/吞吐通过，最终值须按实测更新本文件与README。
-- 新`[qwen_asr]`字段：`max_inference_batch_size`缺省1（1～128）、`batch_wait_timeout_ms`缺省10（0～1000ms）、`max_batch_audio_frames`缺省102400、`max_batch_tokens`缺省78336、`pending_segment_limit`缺省256、`pending_audio_bytes_limit`缺省268435456（256MiB）。完整类型/范围见README和`core/config.py`，修改后重启。帧估计为最长100Hz帧数×B，token估计为`(ceil(max_frames/8)+max_new_tokens+256)×B`；processor实际shape另存，估计不保证显存容量。
+- 新`[qwen_asr]`字段：`max_inference_batch_size`缺省1（1～384；384为独立候选）、`batch_wait_timeout_ms`缺省10（0～1000ms）、`max_batch_audio_frames`缺省102400、`max_batch_tokens`缺省78336、`pending_segment_limit`缺省256、`pending_audio_bytes_limit`缺省268435456（256MiB）。完整类型/范围见README和`core/config.py`，修改后重启。帧估计为最长100Hz帧数×B，token估计为`(ceil(max_frames/8)+max_new_tokens+256)×B`；processor实际shape另存，估计不保证显存容量。
 - 新`[model_device_pool]`的`speech_campplus_prefetch_queue_depth`、`emotion2vec_prefetch_queue_depth`缺省0（0～64，0无预取），各`*_batch_size`仅支持1。数组长度=实例数；每健康实例等待深度=预取；batch=实际计算。八实例深度5为40等待+最多8运行，不是batch5。共享任务源不将未执行段锁死在忙副本，空闲即补位，反压等待另计。
 - 每条完整音频最多占一个VAD worker。8条/4worker时任一FINISHED即分派下一条，不等最初四条或下游；VAD租约与整音频租约分开归还。Qwen完成即释放自己的段窗口，CAM/emo各自归还，最终仍按请求/段标识汇合；段数/PCM预算满时明确反压，不无限堆积future或PCM。
 - 每音频元任务worker至多`min(段数,pending_segment_limit)`，缺省256；总八音频至多2048个元任务，不是全局future最多256。真正切片和分支开工另受全局256段/256MiB PCM预算限制，预算满则worker等待，必要分支全部收尾才归还；Qwen逻辑窗口独立释放。响应文本/embedding不计作在途PCM。
@@ -425,3 +425,40 @@ CONFIG_PATH=./test/config.qwen128.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 纯Qwen历史固定同128段曲线中，batch64/128处理总量的三轮稳态中位约5.232/3.871秒，吞吐仍增加35.2%；128是最高已测档，不是已证最优。当前物理批校验上限128，未执行>128实验；不能推断拐点已在128之外，也不能拿该组件成绩替代完整A8/B8。
 
 - 2026-11-19本补充已验证：当前源码CPU1001/281子测试通过，预加载NPU7 load-only与exit0/port5关闭通过；清单43/59。test/请求客户端已提供，未执行完整A8请求，不将load-only当推理吞吐验收。证据见docs/npu-throughput-20261118/preload-request-validation-20261119.json。
+
+
+### 单Qwen八音频48／384段候选（2026-11-19）
+
+参数已在`config.toml`与`docker/config.toml`显式列出，配置重启后生效。依用户此前选择，根配置保留1／1、物理batch1、预加载false及原小模型池行为；384只在独立候选`test/config.qwen384.toml`和`test/config.qwen384-b8.toml`启用。128测试配置仍保留。
+
+| [qwen_asr]参数 | 384候选值 | 含义 |
+| --- | ---: | --- |
+| local_instance_count | 1 | 常驻Qwen权重副本数 |
+| preload_on_startup | true | 权重/processor就绪后才开放HTTP，不做生成暖身 |
+| segment_concurrency | 48 | 每条完整音频在途Qwen段窗口 |
+| request_concurrency | 384 | 所有音频共享逻辑段窗口 |
+| max_inference_batch_size | 384 | 每次物理批最多384，校验范围1～384；不开放512 |
+| batch_wait_timeout_ms | 100 | 等待有限，到期发已有段，不强凑384 |
+| batch_max_duration_ratio | 32 | 按最长/最短有效特征帧限制同批跨度 |
+| max_batch_audio_frames | 345600 | 按每成员900padding帧×384估计 |
+| max_batch_tokens | 240000 | 按(ceil(900/8)+256+256)×384估计 |
+| pending_segment_limit | 512 | 独立活动PCM段数预算，旧256会先反压384供给 |
+| pending_audio_bytes_limit | 268435456 | 256MiB原PCM预算，仍可能先反压；不含模型/前端/IPC临时内存 |
+| audio_concurrency | 8 | A+B完整音频准入总上限 |
+| audio_spk_emo_concurrency | 4或独立8 | B4默认保留；纯B八路使用-b8候选 |
+
+八条各48为逻辑上限384；两条最多96、四条最多192，不等待凑满。B4纯B只准四条、最多192逻辑段，第5B仍4017；总8满时原4013优先级不变。四A四B也可供384，真实批仍取决于各音频VAD就绪、切片/WAV供给、长短/帧/token/PCM预算与增强汇合，不保证总是满384。VAD八CPU、CAM八process/emo八thread继续各自独立排队、batch1/预取0，不因Qwen384增加NN实例或跳过分支。
+
+在远程项目根目录加载CANN后启动测试候选：
+
+```bash
+CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
+  /home/zhangs/conda-envs/asr/bin/python main.py --host 127.0.0.1 --port 8083 --workers 1
+# 八条纯B另用CONFIG_PATH=./test/config.qwen384-b8.toml；不会自动扩大根配置B4。
+```
+
+请求客户端仍用`test/v3_request.py --audio-dir test --limit 8 --mode A --concurrency 8`，其并发8是完整HTTP音频，不是384个HTTP请求。客户端不拥有服务；测试服务启动者须正常TERM并确认worker/端口关闭，不杀既有服务。
+
+已有纯Qwen组件384是固定原128段各3份：中位7.415秒、同期128×3为11.389秒，峰allocated21.69GiB，27/384原始输出SHA不同，未验准确率。512首次暖身在Conv2D分配额外11.72GiB时OOM；该结论限当时共享卡/缓存条件。384在八CAM/八emo共驻和八完整音频上的稳定性、OOM、输出质量及吞吐尚未验收，不能以纯组件成绩推广正式默认。基于100ms/900帧的预算是供给/拆批门槛，不能当作HBM容量保证。
+
+- 2026-11-19配置48/384补充完成：根/容器显式释放预算但旧值保持；test/config.qwen384{,-b8}.toml为候选，当前源码CPU1023/281子测试通过，正式source client/process实际四轮1×384（八owner各48）与正常关闭/parent后全birth退出通过，中位8.521633秒。44/60，完整/B共驻/保护仍待测。音频已由用户迁移为test/test_audio，引用8源SHA一致，仅临时清单刷新路径，原件与失败保留。证据docs/npu-throughput-20261118/config384-validation-20261119.json。

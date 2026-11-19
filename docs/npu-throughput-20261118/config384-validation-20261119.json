@@ -1,0 +1,200 @@
+{
+  "date": "2026-11-19",
+  "scope": "48/384 configurable candidate; root behavior preserved; not final8audio or Bco-resident/quality acceptance",
+  "tasks": {
+    "complete": 44,
+    "total": 60
+  },
+  "current_source_CPU": {
+    "status": "passed",
+    "returncode": 0,
+    "elapsed_s": 240.8730856999755,
+    "source_changed": [],
+    "config_changed": false,
+    "remaining_owned": [],
+    "guard_blocked_backend_import_attempts": [
+      "BLOCK_IMPORT torch_npu"
+    ],
+    "required_node_evidence_status": "passed",
+    "global_cache_mutation_attempts": [],
+    "passed": 1023,
+    "subtests": 281,
+    "skipped": 2,
+    "hardware_deselected": 1,
+    "pytest_seconds": 238.03,
+    "result_path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-config384-20261119-115223/result.json",
+    "result_sha256": "c845596128b8b4a06b9b0f933464becbaf29f1d2974803a2211d062836c83153"
+  },
+  "formal_source_client384": {
+    "scope": "source realSettings/Qwenclient/process/scheduler/gates384; no fullaudio/VAD/CAM/emo",
+    "passed": true,
+    "all_registered_births_gone_after_parent_exit": true,
+    "parent_pid": 2168968,
+    "parent_create_time": 1795060629.73,
+    "owned_child_count": 21,
+    "model_worker_count": 1,
+    "normal_close_passed": true,
+    "shared_preserved": true,
+    "source_summary": "/tmp/asr-throughput-20261118-xvior99k/formal-client384-r2-20261119-115710/summary.json",
+    "source_summary_sha256": "13efafe5ca6df6256891eba2c728917c40de5693a1ce4c3e0a99a694612d630a",
+    "steady_s": [
+      9.063581639900804,
+      8.52163266018033,
+      7.879309990443289
+    ],
+    "steady_median_s": 8.52163266018033,
+    "actual_batch_sizes_each": [
+      [
+        384
+      ],
+      [
+        384
+      ],
+      [
+        384
+      ],
+      [
+        384
+      ]
+    ],
+    "owner_peaks_each": [
+      [
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      [
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      [
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48
+      ],
+      [
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48,
+        48
+      ]
+    ],
+    "remaining_after_parent_exit": [],
+    "parent_torch_npu_imported": false,
+    "config_SHA256": "440232423062a5f4d771d661f233af427c72eea963f7bee0c34da6702f5a3078",
+    "manifest_SHA256": "4a80cbbcf89320849b015ae1f87cc988abcaaa63bcbcfd4f4bad889c1f24f129",
+    "source_unique_segments": 128,
+    "copies": 3,
+    "logical_members": 384,
+    "HBM_scope": "not sampled; parent must not initialize NPU; prior native384 peak is separate evidence"
+  },
+  "native_quick_cases": {
+    "256": {
+      "status": "completed",
+      "scope": "pure single Qwen physicalbatch capacity/performance; no fullaudio/VAD/CAM/emo; same128 sources repeated twice",
+      "source_unique_segments": 128,
+      "logical_members": 256,
+      "copies_each": 2,
+      "case_medians_s": {
+        "128": 7.208715029992163,
+        "256": 5.485068200156093
+      },
+      "historical_reference_s": 7.741296339780092,
+      "time_reduction_vs_paired": 0.23910597418052526,
+      "throughput_gain_vs_paired": 0.31424346369786615,
+      "peak_allocator_allocated_GiB": 15.724533557891846,
+      "raw_outputs_different_vs_128": 21,
+      "quality_limit": "raw hashes only; no accuracy or exact text equivalence validation",
+      "source_summary_sha256": "c33a0cacfac1469c8761ca31b4a2d8a5dbe1cd8734c9b3c4141a23cfaf4ba0a9"
+    },
+    "384": {
+      "status": "completed",
+      "scope": "pure single Qwen physicalbatch capacity/performance; no fullaudio/VAD/CAM/emo; same128 sources repeated three times",
+      "source_unique_segments": 128,
+      "logical_members": 384,
+      "copies_each": 3,
+      "case_medians_s": {
+        "128": 11.388611699454486,
+        "384": 7.41453245934099
+      },
+      "requested_reference_s": 11.613,
+      "time_reduction_vs_paired": 0.34895203603296576,
+      "throughput_gain_vs_paired": 0.535985142948139,
+      "peak_allocated_GiB": 21.68855619430542,
+      "raw_output_SHA_differences_vs128": 27,
+      "quality_limit": "no accuracy evaluation; raw outputs differ",
+      "source_summary_sha256": "cc53d841a2af2d326a6a502617fae695eca4d7ec3df4bfc72ba34e8f265b2cba"
+    },
+    "512": {
+      "status": "failed_OOM",
+      "scope": "singleQwen NPU7 actual512 capacity probe; canonical128 four copies=512logicalmembers",
+      "requested_reference_s": 15.484,
+      "valid_512_elapsed_s": null,
+      "additional_failed_allocation_GiB": 11.71881103515625,
+      "source_summary_sha256": "7350b978690137d3130107c1da86c670f29f8bc4eccb1e85a6610ac31280bbae"
+    }
+  },
+  "profile_sha256": {
+    "test/config.qwen384.toml": "9f204fc44114e281b1138d2464d2fe97df6c38f7ee226be4312d6f2ac6238723",
+    "test/config.qwen384-b8.toml": "796e25d2b0b8702df6c36aaca3588a7c2fb9ad13c7034b83317915c7a2043f01"
+  },
+  "root_values_unchanged": true,
+  "new_explicit_config_fields": [
+    "max_inference_batch_size",
+    "batch_wait_timeout_ms",
+    "batch_max_duration_ratio",
+    "max_batch_audio_frames",
+    "max_batch_tokens",
+    "pending_segment_limit",
+    "pending_audio_bytes_limit"
+  ],
+  "B4_default_preserved": true,
+  "source_path_refresh": {
+    "mapping_path": "/tmp/asr-throughput-20261118-xvior99k/audio-path-refresh-20261119.json",
+    "mapping_sha256": "f903956a0406a56df26e8ae4c46f35b792c62312e44bbc1895ab37b02e7d06c4",
+    "same_eight_source_SHA_verified": true,
+    "source_directory_now": "test/test_audio",
+    "source_audio_bytes_modified": false
+  },
+  "limitations": [
+    "native384 data128x3; generationpadding35; rawSHA27/384 changed; no accuracy truth",
+    "source client384 has IPC/gating envelope and no VAD/CAM/emo/fullaudio HTTP",
+    "no current protected rebuild or complete1/2/4/8A/B matrix; task8.8 staysopen"
+  ],
+  "whitespace_only_profile_formatting": [
+    {
+      "file": "test/config.qwen384.toml",
+      "tested_SHA256": "440232423062a5f4d771d661f233af427c72eea963f7bee0c34da6702f5a3078",
+      "final_SHA256": "9f204fc44114e281b1138d2464d2fe97df6c38f7ee226be4312d6f2ac6238723",
+      "TOML_values_identical": true,
+      "tested_original_copy": "/home/zhangs/asr_nvidia/logs/npu-throughput-20261118/config384-20261119/tested-profiles/config.qwen384.toml"
+    },
+    {
+      "file": "test/config.qwen384-b8.toml",
+      "tested_SHA256": "60a106d0d37b78ee07c03b15c637ab58cca708445ce66f088a1cac0eba87f3c6",
+      "final_SHA256": "796e25d2b0b8702df6c36aaca3588a7c2fb9ad13c7034b83317915c7a2043f01",
+      "TOML_values_identical": true,
+      "tested_original_copy": "/home/zhangs/asr_nvidia/logs/npu-throughput-20261118/config384-20261119/tested-profiles/config.qwen384-b8.toml"
+    }
+  ]
+}

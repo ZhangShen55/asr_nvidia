@@ -150,7 +150,7 @@ class ConfigContractTests(unittest.TestCase):
                     settings.validate_model_backends()
 
     def test_invalid_batch_budgets_fail_before_loading(self):
-        fields = {'max_inference_batch_size':[0,129,True,1.5,'128'],
+        fields = {'max_inference_batch_size':[0,385,True,1.5,'128'],
                   'batch_wait_timeout_ms':[-1,1001,True,'10'],
                   'max_batch_audio_frames':[0,True,'100'], 'max_batch_tokens':[0,True],
                   'pending_segment_limit':[0,4097,False], 'pending_audio_bytes_limit':[0,True],

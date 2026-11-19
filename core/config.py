@@ -230,8 +230,8 @@ class Settings:
 
     @property
     def qwen_max_inference_batch_size(self) -> int:
-        # 缺省先保留兼容单批；128由独立验证profile请求，交付值以实机结果定案。
-        return self._qwen_bounded_int("max_inference_batch_size", 1, 1, 128)
+        # 缺省仍单批；384仅有纯Qwen组件证据，完整/增强共驻须用独立profile验收。
+        return self._qwen_bounded_int("max_inference_batch_size", 1, 1, 384)
 
     @property
     def qwen_batch_wait_timeout_ms(self) -> int:
