@@ -46,11 +46,18 @@ request_timeout_s = 120                 # 单次 Qwen 请求超时
 retry_count = 2                         # Qwen 请求失败重试次数
 speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）
 
+# 以下组批及PCM预算修改后需重启生效。
+# 单次Qwen真实物理批的成员上限（1～384），不是完整音频HTTP并发数；实际还受供给和下列预算限制。
 max_inference_batch_size = 384
+# 组批最多等待的毫秒数（0～1000）；到期执行已有就绪段，不强等凑满384。
 batch_wait_timeout_ms = 100
+# 单批估算音频帧预算：最长成员补齐后的100Hz特征帧数×成员数；此值按900×384设置，不是HBM容量保证。
 max_batch_audio_frames = 345600
+# 单批估算token预算：(ceil(最长补齐帧数/8)+max_new_tokens+256提示预留)×成员数；按900帧×384取整留量，非实际生成量。
 max_batch_tokens = 240000
+# 全服务活动PCM段数预算；独立于Qwen逻辑窗口384，避免旧256段上限先限制供给，预算满时反压等待。
 pending_segment_limit = 512
+# 全服务活动原PCM字节预算（256MiB），与段数预算同时生效；不含模型、前端、IPC及临时工作buffer，满时反压等待。
 pending_audio_bytes_limit = 268435456
 
 [vad]
