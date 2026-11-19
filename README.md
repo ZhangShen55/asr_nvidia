@@ -490,3 +490,22 @@ CAM进程缓存由`localModels.speech_campplus.model_workers`保留，包括尚�
 单份实际128容量已证，完整8B效率未通过，故试process2、每份物理批64、每音频16/全局128；一HTTP服务、VAD8CPU/CAM8进程/emo8线程、NPU7与精度不变。process可配置1～8不等于8份已通过HBM/性能；先2实测，4/8按需。首次发现全部健康才发布，成功发现后坏一份仍可用健康已加载副本，容量如实下降，不重启失败者。每physical attempt保留index/PID出生/launch/RPC归属，空闲FIFO接力、不绑定整音频。
 
 正常drain后并发CLOSE，候选显式process shutdown grace120允许已测39秒长批排空，完成即返回；不改业务推理timeout120、测试420/无进展120、owned HTTP drain10/outer close240。缺省兼容值与待推广候选分开。双份暖身至多两个顺序真实clip、一次420总deadline，按两actor真实forward证据判定，不只看READY；单份仍一次。当前仍未完成最终source18矩阵或推广默认。
+
+
+### 单Qwen启动预加载及128段测试配置（2026-11-19）
+
+`[qwen_asr].preload_on_startup`为严格bool，缺省及根/容器配置均为false以保留原首次使用加载行为。true在VAD启动后、HTTP服务就绪前加载全部配置Qwen权重与processor并常驻；显示model名称不替代加载，失败/取消同样回收。该开关不执行语音generate，不承诺所有shape已暖身；不是在线换权重或免重启更新配置。预加载主要移除首请求的模型加载耗时，不能据此宣称暖态吞吐更快。
+
+用户选择保持根配置，单份128独立候选在`test/config.qwen128.toml`（总8/B4）与`test/config.qwen128-b8.toml`（仅B8准入实验）。二者启用预加载、process1/BF16@npu7、每音频16／全局128逻辑段、物理批最多128、100ms有限等待、115200帧/80000估计token、256段/256MiB预算、显式关闭120秒；VAD八CPU、CAM八NPU process/emo八NPU thread、预取0且实际batch1。最短0.3秒及三过滤false/-100/-1/-1按本轮约定。仍未完成完整性能验收，不是新生产默认。
+
+```bash
+cd /home/zhangs/asr_nvidia
+set +u
+source /usr/local/Ascend/ascend-toolkit/set_env.sh
+CONFIG_PATH=./test/config.qwen128.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
+  /home/zhangs/conda-envs/asr/bin/python main.py --host 127.0.0.1 --port 8083 --workers 1
+```
+
+`local_instance_count=1`是一份权重；`segment_concurrency=16`是一条完整音频的Qwen段窗口；`request_concurrency=128`是全部音频共享的逻辑在途段窗口；`max_inference_batch_size=128`是一次物理批上限，仍受就绪段数/长度/帧/token预算限制。完整HTTP音频并发为1/2/4/8，总容量仍8、B4或显式B8，不能用128并发上传完整音频代替段批处理。请求示例与客户端见test/中的使用说明。关闭使用本次父进程TERM并等待子进程/端口释放，勿接管已有服务。
+
+纯Qwen历史固定同128段曲线中，batch64/128处理总量的三轮稳态中位约5.232/3.871秒，吞吐仍增加35.2%；128是最高已测档，不是已证最优。当前物理批校验上限128，未执行>128实验；不能推断拐点已在128之外，也不能拿该组件成绩替代完整A8/B8。

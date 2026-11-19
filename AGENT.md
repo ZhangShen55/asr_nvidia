@@ -404,3 +404,24 @@ v17单份8B仍420诊断3/8且30秒显式关闭宽限触发inner abort/main1，�
 ### 2026-11-19必要代码阶段提交
 
 用户要求保存并推送当前必要实现。清单仍41/57，未归档、不推广候选默认；当前源码隔离完整CPU968项/281子测试通过、2保护专属skip、1硬件探针排除，237.17秒；源码/profile稳定、owned归零、共享cache写删尝试0。双份NPU及最终1/2/4/8完整音频矩阵待验收，v17的420秒/3of8及关闭main1失败保留。当前权威检查点为docs/npu-throughput-20261118/v18-precommit-checkpoint.json，历史章节只代表各冻结版本。
+
+
+### 单Qwen启动预加载及128段测试配置（2026-11-19）
+
+`[qwen_asr].preload_on_startup`为严格bool，缺省及根/容器配置均为false以保留原首次使用加载行为。true在VAD启动后、HTTP服务就绪前加载全部配置Qwen权重与processor并常驻；显示model名称不替代加载，失败/取消同样回收。该开关不执行语音generate，不承诺所有shape已暖身；不是在线换权重或免重启更新配置。预加载主要移除首请求的模型加载耗时，不能据此宣称暖态吞吐更快。
+
+用户选择保持根配置，单份128独立候选在`test/config.qwen128.toml`（总8/B4）与`test/config.qwen128-b8.toml`（仅B8准入实验）。二者启用预加载、process1/BF16@npu7、每音频16／全局128逻辑段、物理批最多128、100ms有限等待、115200帧/80000估计token、256段/256MiB预算、显式关闭120秒；VAD八CPU、CAM八NPU process/emo八NPU thread、预取0且实际batch1。最短0.3秒及三过滤false/-100/-1/-1按本轮约定。仍未完成完整性能验收，不是新生产默认。
+
+```bash
+cd /home/zhangs/asr_nvidia
+set +u
+source /usr/local/Ascend/ascend-toolkit/set_env.sh
+CONFIG_PATH=./test/config.qwen128.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
+  /home/zhangs/conda-envs/asr/bin/python main.py --host 127.0.0.1 --port 8083 --workers 1
+```
+
+`local_instance_count=1`是一份权重；`segment_concurrency=16`是一条完整音频的Qwen段窗口；`request_concurrency=128`是全部音频共享的逻辑在途段窗口；`max_inference_batch_size=128`是一次物理批上限，仍受就绪段数/长度/帧/token预算限制。完整HTTP音频并发为1/2/4/8，总容量仍8、B4或显式B8，不能用128并发上传完整音频代替段批处理。请求示例与客户端见test/中的使用说明。关闭使用本次父进程TERM并等待子进程/端口释放，勿接管已有服务。
+
+纯Qwen历史固定同128段曲线中，batch64/128处理总量的三轮稳态中位约5.232/3.871秒，吞吐仍增加35.2%；128是最高已测档，不是已证最优。当前物理批校验上限128，未执行>128实验；不能推断拐点已在128之外，也不能拿该组件成绩替代完整A8/B8。
+
+- 2026-11-19本补充已验证：当前源码CPU1001/281子测试通过，预加载NPU7 load-only与exit0/port5关闭通过；清单43/59。test/请求客户端已提供，未执行完整A8请求，不将load-only当推理吞吐验收。证据见docs/npu-throughput-20261118/preload-request-validation-20261119.json。

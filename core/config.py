@@ -174,6 +174,13 @@ class Settings:
         return value
 
     @property
+    def qwen_preload_on_startup(self) -> bool:
+        value = self._cfg.get("qwen_asr", {}).get("preload_on_startup", False)
+        if type(value) is not bool:
+            raise ValueError("[qwen_asr].preload_on_startup 必须是bool")
+        return value
+
+    @property
     def qwen_execution_mode(self) -> str:
         value = self._cfg.get("qwen_asr", {}).get("execution_mode", "thread")
         if not isinstance(value, str) or value not in {"thread", "process"}:
@@ -529,6 +536,7 @@ class Settings:
         """只校验配置，硬件及文件检查由启动预检处理，懒加载不会被触发。"""
         _ = self.deployment_profile
         _ = self.resource_sample_interval_s
+        _ = self.qwen_preload_on_startup
         _ = self.vad_device
         for name in ("speech_campplus", "emotion2vec"):
             self._model_pool_devices(name)

@@ -1,0 +1,87 @@
+{
+  "scope": "singleQwen startup preload only, no upload/forward; not fullaudio performance",
+  "config": "/home/zhangs/asr_nvidia/test/config.qwen128.toml",
+  "device": "npu:7",
+  "passed": true,
+  "ready_s": 33.65880664996803,
+  "loaded": true,
+  "capacity": 1,
+  "completed_batches": 0,
+  "VAD_loaded": 8,
+  "owned_birth_count": 31,
+  "shared_pid": 1601397,
+  "shared_create_time": 1791963491.5,
+  "shared_preserved": true,
+  "source_changed": [],
+  "shutdown": {
+    "passed": true,
+    "forced": false,
+    "exit_code": 0,
+    "remaining_pids": [],
+    "remaining_cache_files": [],
+    "cache_scan_error": null,
+    "observe_s": 5,
+    "term_to_parent_exit_s": 12.715617240406573
+  },
+  "qwen_model_worker": {
+    "worker_pid": 1442008,
+    "worker_create_time": 1795057795.04,
+    "worker_start_ticks": "714546904",
+    "launch_id": "4fc688ffc163438e80438763bd1518b4",
+    "ready_verified": true,
+    "runtime_kind": "original_hf_runtime",
+    "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py"
+  },
+  "input_source_file": "/tmp/asr-throughput-20261118-xvior99k/NPU-single-preload-ready-20261119-110940/result.json",
+  "input_source_sha256": "a0830aaa167a2fb5c965a7a46aee30d0dc1b4e5757fbf96be0f4c8db9c453000",
+  "current_full_CPU": {
+    "status": "passed",
+    "returncode": 0,
+    "elapsed_s": 237.53993791993707,
+    "source_changed": [],
+    "config_changed": false,
+    "remaining_owned": [],
+    "guard_blocked_backend_import_attempts": [
+      "BLOCK_IMPORT torch_npu"
+    ],
+    "required_node_evidence_status": "passed",
+    "global_cache_mutation_attempts": [],
+    "passed": 1001,
+    "subtests": 281,
+    "skipped": 2,
+    "hardware_deselected": 1,
+    "pytest_seconds": 234.74,
+    "result_path": "/tmp/asr-throughput-20261118-xvior99k/source-full-cpu-preload-20261119-110940/result.json",
+    "result_sha256": "32180985f2b9bfba3854465551337e79d0798706e7d9beca823faac5034c8147"
+  },
+  "target_CPU": {
+    "preload": {
+      "passed": 22,
+      "seconds": 3.25
+    },
+    "request_client": {
+      "passed": 11,
+      "seconds": 2.99
+    }
+  },
+  "root_config_preserved": true,
+  "profiles": {
+    "test/config.qwen128.toml": "b371848e67df6fb75298a5aec616456830c9e08fbdf17985cea84540d2378718",
+    "test/config.qwen128-b8.toml": "b0cd8136e5aaacedacc2efd8c3c1137bf8105265bd56bb82b119895eda76cf7a"
+  },
+  "curve_scope": "historical pure Qwen same128segments/three steady medians; no >128 samples; not full8A or full8B performance",
+  "curve_source_sha256": "bc677663d953243500a2c317c362ff1ccd6a2f5452a9d41a908b4d9c76ab80f5",
+  "batch_sizes_measured": [
+    1,
+    8,
+    16,
+    32,
+    64,
+    128
+  ],
+  "no_measured_knee_claim": true,
+  "tasks": {
+    "complete": 43,
+    "total": 59
+  }
+}

@@ -155,6 +155,13 @@ class QwenAsrClient:
         finally:
             self._waiting -= 1
 
+    async def preload(self):
+        # 启动预加载复用全体租约/取消排空流程，显示model名不能跳过真实加载。
+        name = await self._discover_all_process_runtimes()
+        if not all(runtime.loaded and not runtime.failure for runtime in self._runtimes):
+            raise QwenAsrUnavailableError()
+        return name
+
     async def discover_model(self):
         if self.execution_mode == "process" and len(self._runtimes) > 1:
             return await self._discover_all_process_runtimes()
@@ -496,6 +503,11 @@ async def get_qwen_client() -> QwenAsrClient:
     return _client_instance
 
 
+async def preload_qwen_client() -> str:
+    client = await get_qwen_client()
+    return await client.preload()
+
+
 def get_qwen_status(*, recent_batch_limit=None):
     if _client_instance is not None:
         if recent_batch_limit is None:
@@ -540,4 +552,4 @@ async def close_qwen_client() -> None:
 
 __all__ = ["QwenAsrClient", "QwenAsrError", "QwenAsrUnavailableError", "QwenAsrCallError",
            "QwenAsrUnsupportedLanguageError", "close_qwen_client", "get_qwen_client", "get_qwen_status",
-           "normalize_language_param"]
+           "normalize_language_param", "preload_qwen_client"]

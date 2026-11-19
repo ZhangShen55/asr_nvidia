@@ -254,3 +254,12 @@ process配置支持1～8，每实例一owned子进程，HTTP仍1。首次发现�
 候选显式关闭grace由30调整为120秒：有效批已实测39秒，原业务单Qwen超时本来就是120秒。120仅是显式关闭的最大排空宽限，完成即返回，不改变业务timeout、watchdog420/no-progress120、owned HTTP drain10或outer close240，也不把旧exit1改成通过。源码/保护版本均须覆盖正常与预期异常。
 
 暖身count1保留原单请求结构；count2至多两次顺序真实clip，合用一次420秒/无进展闸门，不重置为840秒。FIFO只是预期，必须核各index真实generate_completed、不同worker出生身份和RPC后计时，READY/LOAD不能冒充forward；不能覆盖原第一个warmup原件或靠64个HTTP触发容量拒绝。先用同canonical128和同64参考做小规模容量/数值/两actor重叠/健康接力/HBM及取消关闭，再恢复完整8B；最终source18轮及B增幅≤30%门槛不减。
+
+
+## 启动预加载与可直接请求的测试入口（2026-11-19用户补充）
+
+用户选择保留根配置，另给128测试配置。新增[qwen_asr].preload_on_startup严格bool、兼容缺省false；开启且Qwen enabled时，VAD池完成启动后、lifespan yield就绪前，复用owned全实例加载流程，显示model名称不能跳过真实ensure_loaded。所有实例健康才就绪；失败或重复取消沿现有finally排空并关闭。这里只加载原权重与processor并常驻，不伪造语音推理、不承诺所有输入shape已暖身，也不是在线重载模型/修改配置。
+
+根配置与容器仍显式false、原窗口不变；test/config.qwen128.toml及独立B8版本为未完成完整性能验收的单Qwenprocess、16/128、真实批至128、grace120测试配置，VAD八CPU/CAM八process/emo八thread与原过滤策略按本轮约定。参数重启生效。test/请求客户端只访问显式URL，不启动模型或关闭他人服务；完整音频并发与段窗口分别命名，输出逐请求HTTP/业务码/elapsed及可选私有响应，保留420秒停止追加与失败，不把成功子集当完整矩阵。
+
+128是当前已实现/已测目标上限，不是已知最优拐点；本轮没有>128实验。拐点需要同PCM/生成上限/资源与真实批、延迟和吞吐曲线实测确定，暂不为猜测扩大校验上限。

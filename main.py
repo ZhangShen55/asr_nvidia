@@ -6,7 +6,7 @@ from datetime import datetime
 
 from core.config import settings
 from core.logging import setup_logging
-from core.qwen_asr_client import close_qwen_client
+from core.qwen_asr_client import close_qwen_client, preload_qwen_client
 from core.models import close_v3_model_pools
 from core.vad_pool import start_vad_pool, stop_vad_pool
 from core.deployment import validate_npu_runtime
@@ -97,6 +97,9 @@ async def lifespan(app: FastAPI):
 
     try:
         await start_vad_pool()
+        # 放在同一个finally内且先于就绪：加载失败也关闭部分VAD/Qwen，不留半就绪服务。
+        if getattr(settings, "qwen_preload_on_startup", False) and settings.qwen_asr_enabled:
+            await preload_qwen_client()
         yield
     finally:
         # 启动部分失败同样回收；调用方重复取消也不能遗弃正在关闭的资源。

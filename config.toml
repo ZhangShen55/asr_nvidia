@@ -25,6 +25,8 @@ remove_interjections = true
 failure_mode = "passthrough"
 
 [qwen_asr]
+# true在就绪前加载全部Qwen权重/processor并常驻；不执行语音暖身，修改后重启。
+preload_on_startup = false            # 保留原根配置行为；128预加载见test/config.qwen128.toml
 execution_mode = "thread"             # thread兼容缺省；process为单HF模型worker，待审核后显式选择
 process_shutdown_grace_s = 30          # 只在显式关闭后等待；不改120秒推理timeout，不到grace不kill
 enabled = true
