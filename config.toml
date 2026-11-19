@@ -1,3 +1,6 @@
+# 单Qwen预加载/48-384候选：仅纯组件384已测，完整/增强共驻未验收；从项目根启动。
+# 384为全局语音段窗口和物理批上限，不是384个完整音频请求。
+# frames=900×384，tokens=(ceil(900/8)+256+256)×384；pending512避免旧256先反压。
 instance_count = 1
 
 [log]
@@ -5,14 +8,10 @@ log_path = "./asr_service.log"
 max_days = 7
 max_size_mb = 100
 
-[status]
-# GET按需刷新资源缓存的最短间隔；无查询不采样，0.1～60秒，修改后重启。
-resource_sample_interval_s = 1.0
-
 [model_paths]
-vad_model_dir = "./model/speech_fsmn_vad_zh-cn-16k-common-pytorch"
-spk_model_dir = "./model/speech_campplus_sv_zh_en_16k-common_advanced"
-emotion_model_dir = "./model/emotion2vec_plus_large"
+vad_model_dir = "/home/zhangs/asr_nvidia/model/speech_fsmn_vad_zh-cn-16k-common-pytorch"
+spk_model_dir = "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced"
+emotion_model_dir = "/home/zhangs/asr_nvidia/model/emotion2vec_plus_large"
 
 [speech_rate]
 rate_factor = 0.4  # 语速修正系数（数值偏高时下调），最终语速 = 原始字/分钟 * rate_factor
@@ -25,10 +24,10 @@ remove_interjections = true
 failure_mode = "passthrough"
 
 [qwen_asr]
-# true在就绪前加载全部Qwen权重/processor并常驻；不执行语音暖身，修改后重启。
-preload_on_startup = false            # 保留原根配置行为；128预加载见test/config.qwen128.toml
-execution_mode = "thread"             # thread兼容缺省；process为单HF模型worker，待审核后显式选择
-process_shutdown_grace_s = 30          # 只在显式关闭后等待；不改120秒推理timeout，不到grace不kill
+preload_on_startup = true # 启动预加载权重，不是所有shape已推理暖身
+execution_mode = "process"
+process_shutdown_grace_s = 120
+batch_max_duration_ratio = 32.0
 enabled = true
 model = ""                              # 可选本地模型显示名称
 local_model_dir = "/home/model/Qwen3-ASR-1.7B-hf"
@@ -37,25 +36,22 @@ local_device = "npu:7"                  # 宿主指定物理卡7；容器仅映�
 local_dtype = "bfloat16"
 local_instance_count = 1                # 每增加一个实例即复制一份权重
 max_new_tokens = 256
-segment_concurrency = 1                 # 完整课堂对照选择单Qwen实例、双门限1/1；证据见迁移报告
-request_concurrency = 1                 # 全局在途1；单实例执行1，额外任务在全局闸门外等待
+segment_concurrency = 48
+request_concurrency = 384
 audio_concurrency = 8                   # A+B 同时处理的音频总数
 audio_spk_emo_concurrency = 4           # B 类音频上限（请求说话人、情绪或角色识别）
 queue_max_size = 64                     # A+B 共享等待队列容量
 queue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排队等待
 request_timeout_s = 120                 # 单次 Qwen 请求超时
 retry_count = 2                         # Qwen 请求失败重试次数
-# 以下分别限制真实物理批、组批等待及输入预算；缺省值显式列出，不改变现有行为。
-# 48/384候选在test/config.qwen384.toml，根配置不因组件测试自动升级。
-max_inference_batch_size = 1          # 1～384；不是完整音频HTTP并发
-batch_wait_timeout_ms = 10           # 0～1000ms；到期处理已有段，不强等凑满
-batch_max_duration_ratio = 4.0       # 1～64；控制同批最长/最短有效特征帧比
-max_batch_audio_frames = 102400      # padding最长100Hz帧数×成员数；非HBM字节
-max_batch_tokens = 78336             # 输入+生成的保守估计token预算；非实际生成总量
-pending_segment_limit = 256          # 全服务活动PCM段预算；要供384批不能仍只给256
-pending_audio_bytes_limit = 268435456 # 原PCM预算256MiB，不含模型/前端/IPC临时buffer
-
 speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）
+
+max_inference_batch_size = 384
+batch_wait_timeout_ms = 100
+max_batch_audio_frames = 345600
+max_batch_tokens = 240000
+pending_segment_limit = 512
+pending_audio_bytes_limit = 268435456
 
 [vad]
 # 保留既有nested kwargs传递方式，不把声明值误当实际FSMN选项。
@@ -64,7 +60,7 @@ speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度�
 # 服务段级SNR18、独立segment_decibel=-40与RMS过滤另行真实生效。
 # 详见docs/npu-910b-migration-20261117/classroom-threshold-review.md。
 # 每个元素对应一个独立 FSMN-VAD worker；数组长度决定完整音频 VAD 并发上限
-vad_device = ["cpu", "cpu", "npu:7", "npu:7"]
+vad_device = ["cpu","cpu","cpu","cpu","cpu","cpu","cpu","cpu"]
 # 小于该时长的候选段直接丢弃，单位：秒
 min_segment_duration_s = 0.3
 # 历史nested传入值，单位毫秒；实际选项见上方说明
@@ -74,25 +70,25 @@ vad_max_end_silence_time_ms = 800
 vad_speech_noise_thres = 0.8
 
 vad_snr_thres = 18.0 # 段级 SNR 过滤；18.0
-vad_snr_thres_filter_enabled = true
+vad_snr_thres_filter_enabled = false
 
 # 历史全局帧级log能量声明，非dBFS；当前FSMN实际仍为模型配置-100
-vad_decibel_thres = -40.0
+vad_decibel_thres = -100.0
 # 独立服务段级log能量阈值，非dBFS；不等于上方FSMN全局选项
 vad_segment_decibel_thres = -40.0
 vad_decibel_frame_sample_ratio = 0.5 # 每秒采取帧率
 vad_decibel_low_frame_ratio_thres = 0.8 # 段级 decibel 过滤：抽取帧中低能量比例达到 0.8 时删除该段
-vad_decibel_thres_filter_enabled = true
+vad_decibel_thres_filter_enabled = false
 
 # 段级 RMS dBFS 过滤
 vad_low_volume_rms_dbfs_thres = -40.0
-vad_low_volume_filter_enabled = true
+vad_low_volume_filter_enabled = false
 
 # 段级过滤窗口，单位：分钟；0=整段都参与过滤，-1=该侧不限制
 # 3/3：只有落在开头 3 分钟、结尾 3 分钟内的段才做低音量/SNR/RMS 过滤；
 # 窗口外的中间段无条件保留，避免误删讲授主体。改动需重启生效。
-after_start = 3
-before_end = 3
+after_start = -1
+before_end = -1
 
 # 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
 # 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
@@ -111,8 +107,16 @@ open_v2_role = true      # CAM++ 说话人嵌入
 open_v2_emotion = true   # emotion2vec 情绪
 
 [model_device_pool]
-speech_campplus_execution_mode = "thread" # 兼容安全缺省；process候选须完整矩阵/保护验收后选用
-speech_campplus_process_startup_timeout_s = 60 # 每worker READY启动期限；有限正数且不超过300秒
-speech_campplus_process_shutdown_grace_s = 30 # 仅显式关闭；不将普通请求取消改为kill
-speech_campplus_devices = ["npu:7","npu:7","npu:7"]  # 每个元素对应一个 CAM++ 实例
-emotion2vec_devices = ["npu:7"]      # 每个元素对应一个 emotion2vec 实例
+speech_campplus_execution_mode = "process"
+speech_campplus_process_startup_timeout_s = 60
+speech_campplus_process_shutdown_grace_s = 30
+speech_campplus_devices = ["npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7"]
+emotion2vec_devices = ["npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7"]
+
+speech_campplus_prefetch_queue_depth = 0
+emotion2vec_prefetch_queue_depth = 0
+speech_campplus_batch_size = 1
+emotion2vec_batch_size = 1
+
+[status]
+resource_sample_interval_s = 1.0

@@ -544,3 +544,7 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 请求客户端仍用`test/v3_request.py --audio-dir test --limit 8 --mode A --concurrency 8`，其并发8是完整HTTP音频，不是384个HTTP请求。客户端不拥有服务；测试服务启动者须正常TERM并确认worker/端口关闭，不杀既有服务。
 
 已有纯Qwen组件384是固定原128段各3份：中位7.415秒、同期128×3为11.389秒，峰allocated21.69GiB，27/384原始输出SHA不同，未验准确率。512首次暖身在Conv2D分配额外11.72GiB时OOM；该结论限当时共享卡/缓存条件。384在八CAM/八emo共驻和八完整音频上的稳定性、OOM、输出质量及吞吐尚未验收，不能以纯组件成绩推广正式默认。基于100ms/900帧的预算是供给/拆批门槛，不能当作HBM容量保证。
+
+### 根配置同步384（2026-11-19）
+
+按用户明确要求，根 `config.toml` 已原样同步 `test/config.qwen384.toml`：单 Qwen process、预加载 true、每音频48/全局384、物理批384、八CPU VAD、八CAM process/八emo thread、关闭三项能量过滤，总8/B4。修改需重启生效；此次未重启服务。此前“根配置保留1/1、batch1、预加载false”的描述仅代表同步前状态；容器模板未改。此配置选择不表示完整八音频/增强共驻性能已验收，现有验收缺口仍保留。

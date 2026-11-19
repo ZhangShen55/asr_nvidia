@@ -466,3 +466,7 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 ### 910B 依赖清单整理（2026-11-19）
 
 运行依赖统一在根目录 `requirements.txt`，原四份运行子清单已合并；版本和依赖集合不变。开发/构建清单保留，完整 Conda/pip 参考锁移至 `environment/910b/`，重建脚本同步引用。av/pynini 仍由 Conda 提供；历史报告与模型原始文件不改。本次仅整理交付文件，不修改业务行为、配置字段和现用环境，不代表重建环境、镜像或 NPU 验收。
+
+### 根配置同步384（2026-11-19）
+
+按用户明确要求，根 `config.toml` 已原样同步 `test/config.qwen384.toml`：单 Qwen process、预加载 true、每音频48/全局384、物理批384、八CPU VAD、八CAM process/八emo thread、关闭三项能量过滤，总8/B4。修改需重启生效；此次未重启服务。此前“根配置保留1/1、batch1、预加载false”的描述仅代表同步前状态；容器模板未改。此配置选择不表示完整八音频/增强共驻性能已验收，现有验收缺口仍保留。
