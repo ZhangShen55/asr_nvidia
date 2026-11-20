@@ -1,0 +1,46 @@
+{
+  "sample_rate": 16000,
+  "selection": "two first HTTP4012 suspect segments for cause replay; no assumption of repetition",
+  "samples": [
+    {
+      "index": 0,
+      "sample_id": "a2-vad8",
+      "segment_id": "8",
+      "request_id": "a2",
+      "source_id": "a2",
+      "source_vad_index": 8,
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/反常积分与级数（中法）.wav",
+      "source_sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+      "start_s": 64.08,
+      "end_s": 72.09,
+      "start_sample": 1025280,
+      "end_sample": 1153440,
+      "duration_s": 8.01,
+      "audio_key": "audio_a2",
+      "pcm_sha256": "8add81e45a95628c56f61ff27620408a5ff7d13fd8db8e048946ca46c7f99482",
+      "language": null,
+      "vad_wall_s": 32.128763269633055,
+      "index_scope": "zero-based index after filter_short_segments(.3), original service independent VAD logic"
+    },
+    {
+      "index": 1,
+      "sample_id": "a4-vad29",
+      "segment_id": "29",
+      "request_id": "a4",
+      "source_id": "a4",
+      "source_vad_index": 29,
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/多模态机器学习2(中英).wav",
+      "source_sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+      "start_s": 148.49,
+      "end_s": 156.5,
+      "start_sample": 2375840,
+      "end_sample": 2504000,
+      "duration_s": 8.01,
+      "audio_key": "audio_a4",
+      "pcm_sha256": "9d3f6f96978526e78ec2e63c2857d6e3bd9e911a69187c039ec703b07f81af8b",
+      "language": null,
+      "vad_wall_s": 27.479599310085177,
+      "index_scope": "zero-based index after filter_short_segments(.3), original service independent VAD logic"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import asyncio
 import copy
+import logging
 from collections import deque
 from dataclasses import dataclass
 import time
@@ -90,12 +91,14 @@ def pending_snapshot():
     return _budget.snapshot() if _budget is not None else {"active": 0, "audio_bytes": 0, "waiting": 0}
 
 
-async def run_bounded_segments(segments, process, worker_count):
+async def run_bounded_segments(segments, process, worker_count, *, fail_fast=False):
     """只为有限worker创建协程；最终文本/embedding属于响应，不计为在途PCM缓存。"""
     outcomes = [None] * len(segments)
+    first_failure = None
     iterator = iter(enumerate(segments))
 
     async def worker():
+        nonlocal first_failure
         for index, segment in iterator:
             try:
                 outcomes[index] = await process(index, segment)
@@ -108,10 +111,30 @@ async def run_bounded_segments(segments, process, worker_count):
                 error.__traceback__ = error.__cause__ = error.__context__ = None
                 error.__suppress_context__ = True
                 outcomes[index] = error
+                if fail_fast:
+                    if first_failure is None:
+                        first_failure = (index, error)
+                    raise
 
     tasks = [asyncio.create_task(worker()) for _ in range(min(len(segments), max(1, worker_count)))]
     try:
         await asyncio.gather(*tasks)
+    except Exception:
+        if not fail_fast:
+            raise
+        for task in tasks:
+            task.cancel()
+        # Preserve the first inference failure as the response cause; cancellations
+        # of sibling workers are owned cleanup, not additional inference failures.
+        await await_completion(asyncio.gather(*tasks, return_exceptions=True))
+        # A sibling cancellation must never replace the first real inference error.
+        if first_failure is not None:
+            index, error = first_failure
+            outcomes = [None] * len(segments)
+            outcomes[index] = error
+            logging.getLogger(__name__).warning(
+                'continuous segment failure index=%d type=%s sibling_cancelled_workers=%d',
+                index, type(error).__name__, sum(task.cancelled() for task in tasks))
     except BaseException:
         # 停止继续消费尚未开始的段；等待已启动线程/设备收尾后才退出完整请求。
         for task in tasks:

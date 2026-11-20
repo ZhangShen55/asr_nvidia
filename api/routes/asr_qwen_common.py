@@ -23,6 +23,7 @@ from core.qwen_asr_client import (
     QwenAsrUnavailableError,
     QwenAsrUnsupportedLanguageError,
     get_qwen_client,
+    release_qwen_request,
 )
 from core.qwen_asr_queue import get_request_concurrency
 from core.segment_pipeline import get_pending_budget, run_bounded_segments, gather_owned_branches
@@ -772,9 +773,15 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             # 每音频只预建有限元任务；PCM/实际分支开工仍由全局段和字节预算控制。
             # 总8音频时最多8*pending_limit元任务，不将它误报为全局PCM活动数。
             settings.qwen_pending_segment_limit,
+            **({"fail_fast": True} if getattr(settings, "qwen_generation_mode", "legacy") == "continuous" else {}),
         )
     finally:
-        progress.close()
+        # run_bounded_segments does not return/propagate cancellation until all
+        # owned segment branches have drained. Only now may worker dedup entries go.
+        try:
+            progress.close()
+        finally:
+            await await_completion(release_qwen_request(str(getattr(ctx, "task_id", "audio"))))
     phase["segment_ms"] = (time.perf_counter() - segment_started) * 1000
     stats["segment_ms"] = phase["segment_ms"]
     if phase["cut_wall_started"] is not None and phase["cut_wall_ended"] is not None:

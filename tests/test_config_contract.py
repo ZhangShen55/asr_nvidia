@@ -14,6 +14,54 @@ class ConfigContractTests(unittest.TestCase):
         self.addCleanup(lambda: Path(handle.name).unlink(missing_ok=True))
         return Settings(config_path=handle.name)
 
+    def test_continuous_generation_contract(self):
+        self.assertEqual(self._settings("").qwen_generation_mode, "legacy")
+        self.assertFalse(self._settings("").qwen_online_repetition_enabled)
+        self.assertEqual(self._settings("").qwen_continuous_prefill_batch_size, 16)
+        for value in ("0", "129", "true", '"16"'):
+            with self.assertRaises(ValueError):
+                self._settings("[qwen_asr]\ncontinuous_prefill_batch_size="+value+"\n").validate_model_backends()
+        valid = self._settings('[qwen_asr]\ngeneration_mode="continuous"\nexecution_mode="process"\nlocal_instance_count=1\nrequest_concurrency=128\nmax_inference_batch_size=128\nonline_repetition_enabled=true\n')
+        valid.validate_model_backends()
+        for text in ('generation_mode=true', 'generation_mode="bad"', 'online_repetition_enabled="false"', 'generation_mode="continuous"\nexecution_mode="thread"', 'generation_mode="continuous"\nexecution_mode="process"\nlocal_instance_count=2', 'generation_mode="continuous"\nexecution_mode="process"\nrequest_concurrency=128\nmax_inference_batch_size=64'):
+            with self.subTest(text=text), self.assertRaises(ValueError):
+                self._settings('[qwen_asr]\n'+text+'\n').validate_model_backends()
+
+    def test_online_repetition_threshold_defaults_and_overrides(self):
+        from dataclasses import asdict
+        from utils.incremental_repetition import RepetitionGuardConfig
+        default = self._settings("").qwen_online_repetition_config
+        self.assertIsInstance(default, RepetitionGuardConfig)
+        self.assertEqual(asdict(default), dict(enabled=False, min_generated_tokens=32,
+            min_chars=120, max_chars_per_second=40, min_repeats=8,
+            min_repeat_chars=64, max_unit_chars=32, tail_chars=512, confirmations=2))
+        cfg = self._settings('[qwen_asr]\nonline_repetition_enabled=true\n'
+            'online_repetition_min_generated_tokens=48\nonline_repetition_min_chars=160\n'
+            'online_repetition_max_chars_per_second=45\nonline_repetition_min_repeats=10\n'
+            'online_repetition_min_repeat_chars=80\nonline_repetition_max_unit_chars=40\n'
+            'online_repetition_tail_chars=640\nonline_repetition_confirmations=3\n')
+        cfg.validate_model_backends()
+        self.assertEqual(asdict(cfg.qwen_online_repetition_config), dict(enabled=True,
+            min_generated_tokens=48, min_chars=160, max_chars_per_second=45, min_repeats=10,
+            min_repeat_chars=80, max_unit_chars=40, tail_chars=640, confirmations=3))
+
+    def test_online_repetition_thresholds_reject_wrong_types_and_combinations(self):
+        from dataclasses import fields
+        from utils.incremental_repetition import RepetitionGuardConfig
+        for field in fields(RepetitionGuardConfig):
+            if field.name == "enabled":
+                continue
+            for literal in ('true', 'false', '0', '-1', '1.5', '"32"', 'nan', 'inf'):
+                with self.subTest(field=field.name, literal=literal), self.assertRaises(ValueError):
+                    self._settings('[qwen_asr]\nonline_repetition_enabled=false\nonline_repetition_'
+                        + field.name + '=' + literal + '\n').validate_model_backends()
+        for text in ('online_repetition_min_repeats=2', 'online_repetition_confirmations=1',
+                     'online_repetition_tail_chars=32',
+                     'online_repetition_max_unit_chars=513',
+                     'online_repetition_min_repeat_chars=513'):
+            with self.subTest(text=text), self.assertRaisesRegex(ValueError, 'online_repetition'):
+                self._settings('[qwen_asr]\n' + text + '\n').validate_model_backends()
+
     def test_nested_log_path_has_priority(self):
         settings = self._settings("[log]\nlog_path = \"nested.log\"\n")
         self.assertEqual(settings.log_path, "nested.log")

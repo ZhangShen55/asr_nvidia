@@ -474,3 +474,7 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 ### 无效VAD配置清理（2026-11-19）
 
 已删除 `vad_max_single_segment_time_ms`、`vad_max_end_silence_time_ms`、`vad_speech_noise_thres`、`vad_decibel_thres` 及对应Settings正名/别名和默认nested转发；它们不会覆盖FSMN真实构造选项。模型原始配置与有效选项不变，不将删除操作当作阈值调整。`vad_snr_thres`仍用于服务段级过滤，独立 `vad_segment_decibel_thres`、RMS、开关及范围参数均有效并保留。复读参数移至实际读取的 `[qwen_asr]`，此前误放 `[vad]` 的值恰与有效缺省一致，修正不改变当前有效值。历史章节中的旧参数仅代表清理前版本。当前服务未重启。
+
+### 2026-11-20 连续生成实施中
+
+新change `2026-11-20-qwen-continuous-segment-scheduling`保持单Qwen HF/BF16@npu7。generation_mode=legacy缺省保留静态批；continuous候选仅process单实例，online_repetition_enabled缺省false；test/config.qwen-continuous128.toml为8/16/128验证入口，未验收不推广根配置。每段独立结束及KV安全清理后补位；真实短长交错与完整v3八并发420秒为必要验收，离线128段不替代。当前进度以该change tasks及docs/qwen-continuous-20261120为准。

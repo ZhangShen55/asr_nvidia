@@ -1,0 +1,173 @@
+{
+  "owned": true,
+  "identities": [
+    [
+      2993565,
+      1795190563.29
+    ],
+    [
+      3023976,
+      1795190568.49
+    ],
+    [
+      3024040,
+      1795190568.5
+    ],
+    [
+      3024041,
+      1795190568.5
+    ],
+    [
+      3024042,
+      1795190568.5
+    ],
+    [
+      3024048,
+      1795190568.5
+    ],
+    [
+      3024075,
+      1795190568.51
+    ],
+    [
+      3024135,
+      1795190568.51
+    ],
+    [
+      3024199,
+      1795190568.51
+    ],
+    [
+      3024259,
+      1795190568.51
+    ],
+    [
+      3109732,
+      1795190578.36
+    ],
+    [
+      3192783,
+      1795190586.94
+    ],
+    [
+      3237654,
+      1795190591.94
+    ],
+    [
+      3238147,
+      1795190592.0
+    ],
+    [
+      3238176,
+      1795190592.01
+    ],
+    [
+      3238201,
+      1795190592.01
+    ],
+    [
+      3238228,
+      1795190592.01
+    ],
+    [
+      3238266,
+      1795190592.01
+    ],
+    [
+      3238299,
+      1795190592.01
+    ],
+    [
+      3238354,
+      1795190592.02
+    ],
+    [
+      3238512,
+      1795190592.02
+    ],
+    [
+      3238631,
+      1795190592.03
+    ],
+    [
+      3240689,
+      1795190592.29
+    ],
+    [
+      3240690,
+      1795190592.29
+    ],
+    [
+      3240691,
+      1795190592.3
+    ],
+    [
+      3240692,
+      1795190592.3
+    ],
+    [
+      3240693,
+      1795190592.3
+    ],
+    [
+      3240694,
+      1795190592.3
+    ],
+    [
+      3240695,
+      1795190592.3
+    ],
+    [
+      3240715,
+      1795190592.3
+    ]
+  ],
+  "forced": false,
+  "temp_dir": "/tmp/asr-svc-x1ngdjfi",
+  "cache_dir": "/tmp/asr-svc-x1ngdjfi/seacraft_asr",
+  "temp_dir_retained": true,
+  "remaining_cache_files": [],
+  "cache_scan_error": null,
+  "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+  "exit_code": 0,
+  "expected_exit_codes": [
+    0
+  ],
+  "exit_code_ok": true,
+  "remaining_pids": [],
+  "port_observations": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "observe_s": 5,
+  "orphan_cleanup": false,
+  "term_sent_monotonic": 7278281.2302637,
+  "parent_exit_observed_monotonic": 7278308.09015727,
+  "term_to_parent_exit_s": 26.859893570654094,
+  "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+  "passed": true
+}

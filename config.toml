@@ -24,6 +24,22 @@ remove_interjections = true
 failure_mode = "passthrough"
 
 [qwen_asr]
+# 每轮prefill至多1～128段，完成后推进decode；仅continuous使用，16为待实测候选。
+continuous_prefill_batch_size = 16
+# continuous为逐段持续生成候选，仅process单实例；切换需重启，legacy保留现有行为。
+generation_mode = "legacy"
+# 生成中复读停止开关，与生成后文本折叠独立；候选须通过质量验收后启用。
+online_repetition_enabled = false
+# 生成中复读候选阈值：至少观察量 + 异常长度 + 尾部循环 + 持续确认共同生效；非实测最优值。
+# 仅在线停止使用，与下方生成后修复阈值独立；修改需重启。
+online_repetition_min_generated_tokens = 32 # 最少已生成token
+online_repetition_min_chars = 120 # 正文异常长度绝对下限（字符）
+online_repetition_max_chars_per_second = 40 # 异常长度还须超过音频秒数×此值
+online_repetition_min_repeats = 8 # 尾部连续循环次数，至少3
+online_repetition_min_repeat_chars = 64 # 循环覆盖字符总数，不得超过tail_chars
+online_repetition_max_unit_chars = 32 # 检测单元最大字符数，不得超过tail_chars
+online_repetition_tail_chars = 512 # 有界检测尾窗字符数
+online_repetition_confirmations = 2 # 不同正文增长观测连续确认次数，至少2
 preload_on_startup = true # 启动预加载权重，不是所有shape已推理暖身
 execution_mode = "process"
 process_shutdown_grace_s = 120

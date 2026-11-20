@@ -1,0 +1,44 @@
+{
+  "kind": "CPU offline actual recorded-token replay; no model inference",
+  "tokenizer": "tokenizers.Tokenizer.from_file(original tokenizer.json)",
+  "candidates": [
+    {
+      "candidate": "hf-b16",
+      "recorded_outputs": 128,
+      "stops": []
+    },
+    {
+      "candidate": "hf-b32",
+      "recorded_outputs": 128,
+      "stops": []
+    },
+    {
+      "candidate": "hf-b64",
+      "recorded_outputs": 128,
+      "stops": []
+    },
+    {
+      "candidate": "hf-b128",
+      "recorded_outputs": 128,
+      "stops": []
+    },
+    {
+      "candidate": "om-b16",
+      "recorded_outputs": 128,
+      "stops": []
+    },
+    {
+      "candidate": "om-b32",
+      "recorded_outputs": 128,
+      "stops": []
+    },
+    {
+      "candidate": "om-b64",
+      "recorded_outputs": 128,
+      "stops": []
+    }
+  ],
+  "decode_matches_recorded": 896,
+  "total_outputs": 896,
+  "total_stops": 0
+}

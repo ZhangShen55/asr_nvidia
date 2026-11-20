@@ -1,0 +1,19 @@
+# 连续段调度接口与所有权
+
+`generation_mode=legacy`沿用原静态批执行；`continuous`只支持单process模型owner，client实例不为每段独占整模型租约。上游原RequestConcurrency先取得每音频credit再取得全局credit，在PCM预算之前限流，Qwen安全返回后立即还credit；增强分支及PCM预算仍独立。每音频16/global128约束获准在途任务，不保证实际128个序列或单步128成员。
+
+ContinuousScheduler有界接纳段音频，按request_id轮转取成员，不设置100ms组批等待、不等待同组其它成员结果；完成事件逐段传回。`recent_batches`在此模式为有界序列记录，明确标注mode；不是物理批吞吐证据。真实设备step大小以worker快照为准。
+
+后端接口：`submit(audio,language,request_id,segment_id)`快速返回concurrent Future，只有段设备访问/读取收尾后才完成；`cancel_segment`发取消通知，但不能Future.cancel提前释放credit。客户端取消时保持Future，等待后端安全终态；重复取消同样等待。超时也先通知取消并等待完成，不盲目重发。
+
+仅accepted=False且reason=capacity_rejected的明确未接收拒绝可重试。首次拒绝后30秒内最多3次重试，含首次至多4次；退避0.1/0.5/1秒。后台执行异常、网络状态未知或模型失败不进入容量重试。请求/段ID跨attempt稳定，完成后由完整音频finally在全部段收尾后release_request清理后端有界去重表。
+
+CPU测试`tests/test_qwen_continuous_scheduler.py`只验证调度/计数/所有权，不代表NPU连续接纳或性能；真实设备证据和八HTTP验收仍必需。
+
+连续模式完整音频首个段失败时停止消费，取消其它元worker并等待所有已开始分支安全退出，保留第一个真实错误作4012首因；日志中的sibling_cancelled_workers单列连带取消，不计作新增推理故障。legacy仍收集原有全部结果。API在这一步完成之后才release_request，取消、重复取消、异常路径一致。接口已由调度Agent评审。
+
+## 阻塞通信与超时首因修正
+
+父进程Pipe send可以在worker执行NPU步时阻塞；submit、cancel、release通过owned线程调用，防止阻塞事件循环。提交过程中取消必须等send完成：若已接收，就发送cancel并等待该段Future安全完成后才释放credit。timeout发出cancel后收到的后端cancelled是收尾确认，不能覆盖request_timeout首因。4012内部保留reason、段ID和backend_error_type，日志不打印异常正文。
+
+首轮真实八HTTP的shutdown.json为forced=true、exit_code=-9；Application shutdown complete/Finished server不代表进程已经正常退出。该运行尚未闭环，必须在下一次升压前先做小服务正常退出复验。若Finished后父进程仍存活，应采集owned父进程全部线程/atexit栈（预先注册faulthandler）及/proc/PID/task/*/wchan；现有证据不能断言是executor或torch_npu终结器阻塞。

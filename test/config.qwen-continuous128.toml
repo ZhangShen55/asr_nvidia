@@ -1,0 +1,126 @@
+# 单Qwen预加载/16-128候选：仅测试，完整性能尚未验收；在项目根目录启动。
+# 128为全局语音段窗口和物理批上限，不是128个完整音频请求。
+instance_count = 1
+
+[log]
+log_path = "./asr_service.log"
+max_days = 7
+max_size_mb = 100
+
+[model_paths]
+vad_model_dir = "/home/zhangs/asr_nvidia/model/speech_fsmn_vad_zh-cn-16k-common-pytorch"
+spk_model_dir = "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced"
+emotion_model_dir = "/home/zhangs/asr_nvidia/model/emotion2vec_plus_large"
+
+[speech_rate]
+rate_factor = 0.4  # 语速修正系数（数值偏高时下调），最终语速 = 原始字/分钟 * rate_factor
+
+[itn]
+enabled = true
+enable_standalone_number = true
+enable_0_to_9 = false
+remove_interjections = true
+failure_mode = "passthrough"
+
+[qwen_asr]
+# 每轮prefill至多1～128段，完成后推进decode；仅continuous使用，16为待实测候选。
+continuous_prefill_batch_size = 16
+generation_mode = "continuous"
+online_repetition_enabled = true # 真实服务候选启用，另以关闭保护完成同源配对；未通过不推广
+# 生成中复读候选阈值：至少观察量 + 异常长度 + 尾部循环 + 持续确认共同生效；非实测最优值。
+# 仅在线停止使用，与下方生成后修复阈值独立；修改需重启。
+online_repetition_min_generated_tokens = 32 # 最少已生成token
+online_repetition_min_chars = 120 # 正文异常长度绝对下限（字符）
+online_repetition_max_chars_per_second = 40 # 异常长度还须超过音频秒数×此值
+online_repetition_min_repeats = 8 # 尾部连续循环次数，至少3
+online_repetition_min_repeat_chars = 64 # 循环覆盖字符总数，不得超过tail_chars
+online_repetition_max_unit_chars = 32 # 检测单元最大字符数，不得超过tail_chars
+online_repetition_tail_chars = 512 # 有界检测尾窗字符数
+online_repetition_confirmations = 2 # 不同正文增长观测连续确认次数，至少2
+preload_on_startup = true # 启动预加载权重，不是所有shape已推理暖身
+execution_mode = "process"
+process_shutdown_grace_s = 120
+batch_max_duration_ratio = 32.0
+enabled = true
+model = ""                              # 可选本地模型显示名称
+local_model_dir = "/home/model/Qwen3-ASR-1.7B-hf"
+# ASCEND_VISIBLE_DEVICES 指定宿主物理卡；容器内设备编号从0重新映射，单映射7时使用npu:0
+local_device = "npu:7"                  # 宿主指定物理卡7；容器仅映射卡7时按实际映射使用逻辑npu:0
+local_dtype = "bfloat16"
+local_instance_count = 1                # 每增加一个实例即复制一份权重
+max_new_tokens = 256
+segment_concurrency = 16
+request_concurrency = 128
+audio_concurrency = 8                   # A+B 同时处理的音频总数
+audio_spk_emo_concurrency = 4           # B 类音频上限（请求说话人、情绪或角色识别）
+queue_max_size = 64                     # A+B 共享等待队列容量
+queue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排队等待
+request_timeout_s = 120                 # 单次 Qwen 请求超时
+retry_count = 2                         # Qwen 请求失败重试次数
+speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）
+
+max_inference_batch_size = 128
+batch_wait_timeout_ms = 100
+max_batch_audio_frames = 115200
+max_batch_tokens = 80000
+pending_segment_limit = 256
+pending_audio_bytes_limit = 268435456
+
+# 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
+# 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
+# 1863 字符的复读串）。这里按语速上限判定异常长度，再折叠重复部分。
+# 标定依据（68,018 段真实样本）：正常段 p99.9 = 20.3 字符/秒、峰值 26.2；
+# 复读段 282~313。取 40 留约 1.5 倍余量且远低于复读量级。
+# 复读保护由Qwen后处理读取；保持原有效缺省值。
+repetition_guard_enabled = true          # 是否启用复读检测与修复
+repetition_max_chars_per_second = 40     # 按段时长估算合理字符数的上限系数
+repetition_min_chars = 120               # 判定长度异常的绝对下限字符数
+repetition_min_unit = 4                  # 判定为循环的重复子串最小长度
+repetition_min_times = 3                 # 判定为循环的最小连续重复次数
+
+[vad]
+# 详见docs/npu-910b-migration-20261117/classroom-threshold-review.md。
+# 每个元素对应一个独立 FSMN-VAD worker；数组长度决定完整音频 VAD 并发上限
+vad_device = ["cpu","cpu","cpu","cpu","cpu","cpu","cpu","cpu"]
+# 小于该时长的候选段直接丢弃，单位：秒
+min_segment_duration_s = 0.3
+
+vad_snr_thres = 18.0 # 段级 SNR 过滤；18.0
+vad_snr_thres_filter_enabled = false
+
+# 独立服务段级log能量阈值，非dBFS；与模型内部FSMN全局选项独立
+vad_segment_decibel_thres = -40.0
+vad_decibel_frame_sample_ratio = 0.5 # 每秒采取帧率
+vad_decibel_low_frame_ratio_thres = 0.8 # 段级 decibel 过滤：抽取帧中低能量比例达到 0.8 时删除该段
+vad_decibel_thres_filter_enabled = false
+
+# 段级 RMS dBFS 过滤
+vad_low_volume_rms_dbfs_thres = -40.0
+vad_low_volume_filter_enabled = false
+
+# 段级过滤窗口，单位：分钟；0=整段都参与过滤，-1=该侧不限制
+# 3/3：只有落在开头 3 分钟、结尾 3 分钟内的段才做低音量/SNR/RMS 过滤；
+# 窗口外的中间段无条件保留，避免误删讲授主体。改动需重启生效。
+after_start = -1
+before_end = -1
+
+
+# 功能开关配置：v3 链路的说话人与情绪能力互相独立
+[features]
+open_v2_role = true      # CAM++ 说话人嵌入
+open_v2_emotion = true   # emotion2vec 情绪
+
+[model_device_pool]
+speech_campplus_execution_mode = "process"
+speech_campplus_process_startup_timeout_s = 60
+speech_campplus_process_shutdown_grace_s = 30
+speech_campplus_devices = ["npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7"]
+emotion2vec_devices = ["npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7"]
+
+speech_campplus_prefetch_queue_depth = 0
+emotion2vec_prefetch_queue_depth = 0
+speech_campplus_batch_size = 1
+emotion2vec_batch_size = 1
+
+[status]
+resource_sample_interval_s = 1.0

@@ -1,0 +1,27 @@
+# KV只读视图与遥测开销调整
+
+## 依据
+
+首轮真实128段稳态静态HF约4.553秒、连续生成约15.264秒，连续模式存在额外开销；4条具体文本差异保留在主Agent的/tmp/qc-capacity/result.json，不以任何一路作为人工真值。本调整先去除逐层逐成员clone；性能收益必须由主Agent复验，本文不预报加速。
+
+## 存储与所有权
+
+prefill/decode完成后，各活跃段保存输出KV中有效范围的只读slice，保留自身逻辑长度与position。底层同一代物理batch存储可以被多个段共享只读引用，下一步packing生成独立新输入，DynamicCache更新是cat而非就地改写旧slice。已完成段删除其引用，其他活跃段不读完成段的行。
+
+全部活跃段参加下一decode时，其KV引用整体替换为新一代输出；不保留历史cache对象，不用completed_tokens或遥测持有tensor。旧batch可能因同批存活段暂时持有，到这些存活段下次执行并替换引用即释放。若max_batch_size小于max_active则按公平轮转逐组更新，不能声称旧存储恰好下一全局step全部释放；保留代数受当前活跃段数有界，实际物理存储字节单列。测试目标128/128在全活跃decode后替换整代。
+
+设备同步和安全边界保持；视图生命周期优化没有改变原始PCM、mask、RoPE位置、生成参数或独立结束/接纳契约。
+
+## CPU验证
+
+小真实Qwen3混长四步与独立执行的token/KV对照继续执行。新增StorageImpl弱引用验证：两成员的KV共享物理存储；取消一个成员时另一个仍可读取旧存储；存活成员下次decode后旧存储过期；全部取消后kv_storage_bytes为0。使用StorageImpl弱引用而非Tensor._base，因为inference tensor不提供_view base追踪。
+
+## 控制流与遥测
+
+submit和release_request注册/查询future时短持routing锁，Pipe发送不持该锁，避免双向Pipe背压阻止reader拿锁而死锁；提交与close的发送侧再次检查closing。CPU背压模拟用16个256KiB请求，send等待另一个result-routing线程取得锁并完成future，确保发送期间reader可推进。
+
+阶段prefill/decode累计wall、步数、结束原因计数、peak active与KV bytes为有界摘要。KV逻辑/物理字节每step缓存，结果消息最多每秒附一次完整snapshot/allocator，最终active0强制快照，避免每个member完成时重复遍历全部KV的O(B²L)开销。事件环最近256条不是无损审计轨迹。
+
+复读检测在达到32token后每四token批量detokenize一次，仍按段独立确认，EOS优先，不改变保护关闭时的生成结果。保护开启效果和误杀由主Agent另做同源验证。
+
+最终CPU命令运行adapter与RPC两文件，共5项通过，覆盖混长数值、视图StorageImpl生命周期、去重取消释放、背压routing锁及batch/active独立配置；online_repetition_config字典参数透传保持默认判据不变。

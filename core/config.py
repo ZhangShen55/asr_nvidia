@@ -181,6 +181,44 @@ class Settings:
         return value
 
     @property
+    def qwen_generation_mode(self) -> str:
+        value = self._cfg.get("qwen_asr", {}).get("generation_mode", "legacy")
+        if type(value) is not str or value not in {"legacy", "continuous"}:
+            raise ValueError("[qwen_asr].generation_mode 必须是 legacy 或 continuous")
+        return value
+
+    @property
+    def qwen_continuous_prefill_batch_size(self) -> int:
+        return self._qwen_bounded_int("continuous_prefill_batch_size", 16, 1, 128)
+
+    @property
+    def qwen_online_repetition_enabled(self) -> bool:
+        value = self._cfg.get("qwen_asr", {}).get("online_repetition_enabled", False)
+        if type(value) is not bool:
+            raise ValueError("[qwen_asr].online_repetition_enabled 必须是bool")
+        return value
+
+    @property
+    def qwen_online_repetition_config(self):
+        """Typed online stop policy; separate from post-generation repair thresholds."""
+        from utils.incremental_repetition import RepetitionGuardConfig
+
+        defaults = RepetitionGuardConfig()
+        values = {"enabled": self.qwen_online_repetition_enabled}
+        for name in defaults.__dataclass_fields__:
+            if name == "enabled":
+                continue
+            key = "online_repetition_" + name
+            value = self._cfg.get("qwen_asr", {}).get(key, getattr(defaults, name))
+            if type(value) is not int or value <= 0:
+                raise ValueError(f"[qwen_asr].{key} 必须是正整数")
+            values[name] = value
+        try:
+            return RepetitionGuardConfig(**values)
+        except ValueError as exc:
+            raise ValueError(f"[qwen_asr] online_repetition 配置不合法: {exc}") from exc
+
+    @property
     def qwen_execution_mode(self) -> str:
         value = self._cfg.get("qwen_asr", {}).get("execution_mode", "thread")
         if not isinstance(value, str) or value not in {"thread", "process"}:
@@ -490,6 +528,13 @@ class Settings:
         _ = self.deployment_profile
         _ = self.resource_sample_interval_s
         _ = self.qwen_preload_on_startup
+        _ = self.qwen_online_repetition_config
+        _ = self.qwen_continuous_prefill_batch_size
+        if self.qwen_generation_mode == "continuous":
+            if self.qwen_execution_mode != "process" or self.qwen_local_instance_count != 1:
+                raise ValueError("continuous 仅支持 process 单Qwen实例")
+            if self.qwen_request_concurrency > self.qwen_max_inference_batch_size:
+                raise ValueError("continuous request_concurrency 不得超过 max_inference_batch_size")
         _ = self.vad_device
         for name in ("speech_campplus", "emotion2vec"):
             self._model_pool_devices(name)

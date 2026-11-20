@@ -1,0 +1,82 @@
+{
+  "utc": "2026-11-20T16:03:48.087013+00:00",
+  "monotonic": 7278301.43692163,
+  "pid": 2993565,
+  "create_time": 1795190563.29,
+  "action": "SIGUSR2 traceback only; no kill",
+  "tasks": [
+    {
+      "tid": "2993565",
+      "comm": "asr-offline-mod\n",
+      "wchan": "ep_poll",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] ep_poll+0x4a8/0x570\n[<0>] do_epoll_wait+0xe0/0x124\n[<0>] __se_sys_epoll_pwait+0x68/0xe0\n[<0>] __arm64_sys_epoll_pwait+0x28/0x34\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3003841",
+      "comm": "python\n",
+      "wchan": "futex_wait_queue_me",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] futex_wait_queue_me+0xc0/0x144\n[<0>] futex_wait+0xdc/0x1ac\n[<0>] do_futex+0xc4/0x1d0\n[<0>] __arm64_sys_futex+0x120/0x1a0\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3003842",
+      "comm": "python\n",
+      "wchan": "futex_wait_queue_me",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] futex_wait_queue_me+0xc0/0x144\n[<0>] futex_wait+0xdc/0x1ac\n[<0>] do_futex+0xc4/0x1d0\n[<0>] __arm64_sys_futex+0x120/0x1a0\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3003843",
+      "comm": "python\n",
+      "wchan": "futex_wait_queue_me",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] futex_wait_queue_me+0xc0/0x144\n[<0>] futex_wait+0xdc/0x1ac\n[<0>] do_futex+0xc4/0x1d0\n[<0>] __arm64_sys_futex+0x120/0x1a0\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3018503",
+      "comm": "PlogFlush\n",
+      "wchan": "hrtimer_nanosleep",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] hrtimer_nanosleep+0x90/0x110\n[<0>] common_nsleep+0x4c/0x74\n[<0>] __arm64_sys_clock_nanosleep+0xc4/0x140\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3018504",
+      "comm": "AtraceMonitor\n",
+      "wchan": "hrtimer_nanosleep",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] hrtimer_nanosleep+0x90/0x110\n[<0>] common_nsleep+0x4c/0x74\n[<0>] __arm64_sys_clock_nanosleep+0xc4/0x140\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3018505",
+      "comm": "WatchdogMonitor\n",
+      "wchan": "hrtimer_nanosleep",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] hrtimer_nanosleep+0x90/0x110\n[<0>] common_nsleep+0x4c/0x74\n[<0>] __arm64_sys_clock_nanosleep+0xc4/0x140\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3109716",
+      "comm": "asr-offline-mod\n",
+      "wchan": "futex_wait_queue_me",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] futex_wait_queue_me+0xc0/0x144\n[<0>] futex_wait+0xdc/0x1ac\n[<0>] do_futex+0xc4/0x1d0\n[<0>] __arm64_sys_futex+0x120/0x1a0\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3338681",
+      "comm": "asr-offline-mod\n",
+      "wchan": "do_poll.constprop.0",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] do_poll.constprop.0+0x200/0x2fc\n[<0>] do_sys_poll+0x1e0/0x320\n[<0>] __arm64_sys_ppoll+0xa8/0x140\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3340720",
+      "comm": "asr-offline-mod\n",
+      "wchan": "futex_wait_queue_me",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] futex_wait_queue_me+0xc0/0x144\n[<0>] futex_wait+0xdc/0x1ac\n[<0>] do_futex+0xc4/0x1d0\n[<0>] __arm64_sys_futex+0x120/0x1a0\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3340722",
+      "comm": "asr-offline-mod\n",
+      "wchan": "futex_wait_queue_me",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] futex_wait_queue_me+0xc0/0x144\n[<0>] futex_wait+0xdc/0x1ac\n[<0>] do_futex+0xc4/0x1d0\n[<0>] __arm64_sys_futex+0x120/0x1a0\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    },
+    {
+      "tid": "3340724",
+      "comm": "asr-offline-mod\n",
+      "wchan": "futex_wait_queue_me",
+      "stack": "[<0>] __switch_to+0xbc/0xfc\n[<0>] futex_wait_queue_me+0xc0/0x144\n[<0>] futex_wait+0xdc/0x1ac\n[<0>] do_futex+0xc4/0x1d0\n[<0>] __arm64_sys_futex+0x120/0x1a0\n[<0>] el0_svc_common.constprop.0+0x7c/0x1bc\n[<0>] do_el0_svc+0x2c/0x94\n[<0>] el0_svc+0x20/0x30\n[<0>] el0_sync_handler+0xb0/0xb4\n[<0>] el0_sync+0x160/0x180\n"
+    }
+  ],
+  "signal_sent": true
+}

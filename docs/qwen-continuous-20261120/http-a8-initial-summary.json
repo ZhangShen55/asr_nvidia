@@ -1,0 +1,173 @@
+{
+  "kind": "initial real v3 HTTP 8-audio A-mode 16/128; failed performance acceptance",
+  "raw_directory": "/home/zhangs/asr_nvidia/logs/qwen-continuous-20261120-a8",
+  "raw_summary_sha256": "6d25d0cde52d8d5af8d926141dc8a4979b80d9fcb9e12bd37592e202f206638d",
+  "status": "cleanup_failed",
+  "mode": "A",
+  "concurrency": 8,
+  "temperature": "warmup_completed",
+  "source_audio_seconds": 24221.7386875,
+  "expected": 8,
+  "successful": 0,
+  "success_rate": 0.0,
+  "business_failed": 2,
+  "unfinished_at_420s": 6,
+  "records": [
+    {
+      "sample_id": "a1",
+      "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+      "audio_seconds": 3117.312,
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 421.12094064988196
+    },
+    {
+      "sample_id": "a2",
+      "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+      "audio_seconds": 3287.296,
+      "status": "failed",
+      "http_status": 200,
+      "code": 4012,
+      "elapsed_s": 183.6956262998283
+    },
+    {
+      "sample_id": "a3",
+      "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+      "audio_seconds": 3306.048,
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 421.1190704703331
+    },
+    {
+      "sample_id": "a4",
+      "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+      "audio_seconds": 3284.416,
+      "status": "failed",
+      "http_status": 200,
+      "code": 4012,
+      "elapsed_s": 199.95545649994165
+    },
+    {
+      "sample_id": "a5",
+      "sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+      "audio_seconds": 2981.12,
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 421.1177354399115
+    },
+    {
+      "sample_id": "a6",
+      "sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+      "audio_seconds": 3121.1306875,
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 421.11774864047766
+    },
+    {
+      "sample_id": "a7",
+      "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+      "audio_seconds": 2702.016,
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 421.1175016593188
+    },
+    {
+      "sample_id": "a8",
+      "sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+      "audio_seconds": 2422.4,
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 421.11714741028845
+    }
+  ],
+  "batch_elapsed_s": 421.3295644596219,
+  "p50_s": null,
+  "p95_s": null,
+  "quantile_scope": "0 normal successful complete audio responses; success latency quantiles undefined. Early business4012 failures are not >420s censored requests.",
+  "diagnostic_trigger": {
+    "reason": "inflight_wall_timeout",
+    "observed_monotonic": 7277203.77306312,
+    "request_id": "a1",
+    "observed_s": 420.2087447606027,
+    "threshold_s": 420
+  },
+  "snapshot_count": 173,
+  "logical_inflight_peak": 121,
+  "worker_active_sequences_peak": 109,
+  "observed_decode_step_members_peak": 109,
+  "peak_logical_kv_bytes": 1249411072,
+  "last_worker_sample": {
+    "active_sequences": 81,
+    "kv_bytes": 1101234176,
+    "kv_storage_bytes": 1556545536,
+    "sampled_monotonic": 7277201.95160626,
+    "completed": 1786,
+    "last_step": {
+      "batch_size": 87,
+      "wall_s": 0.6443473603576422,
+      "max_cache_length": 155
+    },
+    "end_reasons": {
+      "eos": 1786,
+      "cancelled": 13
+    },
+    "phase_wall_s": {
+      "prefill": 124.74118031933904,
+      "decode": 260.79832853283733
+    },
+    "steps": {
+      "prefill": 554,
+      "decode": 592
+    },
+    "peak_active": 109,
+    "peak_kv_bytes": 1249411072
+  },
+  "phase_counters_scope": "worker cumulative since startup, may include warmup; last sampled before cleanup, not final drained totals",
+  "failure_attribution": "unknown; two4012 observed. End counters onlyeos/cancelled in captured snapshots; no proven repetition_stop or first failure cause. Do not attribute to repetition.",
+  "owned_shutdown": {
+    "owned": true,
+    "forced": true,
+    "exit_code": -9,
+    "exit_code_ok": false,
+    "remaining_pids": [],
+    "port_observations": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "observe_s": 5,
+    "passed": false,
+    "term_to_parent_exit_s": 210.2522129798308,
+    "evidence": "http-a8-initial-cleanup.json"
+  },
+  "promotion": "not accepted; pending bundling changes and new test; original raw logs retained"
+}

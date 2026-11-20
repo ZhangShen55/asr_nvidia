@@ -1,0 +1,13 @@
+{
+  "text_equal": [
+    true,
+    true,
+    true
+  ],
+  "short_eos": 7254138.60848468,
+  "new_prefill": 7254138.79703807,
+  "long_eos": 7254141.36392988,
+  "replacement_interval_s": 0.18855339009314775,
+  "normal_close": true,
+  "scope": "3 real VAD segments; not capacity or full HTTP performance"
+}

@@ -54,7 +54,7 @@ class QwenAsrClient:
                  local_instance_count=None, max_new_tokens=None, runtime_factory=None,
                  max_inference_batch_size=None, batch_wait_timeout_ms=None,
                  max_batch_audio_frames=None, max_batch_tokens=None, batch_max_duration_ratio=None,
-                 execution_mode=None):
+                 execution_mode=None, generation_mode=None):
         # 旧参数仍可被现有调用者传入，但不再创建HTTP连接池或发模型发现请求。
         self.base_url = str(base_url).rstrip("/")
         self.model = (model or "").strip()
@@ -72,8 +72,28 @@ class QwenAsrClient:
         self.execution_mode = settings.qwen_execution_mode if execution_mode is None else execution_mode
         if not isinstance(self.execution_mode, str) or self.execution_mode not in {"thread", "process"}:
             raise ValueError("execution_mode must be thread or process")
+        self.generation_mode = (getattr(settings, 'qwen_generation_mode', 'legacy')
+                                if generation_mode is None else generation_mode)
+        if self.generation_mode not in {'legacy', 'continuous'}:
+            raise ValueError('generation_mode must be legacy or continuous')
+        if self.generation_mode == 'continuous' and (self.execution_mode != 'process' or count != 1):
+            raise ValueError('continuous generation requires one process model owner')
         if runtime_factory is not None:
             factory = runtime_factory
+        elif self.generation_mode == 'continuous':
+            from core.qwen_continuous_process import LocalQwenContinuousProcessRuntime
+            factory = lambda *args: LocalQwenContinuousProcessRuntime(*args,
+                max_active=int(getattr(settings, 'qwen_request_concurrency', 128)),
+                max_batch_size=int(max_inference_batch_size if max_inference_batch_size is not None else
+                                   getattr(settings, 'qwen_max_inference_batch_size', 128)),
+                prefill_batch_size=int(getattr(settings, 'qwen_continuous_prefill_batch_size', 16)),
+                max_batch_tokens=int(max_batch_tokens if max_batch_tokens is not None else
+                                     getattr(settings, 'qwen_max_batch_tokens', 80000)),
+                max_batch_audio_frames=int(max_batch_audio_frames if max_batch_audio_frames is not None else
+                                           getattr(settings, 'qwen_max_batch_audio_frames', 115200)),
+                online_repetition_enabled=bool(getattr(settings, 'qwen_online_repetition_enabled', False)),
+                online_repetition_config=(__import__('dataclasses').asdict(settings.qwen_online_repetition_config)
+                    if hasattr(settings, 'qwen_online_repetition_config') else None))
         elif self.execution_mode == "process":
             from core.qwen_asr_process import LocalQwenProcessRuntime
             factory = LocalQwenProcessRuntime
@@ -109,6 +129,12 @@ class QwenAsrClient:
                             getattr(settings, "qwen_batch_max_duration_ratio", 4.0)),
             max_new_tokens=tokens, capacity=int(getattr(settings, "qwen_pending_segment_limit", 256)),
         )
+        if self.generation_mode == 'continuous':
+            from core.qwen_continuous_scheduler import ContinuousScheduler
+            self._batch_scheduler = ContinuousScheduler(self._execute_sequence,
+                capacity=int(getattr(settings, 'qwen_request_concurrency', 128)),
+                audio_frame_budget=self._batch_scheduler.audio_frame_budget,
+                token_budget=self._batch_scheduler.token_budget, max_new_tokens=tokens)
         if self.base_url:
             logger.info("[配置迁移] qwen_asr.base_url/connect_timeout_s 仅兼容读取，本地推理不发起HTTP调用")
 
@@ -272,7 +298,109 @@ class QwenAsrClient:
         except (QwenAsrError, asyncio.CancelledError):
             raise
         except Exception as exc:
+            if self.generation_mode == 'continuous':
+                reason = getattr(exc, 'reason', 'generation_error')
+                error = QwenAsrCallError(f'Qwen sequence failed: reason={reason}, request_id={request_id}, segment_id={segment_index}')
+                error.reason, error.request_id, error.segment_id = reason, request_id, segment_index
+                error.backend_error_type = type(exc).__name__
+                logger.warning('[Qwen] sequence failed request=%s segment=%s reason=%s type=%s',
+                    request_id, segment_index, reason, type(exc).__name__)
+                raise error from exc
             raise QwenAsrCallError() from exc
+
+    async def _execute_sequence(self, member):
+        # Discovery is serialized; after it completes there is no whole-model lease.
+        # All member futures are routed by the single worker's device owner.
+        runtime = self._runtimes[0]
+        try:
+            async with self._discovery_lock:
+                if not runtime.loaded:
+                    await self._run_owned(runtime.ensure_loaded)
+        except LocalModelUnavailable as exc:
+            raise QwenAsrUnavailableError() from exc
+        if self._closing or runtime.failure:
+            raise QwenAsrUnavailableError()
+        rejected_at = None
+        for attempt in range(4):
+            if member.cancelled:
+                raise asyncio.CancelledError()
+            try:
+                # Pipe IO can block behind a device step. Keep it off the event
+                # loop, but retain ownership if cancellation arrives during send.
+                send = asyncio.create_task(asyncio.to_thread(runtime.submit,
+                    member.audio, member.language, request_id=member.request_id,
+                    segment_id=member.segment_index))
+                try:
+                    submitted = await asyncio.shield(send)
+                except asyncio.CancelledError as cancelled:
+                    try:
+                        submitted = await await_completion(send)
+                    except BaseException:
+                        raise cancelled
+                    owned = asyncio.wrap_future(submitted)
+                    try:
+                        try:
+                            await await_completion(asyncio.to_thread(runtime.cancel_segment,
+                                member.request_id, member.segment_index))
+                        finally:
+                            await await_completion(owned)
+                    except BaseException:
+                        pass
+                    raise cancelled
+                future = asyncio.wrap_future(submitted)
+                return await self._await_sequence(runtime, member, future)
+            except LocalModelUnavailable as exc:
+                raise QwenAsrUnavailableError() from exc
+            except Exception as exc:
+                if not (getattr(exc, 'accepted', None) is False and
+                        getattr(exc, 'reason', None) == 'capacity_rejected'):
+                    raise
+                now = time.monotonic()
+                rejected_at = now if rejected_at is None else rejected_at
+                delay = (0.1, 0.5, 1.0)[min(attempt, 2)]
+                if attempt == 3 or now + delay - rejected_at > 30:
+                    raise QwenAsrCallError('Qwen capacity retry exhausted') from exc
+                await asyncio.sleep(delay)
+
+    async def _await_sequence(self, runtime, member, future):
+        started = time.monotonic()
+        cancel_sent = False
+        timeout = False
+        try:
+            while not future.done():
+                timeout = timeout or time.monotonic() - started >= self.request_timeout_s
+                if (member.cancelled or timeout) and not cancel_sent:
+                    cancel_sent = True
+                    await await_completion(asyncio.to_thread(runtime.cancel_segment,
+                        member.request_id, member.segment_index))
+                await asyncio.wait({future}, timeout=0.05)
+            # Retrieve the owned completion before applying the caller's first
+            # cause: backend cancellation is an acknowledgement, not a new cause.
+            backend_error = None
+            try:
+                value = future.result()
+            except BaseException as exc:
+                backend_error = exc
+            if member.cancelled:
+                raise asyncio.CancelledError() from backend_error
+            if timeout:
+                error = TimeoutError('Qwen sequence timed out after owned cleanup')
+                error.reason = 'request_timeout'
+                raise error from backend_error
+            if backend_error is not None:
+                raise backend_error
+            return value
+        except asyncio.CancelledError as cancelled:
+            try:
+                try:
+                    if not cancel_sent:
+                        await await_completion(asyncio.to_thread(runtime.cancel_segment,
+                            member.request_id, member.segment_index))
+                finally:
+                    await await_completion(future)
+            except BaseException:
+                pass
+            raise cancelled
 
     async def _execute_batch(self, members, batch_id):
         index = await self._lease()
@@ -341,6 +469,11 @@ class QwenAsrClient:
             self._available.put_nowait(index)
             self._changed.set()
 
+    def release_request(self, request_id):
+        """Forget deduplication only after the parent's owned segments have drained."""
+        if self.generation_mode == 'continuous':
+            self._runtimes[0].release_request(str(request_id))
+
     async def transcribe(self, audio_path: str, language: Optional[str] = None) -> str:
         data = await asyncio.to_thread(Path(audio_path).read_bytes)
         return await self.transcribe_bytes(data, language=language, filename=Path(audio_path).name)
@@ -349,7 +482,10 @@ class QwenAsrClient:
         details = [dict(runtime.snapshot(), index=index, busy=self._busy[index]) for index, runtime in enumerate(self._runtimes)]
         batch_snapshot = (self._batch_scheduler.snapshot() if recent_batch_limit is None else
                           self._batch_scheduler.snapshot(recent_limit=recent_batch_limit))
+        if self.generation_mode == 'continuous':
+            details[0]['busy'] = bool(batch_snapshot['running_members'])
         return {
+            **({"generation_mode": self.generation_mode} if self.generation_mode == "continuous" else {}),
             "execution_mode": self.execution_mode,
             "memory_process_scope": "model_worker" if self.execution_mode == "process" else "service_process",
             "configured_model_workers": len(details) if self.execution_mode == "process" else 0,
@@ -362,7 +498,7 @@ class QwenAsrClient:
             "loading": any(x.get("loading") for x in details),
             "configured_instances": len(details),
             "capacity": sum(x["loaded"] and not x.get("failure") for x in details),
-            "busy": sum(self._busy), "waiting": self._waiting + batch_snapshot["waiting"],
+            "busy": sum(bool(item.get("busy")) for item in details), "waiting": self._waiting + batch_snapshot["waiting"],
             "batch_scheduler": batch_snapshot,
             "failed_instances": sum(bool(x.get("failure")) for x in details),
             "execution_failures": self._execution_failures, "closing": self._closing,
@@ -501,6 +637,13 @@ async def get_qwen_client() -> QwenAsrClient:
                     retry_count=settings.qwen_retry_count,
                 )
     return _client_instance
+
+
+async def release_qwen_request(request_id) -> None:
+    """Drain the existing client's Pipe send without blocking the event loop."""
+    client = _client_instance
+    if client is not None:
+        await await_completion(asyncio.to_thread(client.release_request, request_id))
 
 
 async def preload_qwen_client() -> str:

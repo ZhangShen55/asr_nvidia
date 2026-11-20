@@ -548,3 +548,27 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 ### 无效VAD配置清理（2026-11-19）
 
 已删除 `vad_max_single_segment_time_ms`、`vad_max_end_silence_time_ms`、`vad_speech_noise_thres`、`vad_decibel_thres` 及对应Settings正名/别名和默认nested转发；它们不会覆盖FSMN真实构造选项。模型原始配置与有效选项不变，不将删除操作当作阈值调整。`vad_snr_thres`仍用于服务段级过滤，独立 `vad_segment_decibel_thres`、RMS、开关及范围参数均有效并保留。复读参数移至实际读取的 `[qwen_asr]`，此前误放 `[vad]` 的值恰与有效缺省一致，修正不改变当前有效值。历史章节中的旧参数仅代表清理前版本。当前服务未重启。
+
+### 单Qwen持续生成候选（2026-11-20）
+
+`[qwen_asr].generation_mode`支持`legacy`（缺省，原静态批）或`continuous`（逐段持续生成）；后者仅支持process、单实例，request_concurrency不得超过max_inference_batch_size。`online_repetition_enabled`为严格bool，缺省false，独立于生成后repetition_guard_enabled。候选配置`test/config.qwen-continuous128.toml`为音频8、每音频16、全局128；尚未完成真实8并发验收，不自动替换根48/384配置。配置变更需重启。
+
+连续生成每段独立EOS和KV，底层仍按步批量计算。复读停止/未EOS达到长度上限按4012失败，不视为完整成功；取消不提前回收设备资源。只对明确未接收容量拒绝最多重试3次（总4次尝试）、首次拒绝后30秒内，未知执行状态不重发。状态摘要不记录正文。
+
+`continuous_prefill_batch_size`范围1～128、缺省16，为每次接纳新段的prefill上限；prefill后推进已有decode，不等待凑满。该值仅为候选，需真实NPU标定。
+
+
+生成中复读阈值均位于`[qwen_asr]`，使用严格正整数，拒绝bool、浮点和字符串；启用状态沿用`online_repetition_enabled`严格bool。以下默认值是保守候选，已完成构造文本保护与既有token离线回放，尚非真实复读召回标定或实测最优。配置修改需重启，与`repetition_guard_enabled`生成后修复独立。
+
+| 字段 | 默认值 | 作用 |
+| --- | ---: | --- |
+| `online_repetition_min_generated_tokens` | 32 | 最少已生成token，未达到不检测 |
+| `online_repetition_min_chars` | 120 | 正文异常长度绝对下限 |
+| `online_repetition_max_chars_per_second` | 40 | 正文还须超过音频时长×该系数 |
+| `online_repetition_min_repeats` | 8 | 尾部循环最少次数，必须≥3 |
+| `online_repetition_min_repeat_chars` | 64 | 循环覆盖最少字符，必须≤tail_chars |
+| `online_repetition_max_unit_chars` | 32 | 扫描单元最大字符，必须≤tail_chars |
+| `online_repetition_tail_chars` | 512 | 有界检测尾窗大小 |
+| `online_repetition_confirmations` | 2 | 连续正文增长确认次数，必须≥2 |
+
+长度、最少token、循环和确认条件须同时满足；只检测`<asr_text>`后的正文，不通过全局禁止重复来修改正常讲授。`Settings.qwen_online_repetition_config`返回严格校验的`RepetitionGuardConfig`，无效组合即使保护关闭也拒绝启动，防止开关开启后才暴露配置错误。

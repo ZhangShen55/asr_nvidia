@@ -1,0 +1,107 @@
+{
+  "head": "240b915f7527f6fd642e9b57050b87f6c5fdc8ac",
+  "preexisting_status": " D fusion_result.json\n?? tests/test_incremental_repetition.py\n?? utils/incremental_repetition.py\n",
+  "sources": [
+    {
+      "source_id": "a1",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/储能学术英语-多人（中英）.wav",
+      "source_sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+      "vad_seconds": 30.716073770076036,
+      "valid_vad_count": 753,
+      "audio_seconds": 3117.312,
+      "verified_sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70"
+    },
+    {
+      "source_id": "a2",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/反常积分与级数（中法）.wav",
+      "source_sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+      "vad_seconds": 31.36302386969328,
+      "valid_vad_count": 615,
+      "audio_seconds": 3287.296,
+      "verified_sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79"
+    },
+    {
+      "source_id": "a3",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/多模态机器学习1（中英）.wav",
+      "source_sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+      "vad_seconds": 32.1571379005909,
+      "valid_vad_count": 706,
+      "audio_seconds": 3306.048,
+      "verified_sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d"
+    },
+    {
+      "source_id": "a4",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/多模态机器学习2(中英).wav",
+      "source_sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+      "vad_seconds": 32.64861867018044,
+      "valid_vad_count": 701,
+      "audio_seconds": 3284.416,
+      "verified_sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305"
+    },
+    {
+      "source_id": "a5",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/多模态机器学习3（中英）.wav",
+      "source_sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+      "vad_seconds": 29.922289580106735,
+      "valid_vad_count": 457,
+      "audio_seconds": 2981.12,
+      "verified_sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f"
+    },
+    {
+      "source_id": "a6",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/线性代数与解析几何（中文）.wav",
+      "source_sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+      "vad_seconds": 31.546319340355694,
+      "valid_vad_count": 520,
+      "audio_seconds": 3121.1306875,
+      "verified_sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6"
+    },
+    {
+      "source_id": "a7",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/高等数学（中文）.wav",
+      "source_sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+      "vad_seconds": 27.611663300544024,
+      "valid_vad_count": 397,
+      "audio_seconds": 2702.016,
+      "verified_sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be"
+    },
+    {
+      "source_id": "a8",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/金匮中医/金匮中医（中文）.wav",
+      "source_sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+      "vad_seconds": 25.434775750152767,
+      "valid_vad_count": 367,
+      "audio_seconds": 2422.4,
+      "verified_sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b"
+    }
+  ],
+  "dependencies": {
+    "torch": "2.5.1",
+    "torch-npu": "2.5.1",
+    "transformers": "5.13.0",
+    "numpy": "1.26.4"
+  },
+  "files": {
+    "config.toml": "12bf0fcde98cdde79eb5ed3a1889c08ec684f60746b9285c8cc649407561c998",
+    "requirements.txt": "bcd89e915037e047d3e82ba69b0637643dc9bb1fb8414045b5132c0112995bbe",
+    "core/qwen_asr_runtime.py": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe",
+    "core/qwen_asr_process.py": "ae85af3e67cfedb7095e1d814b417baec2926692e7d69359478bbd9c73921a55"
+  },
+  "weight_metadata": {
+    "/home/model/Qwen3-ASR-1.7B-hf/processor_config.json": "bc0b230081b44e629dd5b9045b78495615c1831b4b9f4cffe97bd37e82a6156a",
+    "/home/model/Qwen3-ASR-1.7B-hf/generation_config.json": "9939fc9388b79bd70757f938b87381e817173d6a6158f5af6506c0b73e775c3c",
+    "/home/model/Qwen3-ASR-1.7B-hf/configuration.json": "0657e261c850f8d368b4da948a15279089f3484d40c152cc07fb4e9d1727ca3d",
+    "/home/model/Qwen3-ASR-1.7B-hf/tokenizer.json": "fe1fad59be22a41ee293363fcf95fdedbc7c93f3b49270b1d2e18bd1399a7a05",
+    "/home/model/Qwen3-ASR-1.7B-hf/config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63",
+    "/home/model/Qwen3-ASR-1.7B-hf/tokenizer_config.json": "945e980986de2ca7768f3326bfdbb4fbea3406f972b8ae0be233089f2b253c11"
+  },
+  "old_change": "2026-11-18-npu-asr-throughput-scheduling",
+  "scope_mapping": {
+    "retained": "VAD/独立前端/增强/时间轴/已有准入",
+    "replaced_in_candidate": "静态整批执行与整批RPC",
+    "unverified_old_tasks": "保留未勾状态，连续生成不自动证明旧B8/多副本矩阵"
+  },
+  "weight_hash_scope": "metadata only; original weights unchanged",
+  "npu": 7,
+  "shared_pid": 1601397
+}

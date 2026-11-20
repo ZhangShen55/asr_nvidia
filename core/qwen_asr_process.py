@@ -130,6 +130,8 @@ def _worker(connection, runtime_args, factory_path, launch_id, launch_config):
         for attribute in qualname.split('.'):
             factory = getattr(factory, attribute)
         runtime = factory(*runtime_args)
+        if launch_config.get('continuous_options') is not None:
+            runtime.ensure_loaded()
         ready_config = dict(launch_config, factory_identity=_factory_identity(factory_path),
                             model_identity=_model_identity(runtime_args[0]),
                             model_dir=str(getattr(runtime, 'model_dir', runtime_args[0])),
@@ -148,6 +150,11 @@ def _worker(connection, runtime_args, factory_path, launch_id, launch_config):
                                'npu_initialization_observation':
                                    'no_torch_no_torch_npu_no_runtime_api' if 'torch' not in sys.modules
                                    and 'torch_npu' not in sys.modules and getattr(runtime,'api',None) is None else 'not_queried'}})
+        if launch_config.get('continuous_options') is not None:
+            from core.qwen_continuous_process import worker_loop
+            close_attempted = True
+            worker_loop(connection, runtime, launch_id, launch_config['continuous_options'])
+            return
         while True:
             request, _ = _receive(connection)
             rpc_id, operation = request['rpc_id'], request['operation']

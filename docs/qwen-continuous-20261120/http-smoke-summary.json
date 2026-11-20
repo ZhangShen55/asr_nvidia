@@ -1,0 +1,259 @@
+{
+  "kind": "real_main_v3_single_short_audio_smoke",
+  "started_utc": "2026-11-20T16:02:43.921312+00:00",
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "/home/zhangs/asr_nvidia/main.py",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "18083",
+    "--workers",
+    "1"
+  ],
+  "config": "/home/zhangs/asr_nvidia/test/config.qwen-continuous128.toml",
+  "config_sha256": "eb779f3db8e402996fada3c7949ac10fe3fb8452a62131d5cfdca66a571eb139",
+  "audio": "/tmp/qc-warmup.wav",
+  "audio_sha256": "d290c5bb7ac2d10153243444320f904a491b8af1979701e7c70f2ac02870792b",
+  "success": true,
+  "request": {
+    "fields": {
+      "showSpk": "false",
+      "showEmotion": "false",
+      "showRoleIdentify": "false"
+    },
+    "started_utc": "2026-11-20T16:03:23.056046+00:00",
+    "started_monotonic": 7278276.40597524,
+    "http_status": 200,
+    "response_text": "{\"language\":\"Chinese\",\"segments\":[{\"segment_text\":\"\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f\",\"bg\":\"0.00\",\"ed\":\"7.99\",\"speed\":129,\"segment_words\":[],\"role\":null,\"emotion\":null}],\"text\":\"\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f\",\"speed_info\":[{\"unit\":1,\"segment_info\":{\"segment_count\":1,\"speed\":[322]}},{\"unit\":5,\"segment_info\":{\"segment_count\":1,\"speed\":[322]}},{\"unit\":10,\"segment_info\":{\"segment_count\":1,\"speed\":[322]}}],\"load_audio_time_ms\":\"3.68\",\"gpu_time_ms\":\"4416.36\",\"language_ratio\":{\"zh\":100.0}}",
+    "response": {
+      "language": "Chinese",
+      "segments": [
+        {
+          "segment_text": "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+          "bg": "0.00",
+          "ed": "7.99",
+          "speed": 129,
+          "segment_words": [],
+          "role": null,
+          "emotion": null
+        }
+      ],
+      "text": "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+      "speed_info": [
+        {
+          "unit": 1,
+          "segment_info": {
+            "segment_count": 1,
+            "speed": [
+              322
+            ]
+          }
+        },
+        {
+          "unit": 5,
+          "segment_info": {
+            "segment_count": 1,
+            "speed": [
+              322
+            ]
+          }
+        },
+        {
+          "unit": 10,
+          "segment_info": {
+            "segment_count": 1,
+            "speed": [
+              322
+            ]
+          }
+        }
+      ],
+      "load_audio_time_ms": "3.68",
+      "gpu_time_ms": "4416.36",
+      "language_ratio": {
+        "zh": 100.0
+      }
+    },
+    "code": null,
+    "ended_utc": "2026-11-20T16:03:27.650797+00:00",
+    "elapsed_s": 4.594728529453278
+  },
+  "failure": null,
+  "cleanup": {
+    "owned": true,
+    "identities": [
+      [
+        2993565,
+        1795190563.29
+      ],
+      [
+        3023976,
+        1795190568.49
+      ],
+      [
+        3024040,
+        1795190568.5
+      ],
+      [
+        3024041,
+        1795190568.5
+      ],
+      [
+        3024042,
+        1795190568.5
+      ],
+      [
+        3024048,
+        1795190568.5
+      ],
+      [
+        3024075,
+        1795190568.51
+      ],
+      [
+        3024135,
+        1795190568.51
+      ],
+      [
+        3024199,
+        1795190568.51
+      ],
+      [
+        3024259,
+        1795190568.51
+      ],
+      [
+        3109732,
+        1795190578.36
+      ],
+      [
+        3192783,
+        1795190586.94
+      ],
+      [
+        3237654,
+        1795190591.94
+      ],
+      [
+        3238147,
+        1795190592.0
+      ],
+      [
+        3238176,
+        1795190592.01
+      ],
+      [
+        3238201,
+        1795190592.01
+      ],
+      [
+        3238228,
+        1795190592.01
+      ],
+      [
+        3238266,
+        1795190592.01
+      ],
+      [
+        3238299,
+        1795190592.01
+      ],
+      [
+        3238354,
+        1795190592.02
+      ],
+      [
+        3238512,
+        1795190592.02
+      ],
+      [
+        3238631,
+        1795190592.03
+      ],
+      [
+        3240689,
+        1795190592.29
+      ],
+      [
+        3240690,
+        1795190592.29
+      ],
+      [
+        3240691,
+        1795190592.3
+      ],
+      [
+        3240692,
+        1795190592.3
+      ],
+      [
+        3240693,
+        1795190592.3
+      ],
+      [
+        3240694,
+        1795190592.3
+      ],
+      [
+        3240695,
+        1795190592.3
+      ],
+      [
+        3240715,
+        1795190592.3
+      ]
+    ],
+    "forced": false,
+    "temp_dir": "/tmp/asr-svc-x1ngdjfi",
+    "cache_dir": "/tmp/asr-svc-x1ngdjfi/seacraft_asr",
+    "temp_dir_retained": true,
+    "remaining_cache_files": [],
+    "cache_scan_error": null,
+    "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "exit_code_ok": true,
+    "remaining_pids": [],
+    "port_observations": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "observe_s": 5,
+    "orphan_cleanup": false,
+    "term_sent_monotonic": 7278281.2302637,
+    "parent_exit_observed_monotonic": 7278308.09015727,
+    "term_to_parent_exit_s": 26.859893570654094,
+    "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+    "passed": true
+  },
+  "startup_to_healthy_s": 36.912269559688866,
+  "ended_utc": "2026-11-20T16:03:59.847690+00:00",
+  "passed": true
+}
