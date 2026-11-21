@@ -1,0 +1,829 @@
+{
+  "samples": [
+    {
+      "source_id": "a8",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/金匮中医/金匮中医（中文）.wav",
+      "source_sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+      "source_vad_index": 347,
+      "start_s": 2292.7,
+      "end_s": 2300.71,
+      "start_sample": 36683200,
+      "end_sample": 36811360,
+      "duration_s": 8.01,
+      "pcm_sha256": "779eb60a8c741901541e0d8202720fa85f06b565faee993a456caf4a477291ce",
+      "index": 127,
+      "sample_id": "vad127",
+      "audio_key": "audio_127"
+    },
+    {
+      "source_id": "a2",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/反常积分与级数（中法）.wav",
+      "source_sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+      "source_vad_index": 50,
+      "start_s": 341.46,
+      "end_s": 342.07,
+      "start_sample": 5463360,
+      "end_sample": 5473120,
+      "duration_s": 0.61,
+      "pcm_sha256": "b1b23546017fd3a247912954a4ec9ccbc3d322674fdd619203b4b213d4cde6f3",
+      "index": 1,
+      "sample_id": "vad001",
+      "audio_key": "audio_001"
+    },
+    {
+      "source_id": "a4",
+      "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/多模态机器学习2(中英).wav",
+      "source_sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+      "source_vad_index": 205,
+      "start_s": 1121.44,
+      "end_s": 1125.69,
+      "start_sample": 17943040,
+      "end_sample": 18011040,
+      "duration_s": 4.25,
+      "pcm_sha256": "91da9e20596af4dc52b563cd2b984be50cc39a20ae8dbc7547bc76f631ce6c99",
+      "index": 75,
+      "sample_id": "vad075",
+      "audio_key": "audio_075"
+    }
+  ],
+  "static": [
+    "language Chinese<asr_text>三个是利水的，说明什么？气虚，水液代谢失调嘛，是一种病症。如果我用黄芪，黄芪有什么作用？你们有没有看？",
+    "language None<asr_text>",
+    "language English<asr_text>I I was outside, and I took the picture."
+  ],
+  "continuous": {
+    "0": {
+      "text": "language Chinese<asr_text>三个是利水的，说明什么？气虚，水液代谢失调嘛，是一种病症。如果我用黄芪，黄芪有什么作用？你们有没有看？",
+      "warning": null,
+      "recovered": false,
+      "original_raw": "language Chinese<asr_text>三个是利水的，说明什么？气虚，水液代谢失调嘛，是一种病症。如果我用黄芪，黄芪有什么作用？你们有没有看？<|im_end|>",
+      "tokens": [
+        11528,
+        8453,
+        151704,
+        101124,
+        20412,
+        59532,
+        52510,
+        9370,
+        3837,
+        66394,
+        99245,
+        11319,
+        99180,
+        100226,
+        3837,
+        52510,
+        100058,
+        103225,
+        117400,
+        102455,
+        3837,
+        101158,
+        116067,
+        1773,
+        62244,
+        35946,
+        11622,
+        99789,
+        119671,
+        3837,
+        99789,
+        119671,
+        104139,
+        100154,
+        11319,
+        101900,
+        104710,
+        50930,
+        11319,
+        151645
+      ],
+      "wall_s": 4.2925436198711395
+    },
+    "1": {
+      "text": "language None<asr_text>",
+      "warning": null,
+      "recovered": false,
+      "original_raw": "language None<asr_text><|im_end|>",
+      "tokens": [
+        11528,
+        2240,
+        151704,
+        151645
+      ],
+      "wall_s": 4.292563499882817
+    },
+    "2": {
+      "text": "language English<asr_text>I I was outside, and I took the picture.",
+      "warning": null,
+      "recovered": false,
+      "original_raw": "language English<asr_text>I I was outside, and I took the picture.<|im_end|>",
+      "tokens": [
+        11528,
+        6364,
+        151704,
+        40,
+        358,
+        572,
+        4889,
+        11,
+        323,
+        358,
+        3867,
+        279,
+        6802,
+        13,
+        151645
+      ],
+      "wall_s": 4.292570689693093
+    }
+  },
+  "owners": [
+    {
+      "device": "npu:7",
+      "dtype": "bfloat16",
+      "loaded": false,
+      "loading": false,
+      "failure": null,
+      "memory_allocated_mb": 0.0,
+      "memory_reserved_mb": 0.0,
+      "model_worker": {
+        "started": true,
+        "worker_pid": 84820,
+        "worker_create_time": 1795228125.71,
+        "worker_alive": false,
+        "closed": true,
+        "closing": true,
+        "birth_in_progress": false,
+        "cleanup_status": "passed",
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "95b819699e574d30b9a1821acb58bee2",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+            "module_sha256": "82a176cc8548eb2a941993fd3e8e492ca30ecb40ba5dcd7cea3ce03a6c495e56"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+            "module_sha256": "9492b81dfe8c42cb22353d913ab9e6da993c681320d28e41db24fc3711bc2006"
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "731579971",
+        "ready_wire_payload_bytes": 1937,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 84820,
+          "start_ticks": "731579971",
+          "create_time": 1795228125.71
+        },
+        "worker_entry_module_file": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+        "ready_preload_observation": {
+          "runtime_module_file": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+          "torch_imported": false,
+          "torch_npu_imported": false,
+          "runtime_api_present": false,
+          "loaded": false,
+          "npu_initialization_observation": "no_torch_no_torch_npu_no_runtime_api"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 84820,
+          "worker_rss_mb": 2466.50390625,
+          "peak_scope": "last_transcribe_batch",
+          "memory_allocated_mb": 0.0,
+          "memory_reserved_mb": 0.0,
+          "max_memory_allocated_mb": 4052.58740234375,
+          "max_memory_reserved_mb": 4528.0
+        },
+        "parent_rss_mb": 37.421875,
+        "last_request_wire_payload_bytes": 412168,
+        "last_response_wire_payload_bytes": 2276,
+        "last_audio_bytes": 411972,
+        "last_parent_rpc_wall_ms": 4398.933279328048,
+        "worker_exitcode": 0,
+        "close_error": null
+      },
+      "last_batch_timings": {
+        "batch_size": 3,
+        "decode_audio_ms": 1.598929986357689,
+        "load_ms": 0.004599802196025848,
+        "generate_started": true,
+        "generate_completed": true,
+        "requested_batch_size": 3,
+        "valid_member_indices": [
+          0,
+          1,
+          2
+        ],
+        "frontend_mode": "independent_single_fp32_then_collate",
+        "single_processor_shapes": [
+          {
+            "input_ids": [
+              1,
+              120
+            ],
+            "attention_mask": [
+              1,
+              120
+            ],
+            "input_features": [
+              1,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              1,
+              900
+            ]
+          },
+          {
+            "input_ids": [
+              1,
+              23
+            ],
+            "attention_mask": [
+              1,
+              23
+            ],
+            "input_features": [
+              1,
+              128,
+              100
+            ],
+            "input_features_mask": [
+              1,
+              100
+            ]
+          },
+          {
+            "input_ids": [
+              1,
+              71
+            ],
+            "attention_mask": [
+              1,
+              71
+            ],
+            "input_features": [
+              1,
+              128,
+              500
+            ],
+            "input_features_mask": [
+              1,
+              500
+            ]
+          }
+        ],
+        "processor_shapes": {
+          "input_ids": [
+            3,
+            120
+          ],
+          "attention_mask": [
+            3,
+            120
+          ],
+          "input_features": [
+            3,
+            128,
+            900
+          ],
+          "input_features_mask": [
+            3,
+            900
+          ]
+        },
+        "processor_ms": 81.9538701325655,
+        "transfer_wall_ms": 0.9638704359531403,
+        "generate_wall_ms": 4307.233719155192,
+        "output_error_indices": [],
+        "output_error_count": 0,
+        "read_decode_wall_ms": 1.5019001439213753,
+        "generated_padded_tokens": 40,
+        "synchronize_wall_ms": 2.046150155365467,
+        "total_wall_ms": 4395.318449474871
+      },
+      "precision_policy": {
+        "mode": "fp32_ops_hf32_disabled",
+        "conv_allow_hf32": false,
+        "matmul_allow_hf32": false
+      },
+      "parameter_dtype_check": {
+        "expected_dtype": "torch.bfloat16",
+        "floating_parameter_dtype_counts": {
+          "torch.bfloat16": 707
+        },
+        "nonfloating_parameter_count": 0,
+        "buffers_cast_or_checked": false
+      },
+      "memory_source": "pytorch_load_delta_estimate"
+    },
+    {
+      "device": "npu:7",
+      "dtype": "bfloat16",
+      "loaded": false,
+      "loading": false,
+      "failure": null,
+      "memory_allocated_mb": 0.0,
+      "memory_reserved_mb": 0.0,
+      "model_worker": {
+        "started": true,
+        "worker_pid": 361461,
+        "worker_create_time": 1795228155.18,
+        "worker_alive": false,
+        "closed": true,
+        "closing": true,
+        "birth_in_progress": false,
+        "cleanup_status": "passed",
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "495c4aa4ec8d45dd9893d82305b52633",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+            "module_sha256": "82a176cc8548eb2a941993fd3e8e492ca30ecb40ba5dcd7cea3ce03a6c495e56"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+            "module_sha256": "9492b81dfe8c42cb22353d913ab9e6da993c681320d28e41db24fc3711bc2006"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": false,
+            "online_repetition_config": null,
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 80000,
+            "max_batch_audio_frames": 115200,
+            "transport_drain_s": 0.0
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "731582918",
+        "ready_wire_payload_bytes": 2409,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 361461,
+          "start_ticks": "731582918",
+          "create_time": 1795228155.18
+        },
+        "worker_entry_module_file": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+        "ready_preload_observation": {
+          "runtime_module_file": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 361461,
+          "worker_rss_mb": 2488.8046875,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 0.0,
+          "memory_reserved_mb": 0.0,
+          "max_memory_allocated_mb": 4006.04052734375,
+          "max_memory_reserved_mb": 4510.0
+        },
+        "parent_rss_mb": 37.421875,
+        "worker_exitcode": 0
+      },
+      "last_batch_timings": null,
+      "precision_policy": {
+        "mode": "fp32_ops_hf32_disabled",
+        "conv_allow_hf32": false,
+        "matmul_allow_hf32": false
+      },
+      "parameter_dtype_check": {
+        "expected_dtype": "torch.bfloat16",
+        "floating_parameter_dtype_counts": {
+          "torch.bfloat16": 707
+        },
+        "nonfloating_parameter_count": 0,
+        "buffers_cast_or_checked": false
+      },
+      "memory_source": "pytorch_load_delta_estimate",
+      "continuous": {
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0,
+        "sampled_monotonic": 7315851.66924682,
+        "completed": 3,
+        "last_step": {
+          "batch_size": 1,
+          "wall_s": 0.058858719654381275,
+          "max_cache_length": 158
+        },
+        "events": [
+          {
+            "request_id": "smoke",
+            "segment_id": "0",
+            "kind": "prefill",
+            "monotonic": 7315849.16091837,
+            "prompt_length": 120,
+            "wall_s": 1.7700471701100469
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "0",
+            "kind": "first_token",
+            "monotonic": 7315849.16093011
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "1",
+            "kind": "prefill",
+            "monotonic": 7315849.16137955,
+            "prompt_length": 23,
+            "wall_s": 1.7705351505428553
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "1",
+            "kind": "first_token",
+            "monotonic": 7315849.1613835
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "1",
+            "kind": "eos",
+            "monotonic": 7315849.39094322,
+            "generated_tokens": 4
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "1",
+            "kind": "resource_reusable",
+            "monotonic": 7315849.39095288
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "2",
+            "kind": "prefill",
+            "monotonic": 7315849.56983357,
+            "prompt_length": 71,
+            "wall_s": 0.11059036012738943
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "2",
+            "kind": "first_token",
+            "monotonic": 7315849.56984372
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "2",
+            "kind": "eos",
+            "monotonic": 7315850.46674508,
+            "generated_tokens": 15
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "2",
+            "kind": "resource_reusable",
+            "monotonic": 7315850.46676375
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "0",
+            "kind": "eos",
+            "monotonic": 7315851.66900804,
+            "generated_tokens": 40
+          },
+          {
+            "request_id": "smoke",
+            "segment_id": "0",
+            "kind": "resource_reusable",
+            "monotonic": 7315851.66902427
+          }
+        ],
+        "error_counts": {},
+        "recent_errors": [],
+        "warning_counts": {},
+        "warning_actions": {},
+        "recent_warnings": [],
+        "end_reasons": {
+          "eos": 3
+        },
+        "phase_wall_s": {
+          "prefill": 1.881616580300033,
+          "decode": 2.368324157781899
+        },
+        "steps": {
+          "prefill": 2,
+          "decode": 39
+        },
+        "peak_active": 2,
+        "peak_kv_bytes": 25575424,
+        "repacks": 4,
+        "cache_reuses": 35,
+        "transport": {
+          "poll_wait_calls": 0,
+          "poll_wait_s": 0.0,
+          "poll_wait_timeouts": 0,
+          "received_submits": 3,
+          "prefill_calls": 2,
+          "prefill_members": 3,
+          "max_receive_burst": 2,
+          "accepted_per_drain": {
+            "2": 1,
+            "1": 1
+          }
+        }
+      },
+      "transport_sender": {
+        "pending_send_count": 0,
+        "oldest_pending_s": 0.0,
+        "cumulative_submit_send_s": 0.003991398960351944,
+        "max_submit_send_s": 0.00380856916308403
+      }
+    }
+  ],
+  "error": null,
+  "first_done": "1",
+  "long_done_when_replacing": false,
+  "state_before_close": {
+    "device": "npu:7",
+    "dtype": "bfloat16",
+    "loaded": true,
+    "loading": false,
+    "failure": null,
+    "memory_allocated_mb": 3889.24560546875,
+    "memory_reserved_mb": 4296.0,
+    "model_worker": {
+      "started": true,
+      "worker_pid": 361461,
+      "worker_create_time": 1795228155.18,
+      "worker_alive": true,
+      "closed": false,
+      "closing": false,
+      "birth_in_progress": false,
+      "cleanup_status": "pending",
+      "resource_reaped": false,
+      "normal_exit_ok": null,
+      "forced_cleanup": false,
+      "runtime_kind": "original_hf_runtime",
+      "start_method": "spawn",
+      "cann_environment_inherited": true,
+      "launch_id": "495c4aa4ec8d45dd9893d82305b52633",
+      "device_scope": "configured logical device; physical mapping follows deployment",
+      "launch_config": {
+        "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+        "device": "npu:7",
+        "dtype": "bfloat16",
+        "max_new_tokens": 256,
+        "factory_identity": {
+          "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+          "module_origin": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+          "module_sha256": "82a176cc8548eb2a941993fd3e8e492ca30ecb40ba5dcd7cea3ce03a6c495e56"
+        },
+        "model_identity": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "metadata_sha256": {
+            "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+          },
+          "weight_hash_scope": "metadata_only_not_full_weights"
+        },
+        "worker_entry_identity": {
+          "factory": "core.qwen_asr_process:_worker",
+          "module_origin": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+          "module_sha256": "9492b81dfe8c42cb22353d913ab9e6da993c681320d28e41db24fc3711bc2006"
+        },
+        "continuous_options": {
+          "max_active": 16,
+          "max_batch_size": 16,
+          "online_repetition_enabled": false,
+          "online_repetition_config": null,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 80000,
+          "max_batch_audio_frames": 115200,
+          "transport_drain_s": 0.0
+        }
+      },
+      "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+      "worker_start_ticks": "731582918",
+      "ready_wire_payload_bytes": 2409,
+      "ready_verified": true,
+      "worker_ready_identity": {
+        "pid": 361461,
+        "start_ticks": "731582918",
+        "create_time": 1795228155.18
+      },
+      "worker_entry_module_file": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so",
+      "ready_preload_observation": {
+        "runtime_module_file": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so",
+        "torch_imported": true,
+        "torch_npu_imported": true,
+        "runtime_api_present": true,
+        "loaded": true,
+        "npu_initialization_observation": "not_queried"
+      },
+      "worker_allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 361461,
+        "worker_rss_mb": 2488.80078125,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 3889.24560546875,
+        "memory_reserved_mb": 4510.0,
+        "max_memory_allocated_mb": 4006.04052734375,
+        "max_memory_reserved_mb": 4510.0
+      },
+      "parent_rss_mb": 37.421875
+    },
+    "last_batch_timings": null,
+    "precision_policy": {
+      "mode": "fp32_ops_hf32_disabled",
+      "conv_allow_hf32": false,
+      "matmul_allow_hf32": false
+    },
+    "parameter_dtype_check": {
+      "expected_dtype": "torch.bfloat16",
+      "floating_parameter_dtype_counts": {
+        "torch.bfloat16": 707
+      },
+      "nonfloating_parameter_count": 0,
+      "buffers_cast_or_checked": false
+    },
+    "memory_source": "pytorch_load_delta_estimate",
+    "continuous": {
+      "active_sequences": 0,
+      "kv_bytes": 0,
+      "kv_storage_bytes": 0,
+      "sampled_monotonic": 7315851.66924682,
+      "completed": 3,
+      "last_step": {
+        "batch_size": 1,
+        "wall_s": 0.058858719654381275,
+        "max_cache_length": 158
+      },
+      "events": [
+        {
+          "request_id": "smoke",
+          "segment_id": "0",
+          "kind": "prefill",
+          "monotonic": 7315849.16091837,
+          "prompt_length": 120,
+          "wall_s": 1.7700471701100469
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "0",
+          "kind": "first_token",
+          "monotonic": 7315849.16093011
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "1",
+          "kind": "prefill",
+          "monotonic": 7315849.16137955,
+          "prompt_length": 23,
+          "wall_s": 1.7705351505428553
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "1",
+          "kind": "first_token",
+          "monotonic": 7315849.1613835
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "1",
+          "kind": "eos",
+          "monotonic": 7315849.39094322,
+          "generated_tokens": 4
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "1",
+          "kind": "resource_reusable",
+          "monotonic": 7315849.39095288
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "2",
+          "kind": "prefill",
+          "monotonic": 7315849.56983357,
+          "prompt_length": 71,
+          "wall_s": 0.11059036012738943
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "2",
+          "kind": "first_token",
+          "monotonic": 7315849.56984372
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "2",
+          "kind": "eos",
+          "monotonic": 7315850.46674508,
+          "generated_tokens": 15
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "2",
+          "kind": "resource_reusable",
+          "monotonic": 7315850.46676375
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "0",
+          "kind": "eos",
+          "monotonic": 7315851.66900804,
+          "generated_tokens": 40
+        },
+        {
+          "request_id": "smoke",
+          "segment_id": "0",
+          "kind": "resource_reusable",
+          "monotonic": 7315851.66902427
+        }
+      ],
+      "error_counts": {},
+      "recent_errors": [],
+      "warning_counts": {},
+      "warning_actions": {},
+      "recent_warnings": [],
+      "end_reasons": {
+        "eos": 3
+      },
+      "phase_wall_s": {
+        "prefill": 1.881616580300033,
+        "decode": 2.368324157781899
+      },
+      "steps": {
+        "prefill": 2,
+        "decode": 39
+      },
+      "peak_active": 2,
+      "peak_kv_bytes": 25575424,
+      "repacks": 4,
+      "cache_reuses": 35,
+      "transport": {
+        "poll_wait_calls": 0,
+        "poll_wait_s": 0.0,
+        "poll_wait_timeouts": 0,
+        "received_submits": 3,
+        "prefill_calls": 2,
+        "prefill_members": 3,
+        "max_receive_burst": 2,
+        "accepted_per_drain": {
+          "2": 1,
+          "1": 1
+        }
+      }
+    },
+    "transport_sender": {
+      "pending_send_count": 0,
+      "oldest_pending_s": 0.0,
+      "cumulative_submit_send_s": 0.003991398960351944,
+      "max_submit_send_s": 0.00380856916308403
+    }
+  },
+  "text_equal": [
+    true,
+    true,
+    true
+  ]
+}

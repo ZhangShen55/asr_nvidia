@@ -24,6 +24,7 @@
 
 - `local-qwen-asr-inference`: 单实例执行所有权细化为串行设备步、独立序列生命周期；持续补位、公平窗口、异常重复和准入重试契约。
 - `resource-pressure-diagnostics`: 连续序列诊断、同源性能归因、真实八音频验收与可复算统计。
+- `offline-asr-service`: continuous模式新增段级异常警告与完成状态，明确完成不等于无异常成功。
 
 ## Impact
 

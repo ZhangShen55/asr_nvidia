@@ -571,4 +571,10 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 | `online_repetition_tail_chars` | 512 | 有界检测尾窗大小 |
 | `online_repetition_confirmations` | 2 | 连续正文增长确认次数，必须≥2 |
 
-长度、最少token、循环和确认条件须同时满足；只检测`<asr_text>`后的正文，不通过全局禁止重复来修改正常讲授。`Settings.qwen_online_repetition_config`返回严格校验的`RepetitionGuardConfig`，无效组合即使保护关闭也拒绝启动，防止开关开启后才暴露配置错误。
+达到最少token及多次确认后，异常长度路径或强循环路径任一路径满足即停止；只检测`<asr_text>`后的正文，不通过全局禁止重复来修改正常讲授。`Settings.qwen_online_repetition_config`返回严格校验的`RepetitionGuardConfig`，无效组合即使保护关闭也拒绝启动，防止开关开启后才暴露配置错误。
+
+2026-11-21：continuous段生成异常（复读、长度耗尽、无效前缀）经保守恢复后继续其它段。新响应`processing_status=complete|completed_with_warnings`及`segment_warnings`（原段index/bg/ed/reason/action/recovered）区分无异常与警告完成。无法恢复段保留警告，不伪装无人声；OOM/设备死亡/取消/timeout不被降级。legacy响应不变。
+
+在线强循环判据新增`online_repetition_strong_tail_min_chars=96`、`online_repetition_strong_tail_min_ratio=95`（1～100百分比）、`online_repetition_strong_tail_repeats_per_second=4`，其余为严格正整数；与异常长度路径并列，仍需多次新增token确认。候选来源为两条真实循环轨迹和既有正常输出回放，不代表人工准确率或最优阈值。统计分列处理完成、严格无警告成功和可用文本，警告不能默算质量成功。
+
+`continuous_admission_drain_ms`为0～5毫秒严格整数，缺省0保留即时poll旧行为；候选3ms只在本轮收到新submit后用于Pipe发送者交接的固定总预算，deadline不续期，prefill已满/容量满/closing立即停止，无新submit不增加等待。它不恢复整批generate屏障，也不重置原100ms组批等待。根配置保留0、独立候选3，需NPU实测。

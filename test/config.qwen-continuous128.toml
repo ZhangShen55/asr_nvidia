@@ -23,6 +23,8 @@ remove_interjections = true
 failure_mode = "passthrough"
 
 [qwen_asr]
+# 已收到新段后的IPC运输交接总上限0～5ms；不续期凑满，不影响空闲/无新段周期。
+continuous_admission_drain_ms = 3
 # 每轮prefill至多1～128段，完成后推进decode；仅continuous使用，16为待实测候选。
 continuous_prefill_batch_size = 16
 generation_mode = "continuous"
@@ -37,6 +39,11 @@ online_repetition_min_repeat_chars = 64 # 循环覆盖字符总数，不得超�
 online_repetition_max_unit_chars = 32 # 检测单元最大字符数，不得超过tail_chars
 online_repetition_tail_chars = 512 # 有界检测尾窗字符数
 online_repetition_confirmations = 2 # 不同正文增长观测连续确认次数，至少2
+# 强循环路径：至少96个规范字符、占正文95%，且重复次数达到音频秒数×4；与异常长度路径并列。
+# 来源为两个真实循环轨迹及正常记录回放，仅候选标定，不能代替人工准确率。
+online_repetition_strong_tail_min_chars = 96
+online_repetition_strong_tail_min_ratio = 95
+online_repetition_strong_tail_repeats_per_second = 4 # 强循环最少重复次数随音频时长增长
 preload_on_startup = true # 启动预加载权重，不是所有shape已推理暖身
 execution_mode = "process"
 process_shutdown_grace_s = 120

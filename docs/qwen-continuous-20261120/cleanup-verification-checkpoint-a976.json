@@ -1,0 +1,19 @@
+{
+  "owned_births_checked": 128,
+  "remaining": [],
+  "port_listening_observations": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "shared": {
+    "pid": 1601397,
+    "create_time": 1791963491.5,
+    "name": "uvicorn"
+  },
+  "resource_cleanup_passed": true,
+  "normal_close_acceptance": "initial full A8 failed (forced -9), subsequent short HTTP passed exit0; not equivalent"
+}

@@ -1,0 +1,261 @@
+{
+  "kind": "real_main_v3_single_short_audio_smoke",
+  "started_utc": "2026-11-21T02:10:40.726875+00:00",
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "/home/zhangs/asr_nvidia/main.py",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "18083",
+    "--workers",
+    "1"
+  ],
+  "config": "/home/zhangs/asr_nvidia/test/config.qwen-continuous128.toml",
+  "config_sha256": "018f3641bfb53a36cbead96e02dbc74b7a88267e48611f7933b403938c050fd8",
+  "audio": "/tmp/qc-warning-a2.wav",
+  "audio_sha256": "9a1f03552473b327498137083c77378af061d7c0130233a77f906d2d8ae1fd91",
+  "success": true,
+  "request": {
+    "fields": {
+      "showSpk": "false",
+      "showEmotion": "false",
+      "showRoleIdentify": "false"
+    },
+    "started_utc": "2026-11-21T02:11:19.922313+00:00",
+    "started_monotonic": 7314753.27224317,
+    "http_status": 200,
+    "response_text": "{\"language\":\"Chinese\",\"segments\":[{\"segment_text\":\"\u5929\uff01\",\"bg\":\"0.41\",\"ed\":\"7.99\",\"speed\":3,\"segment_words\":[],\"role\":null,\"emotion\":null}],\"text\":\"\u5929\uff01\",\"speed_info\":[{\"unit\":1,\"segment_info\":{\"segment_count\":1,\"speed\":[7]}},{\"unit\":5,\"segment_info\":{\"segment_count\":1,\"speed\":[7]}},{\"unit\":10,\"segment_info\":{\"segment_count\":1,\"speed\":[7]}}],\"load_audio_time_ms\":\"1.80\",\"gpu_time_ms\":\"2472.89\",\"language_ratio\":{\"zh\":100.0},\"processing_status\":\"complete\",\"segment_warnings\":[]}",
+    "response": {
+      "language": "Chinese",
+      "segments": [
+        {
+          "segment_text": "\u5929\uff01",
+          "bg": "0.41",
+          "ed": "7.99",
+          "speed": 3,
+          "segment_words": [],
+          "role": null,
+          "emotion": null
+        }
+      ],
+      "text": "\u5929\uff01",
+      "speed_info": [
+        {
+          "unit": 1,
+          "segment_info": {
+            "segment_count": 1,
+            "speed": [
+              7
+            ]
+          }
+        },
+        {
+          "unit": 5,
+          "segment_info": {
+            "segment_count": 1,
+            "speed": [
+              7
+            ]
+          }
+        },
+        {
+          "unit": 10,
+          "segment_info": {
+            "segment_count": 1,
+            "speed": [
+              7
+            ]
+          }
+        }
+      ],
+      "load_audio_time_ms": "1.80",
+      "gpu_time_ms": "2472.89",
+      "language_ratio": {
+        "zh": 100.0
+      },
+      "processing_status": "complete",
+      "segment_warnings": []
+    },
+    "code": null,
+    "ended_utc": "2026-11-21T02:11:22.550902+00:00",
+    "elapsed_s": 2.6285741794854403
+  },
+  "failure": null,
+  "cleanup": {
+    "owned": true,
+    "identities": [
+      [
+        507983,
+        1795227040.09
+      ],
+      [
+        573794,
+        1795227045.73
+      ],
+      [
+        573796,
+        1795227045.73
+      ],
+      [
+        573797,
+        1795227045.73
+      ],
+      [
+        573798,
+        1795227045.74
+      ],
+      [
+        573799,
+        1795227045.74
+      ],
+      [
+        573813,
+        1795227045.74
+      ],
+      [
+        573850,
+        1795227045.74
+      ],
+      [
+        573886,
+        1795227045.75
+      ],
+      [
+        573923,
+        1795227045.75
+      ],
+      [
+        682581,
+        1795227055.7
+      ],
+      [
+        775900,
+        1795227064.46
+      ],
+      [
+        833179,
+        1795227069.46
+      ],
+      [
+        834056,
+        1795227069.52
+      ],
+      [
+        834060,
+        1795227069.53
+      ],
+      [
+        834080,
+        1795227069.53
+      ],
+      [
+        834098,
+        1795227069.53
+      ],
+      [
+        834117,
+        1795227069.53
+      ],
+      [
+        834134,
+        1795227069.53
+      ],
+      [
+        834174,
+        1795227069.53
+      ],
+      [
+        834230,
+        1795227069.53
+      ],
+      [
+        834278,
+        1795227069.54
+      ],
+      [
+        837090,
+        1795227069.81
+      ],
+      [
+        837091,
+        1795227069.81
+      ],
+      [
+        837092,
+        1795227069.81
+      ],
+      [
+        837094,
+        1795227069.81
+      ],
+      [
+        837110,
+        1795227069.81
+      ],
+      [
+        837126,
+        1795227069.81
+      ],
+      [
+        837146,
+        1795227069.82
+      ],
+      [
+        837177,
+        1795227069.82
+      ]
+    ],
+    "forced": false,
+    "temp_dir": "/tmp/asr-svc-q8ulocbx",
+    "cache_dir": "/tmp/asr-svc-q8ulocbx/seacraft_asr",
+    "temp_dir_retained": true,
+    "remaining_cache_files": [],
+    "cache_scan_error": null,
+    "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "exit_code_ok": true,
+    "remaining_pids": [],
+    "port_observations": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "observe_s": 5,
+    "orphan_cleanup": false,
+    "term_sent_monotonic": 7314756.12436433,
+    "parent_exit_observed_monotonic": 7314780.20128369,
+    "term_to_parent_exit_s": 24.076919359155,
+    "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+    "passed": true
+  },
+  "startup_to_healthy_s": 36.854348000139,
+  "ended_utc": "2026-11-21T02:11:51.958664+00:00",
+  "passed": true
+}

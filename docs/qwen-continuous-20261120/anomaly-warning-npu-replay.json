@@ -1,0 +1,2211 @@
+{
+  "manifest": {
+    "sample_rate": 16000,
+    "selection": "two first HTTP4012 suspect segments for cause replay; no assumption of repetition",
+    "samples": [
+      {
+        "index": 0,
+        "sample_id": "a2-vad8",
+        "segment_id": "8",
+        "request_id": "a2",
+        "source_id": "a2",
+        "source_vad_index": 8,
+        "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/反常积分与级数（中法）.wav",
+        "source_sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+        "start_s": 64.08,
+        "end_s": 72.09,
+        "start_sample": 1025280,
+        "end_sample": 1153440,
+        "duration_s": 8.01,
+        "audio_key": "audio_a2",
+        "pcm_sha256": "8add81e45a95628c56f61ff27620408a5ff7d13fd8db8e048946ca46c7f99482",
+        "language": null,
+        "vad_wall_s": 32.128763269633055,
+        "index_scope": "zero-based index after filter_short_segments(.3), original service independent VAD logic"
+      },
+      {
+        "index": 1,
+        "sample_id": "a4-vad29",
+        "segment_id": "29",
+        "request_id": "a4",
+        "source_id": "a4",
+        "source_vad_index": 29,
+        "source_path": "/home/zhangs/asr_nvidia/test/test_audio/课程/多模态机器学习2(中英).wav",
+        "source_sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+        "start_s": 148.49,
+        "end_s": 156.5,
+        "start_sample": 2375840,
+        "end_sample": 2504000,
+        "duration_s": 8.01,
+        "audio_key": "audio_a4",
+        "pcm_sha256": "9d3f6f96978526e78ec2e63c2857d6e3bd9e911a69187c039ec703b07f81af8b",
+        "language": null,
+        "vad_wall_s": 27.479599310085177,
+        "index_scope": "zero-based index after filter_short_segments(.3), original service independent VAD logic"
+      }
+    ]
+  },
+  "runs": {
+    "static": {
+      "wall_s": 16.17861368972808,
+      "outputs": [
+        {
+          "text": "language Chinese<asr_text>天啊！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我",
+          "warning": null
+        },
+        {
+          "text": "language Chinese<asr_text>哎，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对",
+          "warning": null
+        }
+      ],
+      "state": {
+        "device": "npu:7",
+        "dtype": "bfloat16",
+        "loaded": true,
+        "loading": false,
+        "failure": null,
+        "memory_allocated_mb": 3889.24560546875,
+        "memory_reserved_mb": 4296.0,
+        "model_worker": {
+          "started": true,
+          "worker_pid": 2903168,
+          "worker_create_time": 1795226795.79,
+          "worker_alive": true,
+          "closed": false,
+          "closing": false,
+          "birth_in_progress": false,
+          "cleanup_status": "pending",
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "runtime_kind": "original_hf_runtime",
+          "start_method": "spawn",
+          "cann_environment_inherited": true,
+          "launch_id": "3a7fb7f2af8b49de99eeb841e611b47d",
+          "device_scope": "configured logical device; physical mapping follows deployment",
+          "launch_config": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "device": "npu:7",
+            "dtype": "bfloat16",
+            "max_new_tokens": 256,
+            "factory_identity": {
+              "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+            },
+            "model_identity": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "metadata_sha256": {
+                "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+              },
+              "weight_hash_scope": "metadata_only_not_full_weights"
+            },
+            "worker_entry_identity": {
+              "factory": "core.qwen_asr_process:_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+              "module_sha256": "270d5cc7e0fcede50decf1054caacb6484bfc900776bb450bd0c80aa1cfd3383"
+            }
+          },
+          "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+          "worker_start_ticks": "731446979",
+          "ready_wire_payload_bytes": 1717,
+          "ready_verified": true,
+          "worker_ready_identity": {
+            "pid": 2903168,
+            "start_ticks": "731446979",
+            "create_time": 1795226795.79
+          },
+          "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+          "ready_preload_observation": {
+            "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "torch_imported": false,
+            "torch_npu_imported": false,
+            "runtime_api_present": false,
+            "loaded": false,
+            "npu_initialization_observation": "no_torch_no_torch_npu_no_runtime_api"
+          },
+          "worker_allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 2903168,
+            "worker_rss_mb": 2490.390625,
+            "peak_scope": "last_transcribe_batch",
+            "memory_allocated_mb": 3889.24560546875,
+            "memory_reserved_mb": 4466.0,
+            "max_memory_allocated_mb": 4022.43603515625,
+            "max_memory_reserved_mb": 4466.0
+          },
+          "parent_rss_mb": 38.390625,
+          "last_request_wire_payload_bytes": 512906,
+          "last_response_wire_payload_bytes": 3480,
+          "last_audio_bytes": 512728,
+          "last_parent_rpc_wall_ms": 16178.125320002437
+        },
+        "last_batch_timings": {
+          "batch_size": 2,
+          "decode_audio_ms": 1.0472899302840233,
+          "load_ms": 0.003269873559474945,
+          "generate_started": true,
+          "generate_completed": true,
+          "requested_batch_size": 2,
+          "valid_member_indices": [
+            0,
+            1
+          ],
+          "frontend_mode": "independent_single_fp32_then_collate",
+          "single_processor_shapes": [
+            {
+              "input_ids": [
+                1,
+                120
+              ],
+              "attention_mask": [
+                1,
+                120
+              ],
+              "input_features": [
+                1,
+                128,
+                900
+              ],
+              "input_features_mask": [
+                1,
+                900
+              ]
+            },
+            {
+              "input_ids": [
+                1,
+                120
+              ],
+              "attention_mask": [
+                1,
+                120
+              ],
+              "input_features": [
+                1,
+                128,
+                900
+              ],
+              "input_features_mask": [
+                1,
+                900
+              ]
+            }
+          ],
+          "processor_shapes": {
+            "input_ids": [
+              2,
+              120
+            ],
+            "attention_mask": [
+              2,
+              120
+            ],
+            "input_features": [
+              2,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              2,
+              900
+            ]
+          },
+          "processor_ms": 78.85530032217503,
+          "transfer_wall_ms": 0.7792199030518532,
+          "generate_wall_ms": 16085.991160012782,
+          "output_error_indices": [],
+          "output_error_count": 0,
+          "read_decode_wall_ms": 3.141080029308796,
+          "generated_padded_tokens": 256,
+          "synchronize_wall_ms": 3.5224398598074913,
+          "total_wall_ms": 16173.356750048697
+        },
+        "precision_policy": {
+          "mode": "fp32_ops_hf32_disabled",
+          "conv_allow_hf32": false,
+          "matmul_allow_hf32": false
+        },
+        "parameter_dtype_check": {
+          "expected_dtype": "torch.bfloat16",
+          "floating_parameter_dtype_counts": {
+            "torch.bfloat16": 707
+          },
+          "nonfloating_parameter_count": 0,
+          "buffers_cast_or_checked": false
+        },
+        "memory_source": "pytorch_load_delta_estimate"
+      }
+    },
+    "continuous-off": {
+      "wall_s": 16.611748280003667,
+      "outputs": [
+        {
+          "text": "language None<asr_text>",
+          "warning": {
+            "reason": "length_limit",
+            "action": "discard_unrecoverable",
+            "recovered": false
+          },
+          "recovered": false,
+          "original_raw": "language Chinese<asr_text>天啊！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我",
+          "index": 0,
+          "tokens": [
+            11528,
+            8453,
+            151704,
+            35727,
+            103924,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946
+          ]
+        },
+        {
+          "text": "language None<asr_text>",
+          "warning": {
+            "reason": "length_limit",
+            "action": "discard_unrecoverable",
+            "recovered": false
+          },
+          "recovered": false,
+          "original_raw": "language Chinese<asr_text>哎，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对",
+          "index": 1,
+          "tokens": [
+            11528,
+            8453,
+            151704,
+            110030,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664
+          ]
+        }
+      ],
+      "state": {
+        "device": "npu:7",
+        "dtype": "bfloat16",
+        "loaded": true,
+        "loading": false,
+        "failure": null,
+        "memory_allocated_mb": 3889.24560546875,
+        "memory_reserved_mb": 4296.0,
+        "model_worker": {
+          "started": true,
+          "worker_pid": 3248157,
+          "worker_create_time": 1795226837.76,
+          "worker_alive": true,
+          "closed": false,
+          "closing": false,
+          "birth_in_progress": false,
+          "cleanup_status": "pending",
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "runtime_kind": "original_hf_runtime",
+          "start_method": "spawn",
+          "cann_environment_inherited": true,
+          "launch_id": "1fb0a5f6a13945b29a7ee011f203b3ef",
+          "device_scope": "configured logical device; physical mapping follows deployment",
+          "launch_config": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "device": "npu:7",
+            "dtype": "bfloat16",
+            "max_new_tokens": 256,
+            "factory_identity": {
+              "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+            },
+            "model_identity": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "metadata_sha256": {
+                "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+              },
+              "weight_hash_scope": "metadata_only_not_full_weights"
+            },
+            "worker_entry_identity": {
+              "factory": "core.qwen_asr_process:_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+              "module_sha256": "270d5cc7e0fcede50decf1054caacb6484bfc900776bb450bd0c80aa1cfd3383"
+            },
+            "continuous_options": {
+              "max_active": 16,
+              "max_batch_size": 16,
+              "online_repetition_enabled": false,
+              "online_repetition_config": null,
+              "prefill_batch_size": 16,
+              "max_batch_tokens": 80000,
+              "max_batch_audio_frames": 115200
+            }
+          },
+          "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+          "worker_start_ticks": "731451176",
+          "ready_wire_payload_bytes": 2160,
+          "ready_verified": true,
+          "worker_ready_identity": {
+            "pid": 3248157,
+            "start_ticks": "731451176",
+            "create_time": 1795226837.76
+          },
+          "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+          "ready_preload_observation": {
+            "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "torch_imported": true,
+            "torch_npu_imported": true,
+            "runtime_api_present": true,
+            "loaded": true,
+            "npu_initialization_observation": "not_queried"
+          },
+          "worker_allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 3248157,
+            "worker_rss_mb": 2473.39453125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3889.24560546875,
+            "memory_reserved_mb": 4518.0,
+            "max_memory_allocated_mb": 4131.94580078125,
+            "max_memory_reserved_mb": 4518.0
+          },
+          "parent_rss_mb": 38.390625
+        },
+        "last_batch_timings": null,
+        "precision_policy": {
+          "mode": "fp32_ops_hf32_disabled",
+          "conv_allow_hf32": false,
+          "matmul_allow_hf32": false
+        },
+        "parameter_dtype_check": {
+          "expected_dtype": "torch.bfloat16",
+          "floating_parameter_dtype_counts": {
+            "torch.bfloat16": 707
+          },
+          "nonfloating_parameter_count": 0,
+          "buffers_cast_or_checked": false
+        },
+        "memory_source": "pytorch_load_delta_estimate",
+        "continuous": {
+          "active_sequences": 0,
+          "kv_bytes": 0,
+          "kv_storage_bytes": 0,
+          "sampled_monotonic": 7314545.86102772,
+          "completed": 2,
+          "last_step": {
+            "batch_size": 2,
+            "wall_s": 0.054915860295295715,
+            "max_cache_length": 374
+          },
+          "events": [
+            {
+              "request_id": "continuous-off",
+              "segment_id": "0",
+              "kind": "prefill",
+              "monotonic": 7314531.3876262,
+              "prompt_length": 120,
+              "wall_s": 2.1280671805143356
+            },
+            {
+              "request_id": "continuous-off",
+              "segment_id": "0",
+              "kind": "first_token",
+              "monotonic": 7314531.38763566
+            },
+            {
+              "request_id": "continuous-off",
+              "segment_id": "1",
+              "kind": "prefill",
+              "monotonic": 7314531.38811641,
+              "prompt_length": 120,
+              "wall_s": 2.128560770303011
+            },
+            {
+              "request_id": "continuous-off",
+              "segment_id": "1",
+              "kind": "first_token",
+              "monotonic": 7314531.38812095
+            },
+            {
+              "request_id": "continuous-off",
+              "segment_id": "0",
+              "kind": "length_limit",
+              "monotonic": 7314545.85855827,
+              "generated_tokens": 256
+            },
+            {
+              "request_id": "continuous-off",
+              "segment_id": "0",
+              "kind": "resource_reusable",
+              "monotonic": 7314545.85857194
+            },
+            {
+              "request_id": "continuous-off",
+              "segment_id": "1",
+              "kind": "length_limit",
+              "monotonic": 7314545.85923387,
+              "generated_tokens": 256
+            },
+            {
+              "request_id": "continuous-off",
+              "segment_id": "1",
+              "kind": "resource_reusable",
+              "monotonic": 7314545.8592408
+            }
+          ],
+          "error_counts": {},
+          "recent_errors": [],
+          "warning_counts": {
+            "length_limit": 2
+          },
+          "warning_actions": {
+            "discard_unrecoverable": 2
+          },
+          "recent_warnings": [
+            {
+              "request_id": "continuous-off",
+              "segment_id": "0",
+              "reason": "length_limit",
+              "action": "discard_unrecoverable",
+              "recovered": false,
+              "generated_tokens": 256,
+              "monotonic": 7314545.858548
+            },
+            {
+              "request_id": "continuous-off",
+              "segment_id": "1",
+              "reason": "length_limit",
+              "action": "discard_unrecoverable",
+              "recovered": false,
+              "generated_tokens": 256,
+              "monotonic": 7314545.85922939
+            }
+          ],
+          "end_reasons": {
+            "length_limit": 2
+          },
+          "phase_wall_s": {
+            "prefill": 2.1290237307548523,
+            "decode": 14.312384003773332
+          },
+          "steps": {
+            "prefill": 1,
+            "decode": 255
+          },
+          "peak_active": 2,
+          "peak_kv_bytes": 86016000,
+          "repacks": 1,
+          "cache_reuses": 254
+        }
+      }
+    },
+    "continuous-on": {
+      "wall_s": 13.093357590027153,
+      "outputs": [
+        {
+          "text": "language None<asr_text>",
+          "warning": {
+            "reason": "repetition_stop",
+            "action": "discard_unrecoverable",
+            "recovered": false
+          },
+          "recovered": false,
+          "original_raw": "language Chinese<asr_text>天啊！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！我操！",
+          "index": 0,
+          "tokens": [
+            11528,
+            8453,
+            151704,
+            35727,
+            103924,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313,
+            35946,
+            100557,
+            6313
+          ]
+        },
+        {
+          "text": "language None<asr_text>",
+          "warning": {
+            "reason": "repetition_stop",
+            "action": "discard_unrecoverable",
+            "recovered": false
+          },
+          "recovered": false,
+          "original_raw": "language Chinese<asr_text>哎，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对，对",
+          "index": 1,
+          "tokens": [
+            11528,
+            8453,
+            151704,
+            110030,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664,
+            3837,
+            32664
+          ]
+        }
+      ],
+      "state": {
+        "device": "npu:7",
+        "dtype": "bfloat16",
+        "loaded": true,
+        "loading": false,
+        "failure": null,
+        "memory_allocated_mb": 3889.24560546875,
+        "memory_reserved_mb": 4296.0,
+        "model_worker": {
+          "started": true,
+          "worker_pid": 3504331,
+          "worker_create_time": 1795226879.2,
+          "worker_alive": true,
+          "closed": false,
+          "closing": false,
+          "birth_in_progress": false,
+          "cleanup_status": "pending",
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "runtime_kind": "original_hf_runtime",
+          "start_method": "spawn",
+          "cann_environment_inherited": true,
+          "launch_id": "3f71429be8fc4f82a732ef69ddf19aed",
+          "device_scope": "configured logical device; physical mapping follows deployment",
+          "launch_config": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "device": "npu:7",
+            "dtype": "bfloat16",
+            "max_new_tokens": 256,
+            "factory_identity": {
+              "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+            },
+            "model_identity": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "metadata_sha256": {
+                "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+              },
+              "weight_hash_scope": "metadata_only_not_full_weights"
+            },
+            "worker_entry_identity": {
+              "factory": "core.qwen_asr_process:_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+              "module_sha256": "270d5cc7e0fcede50decf1054caacb6484bfc900776bb450bd0c80aa1cfd3383"
+            },
+            "continuous_options": {
+              "max_active": 16,
+              "max_batch_size": 16,
+              "online_repetition_enabled": true,
+              "online_repetition_config": null,
+              "prefill_batch_size": 16,
+              "max_batch_tokens": 80000,
+              "max_batch_audio_frames": 115200
+            }
+          },
+          "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+          "worker_start_ticks": "731455320",
+          "ready_wire_payload_bytes": 2160,
+          "ready_verified": true,
+          "worker_ready_identity": {
+            "pid": 3504331,
+            "start_ticks": "731455320",
+            "create_time": 1795226879.2
+          },
+          "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+          "ready_preload_observation": {
+            "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "torch_imported": true,
+            "torch_npu_imported": true,
+            "runtime_api_present": true,
+            "loaded": true,
+            "npu_initialization_observation": "not_queried"
+          },
+          "worker_allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 3504331,
+            "worker_rss_mb": 2481.515625,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3889.24560546875,
+            "memory_reserved_mb": 4518.0,
+            "max_memory_allocated_mb": 4131.38037109375,
+            "max_memory_reserved_mb": 4518.0
+          },
+          "parent_rss_mb": 38.63671875
+        },
+        "last_batch_timings": null,
+        "precision_policy": {
+          "mode": "fp32_ops_hf32_disabled",
+          "conv_allow_hf32": false,
+          "matmul_allow_hf32": false
+        },
+        "parameter_dtype_check": {
+          "expected_dtype": "torch.bfloat16",
+          "floating_parameter_dtype_counts": {
+            "torch.bfloat16": 707
+          },
+          "nonfloating_parameter_count": 0,
+          "buffers_cast_or_checked": false
+        },
+        "memory_source": "pytorch_load_delta_estimate",
+        "continuous": {
+          "active_sequences": 0,
+          "kv_bytes": 0,
+          "kv_storage_bytes": 0,
+          "sampled_monotonic": 7314584.87050482,
+          "completed": 2,
+          "last_step": {
+            "batch_size": 1,
+            "wall_s": 0.05440275929868221,
+            "max_cache_length": 318
+          },
+          "events": [
+            {
+              "request_id": "continuous-on",
+              "segment_id": "0",
+              "kind": "prefill",
+              "monotonic": 7314573.61004829,
+              "prompt_length": 120,
+              "wall_s": 1.8205604795366526
+            },
+            {
+              "request_id": "continuous-on",
+              "segment_id": "0",
+              "kind": "first_token",
+              "monotonic": 7314573.6100581
+            },
+            {
+              "request_id": "continuous-on",
+              "segment_id": "1",
+              "kind": "prefill",
+              "monotonic": 7314573.61056468,
+              "prompt_length": 120,
+              "wall_s": 1.8210792699828744
+            },
+            {
+              "request_id": "continuous-on",
+              "segment_id": "1",
+              "kind": "first_token",
+              "monotonic": 7314573.61056973
+            },
+            {
+              "request_id": "continuous-on",
+              "segment_id": "0",
+              "kind": "repetition_stop",
+              "monotonic": 7314582.40934745,
+              "generated_tokens": 156
+            },
+            {
+              "request_id": "continuous-on",
+              "segment_id": "0",
+              "kind": "resource_reusable",
+              "monotonic": 7314582.40935747
+            },
+            {
+              "request_id": "continuous-on",
+              "segment_id": "1",
+              "kind": "repetition_stop",
+              "monotonic": 7314584.87024739,
+              "generated_tokens": 200
+            },
+            {
+              "request_id": "continuous-on",
+              "segment_id": "1",
+              "kind": "resource_reusable",
+              "monotonic": 7314584.87026294
+            }
+          ],
+          "error_counts": {},
+          "recent_errors": [],
+          "warning_counts": {
+            "repetition_stop": 2
+          },
+          "warning_actions": {
+            "discard_unrecoverable": 2
+          },
+          "recent_warnings": [
+            {
+              "request_id": "continuous-on",
+              "segment_id": "0",
+              "reason": "repetition_stop",
+              "action": "discard_unrecoverable",
+              "recovered": false,
+              "generated_tokens": 156,
+              "monotonic": 7314582.40932239
+            },
+            {
+              "request_id": "continuous-on",
+              "segment_id": "1",
+              "reason": "repetition_stop",
+              "action": "discard_unrecoverable",
+              "recovered": false,
+              "generated_tokens": 200,
+              "monotonic": 7314584.87023337
+            }
+          ],
+          "end_reasons": {
+            "repetition_stop": 2
+          },
+          "phase_wall_s": {
+            "prefill": 1.8215031698346138,
+            "decode": 11.119965984486043
+          },
+          "steps": {
+            "prefill": 1,
+            "decode": 199
+          },
+          "peak_active": 2,
+          "peak_kv_bytes": 63078400,
+          "repacks": 2,
+          "cache_reuses": 197
+        }
+      }
+    }
+  },
+  "owners": [
+    {
+      "device": "npu:7",
+      "dtype": "bfloat16",
+      "loaded": false,
+      "loading": false,
+      "failure": null,
+      "memory_allocated_mb": 0.0,
+      "memory_reserved_mb": 0.0,
+      "model_worker": {
+        "started": true,
+        "worker_pid": 2903168,
+        "worker_create_time": 1795226795.79,
+        "worker_alive": false,
+        "closed": true,
+        "closing": true,
+        "birth_in_progress": false,
+        "cleanup_status": "passed",
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "3a7fb7f2af8b49de99eeb841e611b47d",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "270d5cc7e0fcede50decf1054caacb6484bfc900776bb450bd0c80aa1cfd3383"
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "731446979",
+        "ready_wire_payload_bytes": 1717,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 2903168,
+          "start_ticks": "731446979",
+          "create_time": 1795226795.79
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": false,
+          "torch_npu_imported": false,
+          "runtime_api_present": false,
+          "loaded": false,
+          "npu_initialization_observation": "no_torch_no_torch_npu_no_runtime_api"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 2903168,
+          "worker_rss_mb": 2466.390625,
+          "peak_scope": "last_transcribe_batch",
+          "memory_allocated_mb": 0.0,
+          "memory_reserved_mb": 0.0,
+          "max_memory_allocated_mb": 4022.43603515625,
+          "max_memory_reserved_mb": 4466.0
+        },
+        "parent_rss_mb": 38.390625,
+        "last_request_wire_payload_bytes": 512906,
+        "last_response_wire_payload_bytes": 3480,
+        "last_audio_bytes": 512728,
+        "last_parent_rpc_wall_ms": 16178.125320002437,
+        "worker_exitcode": 0,
+        "close_error": null
+      },
+      "last_batch_timings": {
+        "batch_size": 2,
+        "decode_audio_ms": 1.0472899302840233,
+        "load_ms": 0.003269873559474945,
+        "generate_started": true,
+        "generate_completed": true,
+        "requested_batch_size": 2,
+        "valid_member_indices": [
+          0,
+          1
+        ],
+        "frontend_mode": "independent_single_fp32_then_collate",
+        "single_processor_shapes": [
+          {
+            "input_ids": [
+              1,
+              120
+            ],
+            "attention_mask": [
+              1,
+              120
+            ],
+            "input_features": [
+              1,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              1,
+              900
+            ]
+          },
+          {
+            "input_ids": [
+              1,
+              120
+            ],
+            "attention_mask": [
+              1,
+              120
+            ],
+            "input_features": [
+              1,
+              128,
+              900
+            ],
+            "input_features_mask": [
+              1,
+              900
+            ]
+          }
+        ],
+        "processor_shapes": {
+          "input_ids": [
+            2,
+            120
+          ],
+          "attention_mask": [
+            2,
+            120
+          ],
+          "input_features": [
+            2,
+            128,
+            900
+          ],
+          "input_features_mask": [
+            2,
+            900
+          ]
+        },
+        "processor_ms": 78.85530032217503,
+        "transfer_wall_ms": 0.7792199030518532,
+        "generate_wall_ms": 16085.991160012782,
+        "output_error_indices": [],
+        "output_error_count": 0,
+        "read_decode_wall_ms": 3.141080029308796,
+        "generated_padded_tokens": 256,
+        "synchronize_wall_ms": 3.5224398598074913,
+        "total_wall_ms": 16173.356750048697
+      },
+      "precision_policy": {
+        "mode": "fp32_ops_hf32_disabled",
+        "conv_allow_hf32": false,
+        "matmul_allow_hf32": false
+      },
+      "parameter_dtype_check": {
+        "expected_dtype": "torch.bfloat16",
+        "floating_parameter_dtype_counts": {
+          "torch.bfloat16": 707
+        },
+        "nonfloating_parameter_count": 0,
+        "buffers_cast_or_checked": false
+      },
+      "memory_source": "pytorch_load_delta_estimate"
+    },
+    {
+      "device": "npu:7",
+      "dtype": "bfloat16",
+      "loaded": false,
+      "loading": false,
+      "failure": null,
+      "memory_allocated_mb": 0.0,
+      "memory_reserved_mb": 0.0,
+      "model_worker": {
+        "started": true,
+        "worker_pid": 3248157,
+        "worker_create_time": 1795226837.76,
+        "worker_alive": false,
+        "closed": true,
+        "closing": true,
+        "birth_in_progress": false,
+        "cleanup_status": "passed",
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "1fb0a5f6a13945b29a7ee011f203b3ef",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "270d5cc7e0fcede50decf1054caacb6484bfc900776bb450bd0c80aa1cfd3383"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": false,
+            "online_repetition_config": null,
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 80000,
+            "max_batch_audio_frames": 115200
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "731451176",
+        "ready_wire_payload_bytes": 2160,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 3248157,
+          "start_ticks": "731451176",
+          "create_time": 1795226837.76
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 3248157,
+          "worker_rss_mb": 2473.39453125,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 0.0,
+          "memory_reserved_mb": 0.0,
+          "max_memory_allocated_mb": 4131.94580078125,
+          "max_memory_reserved_mb": 4518.0
+        },
+        "parent_rss_mb": 38.390625,
+        "worker_exitcode": 0
+      },
+      "last_batch_timings": null,
+      "precision_policy": {
+        "mode": "fp32_ops_hf32_disabled",
+        "conv_allow_hf32": false,
+        "matmul_allow_hf32": false
+      },
+      "parameter_dtype_check": {
+        "expected_dtype": "torch.bfloat16",
+        "floating_parameter_dtype_counts": {
+          "torch.bfloat16": 707
+        },
+        "nonfloating_parameter_count": 0,
+        "buffers_cast_or_checked": false
+      },
+      "memory_source": "pytorch_load_delta_estimate",
+      "continuous": {
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0,
+        "sampled_monotonic": 7314545.86102772,
+        "completed": 2,
+        "last_step": {
+          "batch_size": 2,
+          "wall_s": 0.054915860295295715,
+          "max_cache_length": 374
+        },
+        "events": [
+          {
+            "request_id": "continuous-off",
+            "segment_id": "0",
+            "kind": "prefill",
+            "monotonic": 7314531.3876262,
+            "prompt_length": 120,
+            "wall_s": 2.1280671805143356
+          },
+          {
+            "request_id": "continuous-off",
+            "segment_id": "0",
+            "kind": "first_token",
+            "monotonic": 7314531.38763566
+          },
+          {
+            "request_id": "continuous-off",
+            "segment_id": "1",
+            "kind": "prefill",
+            "monotonic": 7314531.38811641,
+            "prompt_length": 120,
+            "wall_s": 2.128560770303011
+          },
+          {
+            "request_id": "continuous-off",
+            "segment_id": "1",
+            "kind": "first_token",
+            "monotonic": 7314531.38812095
+          },
+          {
+            "request_id": "continuous-off",
+            "segment_id": "0",
+            "kind": "length_limit",
+            "monotonic": 7314545.85855827,
+            "generated_tokens": 256
+          },
+          {
+            "request_id": "continuous-off",
+            "segment_id": "0",
+            "kind": "resource_reusable",
+            "monotonic": 7314545.85857194
+          },
+          {
+            "request_id": "continuous-off",
+            "segment_id": "1",
+            "kind": "length_limit",
+            "monotonic": 7314545.85923387,
+            "generated_tokens": 256
+          },
+          {
+            "request_id": "continuous-off",
+            "segment_id": "1",
+            "kind": "resource_reusable",
+            "monotonic": 7314545.8592408
+          }
+        ],
+        "error_counts": {},
+        "recent_errors": [],
+        "warning_counts": {
+          "length_limit": 2
+        },
+        "warning_actions": {
+          "discard_unrecoverable": 2
+        },
+        "recent_warnings": [
+          {
+            "request_id": "continuous-off",
+            "segment_id": "0",
+            "reason": "length_limit",
+            "action": "discard_unrecoverable",
+            "recovered": false,
+            "generated_tokens": 256,
+            "monotonic": 7314545.858548
+          },
+          {
+            "request_id": "continuous-off",
+            "segment_id": "1",
+            "reason": "length_limit",
+            "action": "discard_unrecoverable",
+            "recovered": false,
+            "generated_tokens": 256,
+            "monotonic": 7314545.85922939
+          }
+        ],
+        "end_reasons": {
+          "length_limit": 2
+        },
+        "phase_wall_s": {
+          "prefill": 2.1290237307548523,
+          "decode": 14.312384003773332
+        },
+        "steps": {
+          "prefill": 1,
+          "decode": 255
+        },
+        "peak_active": 2,
+        "peak_kv_bytes": 86016000,
+        "repacks": 1,
+        "cache_reuses": 254
+      }
+    },
+    {
+      "device": "npu:7",
+      "dtype": "bfloat16",
+      "loaded": false,
+      "loading": false,
+      "failure": null,
+      "memory_allocated_mb": 0.0,
+      "memory_reserved_mb": 0.0,
+      "model_worker": {
+        "started": true,
+        "worker_pid": 3504331,
+        "worker_create_time": 1795226879.2,
+        "worker_alive": false,
+        "closed": true,
+        "closing": true,
+        "birth_in_progress": false,
+        "cleanup_status": "passed",
+        "resource_reaped": true,
+        "normal_exit_ok": true,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "3f71429be8fc4f82a732ef69ddf19aed",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "270d5cc7e0fcede50decf1054caacb6484bfc900776bb450bd0c80aa1cfd3383"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": true,
+            "online_repetition_config": null,
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 80000,
+            "max_batch_audio_frames": 115200
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "731455320",
+        "ready_wire_payload_bytes": 2160,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 3504331,
+          "start_ticks": "731455320",
+          "create_time": 1795226879.2
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 3504331,
+          "worker_rss_mb": 2481.515625,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 0.0,
+          "memory_reserved_mb": 0.0,
+          "max_memory_allocated_mb": 4131.38037109375,
+          "max_memory_reserved_mb": 4518.0
+        },
+        "parent_rss_mb": 38.63671875,
+        "worker_exitcode": 0
+      },
+      "last_batch_timings": null,
+      "precision_policy": {
+        "mode": "fp32_ops_hf32_disabled",
+        "conv_allow_hf32": false,
+        "matmul_allow_hf32": false
+      },
+      "parameter_dtype_check": {
+        "expected_dtype": "torch.bfloat16",
+        "floating_parameter_dtype_counts": {
+          "torch.bfloat16": 707
+        },
+        "nonfloating_parameter_count": 0,
+        "buffers_cast_or_checked": false
+      },
+      "memory_source": "pytorch_load_delta_estimate",
+      "continuous": {
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0,
+        "sampled_monotonic": 7314584.87050482,
+        "completed": 2,
+        "last_step": {
+          "batch_size": 1,
+          "wall_s": 0.05440275929868221,
+          "max_cache_length": 318
+        },
+        "events": [
+          {
+            "request_id": "continuous-on",
+            "segment_id": "0",
+            "kind": "prefill",
+            "monotonic": 7314573.61004829,
+            "prompt_length": 120,
+            "wall_s": 1.8205604795366526
+          },
+          {
+            "request_id": "continuous-on",
+            "segment_id": "0",
+            "kind": "first_token",
+            "monotonic": 7314573.6100581
+          },
+          {
+            "request_id": "continuous-on",
+            "segment_id": "1",
+            "kind": "prefill",
+            "monotonic": 7314573.61056468,
+            "prompt_length": 120,
+            "wall_s": 1.8210792699828744
+          },
+          {
+            "request_id": "continuous-on",
+            "segment_id": "1",
+            "kind": "first_token",
+            "monotonic": 7314573.61056973
+          },
+          {
+            "request_id": "continuous-on",
+            "segment_id": "0",
+            "kind": "repetition_stop",
+            "monotonic": 7314582.40934745,
+            "generated_tokens": 156
+          },
+          {
+            "request_id": "continuous-on",
+            "segment_id": "0",
+            "kind": "resource_reusable",
+            "monotonic": 7314582.40935747
+          },
+          {
+            "request_id": "continuous-on",
+            "segment_id": "1",
+            "kind": "repetition_stop",
+            "monotonic": 7314584.87024739,
+            "generated_tokens": 200
+          },
+          {
+            "request_id": "continuous-on",
+            "segment_id": "1",
+            "kind": "resource_reusable",
+            "monotonic": 7314584.87026294
+          }
+        ],
+        "error_counts": {},
+        "recent_errors": [],
+        "warning_counts": {
+          "repetition_stop": 2
+        },
+        "warning_actions": {
+          "discard_unrecoverable": 2
+        },
+        "recent_warnings": [
+          {
+            "request_id": "continuous-on",
+            "segment_id": "0",
+            "reason": "repetition_stop",
+            "action": "discard_unrecoverable",
+            "recovered": false,
+            "generated_tokens": 156,
+            "monotonic": 7314582.40932239
+          },
+          {
+            "request_id": "continuous-on",
+            "segment_id": "1",
+            "reason": "repetition_stop",
+            "action": "discard_unrecoverable",
+            "recovered": false,
+            "generated_tokens": 200,
+            "monotonic": 7314584.87023337
+          }
+        ],
+        "end_reasons": {
+          "repetition_stop": 2
+        },
+        "phase_wall_s": {
+          "prefill": 1.8215031698346138,
+          "decode": 11.119965984486043
+        },
+        "steps": {
+          "prefill": 1,
+          "decode": 199
+        },
+        "peak_active": 2,
+        "peak_kv_bytes": 63078400,
+        "repacks": 2,
+        "cache_reuses": 197
+      }
+    }
+  ]
+}

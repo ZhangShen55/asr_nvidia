@@ -143,6 +143,7 @@ class SegmentOutcome:
     embedding: Optional[torch.Tensor] = None
     emotion: Optional[str] = None
     role: Optional[str] = None
+    warning: Optional[dict] = None
 
 
 def _itn_language(language: Optional[str]) -> str:
@@ -289,7 +290,29 @@ async def _transcribe_segment(
         stats["qwen_ms"] += (time.perf_counter() - call_started) * 1000
         stats["qwen_calls"] += 1
 
+    warning = None
+    structured = isinstance(raw_text, dict)
+    if structured:
+        if getattr(settings, 'qwen_generation_mode', 'legacy') != 'continuous':
+            raise QwenAsrCallError('Unexpected structured result outside continuous mode')
+        value = raw_text
+        raw_text = value.get('text')
+        warning = value.get('warning')
+        if not isinstance(raw_text, str):
+            raise QwenAsrCallError('Invalid continuous text result')
+        if warning is not None:
+            if (not isinstance(warning, dict)
+                    or warning.get('reason') not in {'repetition_stop', 'length_limit', 'invalid_output_prefix'}
+                    or not isinstance(warning.get('action'), str)
+                    or not warning['action']
+                    or type(warning.get('recovered')) is not bool):
+                raise QwenAsrCallError('Invalid continuous segment warning')
+            # Copy only the public warning contract; original raw text and model
+            # diagnostic payloads must not leak through HTTP or online state.
+            warning = {key: warning[key] for key in ('reason', 'action', 'recovered')}
     parsed = parse_qwen_text(raw_text)
+    if structured:
+        return parsed.text, parsed.language, warning
     return parsed.text, parsed.language
 
 
@@ -725,7 +748,10 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             if isinstance(text_result, BaseException):
                 segment_failed = True
                 raise text_result
-            outcome.text, outcome.language = text_result
+            if len(text_result) == 3:
+                outcome.text, outcome.language, outcome.warning = text_result
+            else:
+                outcome.text, outcome.language = text_result
             # 复读修复 MUST 在 ITN 规范化与标点卫生之前：见 _apply_repetition_guard
             outcome.text = await _apply_repetition_guard(outcome.text, segment.duration_s)
 
@@ -804,10 +830,14 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
             update_fail_task()
             return {"msg": "Qwen 服务调用失败，请稍后再试", "code": 4012}
 
+    segment_warnings = [dict(segment_index=o.index, bg=f'{o.segment.start_s:.2f}',
+                             ed=f'{o.segment.end_s:.2f}', **o.warning)
+                        for o in outcomes if isinstance(o, SegmentOutcome) and o.warning is not None]
+    continuous = getattr(settings, 'qwen_generation_mode', 'legacy') == 'continuous'
     valid = [o for o in outcomes if isinstance(o, SegmentOutcome) and o.text.strip()]
     # Remove standalone interjections before language statistics and speaker clustering.
     valid = [o for o in valid if not is_single_interjection(o.text)]
-    if not valid:
+    if not valid and not (continuous and segment_warnings):
         update_fail_task()
         return {"msg": "音频文件为空或未检测到任何人声", "code": 4008}
 
@@ -911,6 +941,8 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         "load_audio_time_ms": f"{ctx.load_audio_time_ms:.2f}",
         "gpu_time_ms": f"{gpu_time_ms:.2f}",
         "language_ratio": language_ratio,
+        **({'processing_status': 'completed_with_warnings' if segment_warnings else 'complete',
+            'segment_warnings': segment_warnings} if continuous else {}),
     }
 
 

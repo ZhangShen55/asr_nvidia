@@ -87,6 +87,7 @@ class QwenAsrClient:
                 max_batch_size=int(max_inference_batch_size if max_inference_batch_size is not None else
                                    getattr(settings, 'qwen_max_inference_batch_size', 128)),
                 prefill_batch_size=int(getattr(settings, 'qwen_continuous_prefill_batch_size', 16)),
+                continuous_admission_drain_ms=int(getattr(settings, 'qwen_continuous_admission_drain_ms', 0)),
                 max_batch_tokens=int(max_batch_tokens if max_batch_tokens is not None else
                                      getattr(settings, 'qwen_max_batch_tokens', 80000)),
                 max_batch_audio_frames=int(max_batch_audio_frames if max_batch_audio_frames is not None else
@@ -286,7 +287,7 @@ class QwenAsrClient:
 
     async def transcribe_bytes(self, audio_bytes: bytes, language: Optional[str] = None,
                                filename: str = "segment.wav", *, request_id=None,
-                               segment_index=None) -> str:
+                               segment_index=None) -> str | dict:
         if self._closing:
             raise QwenAsrUnavailableError()
         try:

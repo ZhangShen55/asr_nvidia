@@ -122,22 +122,24 @@ def test_bundle_reuse_repack_new_member_reorder_cancel_and_positions():
         assert adapter.active[('c','0')].kv[0][0].shape[-2]==6
 
 
-def test_invalid_prefix_eos_is_an_error_not_a_success_and_has_safe_summary():
-    from core.qwen_continuous_runtime import ContinuousGenerationError
+def test_invalid_prefix_eos_is_warning_not_success_eos_or_full_audio_error():
     model=SimpleNamespace(generation_config=SimpleNamespace(eos_token_id=[63]))
     tokenizer=SimpleNamespace(decode=lambda *a,**k:'private output without a valid prefix')
     adapter=ContinuousHFAdapter(SimpleNamespace(model=model,device='cpu',max_new_tokens=256,
         processor=SimpleNamespace(tokenizer=tokenizer)))
     key=('request','12')
-    adapter.active[key]=Sequence(key=key,tokens=[63])
-    result=adapter._finish()
-    assert len(result)==1
-    assert isinstance(result[0][1],ContinuousGenerationError)
-    assert result[0][1].reason=='invalid_output_prefix'
-    assert result[0][1].segment_id=='12'
+    adapter.active[key]=Sequence(key=key,tokens=[63],duration_s=2.0)
+    result=adapter._finish()[0][1]
+    assert isinstance(result,dict)
+    assert result['warning']['reason']=='invalid_output_prefix'
+    assert result['warning']['action']=='discard_unrecoverable'
+    assert result['text']=='language None<asr_text>'
+    assert not result['recovered']
     snapshot=adapter.snapshot()
     assert snapshot['end_reasons']=={'invalid_output_prefix':1}
-    assert snapshot['recent_errors'][0]['segment_id']=='12'
+    assert snapshot['warning_counts']=={'invalid_output_prefix':1}
+    assert snapshot['recent_warnings'][0]['segment_id']=='12'
+    assert snapshot['error_counts']=={}
     assert 'private output' not in str(snapshot)
     assert 'eos' not in snapshot['end_reasons']
 
@@ -190,3 +192,28 @@ def test_bundle_compacts_physical_width_during_many_sequence_generations():
                     torch.testing.assert_close(pair[0],layer.keys,atol=1e-6,rtol=1e-5)
                     torch.testing.assert_close(pair[1],layer.values,atol=1e-6,rtol=1e-5)
                 refs[active_key]=(reference.past_key_values,pending,length+1)
+
+
+def test_normal_eos_returns_structured_text_without_warning():
+    model=SimpleNamespace(generation_config=SimpleNamespace(eos_token_id=[63]))
+    raw='language Chinese<asr_text>正常内容。<|im_end|>'
+    adapter=ContinuousHFAdapter(SimpleNamespace(model=model,device='cpu',max_new_tokens=256,
+        processor=SimpleNamespace(tokenizer=SimpleNamespace(decode=lambda *a,**k:raw))))
+    key=('request','normal')
+    adapter.active[key]=Sequence(key=key,tokens=[63],duration_s=2.0)
+    result=adapter._finish()[0][1]
+    assert result==dict(text='language Chinese<asr_text>正常内容。',warning=None,recovered=False,original_raw=raw)
+    assert adapter.snapshot()['end_reasons']=={'eos':1}
+
+
+def test_length_exhaustion_is_segment_warning_and_other_member_stays_active():
+    raw='language Chinese<asr_text>有效内容。'
+    model=SimpleNamespace(generation_config=SimpleNamespace(eos_token_id=[63]))
+    adapter=ContinuousHFAdapter(SimpleNamespace(model=model,device='cpu',max_new_tokens=4,
+        processor=SimpleNamespace(tokenizer=SimpleNamespace(decode=lambda *a,**k:raw))))
+    adapter.active[('a','0')]=Sequence(key=('a','0'),tokens=[1,2,3,4],duration_s=2.0)
+    adapter.active[('b','0')]=Sequence(key=('b','0'),tokens=[1],duration_s=2.0)
+    result=adapter._finish()
+    assert len(result)==1 and result[0][0]==('a','0')
+    assert result[0][1]['warning']['reason']=='length_limit'
+    assert ('b','0') in adapter.active

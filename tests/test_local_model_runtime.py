@@ -21,11 +21,23 @@ class StatusContractTests(unittest.TestCase):
         # 用上下文管理器进入，确保 lifespan（记录启动时刻）被执行；
         # 合约单测隔离部署预检与 VAD worker；真实预检由 test_deployment 单独验证，
         # 本处保留完整 lifespan 的资源关闭路径，只以替身避免访问硬件。
-        with patch("main.start_vad_pool", new=AsyncMock()), \
-                patch("main.stop_vad_pool", new=AsyncMock()), \
-                patch("main.validate_npu_runtime", return_value={"unit_test": True}):
-            with TestClient(create_app()) as client:
-                return client.get("/get_status").json()
+        # The production profile may preload Qwen. A status contract test must
+        # never load it, close another test's model, or read/reset shared stats.
+        with tempfile.TemporaryDirectory(prefix="status-contract-") as private:
+            stats_path = str(Path(private) / "asr_stats.json")
+            with patch("main.start_vad_pool", new=AsyncMock()), \
+                    patch("main.stop_vad_pool", new=AsyncMock()), \
+                    patch("main.preload_qwen_client", new=AsyncMock(return_value="cpu-fixture")) as preload, \
+                    patch("main.close_qwen_client", new=AsyncMock()), \
+                    patch("utils.asr_stats.STATS_FILE", stats_path), \
+                    patch("main.validate_npu_runtime", return_value={"unit_test": True}):
+                with TestClient(create_app()) as client:
+                    result = client.get("/get_status").json()
+                if settings.qwen_preload_on_startup:
+                    preload.assert_awaited_once()
+                else:
+                    preload.assert_not_awaited()
+                return result
 
     def test_status_contains_fixed_engine_id_and_version(self):
         payload = self._status()

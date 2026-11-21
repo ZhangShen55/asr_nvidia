@@ -17,3 +17,11 @@ CPU测试`tests/test_qwen_continuous_scheduler.py`只验证调度/计数/所有�
 父进程Pipe send可以在worker执行NPU步时阻塞；submit、cancel、release通过owned线程调用，防止阻塞事件循环。提交过程中取消必须等send完成：若已接收，就发送cancel并等待该段Future安全完成后才释放credit。timeout发出cancel后收到的后端cancelled是收尾确认，不能覆盖request_timeout首因。4012内部保留reason、段ID和backend_error_type，日志不打印异常正文。
 
 首轮真实八HTTP的shutdown.json为forced=true、exit_code=-9；Application shutdown complete/Finished server不代表进程已经正常退出。该运行尚未闭环，必须在下一次升压前先做小服务正常退出复验。若Finished后父进程仍存活，应采集owned父进程全部线程/atexit栈（预先注册faulthandler）及/proc/PID/task/*/wchan；现有证据不能断言是executor或torch_npu终结器阻塞。
+
+## 2026-11-21 段级恢复与警告结果
+
+用户选择异常段折叠恢复可信内容、不可恢复显式警告后继续其它段。连续后端Future返回结构text（含原语种前缀）和warning；warning仅允许repetition_stop、length_limit、invalid_output_prefix三种内容生成异常。设备故障、OOM、模型不可用、取消、timeout或通信错误仍抛异常并沿用原错误码和fatal fail-fast收尾。警告不是完整无异常转写成功。
+
+HTTP仅连续模式新增可选processing_status=complete|completed_with_warnings和segment_warnings数组。每条警告保留原segment_index/bg/ed及reason/action/recovered，不随空段过滤或最终排序重新编号。可信文本保留到原段上，无法恢复则该段无文本但仍有原时间边界的警告记录；全部段都不可恢复时返回空segments、空text及completed_with_warnings，不能伪装为4008无人声或严格成功。legacy响应字段原样不变。
+
+后端original_raw只供内部授权测试使用，HTTP、在线状态和日志均不包含。CPU回归覆盖警告与正常段混合、全部不可恢复、正常continuous与legacy对照、fatal异常不能被降级警告。性能报告需分列运行完成、无警告严格成功和有用文本情况，不能仅根据HTTP200提高成功率。

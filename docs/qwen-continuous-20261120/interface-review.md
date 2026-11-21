@@ -26,7 +26,7 @@ submit Pipe发送异常经_unrecoverable_rpc确认owned进程死亡后才允许�
 
 worker在接收前以活跃加待prefill成员的保守token估计预留预算，单段帧超限拒绝；prefill chunk同时按max(frames)*B限制聚合帧预算。实际KV bytes可在snapshot中观察，预算是估算而非HBM保证；动态packing存在额外瞬时设备内存。
 
-语言校验在入prefill队列前逐成员执行，LocalUnsupportedLanguage与LocalModelUnavailable的跨进程类别通过_restore_error保持，不统一改成4012。在线复读/长度耗尽是ContinuousGenerationError(4012)，不直接原样重试。
+语言校验在入prefill队列前逐成员执行，LocalUnsupportedLanguage与LocalModelUnavailable的跨进程类别通过_restore_error保持，不统一改成4012。旧保守版曾将在线复读/长度耗尽作为ContinuousGenerationError(4012)。2026-11-21按用户选择，三类生成异常已改为段级恢复/空告警，详见segment-warning-contract.md；其它设备及执行故障仍抛错，不直接原样重试。
 
 ## 已知限制与待实机核对
 
@@ -38,3 +38,5 @@ worker在接收前以活跃加待prefill成员的保守token估计预留预算�
 - CPU测试没有模拟所有Pipe故障/重复关闭竞态，真实故障收尾和NPU正常退出仍是主Agent必需验收。
 
 当前优化版CPU复验：5 passed，9.36秒；online_repetition_config字典透传加入后相同5项再次通过（最终时间以主Agent日志为准）。详见kv-view-optimization.md。
+
+2026-11-21：continuous结果已统一字典而非str，原接口历史说明中的返回值以segment-warning-contract.md为准；legacy不变。

@@ -49,7 +49,9 @@ def main():
         futures['2'] = runtime.submit(audios[2],request_id='smoke',segment_id='2')
         for key,future in futures.items():
             try:
-                result['continuous'][key] = dict(text=future.result(timeout=120), wall_s=time.monotonic()-started)
+                value=future.result(timeout=120)
+                value=value if isinstance(value,dict) else dict(text=value,warning=None)
+                result['continuous'][key] = dict(value, tokens=getattr(future,'generated_tokens',None), wall_s=time.monotonic()-started)
             except Exception as exc:
                 result['continuous'][key] = dict(error=str(exc))
         result['state_before_close'] = runtime.snapshot()

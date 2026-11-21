@@ -432,11 +432,24 @@ def summarize(records, batch_start, batch_end, aborted):
     values = [r["elapsed_s"] for r in succeeded]
     complete = len(succeeded) == len(records) and not aborted
     elapsed = batch_end - batch_start
-    return {"status": "diagnostic_aborted" if aborted else "completed" if complete else "incomplete",
-            "expected": len(records), "successful": len(succeeded), "complete": complete,
+    strict = [r for r in succeeded if r.get("processing_status", "complete") == "complete"
+              and not r.get("warning_count", 0)]
+    strict_values = [r["elapsed_s"] for r in strict]
+    warned = [r for r in succeeded if r.get("processing_status") == "completed_with_warnings"]
+    return {"status": "diagnostic_aborted" if aborted else
+                     "completed_with_warnings" if complete and warned else "completed" if complete else "incomplete",
+            "expected": len(records), "successful": len(strict), "complete": complete,
+            "processed_completed": len(succeeded), "completed_with_warnings": len(warned),
+            "strict_success_rate": len(strict)/len(records) if records else None,
+            "processing_completion_rate": len(succeeded)/len(records) if records else None,
+            "requests_with_usable_text": sum(bool(r.get("has_usable_text")) for r in succeeded),
+            "warning_segments": sum(r.get("warning_count", 0) for r in succeeded),
+            "unrecoverable_segments": sum(r.get("unrecoverable_segment_count", 0) for r in succeeded),
+            "completion_subset_latency": {"n": len(values), "p50_s": percentile(values, .5),
+                "p95_s": percentile(values, .95), "scope": "all processed completions including explicit warnings"},
             "batch_started_monotonic": batch_start, "batch_ended_monotonic": batch_end,
-            "batch_elapsed_s": elapsed, "success_subset_latency": {"n": len(values),
-            "p50_s": percentile(values, .5), "p95_s": percentile(values, .95),
+            "batch_elapsed_s": elapsed, "success_subset_latency": {"n": len(strict_values),
+            "p50_s": percentile(strict_values, .5), "p95_s": percentile(strict_values, .95),
             "method": "linear interpolation; incomplete rounds are censored and not acceptance"},
             "source_audio_seconds": sum(r["audio_seconds"] for r in records),
             "source_audio_seconds_per_wall_second": sum(r["audio_seconds"] for r in records)/elapsed if complete and elapsed else None,
@@ -477,6 +490,18 @@ async def run_round(args, samples, output, owner=None, *, request_fn=None, statu
                     payload = response.json()
                 row["code"] = payload.get("code")
                 row["status"] = "completed" if row["code"] in (None, 0) and isinstance(payload.get("segments"), list) else "failed"
+                if row["status"] == "completed":
+                    warnings = payload.get("segment_warnings", [])
+                    state = payload.get("processing_status", "complete")
+                    if state not in {"complete", "completed_with_warnings"} or not isinstance(warnings, list):
+                        raise ValueError("invalid processing completion metadata")
+                    if (state == "complete" and warnings) or (state == "completed_with_warnings" and not warnings):
+                        raise ValueError("inconsistent processing warning metadata")
+                    row.update(processing_status=state, warning_count=len(warnings),
+                        unrecoverable_segment_count=sum(w.get("action") in {"discard_unrecoverable", "unrecoverable"}
+                                                        for w in warnings if isinstance(w, dict)),
+                        has_usable_text=any(isinstance(x.get("segment_text"), str) and bool(x["segment_text"].strip())
+                                            for x in payload["segments"] if isinstance(x, dict)))
                 write_json(output / f"response-{index}.json", payload)
             except asyncio.CancelledError:
                 row["status"] = "cancelled"

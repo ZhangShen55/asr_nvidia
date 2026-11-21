@@ -1,7 +1,33 @@
 {
-  "owned_births_checked": 128,
-  "remaining": [],
-  "port_listening_observations": [
+  "utc": "2026-11-21T03:37:11.095701+00:00",
+  "run": "/home/zhangs/asr_nvidia/logs/qwen-continuous-20261121-a8-drain3-clean",
+  "owned_birth_identities_checked": 107,
+  "remaining_owned": [],
+  "normal_exit": true,
+  "term_to_parent_exit_s": 54.699800780043006,
+  "shutdown_passed": true,
+  "port_observed_free_s": 5,
+  "port_observations": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
     false,
     false,
     false,
@@ -9,11 +35,27 @@
     false,
     false
   ],
-  "shared": {
+  "current_18083_listeners": [],
+  "remaining_owned_pcm_cache_files": [],
+  "device_release_scope": "owned Qwen worker birth confirmed gone, npu-smi only existing PID1601397 on card7; no claim of direct allocator measurement after process death",
+  "shared_service": {
     "pid": 1601397,
     "create_time": 1791963491.5,
-    "name": "uvicorn"
+    "cmdline": [
+      "/usr/local/python3.10.17/bin/python",
+      "/usr/local/python3.10.17/bin/uvicorn",
+      "main:app",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8007",
+      "--workers",
+      "1"
+    ],
+    "status": "sleeping"
   },
-  "resource_cleanup_passed": true,
-  "normal_close_acceptance": "initial full A8 failed (forced -9), subsequent short HTTP passed exit0; not equivalent"
+  "npu_smi_exit_code": 0,
+  "npu_smi_evidence": "final-npu-smi.txt",
+  "earlier_strict_round_forced_cleanup_remains_failure": true,
+  "passed": true
 }

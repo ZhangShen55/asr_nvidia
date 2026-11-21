@@ -1,0 +1,2058 @@
+{
+  "baseline": "logs/npu-throughput-20261119-a8-http-128",
+  "candidate": "logs/qwen-continuous-20261121-a8-drain3-clean",
+  "baseline_mode": "A",
+  "candidate_mode": "A",
+  "scope": "Only completed responses in summaries, matched declared source SHA and A/B/form settings, exact sample_id+bg+ed. Model outputs are not human truth; recall>=98% remains unknown.",
+  "audios": [
+    {
+      "sample_id": "a1",
+      "comparable": false,
+      "reason": "completed_pair_unavailable",
+      "different_segments": null,
+      "changes": [],
+      "baseline_record": {
+        "sample_id": "a1",
+        "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+        "audio_seconds": 3117.312,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7162351.82858221,
+        "started_utc": "2026-11-19T07:51:18.478694+00:00",
+        "ended_monotonic": 7162773.00334483,
+        "ended_utc": "2026-11-19T07:58:19.653458+00:00",
+        "elapsed_s": 421.1747626205906,
+        "rtf": 0.13510831210369403
+      },
+      "candidate_record": {
+        "sample_id": "a1",
+        "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+        "audio_seconds": 3117.312,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7318913.87373036,
+        "started_utc": "2026-11-21T03:20:40.523843+00:00",
+        "ended_monotonic": 7319334.64132662,
+        "ended_utc": "2026-11-21T03:27:41.291439+00:00",
+        "elapsed_s": 420.7675962606445,
+        "rtf": 0.13497769753577585
+      },
+      "baseline_sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+      "candidate_sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+      "baseline_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_segment_warnings": []
+    },
+    {
+      "sample_id": "a2",
+      "comparable": false,
+      "reason": "completed_pair_unavailable",
+      "different_segments": null,
+      "changes": [],
+      "baseline_record": {
+        "sample_id": "a2",
+        "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+        "audio_seconds": 3287.296,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7162351.83027454,
+        "started_utc": "2026-11-19T07:51:18.480385+00:00",
+        "ended_monotonic": 7162773.00421487,
+        "ended_utc": "2026-11-19T07:58:19.654326+00:00",
+        "elapsed_s": 421.17394032981247,
+        "rtf": 0.12812169647327545
+      },
+      "candidate_record": {
+        "sample_id": "a2",
+        "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+        "audio_seconds": 3287.296,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7318913.87521506,
+        "started_utc": "2026-11-21T03:20:40.525326+00:00",
+        "ended_monotonic": 7319334.64223161,
+        "ended_utc": "2026-11-21T03:27:41.292343+00:00",
+        "elapsed_s": 420.7670165495947,
+        "rtf": 0.12799790969526162
+      },
+      "baseline_sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+      "candidate_sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+      "baseline_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_segment_warnings": []
+    },
+    {
+      "sample_id": "a3",
+      "comparable": false,
+      "reason": "completed_pair_unavailable",
+      "different_segments": null,
+      "changes": [],
+      "baseline_record": {
+        "sample_id": "a3",
+        "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+        "audio_seconds": 3306.048,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7162351.83144118,
+        "started_utc": "2026-11-19T07:51:18.481552+00:00",
+        "ended_monotonic": 7162773.00498954,
+        "ended_utc": "2026-11-19T07:58:19.655100+00:00",
+        "elapsed_s": 421.1735483603552,
+        "rtf": 0.12739486793910892
+      },
+      "candidate_record": {
+        "sample_id": "a3",
+        "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+        "audio_seconds": 3306.048,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7318913.87640844,
+        "started_utc": "2026-11-21T03:20:40.526519+00:00",
+        "ended_monotonic": 7319334.64306768,
+        "ended_utc": "2026-11-21T03:27:41.293179+00:00",
+        "elapsed_s": 420.76665924023837,
+        "rtf": 0.12727179376713174
+      },
+      "baseline_sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+      "candidate_sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+      "baseline_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_segment_warnings": []
+    },
+    {
+      "sample_id": "a4",
+      "comparable": false,
+      "reason": "completed_pair_unavailable",
+      "different_segments": null,
+      "changes": [],
+      "baseline_record": {
+        "sample_id": "a4",
+        "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+        "audio_seconds": 3284.416,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7162351.8325943,
+        "started_utc": "2026-11-19T07:51:18.482705+00:00",
+        "ended_monotonic": 7162773.00576688,
+        "ended_utc": "2026-11-19T07:58:19.655878+00:00",
+        "elapsed_s": 421.17317258007824,
+        "rtf": 0.12823380856142408
+      },
+      "candidate_record": {
+        "sample_id": "a4",
+        "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+        "audio_seconds": 3284.416,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7318913.87757512,
+        "started_utc": "2026-11-21T03:20:40.527686+00:00",
+        "ended_monotonic": 7319334.64394306,
+        "ended_utc": "2026-11-21T03:27:41.294054+00:00",
+        "elapsed_s": 420.76636794023216,
+        "rtf": 0.12810994951316523
+      },
+      "baseline_sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+      "candidate_sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+      "baseline_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_segment_warnings": []
+    },
+    {
+      "sample_id": "a5",
+      "comparable": false,
+      "reason": "completed_pair_unavailable",
+      "different_segments": null,
+      "changes": [],
+      "baseline_record": {
+        "sample_id": "a5",
+        "sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+        "audio_seconds": 2981.12,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7162351.83371777,
+        "started_utc": "2026-11-19T07:51:18.483828+00:00",
+        "ended_monotonic": 7162773.00654637,
+        "ended_utc": "2026-11-19T07:58:19.656657+00:00",
+        "elapsed_s": 421.1728285998106,
+        "rtf": 0.14128006541159382
+      },
+      "candidate_record": {
+        "sample_id": "a5",
+        "sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+        "audio_seconds": 2981.12,
+        "status": "completed",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7318913.87872289,
+        "started_utc": "2026-11-21T03:20:40.528834+00:00",
+        "http_status": 200,
+        "code": null,
+        "processing_status": "complete",
+        "warning_count": 0,
+        "unrecoverable_segment_count": 0,
+        "has_usable_text": true,
+        "ended_monotonic": 7319302.95880624,
+        "ended_utc": "2026-11-21T03:27:09.608919+00:00",
+        "elapsed_s": 389.08008334971964,
+        "rtf": 0.13051473384154938
+      },
+      "baseline_sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+      "candidate_sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+      "baseline_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_unavailable_reason": null,
+      "candidate_segment_warnings": []
+    },
+    {
+      "sample_id": "a6",
+      "comparable": false,
+      "reason": "completed_pair_unavailable",
+      "different_segments": null,
+      "changes": [],
+      "baseline_record": {
+        "sample_id": "a6",
+        "sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+        "audio_seconds": 3121.1306875,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7162351.83486031,
+        "started_utc": "2026-11-19T07:51:18.484971+00:00",
+        "ended_monotonic": 7162773.00732292,
+        "ended_utc": "2026-11-19T07:58:19.657434+00:00",
+        "elapsed_s": 421.17246260959655,
+        "rtf": 0.13494227085599939
+      },
+      "candidate_record": {
+        "sample_id": "a6",
+        "sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+        "audio_seconds": 3121.1306875,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7318913.87987166,
+        "started_utc": "2026-11-21T03:20:40.529983+00:00",
+        "ended_monotonic": 7319334.64484454,
+        "ended_utc": "2026-11-21T03:27:41.294956+00:00",
+        "elapsed_s": 420.7649728804827,
+        "rtf": 0.13481171248792276
+      },
+      "baseline_sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+      "candidate_sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+      "baseline_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_segment_warnings": []
+    },
+    {
+      "sample_id": "a7",
+      "comparable": false,
+      "reason": "completed_pair_unavailable",
+      "different_segments": null,
+      "changes": [],
+      "baseline_record": {
+        "sample_id": "a7",
+        "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+        "audio_seconds": 2702.016,
+        "status": "completed",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7162351.8361641,
+        "started_utc": "2026-11-19T07:51:18.486275+00:00",
+        "http_status": 200,
+        "code": null,
+        "ended_monotonic": 7162718.71654158,
+        "ended_utc": "2026-11-19T07:57:25.366654+00:00",
+        "elapsed_s": 366.8803774798289,
+        "rtf": 0.13578023871058828
+      },
+      "candidate_record": {
+        "sample_id": "a7",
+        "sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+        "audio_seconds": 2702.016,
+        "status": "cancelled",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7318913.88103819,
+        "started_utc": "2026-11-21T03:20:40.531149+00:00",
+        "ended_monotonic": 7319334.645709,
+        "ended_utc": "2026-11-21T03:27:41.295820+00:00",
+        "elapsed_s": 420.7646708097309,
+        "rtf": 0.15572249417091938
+      },
+      "baseline_sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+      "candidate_sha256": "99195ce63638c7a03c37b319054a655112325fe34c5b615e4e3151a88a6df8be",
+      "baseline_unavailable_reason": null,
+      "candidate_unavailable_reason": "no_completed_response_in_summary",
+      "candidate_segment_warnings": []
+    },
+    {
+      "sample_id": "a8",
+      "comparable": true,
+      "reason": null,
+      "different_segments": 57,
+      "changes": [
+        {
+          "sample_id": "a8",
+          "bg": "9.33",
+          "ed": "15.3",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "现在10~20几公鸡好尴尬哟，一两蚊包。",
+            "bg": "9.33",
+            "ed": "15.30",
+            "speed": 60,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "真的呀，你做皮衣好尴尬哟！哈哈哈哈哈，你一两蚊包。",
+            "bg": "9.33",
+            "ed": "15.30",
+            "speed": 84,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "84.22",
+          "ed": "92.23",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "那么，一再要强调的是，刚才一节课最开始就讲过，我们讲谭影在仲景的著作，比如《金匮要略》里。",
+            "bg": "84.22",
+            "ed": "92.23",
+            "speed": 113,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "那么，一再要强调的是，刚才一节课最开始就讲过，我们讲谭影在仲景的著作，比如说《金匮要略》里。",
+            "bg": "84.22",
+            "ed": "92.23",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "124.27",
+          "ed": "132.28",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "位置与时序观，那么不要被我们后世一提到痰饮，就是什么，就是年至困顿那个病性观。",
+            "bg": "124.27",
+            "ed": "132.28",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "位置与时序观，那么不要被我们后世一提到痰饮，就是什么？就是年至困顿那个病性观。",
+            "bg": "124.27",
+            "ed": "132.28",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "274.5",
+          "ed": "282.51",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "胃有水饮蓄积，脾胃所要产生身体的阳气不足，上焦受制于中焦嘛，中焦不能生举阳气，所以带来结果。",
+            "bg": "274.50",
+            "ed": "282.51",
+            "speed": 122,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "胃有水饮蓄积，脾胃所要产生生体的阳气不足，上焦受制于中焦嘛，中焦不能生举阳气，所以带来结果。",
+            "bg": "274.50",
+            "ed": "282.51",
+            "speed": 122,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "298.53",
+          "ed": "306.54",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "中见到寒气，不见到什么冷凝切痛，胸前逆满呕吐。如果水饮再往上走，不见到什么来，喉。",
+            "bg": "298.53",
+            "ed": "306.54",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "中见到寒气，不见到什么冷凝切痛，胸胁逆满呕吐。如果水饮再往上走，不见到什么来，喉。",
+            "bg": "298.53",
+            "ed": "306.54",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "318.6",
+          "ed": "326.61",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "不见到这些变化。如果他从上往下旁及在两胁，马上就出现什么呢？来，胸满胀，咳喘。",
+            "bg": "318.60",
+            "ed": "326.61",
+            "speed": 98,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "不见他这些变化。如果他从上往下旁及在两胁，马上就注意什么呢？来，胸满胀，咳喘。",
+            "bg": "318.60",
+            "ed": "326.61",
+            "speed": 98,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "337.41",
+          "ed": "345.42",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "水走膀胱，小便不利。比如说，我们《金匮要略》和《伤寒论》里面提到太阳膀胱虚证，五。",
+            "bg": "337.41",
+            "ed": "345.42",
+            "speed": 95,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "水走膀胱，小便不利。比如说，我们经肺腰越，那伤寒论里面提到太阳膀胱虚症，五。",
+            "bg": "337.41",
+            "ed": "345.42",
+            "speed": 95,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "377.5",
+          "ed": "385.51",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "直接积留留在心肝脾肺肾五脏，而使心肝脾肺肾五脏的阳气不足。",
+            "bg": "377.50",
+            "ed": "385.51",
+            "speed": 80,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "直接寄留留在心肝脾肺肾五脏，而使心肝脾肺肾五脏的阳气不足。",
+            "bg": "377.50",
+            "ed": "385.51",
+            "speed": 80,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "385.51",
+          "ed": "393.52",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "水液不能外排，积留在局部的水饮去淋冲心肝脾肺脾肺的五脏，这个叫做水在五脏。那么五",
+            "bg": "385.51",
+            "ed": "393.52",
+            "speed": 110,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "水液不能外排，积留在局部的水饮，去淋冲心肝脾肺脾肺的五脏，这个叫做水在五脏。那么五",
+            "bg": "385.51",
+            "ed": "393.52",
+            "speed": 110,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "418.25",
+          "ed": "420.55",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "心下坚，我们好理解。",
+            "bg": "418.25",
+            "ed": "420.55",
+            "speed": 83,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "心下间，我们好理解。",
+            "bg": "418.25",
+            "ed": "420.55",
+            "speed": 83,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "435.79",
+          "ed": "443.8",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "可而上气，所谓肺胀。其人喘，脉浮者，叫做叫心下有水。这个心下有水，如果是在胃，如",
+            "bg": "435.79",
+            "ed": "443.80",
+            "speed": 98,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "可而上气，所谓肺胀；其人喘，脉浮者，叫做叫心下有水。这个心下有水，如果是在胃，如",
+            "bg": "435.79",
+            "ed": "443.80",
+            "speed": 98,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "451.81",
+          "ed": "459.82",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "从胃通过腹，然后肠腹往外排，攻倒它，利小便倒大便，可不可以排它？也不能。",
+            "bg": "451.81",
+            "ed": "459.82",
+            "speed": 89,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "从胃通过腑，哪里肠腑往外排，攻倒它，利小便倒大便，可不可以排它？也不能。",
+            "bg": "451.81",
+            "ed": "459.82",
+            "speed": 89,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "483.85",
+          "ed": "491.26",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "一下一下往上怼，把这个土压实，所以这个肩柱提什么，一定有个动作，什么动作呢？要搏动。",
+            "bg": "483.85",
+            "ed": "491.26",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "一下一下往上怼，把这个土压实，所以这个肩柱提什么？一定有个动作，什么动作呢？要搏动。",
+            "bg": "483.85",
+            "ed": "491.26",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "533.12",
+          "ed": "541.13",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "干姜苓术汤里面是不是这样的？它一定是中焦脾虚有水停，不管你停在体表的脾脏。",
+            "bg": "533.12",
+            "ed": "541.13",
+            "speed": 101,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "干姜苓竹汤里面是不是这样的？它一定是中焦脾虚有水停，不管你停在体表的脾脏。",
+            "bg": "533.12",
+            "ed": "541.13",
+            "speed": 101,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "562.66",
+          "ed": "563.09",
+          "status": "baseline_missing",
+          "baseline": null,
+          "candidate": {
+            "segment_text": "Yeah.",
+            "bg": "562.66",
+            "ed": "563.09",
+            "speed": 55,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "578.43",
+          "ed": "585.6",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "是一个一个独立的病，是同一处水停在人体内部的四个容器里的四种形态。",
+            "bg": "578.43",
+            "ed": "585.60",
+            "speed": 103,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "是一个一个独立病，是同一处水停在人体内部的四个容器里的四种形态。",
+            "bg": "578.43",
+            "ed": "585.60",
+            "speed": 100,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "628.15",
+          "ed": "636.16",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "底下是个鸟，所指的是用网来捕鸟，引申什么意思呢？把这个东西，把它有规律的。",
+            "bg": "628.15",
+            "ed": "636.16",
+            "speed": 95,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "底下是个鸟，所指的是用网来捕鸟。引申什么意思呢？把这个东西，把它有规律的。",
+            "bg": "628.15",
+            "ed": "636.16",
+            "speed": 95,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "636.16",
+          "ed": "642.12",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "抬起来，所以三点水一个血的这个血指的什么？指的是动血，哗一下洗干净。",
+            "bg": "636.16",
+            "ed": "642.12",
+            "speed": 120,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "抬起来，所以三点水一个血的这个血指的什么？指的是冻血，哗一下洗干净。",
+            "bg": "636.16",
+            "ed": "642.12",
+            "speed": 120,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "675.84",
+          "ed": "678.26",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "我们刚才提的这个四个断点。",
+            "bg": "675.84",
+            "ed": "678.26",
+            "speed": 119,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "我们刚才提的是四个断点。",
+            "bg": "675.84",
+            "ed": "678.26",
+            "speed": 109,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "710.58",
+          "ed": "718.59",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "为什么脏与腑的生理功能不一样？脏长进而不泄，腑的生理功能什么？通泄而不长，邪进去了，入在五脏必然。",
+            "bg": "710.58",
+            "ed": "718.59",
+            "speed": 128,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "为什么脏与腑的生理功能不一样？脏长进而不泄，腑的生理功能什么？通泄而不长，邪进去了入在五脏必然。",
+            "bg": "710.58",
+            "ed": "718.59",
+            "speed": 128,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "911.66",
+          "ed": "919.67",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "就是温气阳不在于峻补，比如我们刚才提的苓桂猪甘汤，就是这样的。三个桂枝茯苓。",
+            "bg": "911.66",
+            "ed": "919.67",
+            "speed": 101,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "就是温气阳，不在于峻补，比如我们刚才提的苓桂猪甘汤，就是这样的。三个桂枝茯苓。",
+            "bg": "911.66",
+            "ed": "919.67",
+            "speed": 101,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "950.82",
+          "ed": "958.83",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "炙甘草汤，这个人都会见到，这就是我们讲到的第一层次。温其阳，苓桂猪甘汤是它的代表，所以一再强调。",
+            "bg": "950.82",
+            "ed": "958.83",
+            "speed": 125,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "炙甘草汤，这个人都会见到，这就是我们讲到的第一层次，温气阳，苓桂猪甘汤是它的代表，所以一再强调。",
+            "bg": "950.82",
+            "ed": "958.83",
+            "speed": 125,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1027.48",
+          "ed": "1035.49",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "所以大青龙汤里面有什么？有石膏、几焦、地黄丸里边苦寒的药，比如说焦木、大黄、葶苈子。",
+            "bg": "1027.48",
+            "ed": "1035.49",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "所以大青龙汤里面有什么？有石膏、几焦地黄丸里边苦寒的药，比如说焦木、大黄、葶苈子。",
+            "bg": "1027.48",
+            "ed": "1035.49",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1043.5",
+          "ed": "1051.51",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "但是不能降的太过。木防己汤里面什么防己、石膏，还加什么？加人参进去，防止它什么起阴阳。",
+            "bg": "1043.50",
+            "ed": "1051.51",
+            "speed": 110,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "但是不能降的太过。木防己汤里面什么防己、石膏，还加什么？加人参进去，防止它什么起阴了。",
+            "bg": "1043.50",
+            "ed": "1051.51",
+            "speed": 110,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1061.26",
+          "ed": "1069.27",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "甘草加上我们其他的药物来起到什么？起到以利小便为主，这是它的特性，所以，我们。",
+            "bg": "1061.26",
+            "ed": "1069.27",
+            "speed": 101,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "甘草加上我们其他的药物来起到什么？起到以利小便为主，这是它的特性，所以我们。",
+            "bg": "1061.26",
+            "ed": "1069.27",
+            "speed": 101,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1141.33",
+          "ed": "1149.34",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "局里运化带来清阳不生，浊阴上冒，所以他必然见到什么呢？见到孤炫，见到凶邪之满，甚至还。",
+            "bg": "1141.33",
+            "ed": "1149.34",
+            "speed": 110,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "局里运化带来清阳不生，浊衣上冒，所以他必然见到什么呢？见到孤炫，见到凶邪之满，甚至还。",
+            "bg": "1141.33",
+            "ed": "1149.34",
+            "speed": 110,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1188.24",
+          "ed": "1196.25",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "合之了，这个时候一定是选一个什么？选一个性平而润的药物，又能够降逆，那往往加什么东西？来。",
+            "bg": "1188.24",
+            "ed": "1196.25",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "合置了，这个时候一定是选一个什么？选一个性平而润的药物，又能够降逆，那往往加什么东西？来。",
+            "bg": "1188.24",
+            "ed": "1196.25",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1211.6",
+          "ed": "1216.77",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "所以有大便不通，是因为什么引结所带来？不要首先加大黄。",
+            "bg": "1211.60",
+            "ed": "1216.77",
+            "speed": 111,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "所以有大便不通，是因为什么引结所带来的？不要首先加大黄。",
+            "bg": "1211.60",
+            "ed": "1216.77",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1298.9",
+          "ed": "1303.78",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "明显是不行的。刚才我们讲过三个层次，那么领柜主管层其实是第一个层次。",
+            "bg": "1298.90",
+            "ed": "1303.78",
+            "speed": 152,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "明显是不行的。刚才我们讲过三个层次，那么领柜主管他们仅仅是第一个层次。",
+            "bg": "1298.90",
+            "ed": "1303.78",
+            "speed": 157,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1384.69",
+          "ed": "1392.7",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "一个是肾虚，而不是虚，一个是阳虚，比如我们的理中丸或者附子理。",
+            "bg": "1384.69",
+            "ed": "1392.70",
+            "speed": 80,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "一个是肾虚，不是虚，一个是阳虚，比如我们的理中丸或者附子理。",
+            "bg": "1384.69",
+            "ed": "1392.70",
+            "speed": 77,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1431.73",
+          "ed": "1439.74",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "四米康是阳气衰微，这个人要挂了，所以他的手足厥冷，饮食不能自复，但是四。",
+            "bg": "1431.73",
+            "ed": "1439.74",
+            "speed": 92,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "四米汤是阳气衰微，这个人要挂了，所以他的手足厥冷，一时不能自负，但是四。",
+            "bg": "1431.73",
+            "ed": "1439.74",
+            "speed": 92,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1479.79",
+          "ed": "1487.8",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "处于一个淤血环境，他的气血流转不通。比如说，青壮年男性常常见到的慢性前列腺炎。",
+            "bg": "1479.79",
+            "ed": "1487.80",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "处于一个淤血环境，它的气血流转不通。比如说，青壮年男性常常见到的慢性前列腺炎。",
+            "bg": "1479.79",
+            "ed": "1487.80",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1487.8",
+          "ed": "1495.81",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "或者急性前列腺炎，如果是老年人，常能见到什么？就是前列腺增生之症。那么你用肾气丸治，它的。",
+            "bg": "1487.80",
+            "ed": "1495.81",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "或者急性前列腺炎，如果是老年人常能见到什么，就是前列腺增生之症，那么你用肾气丸治，它的。",
+            "bg": "1487.80",
+            "ed": "1495.81",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1614",
+          "ed": "1622.01",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "那这就变成了什么呢？这就变成了流饮，流饮是阴邪，久留在体内一定会伤阳气。",
+            "bg": "1614.00",
+            "ed": "1622.01",
+            "speed": 95,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "那这就变成了什么呢？这就变成了流饮。流饮是阴邪，久留在体内一定会伤阳气。",
+            "bg": "1614.00",
+            "ed": "1622.01",
+            "speed": 95,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1654.05",
+          "ed": "1662.06",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "水饮之所以会久留在体内，就是说明你体内有虚邪之处。《内经》里不是有句话吗？邪之所凑，其气必虚。这里说。",
+            "bg": "1654.05",
+            "ed": "1662.06",
+            "speed": 128,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "水饮之所以会久留在体内，就是说明你体内有虚邪之处。《内经》不是有句话吗？邪之所凑，其气必虚。这里说。",
+            "bg": "1654.05",
+            "ed": "1662.06",
+            "speed": 125,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1670.07",
+          "ed": "1678.08",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "驱除其邪，那就形成一个什么千年之势？怎么办呢？缩短病程，尽快的完整的驱除。",
+            "bg": "1670.07",
+            "ed": "1678.08",
+            "speed": 95,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "驱除其邪，那就形成了一个什么千年之势？怎么办呢？缩短病程，尽快的完整的驱除。",
+            "bg": "1670.07",
+            "ed": "1678.08",
+            "speed": 98,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1757.43",
+          "ed": "1765.44",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "甘遂和甘草同用，那我们现在临床，比如说我们学校那个原来的副校长段金鳌教授，他不是一直在做那个九。",
+            "bg": "1757.43",
+            "ed": "1765.44",
+            "speed": 131,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "甘遂和甘草同用，那我们现在临床，比如说我们学校那个原来的副校长段金鳌教授，他不是一直在做那个酒精",
+            "bg": "1757.43",
+            "ed": "1765.44",
+            "speed": 134,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1798.49",
+          "ed": "1806.5",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "每次我讲到这个处方的时候，你们不觉得身上出一层冷汗？为什么出一层冷汗？那我们使用在经方当中。",
+            "bg": "1798.49",
+            "ed": "1806.50",
+            "speed": 125,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "书，每一次我讲到这个处方的时候，你们不觉得身上出一层冷汗？为什么出一层冷汗？那我们使用在经方当中。",
+            "bg": "1798.49",
+            "ed": "1806.50",
+            "speed": 131,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1814.81",
+          "ed": "1822.82",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "三季以早餐那个食食民丰富的早餐健康来送福吧？为什么选择吃早餐？我们是。",
+            "bg": "1814.81",
+            "ed": "1822.82",
+            "speed": 95,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "三季以早餐那个食食民丰富的早了健康来送福吧？为什么选择吃早我们是？",
+            "bg": "1814.81",
+            "ed": "1822.82",
+            "speed": 92,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1842.83",
+          "ed": "1850.84",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "没有止血效果，所以患者一点感觉都没有，必须量大，正好又符合了甘石和甘草配比剂量解毒。",
+            "bg": "1842.83",
+            "ed": "1850.84",
+            "speed": 113,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "没有止血效果，所以患者一点感觉都没有。必须量大，正好又符合了甘石和甘草配比剂量解毒。",
+            "bg": "1842.83",
+            "ed": "1850.84",
+            "speed": 113,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1890.8",
+          "ed": "1898.81",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "对不对？因为汉代的那个芍药跟汉代的荼都是不分白荼和苍荼，不。",
+            "bg": "1890.80",
+            "ed": "1898.81",
+            "speed": 80,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "对不对？因为汉代的那个芍药跟汉代的菊都是不分白菊和苍菊，不。",
+            "bg": "1890.80",
+            "ed": "1898.81",
+            "speed": 80,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1925.76",
+          "ed": "1933.77",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "大黄、厚朴止食，然后加上什么？加上桂枝汤去芍药，呀，这个处方病者腹满，而且明显是一个。",
+            "bg": "1925.76",
+            "ed": "1933.77",
+            "speed": 107,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "大黄、厚朴、枳实，然后加上什么？加上桂枝汤去芍药，呀，这个处方病者腹满，而且明显是一个。",
+            "bg": "1925.76",
+            "ed": "1933.77",
+            "speed": 107,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "1994.5",
+          "ed": "2002.51",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "湿热交搏，肚子都胀满了，疼痛了，你还在里面填？那是堵得更厉害，所以它要去掉什么？去掉白芍就好一点了。那。",
+            "bg": "1994.50",
+            "ed": "2002.51",
+            "speed": 131,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "湿热交搏，肚子都胀满了，疼痛了，你还在里面填，那是堵得更厉害，所以它要去掉什么？去掉白芍就好一点了。那。",
+            "bg": "1994.50",
+            "ed": "2002.51",
+            "speed": 131,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2032.29",
+          "ed": "2040.3",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "刚才那个条文是怎么说的？病者腹满，发热10日，脉浮而数，提示你脉浮是邪仍然在表。",
+            "bg": "2032.29",
+            "ed": "2040.30",
+            "speed": 101,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "刚才那个条文是怎么说的？病者腹满，发热10日，脉浮而数。提示你脉浮是邪仍然在表。",
+            "bg": "2032.29",
+            "ed": "2040.30",
+            "speed": 101,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2040.3",
+          "ed": "2048.31",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "有驸马是有一部分进去了，所以我们一般人他是什么呀？他是一经真正未发，一经正在解释太阳。",
+            "bg": "2040.30",
+            "ed": "2048.31",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "有驸马是有一部分进去了，所以我们一般人他是什么呀？他是“易经”真正会发，“易经”真在解释太阳。",
+            "bg": "2040.30",
+            "ed": "2048.31",
+            "speed": 116,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2098.41",
+          "ed": "2106.42",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "见到有什么？有痰饮患者，病到那么重，哪种患者才会见到？比如说，肝硬化见到什么？见到。",
+            "bg": "2098.41",
+            "ed": "2106.42",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "见到有什么？有痰饮患者，病到那么重，哪种患者才会见到？比如说肝硬化，见到什么？见到。",
+            "bg": "2098.41",
+            "ed": "2106.42",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2127.44",
+          "ed": "2133.5",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "的，是这样一个药物，实际上它也是什么？也是水土同调，所以我们一再强调。",
+            "bg": "2127.44",
+            "ed": "2133.50",
+            "speed": 118,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "的，是这样一个药物，实际上它也是什么？也是水火同调，所以我们一再强调。",
+            "bg": "2127.44",
+            "ed": "2133.50",
+            "speed": 118,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2191.24",
+          "ed": "2199.25",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "掉在哪里？掉在我们学校里面，那可能湖里面去了。我也不知道从哪里掉下去的。那我不能沿着湖岸去找，我更不能刻舟求剑。那我。",
+            "bg": "2191.24",
+            "ed": "2199.25",
+            "speed": 155,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "掉在哪里？掉在我们学校里面，那可能湖里面去了，我也不知道从哪里掉下去的。那我不能沿着湖岸去找，我根本不能刻舟求剑。那我。",
+            "bg": "2191.24",
+            "ed": "2199.25",
+            "speed": 158,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2247.89",
+          "ed": "2250.95",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "在书柜里面，他有时候读这种书都有治阳于表。",
+            "bg": "2247.89",
+            "ed": "2250.95",
+            "speed": 149,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "在这医柜里面，他有时候读这种书都有治阳于表。",
+            "bg": "2247.89",
+            "ed": "2250.95",
+            "speed": 156,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2251.32",
+          "ed": "2259.33",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "能够把阳气提起来，但阳气容易散吧？如果这个人体表阳气不足，不能驱散水的，比如说党参黄芪汤。",
+            "bg": "2251.32",
+            "ed": "2259.33",
+            "speed": 119,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "能够把阳气提起来，但阳气容易散吧？如果这个人体表阳气不足，不能驱散水的，比如说黄芪、黄芪汤。",
+            "bg": "2251.32",
+            "ed": "2259.33",
+            "speed": 119,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2302.34",
+          "ed": "2305.35",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "蒋经发非常有名，台湾那人叫什么来？突然就忘掉了。",
+            "bg": "2302.34",
+            "ed": "2305.35",
+            "speed": 167,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "蒋经发非常有名，台湾那人叫什么来？突然间忘掉了。",
+            "bg": "2302.34",
+            "ed": "2305.35",
+            "speed": 167,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2316.12",
+          "ed": "2324.13",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "长黄芪，我觉得长得挺好，你比我长得好。你才长黄芪什么？黄芪的多的主要是丹参的、地气的。黄芪为什么能脱疮毒？黄芪像大青龙一样。",
+            "bg": "2316.12",
+            "ed": "2324.13",
+            "speed": 161,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "长黄芪，我觉得长得挺好，你比我长得好。你才长黄芪什么？黄芪的多的主要是单温的、地气的。黄芪为什么能脱疮毒？黄芪像大青龙一样。",
+            "bg": "2316.12",
+            "ed": "2324.13",
+            "speed": 161,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2324.13",
+          "ed": "2332.14",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "从中焦打气，让气呢往上升，扶往体表散。所以黄芪的作用什么？补气，都用气来干嘛？来走。",
+            "bg": "2324.13",
+            "ed": "2332.14",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "从中焦打气，让气呢往上升浮，往体表散。所以黄芪的作用什么？补气，都用气来干嘛？来走。",
+            "bg": "2324.13",
+            "ed": "2332.14",
+            "speed": 104,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2355.21",
+          "ed": "2363.22",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "加甘草进去是非常有意思。好，再经过用另外一个病，恰恰他不用甘草，这个人也是气型的问题，哪个呢？血。",
+            "bg": "2355.21",
+            "ed": "2363.22",
+            "speed": 125,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "加甘草进去，非常有意思。好，再听一个，用另外一个病，恰恰他不用甘草，这个人也是气型的问题，哪个呢？血。",
+            "bg": "2355.21",
+            "ed": "2363.22",
+            "speed": 125,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2379.24",
+          "ed": "2386.65",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "阳达表，其速其效最迅速。既然黄芪桂枝五汤、生姜桂枝用到六两了，比我们那个什么？",
+            "bg": "2379.24",
+            "ed": "2386.65",
+            "speed": 110,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "一两达表，其中起到最迅速。既然黄芪桂枝五汤、生姜桂枝用到六两了，比我们那个什么？",
+            "bg": "2379.24",
+            "ed": "2386.65",
+            "speed": 113,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2386.95",
+          "ed": "2394.96",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "比比我们那个四逆汤加什么？加干姜，配干姜一定知道。通脉四逆汤效果还强，那说明这个这个一定。",
+            "bg": "2386.95",
+            "ed": "2394.96",
+            "speed": 119,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "比比我们那个四逆汤加什么？加干姜，配干姜一定知道，通脉四逆汤效果还强，那说明这个这个一定。",
+            "bg": "2386.95",
+            "ed": "2394.96",
+            "speed": 119,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        },
+        {
+          "sample_id": "a8",
+          "bg": "2419",
+          "ed": "2422.38",
+          "status": "changed",
+          "baseline": {
+            "segment_text": "解污腐的毒性，凡是有大毒的，一般都重。",
+            "bg": "2419.00",
+            "ed": "2422.38",
+            "speed": 113,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate": {
+            "segment_text": "解乌附的毒性，凡是有大毒的，一般都重。",
+            "bg": "2419.00",
+            "ed": "2422.38",
+            "speed": 113,
+            "segment_words": [],
+            "role": null,
+            "emotion": null
+          },
+          "candidate_warnings": [],
+          "text_equal": false
+        }
+      ],
+      "baseline_record": {
+        "sample_id": "a8",
+        "sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+        "audio_seconds": 2422.4,
+        "status": "completed",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7162351.83730368,
+        "started_utc": "2026-11-19T07:51:18.487414+00:00",
+        "http_status": 200,
+        "code": null,
+        "ended_monotonic": 7162686.46225752,
+        "ended_utc": "2026-11-19T07:56:53.112371+00:00",
+        "elapsed_s": 334.6249538399279,
+        "rtf": 0.13813777817037975
+      },
+      "candidate_record": {
+        "sample_id": "a8",
+        "sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+        "audio_seconds": 2422.4,
+        "status": "completed",
+        "fields": {
+          "showSpk": "false",
+          "showEmotion": "false",
+          "showRoleIdentify": "false"
+        },
+        "started_monotonic": 7318913.88218424,
+        "started_utc": "2026-11-21T03:20:40.532295+00:00",
+        "http_status": 200,
+        "code": null,
+        "processing_status": "complete",
+        "warning_count": 0,
+        "unrecoverable_segment_count": 0,
+        "has_usable_text": true,
+        "ended_monotonic": 7319324.93274218,
+        "ended_utc": "2026-11-21T03:27:31.582855+00:00",
+        "elapsed_s": 411.050557940267,
+        "rtf": 0.16968731751166902
+      },
+      "baseline_sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+      "candidate_sha256": "b3f93e7aa4c7c11ae3353e8b3b8610468feea5cbde1f8d030d5ea09ccc1bad0b",
+      "baseline_unavailable_reason": null,
+      "candidate_unavailable_reason": null,
+      "candidate_segment_warnings": [],
+      "baseline_segment_count": 353,
+      "candidate_segment_count": 354,
+      "identical_segments": 297,
+      "baseline_response_fields": {
+        "language": "Chinese",
+        "speed_info": [
+          {
+            "unit": 1,
+            "segment_info": {
+              "segment_count": 41,
+              "speed": [
+                166,
+                262,
+                241,
+                236,
+                256,
+                253,
+                236,
+                259,
+                227,
+                260,
+                218,
+                235,
+                243,
+                261,
+                253,
+                266,
+                231,
+                236,
+                267,
+                255,
+                215,
+                264,
+                244,
+                207,
+                266,
+                216,
+                237,
+                274,
+                300,
+                270,
+                286,
+                249,
+                275,
+                263,
+                243,
+                246,
+                327,
+                264,
+                305,
+                279,
+                268
+              ]
+            }
+          },
+          {
+            "unit": 5,
+            "segment_info": {
+              "segment_count": 9,
+              "speed": [
+                232,
+                247,
+                242,
+                251,
+                239,
+                259,
+                263,
+                284,
+                268
+              ]
+            }
+          },
+          {
+            "unit": 10,
+            "segment_info": {
+              "segment_count": 5,
+              "speed": [
+                240,
+                247,
+                249,
+                274,
+                268
+              ]
+            }
+          }
+        ],
+        "load_audio_time_ms": "60.66",
+        "gpu_time_ms": "331157.27",
+        "language_ratio": {
+          "zh": 100.0
+        }
+      },
+      "candidate_response_fields": {
+        "language": "Chinese",
+        "speed_info": [
+          {
+            "unit": 1,
+            "segment_info": {
+              "segment_count": 41,
+              "speed": [
+                172,
+                263,
+                241,
+                236,
+                256,
+                253,
+                236,
+                259,
+                227,
+                260,
+                218,
+                234,
+                243,
+                261,
+                253,
+                266,
+                231,
+                236,
+                267,
+                255,
+                216,
+                265,
+                244,
+                206,
+                266,
+                216,
+                237,
+                274,
+                300,
+                272,
+                287,
+                249,
+                275,
+                263,
+                243,
+                246,
+                328,
+                265,
+                305,
+                280,
+                268
+              ]
+            }
+          },
+          {
+            "unit": 5,
+            "segment_info": {
+              "segment_count": 9,
+              "speed": [
+                234,
+                247,
+                242,
+                251,
+                240,
+                260,
+                263,
+                285,
+                268
+              ]
+            }
+          },
+          {
+            "unit": 10,
+            "segment_info": {
+              "segment_count": 5,
+              "speed": [
+                240,
+                246,
+                250,
+                274,
+                268
+              ]
+            }
+          }
+        ],
+        "load_audio_time_ms": "51.85",
+        "gpu_time_ms": "408415.26",
+        "language_ratio": {
+          "zh": 100.0,
+          "en": 0.0
+        },
+        "processing_status": "complete",
+        "segment_warnings": []
+      },
+      "matched_text_changed_segments": 56,
+      "missing_candidate_segments": 0,
+      "missing_baseline_segments": 1
+    }
+  ],
+  "comparable_audio_count": 1,
+  "unavailable_audio_count": 7,
+  "different_segments_in_comparable_pairs": 57
+}

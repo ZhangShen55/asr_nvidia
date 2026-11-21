@@ -35,6 +35,7 @@ class Sequence:
     tokens: list = field(default_factory=list)
     kv: list = field(default_factory=list)
     prompt_length: int = 0
+    duration_s: float = 0.0
     pending: object = None
     guard: object = None
     events: dict = field(default_factory=dict)
@@ -58,6 +59,9 @@ class ContinuousHFAdapter:
         self.cache_reuses = 0
         self.end_reasons = {}
         self.error_counts = {}
+        self.warning_counts = {}
+        self.warning_actions = {}
+        self.recent_warnings = []
         self.recent_errors = []
         self.last_phase = None
         self.phase_wall_s = {'prefill': 0.0, 'decode': 0.0}
@@ -95,7 +99,8 @@ class ContinuousHFAdapter:
             for i, item in enumerate(requests):
                 key = (item['request_id'], item['segment_id'])
                 length = int(lengths[i])
-                seq = Sequence(key=key, prompt_length=length, pending=sampled[i:i+1], group=group, row=i,
+                seq = Sequence(key=key, prompt_length=length, duration_s=len(audios[i])/16000,
+                    pending=sampled[i:i+1], group=group, row=i,
                     kv=[(layer.keys[i:i+1, :, -length:], layer.values[i:i+1, :, -length:])
                         for layer in output.past_key_values.layers])
                 if self.online_repetition_enabled:
@@ -241,21 +246,31 @@ class ContinuousHFAdapter:
                 raw = rt.processor.tokenizer.decode(seq.tokens, skip_special_tokens=False,
                                                     clean_up_tokenization_spaces=False)
                 text = re.sub(r'<\|(?:im_end|endoftext|eot_id)\|>', '', raw).strip()
-                error = None
-                if reason != 'eos':
-                    error = ContinuousGenerationError(reason, request_id=key[0], segment_id=key[1])
-                elif text and not re.search(r'language\s+[^<]*<asr_text>', text, re.I):
+                if reason == 'eos' and text and not re.search(r'language\s+[^<]*<asr_text>', text, re.I):
                     reason = 'invalid_output_prefix'
-                    error = ContinuousGenerationError(reason, request_id=key[0], segment_id=key[1])
-                if error is not None:
-                    self.record_error(key, error, self.last_phase, reason)
+                result = dict(text=text, warning=None, recovered=False, original_raw=raw)
+                if reason in {'repetition_stop','length_limit','invalid_output_prefix'}:
+                    from utils.qwen_segment_recovery import recover_segment_output
+                    from utils.incremental_repetition import RepetitionGuardConfig
+                    recovery = recover_segment_output(raw, reason, seq.duration_s,
+                        config=RepetitionGuardConfig(**self.online_repetition_config))
+                    warning = dict(recovery['warning'])
+                    warning['recovered'] = bool(recovery['recovered'])
+                    result.update(text=recovery['raw_text'],warning=warning,recovered=warning['recovered'])
+                    self.warning_counts[reason] = self.warning_counts.get(reason,0)+1
+                    action = warning['action']
+                    self.warning_actions[action] = self.warning_actions.get(action,0)+1
+                    self.recent_warnings.append(dict(request_id=key[0],segment_id=key[1],
+                        reason=reason,action=action,recovered=warning['recovered'],
+                        generated_tokens=len(seq.tokens),monotonic=time.monotonic()))
+                    del self.recent_warnings[:-32]
                 self.end_reasons[reason] = self.end_reasons.get(reason, 0)+1
                 self.event(key, reason, generated_tokens=len(seq.tokens))
                 del self.active[key]
                 self.completed += 1
                 self.completed_tokens[key] = list(seq.tokens)
                 self.event(key, 'resource_reusable')
-                completed.append((key, error if error else text))
+                completed.append((key, result))
         return completed
 
     def record_error(self, key, exc, phase, reason):
@@ -281,7 +296,12 @@ class ContinuousHFAdapter:
         self._refresh_memory()
         self.event(key, reason, error_type=type(exc).__name__)
         self.event(key, 'resource_reusable')
-        error = ContinuousGenerationError(reason,request_id=key[0],segment_id=key[1])
+        from core.qwen_asr_runtime import LocalModelUnavailable, LocalUnsupportedLanguage
+        if isinstance(exc, (LocalModelUnavailable,LocalUnsupportedLanguage)):
+            error = exc
+            error.reason, error.request_id, error.segment_id = reason, key[0], key[1]
+        else:
+            error = ContinuousGenerationError(reason,request_id=key[0],segment_id=key[1])
         return [(key,error)]
 
     def cancel(self, key):
@@ -317,6 +337,8 @@ class ContinuousHFAdapter:
         return dict(active_sequences=len(self.active), **self._memory_sample,
                     completed=self.completed, last_step=self.last_step, events=list(self.events),
                     error_counts=dict(self.error_counts),recent_errors=list(self.recent_errors),
+                    warning_counts=dict(self.warning_counts),warning_actions=dict(self.warning_actions),
+                    recent_warnings=list(self.recent_warnings),
                     end_reasons=dict(self.end_reasons), phase_wall_s=dict(self.phase_wall_s),
                     steps=dict(self.steps),peak_active=self.peak_active, peak_kv_bytes=self.peak_kv_bytes,
                     repacks=self.repacks, cache_reuses=self.cache_reuses)

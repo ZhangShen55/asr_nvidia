@@ -1,0 +1,43 @@
+{
+  "scope": "CPU offline replay of recorded real tokens; no human ground truth; firing rate not accuracy",
+  "candidates": [
+    {
+      "candidate": "hf-b16",
+      "recorded_outputs": 128,
+      "triggered": []
+    },
+    {
+      "candidate": "hf-b32",
+      "recorded_outputs": 128,
+      "triggered": []
+    },
+    {
+      "candidate": "hf-b64",
+      "recorded_outputs": 128,
+      "triggered": []
+    },
+    {
+      "candidate": "hf-b128",
+      "recorded_outputs": 128,
+      "triggered": []
+    },
+    {
+      "candidate": "om-b16",
+      "recorded_outputs": 128,
+      "triggered": []
+    },
+    {
+      "candidate": "om-b32",
+      "recorded_outputs": 128,
+      "triggered": []
+    },
+    {
+      "candidate": "om-b64",
+      "recorded_outputs": 128,
+      "triggered": []
+    }
+  ],
+  "total_outputs": 896,
+  "total_triggered": 0,
+  "firing_rate": 0.0
+}

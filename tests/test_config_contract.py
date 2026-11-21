@@ -34,7 +34,8 @@ class ConfigContractTests(unittest.TestCase):
         self.assertIsInstance(default, RepetitionGuardConfig)
         self.assertEqual(asdict(default), dict(enabled=False, min_generated_tokens=32,
             min_chars=120, max_chars_per_second=40, min_repeats=8,
-            min_repeat_chars=64, max_unit_chars=32, tail_chars=512, confirmations=2))
+            min_repeat_chars=64, max_unit_chars=32, tail_chars=512, confirmations=2, strong_tail_min_chars=96,
+            strong_tail_min_ratio=95, strong_tail_repeats_per_second=4))
         cfg = self._settings('[qwen_asr]\nonline_repetition_enabled=true\n'
             'online_repetition_min_generated_tokens=48\nonline_repetition_min_chars=160\n'
             'online_repetition_max_chars_per_second=45\nonline_repetition_min_repeats=10\n'
@@ -43,7 +44,8 @@ class ConfigContractTests(unittest.TestCase):
         cfg.validate_model_backends()
         self.assertEqual(asdict(cfg.qwen_online_repetition_config), dict(enabled=True,
             min_generated_tokens=48, min_chars=160, max_chars_per_second=45, min_repeats=10,
-            min_repeat_chars=80, max_unit_chars=40, tail_chars=640, confirmations=3))
+            min_repeat_chars=80, max_unit_chars=40, tail_chars=640, confirmations=3, strong_tail_min_chars=96,
+            strong_tail_min_ratio=95, strong_tail_repeats_per_second=4))
 
     def test_online_repetition_thresholds_reject_wrong_types_and_combinations(self):
         from dataclasses import fields

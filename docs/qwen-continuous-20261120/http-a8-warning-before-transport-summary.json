@@ -1,0 +1,281 @@
+{
+  "run": "before-3ms real HTTP8 A-mode 16/128 warning recovery",
+  "raw_directory": "/home/zhangs/asr_nvidia/logs/qwen-continuous-20261121-a8-warning",
+  "summary_sha256": "2ebd0fc52d3f229bbcd82c89a4b12327145874d8fc9611fe4cd87b8f560d0fb2",
+  "source_changed_during_round": false,
+  "expected": 8,
+  "processed_completed": 0,
+  "strict_successful": 0,
+  "completed_with_warnings": 0,
+  "strict_success_rate": 0.0,
+  "processing_completion_rate": 0.0,
+  "requests_censored_at_420s": 8,
+  "business_failed_before_gate": 0,
+  "response_warning_segments": 0,
+  "response_warning_scope": "only completed HTTP responses; none completed, so zero is not worker warning count",
+  "batch_elapsed_s": 420.67555282916874,
+  "p50_s": null,
+  "p95_s": null,
+  "quantile_scope": "normal or processing completion n=0; cannot define completion latency quantiles; 8 censored requests are not measured completion durations",
+  "records": [
+    {
+      "sample_id": "a1",
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 420.4705212004483
+    },
+    {
+      "sample_id": "a2",
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 420.4698876105249
+    },
+    {
+      "sample_id": "a3",
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 420.4694953598082
+    },
+    {
+      "sample_id": "a4",
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 420.4693140303716
+    },
+    {
+      "sample_id": "a5",
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 420.46898683998734
+    },
+    {
+      "sample_id": "a6",
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 420.4686358999461
+    },
+    {
+      "sample_id": "a7",
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 420.46816607005894
+    },
+    {
+      "sample_id": "a8",
+      "status": "cancelled",
+      "http_status": null,
+      "code": null,
+      "elapsed_s": 420.4677367191762
+    }
+  ],
+  "gate": {
+    "reason": "inflight_wall_timeout",
+    "observed_monotonic": 7315320.93280221,
+    "request_id": "a1",
+    "observed_s": 420.42540613003075,
+    "threshold_s": 420
+  },
+  "last_before_gate_snapshot_monotonic": 7315320.74274394,
+  "last_worker_sample_monotonic": 7315319.40989863,
+  "valid_before_gate_snapshots": 352,
+  "peaks": {
+    "global_logical_inflight_peak": 128,
+    "worker_active_sequences_peak": 76,
+    "observed_decode_members_peak": 75,
+    "device7_driver_hbm_used_mb_peak": 41240,
+    "owned_qwen_driver_hbm_mb_peak": 25389,
+    "worker_cached_allocator_max_allocated_mb": 11082.99072265625,
+    "worker_cached_allocator_max_reserved_mb": 23694.0
+  },
+  "last_worker_counters": {
+    "active_sequences": 45,
+    "kv_bytes": 582156288,
+    "kv_storage_bytes": 1002946560,
+    "sampled_monotonic": 7315319.40989863,
+    "completed": 2970,
+    "last_step": {
+      "batch_size": 53,
+      "wall_s": 0.14128249045461416,
+      "max_cache_length": 164
+    },
+    "error_counts": {},
+    "warning_counts": {
+      "repetition_stop": 3
+    },
+    "warning_actions": {
+      "discard_unrecoverable": 3
+    },
+    "end_reasons": {
+      "eos": 2967,
+      "repetition_stop": 3
+    },
+    "phase_wall_s": {
+      "prefill": 220.94976805057377,
+      "decode": 153.8226380366832
+    },
+    "steps": {
+      "prefill": 1110,
+      "decode": 1165
+    },
+    "peak_active": 76,
+    "peak_kv_bytes": 977600512,
+    "repacks": 1118,
+    "cache_reuses": 47
+  },
+  "estimated_mean_prefill_members": 2.7162162162162162,
+  "mean_prefill_estimate_scope": "(completed2970+active45)/prefill_steps1110; inferred assuming no admitted-but-unprefilled member included and no omitted cancelled/failed prefill; counters since worker startup may include warmup. No transport prefill_members counter in this version, so not direct measurement.",
+  "warning_scope": "worker cumulative3 repetition_stop/discard_unrecoverable before gate, not3 completed audio responses or human-verified harmless deletions",
+  "hbm_scope": {
+    "device7_driver": "sampled entire device7 aggregate incl existing services",
+    "owned_qwen_driver": "sampled npu-smi compute_apps for recorded owned worker PID; observed peak, not guaranteed true peak",
+    "allocator": "cached worker_torch_npu_allocator max fields; peak_scope not_reset_unknown_or_includes_load; not driver HBM and not necessarily live counters"
+  },
+  "shutdown": {
+    "forced": false,
+    "exit_code": 0,
+    "passed": true,
+    "remaining_pids": [],
+    "port_observations": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "observe_s": 5,
+    "term_to_parent_exit_s": 206.87205961998552
+  },
+  "transport_npu_burst128": {
+    "0ms": [
+      {
+        "request_id": "0ms-0",
+        "wall_s": 10.101039790548384,
+        "normal_eos_count": 128,
+        "result_count": 128,
+        "mean_prefill_members": 14.222222222222221,
+        "steps": {
+          "decode": 50,
+          "prefill": 9
+        },
+        "phase_wall_s": {
+          "decode": 4.879464049823582,
+          "prefill": 4.478260388597846
+        },
+        "transport": {
+          "prefill_members": 128,
+          "received_submits": 128,
+          "max_receive_burst": 122,
+          "poll_wait_timeouts": 0,
+          "poll_wait_s": 0.0,
+          "prefill_calls": 9,
+          "poll_wait_calls": 0
+        }
+      },
+      {
+        "request_id": "0ms-1",
+        "wall_s": 7.840452520176768,
+        "normal_eos_count": 128,
+        "result_count": 128,
+        "mean_prefill_members": 14.222222222222221,
+        "steps": {
+          "decode": 50,
+          "prefill": 9
+        },
+        "phase_wall_s": {
+          "decode": 4.5629981914535165,
+          "prefill": 2.5325023410841823
+        },
+        "transport": {
+          "prefill_members": 128,
+          "received_submits": 128,
+          "max_receive_burst": 4,
+          "poll_wait_timeouts": 0,
+          "poll_wait_s": 0.0,
+          "prefill_calls": 9,
+          "poll_wait_calls": 0
+        }
+      }
+    ],
+    "3ms": [
+      {
+        "request_id": "3ms-0",
+        "wall_s": 10.333241060376167,
+        "normal_eos_count": 128,
+        "result_count": 128,
+        "mean_prefill_members": 12.8,
+        "steps": {
+          "decode": 51,
+          "prefill": 10
+        },
+        "phase_wall_s": {
+          "decode": 5.013111532665789,
+          "prefill": 4.57077098172158
+        },
+        "transport": {
+          "prefill_members": 128,
+          "received_submits": 128,
+          "max_receive_burst": 16,
+          "poll_wait_timeouts": 1,
+          "poll_wait_s": 0.0034458599984645844,
+          "prefill_calls": 10,
+          "poll_wait_calls": 9
+        }
+      },
+      {
+        "request_id": "3ms-1",
+        "wall_s": 7.989916929975152,
+        "normal_eos_count": 128,
+        "result_count": 128,
+        "mean_prefill_members": 14.222222222222221,
+        "steps": {
+          "decode": 50,
+          "prefill": 9
+        },
+        "phase_wall_s": {
+          "decode": 4.683886030688882,
+          "prefill": 2.5696573089808226
+        },
+        "transport": {
+          "prefill_members": 128,
+          "received_submits": 128,
+          "max_receive_burst": 0,
+          "poll_wait_timeouts": 0,
+          "poll_wait_s": 0.0015011699870228767,
+          "prefill_calls": 9,
+          "poll_wait_calls": 7
+        }
+      }
+    ]
+  },
+  "transport_difference_count": 11,
+  "transport_conclusion": "one steady run0ms7.8404525s vs3ms7.9899169s; no speedup, no formal8-service3ms acceptance yet. CPU42to9 improvement is not NPU speed evidence.",
+  "acceptance": "420s8/8 performance gate failed; observed prior fatal4012 replaced by warning handling, but no full response before gate; no deployment quality claim"
+}

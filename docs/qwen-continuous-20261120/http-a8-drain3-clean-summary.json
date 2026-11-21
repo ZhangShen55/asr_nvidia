@@ -1,0 +1,182 @@
+{
+  "status": "diagnostic_aborted",
+  "expected": 8,
+  "successful": 2,
+  "complete": false,
+  "processed_completed": 2,
+  "completed_with_warnings": 0,
+  "strict_success_rate": 0.25,
+  "processing_completion_rate": 0.25,
+  "requests_with_usable_text": 2,
+  "warning_segments": 0,
+  "unrecoverable_segments": 0,
+  "completion_subset_latency": {
+    "n": 2,
+    "p50_s": 400.06532064499334,
+    "p95_s": 409.95203421073967,
+    "scope": "all processed completions including explicit warnings"
+  },
+  "batch_elapsed_s": 420.9596501402557,
+  "success_subset_latency": {
+    "n": 2,
+    "p50_s": 400.06532064499334,
+    "p95_s": 409.95203421073967,
+    "method": "linear interpolation; incomplete rounds are censored and not acceptance"
+  },
+  "diagnostic_trigger": {
+    "reason": "inflight_wall_timeout",
+    "observed_monotonic": 7319334.59602563,
+    "request_id": "a1",
+    "observed_s": 420.7222952703014,
+    "threshold_s": 420
+  },
+  "temperature": "warmup_completed",
+  "records": [
+    {
+      "sample_id": "a1",
+      "status": "cancelled",
+      "elapsed_s": 420.7675962606445,
+      "processing_status": null,
+      "warning_count": null,
+      "unrecoverable_segment_count": null,
+      "has_usable_text": null
+    },
+    {
+      "sample_id": "a2",
+      "status": "cancelled",
+      "elapsed_s": 420.7670165495947,
+      "processing_status": null,
+      "warning_count": null,
+      "unrecoverable_segment_count": null,
+      "has_usable_text": null
+    },
+    {
+      "sample_id": "a3",
+      "status": "cancelled",
+      "elapsed_s": 420.76665924023837,
+      "processing_status": null,
+      "warning_count": null,
+      "unrecoverable_segment_count": null,
+      "has_usable_text": null
+    },
+    {
+      "sample_id": "a4",
+      "status": "cancelled",
+      "elapsed_s": 420.76636794023216,
+      "processing_status": null,
+      "warning_count": null,
+      "unrecoverable_segment_count": null,
+      "has_usable_text": null
+    },
+    {
+      "sample_id": "a5",
+      "status": "completed",
+      "elapsed_s": 389.08008334971964,
+      "processing_status": "complete",
+      "warning_count": 0,
+      "unrecoverable_segment_count": 0,
+      "has_usable_text": true
+    },
+    {
+      "sample_id": "a6",
+      "status": "cancelled",
+      "elapsed_s": 420.7649728804827,
+      "processing_status": null,
+      "warning_count": null,
+      "unrecoverable_segment_count": null,
+      "has_usable_text": null
+    },
+    {
+      "sample_id": "a7",
+      "status": "cancelled",
+      "elapsed_s": 420.7646708097309,
+      "processing_status": null,
+      "warning_count": null,
+      "unrecoverable_segment_count": null,
+      "has_usable_text": null
+    },
+    {
+      "sample_id": "a8",
+      "status": "completed",
+      "elapsed_s": 411.050557940267,
+      "processing_status": "complete",
+      "warning_count": 0,
+      "unrecoverable_segment_count": 0,
+      "has_usable_text": true
+    }
+  ],
+  "acceptance_passed": false,
+  "model_snapshot_before_cancellation": {
+    "active_sequences": 91,
+    "kv_bytes": 1046757376,
+    "kv_storage_bytes": 2000158720,
+    "sampled_monotonic": 7319334.54756883,
+    "completed": 3961,
+    "last_step": {
+      "batch_size": 88,
+      "wall_s": 0.21371227968484163,
+      "max_cache_length": 189
+    },
+    "error_counts": {},
+    "warning_counts": {
+      "repetition_stop": 4
+    },
+    "warning_actions": {
+      "discard_unrecoverable": 3,
+      "recover_prefix": 1
+    },
+    "end_reasons": {
+      "eos": 3957,
+      "repetition_stop": 4
+    },
+    "phase_wall_s": {
+      "prefill": 217.31212298572063,
+      "decode": 150.1936478111893
+    },
+    "steps": {
+      "prefill": 876,
+      "decode": 951
+    },
+    "peak_active": 98,
+    "peak_kv_bytes": 1255718912,
+    "repacks": 902,
+    "cache_reuses": 49,
+    "transport": {
+      "poll_wait_calls": 1208,
+      "poll_wait_s": 1.143210464157164,
+      "poll_wait_timeouts": 168,
+      "received_submits": 4052,
+      "prefill_calls": 876,
+      "prefill_members": 4052,
+      "max_receive_burst": 16,
+      "accepted_per_drain": {
+        "1": 27,
+        "3": 195,
+        "13": 4,
+        "2": 68,
+        "7": 59,
+        "8": 39,
+        "6": 85,
+        "5": 151,
+        "9": 19,
+        "4": 208,
+        "10": 5,
+        "15": 1,
+        "11": 6,
+        "16": 4,
+        "14": 2,
+        "12": 3
+      }
+    },
+    "status_source": "owner_safe_step_boundary"
+  },
+  "snapshot_scope": "safe owner step boundary at diagnostic gate; warmup may be included; not final drained counters",
+  "source_freeze": {
+    "source_changed_during_round": false,
+    "source_changes": [],
+    "source_identity_complete": true,
+    "git_head_changed_during_round": false
+  },
+  "source_run": "/home/zhangs/asr_nvidia/logs/qwen-continuous-20261121-a8-drain3-clean",
+  "warning_scope": "0 in two complete HTTP responses; worker diagnostic shows 4 warnings (3 discard_unrecoverable, 1 recover_prefix) in unfinished requests; six censored are not successes or warning-free"
+}

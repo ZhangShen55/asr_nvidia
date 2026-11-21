@@ -1,0 +1,39 @@
+{
+  "scope": "CPU re-encoding static raw output; original static token IDs not stored, new NPU replay still required",
+  "cases": [
+    {
+      "index": 0,
+      "reencoded_tokens": 256,
+      "trigger_at": 150,
+      "body_chars": 147,
+      "recovery": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      }
+    },
+    {
+      "index": 1,
+      "reencoded_tokens": 256,
+      "trigger_at": 197,
+      "body_chars": 194,
+      "recovery": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      }
+    }
+  ]
+}

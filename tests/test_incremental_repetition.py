@@ -37,7 +37,7 @@ def test_pathological_loop_stops_before_end(unit):
     index, decision = result
     assert index < len(text)
     assert decision.reason == "repetition_stop"
-    assert decision.body_chars > decision.length_limit
+    assert decision.body_chars > decision.length_limit or decision.repeated_chars >= 96
     assert decision.repeats >= 8
 
 
@@ -79,3 +79,33 @@ def test_bad_duration(duration):
 def test_bad_config(kwargs):
     with pytest.raises(ValueError):
         RepetitionGuardConfig(**kwargs)
+
+
+@pytest.mark.parametrize("text,duration", [
+    ("对，" * 20, 8.01),
+    ("ABCDEFGHIJKLMNOPQRSTUVWXYZ" * 12, 40),
+    ("一二三四五六七八九十" * 12, 30),
+    ("We repeat this line for classroom practice. " * 12, 50),
+    ("啊" * 200, 90),
+])
+def test_strong_path_protects_plausible_duration_repetitions(text, duration):
+    assert stream(text, duration) is None
+
+
+def test_strong_path_can_stop_before_length_anomaly():
+    result = stream("天啊！" + "我操！" * 100, 8.01)
+    assert result is not None
+    _, decision = result
+    assert decision.body_chars < decision.length_limit
+
+
+def test_strong_ratio_must_be_percentage():
+    with pytest.raises(ValueError):
+        RepetitionGuardConfig(strong_tail_min_ratio=101)
+
+
+@pytest.mark.parametrize("value", [True, False, 1.0, 2.5, "32", -1])
+def test_generated_token_counter_rejects_coercible_wrong_types(value):
+    guard = IncrementalRepetitionGuard(1)
+    with pytest.raises(ValueError):
+        guard.update("language Chinese<asr_text>正常文本", generated_tokens=value)

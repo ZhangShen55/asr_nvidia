@@ -48,14 +48,20 @@ def test_worker_dedup_cancel_release_and_close(monkeypatch):
     with wave.open(stream,'wb') as w:
         w.setnchannels(1);w.setsampwidth(2);w.setframerate(16000);w.writeframes(b'\0'*16000)
     def command(operation,**kwargs):_send(parent,dict(operation=operation,launch_id='launch',**kwargs))
+    statuses=[]
     def result():
-        assert parent.poll(2)
-        return _receive(parent)[0]
+        while True:
+            assert parent.poll(2)
+            response=_receive(parent)[0]
+            if response.get('kind')!='status':return response
+            statuses.append(response)
     try:
         for segment in ('long','short','short'):
             command('submit',key=('a',segment),audio=stream.getvalue(),language=None)
         first=result();assert first['key']==('a','short')
-        assert first['continuous']['active_sequences']==1
+        # Status can be pushed before the first result; results need not repeat
+        # the same expensive snapshot inside the one-second sample window.
+        assert any(row.get('continuous',{}).get('active_sequences')==2 for row in statuses)
         command('cancel',key=('a','long'))
         assert result()['key']==('a','long')
         command('release_request',request_id='a')
@@ -121,3 +127,95 @@ def test_reader_keeps_structured_sequence_error_identity():
     assert error.reason=='invalid_output_prefix'
     assert error.request_id=='request' and error.segment_id=='17'
     assert runtime._close_ack.is_set()
+
+
+def test_reader_keeps_segment_warning_payload_and_does_not_put_body_in_snapshot():
+    from concurrent.futures import Future
+    import core.qwen_continuous_process as mod
+    runtime=mod.LocalQwenContinuousProcessRuntime('/tmp/nonexistent-cpu-test-model','npu:7')
+    key=('request','warn');future=Future();runtime._futures[key]=future
+    replies=iter([
+        dict(kind='result',launch_id=runtime._launch_id,key=key,result=dict(
+            text='language Chinese<asr_text>保留内容。',
+            warning=dict(reason='repetition_stop',action='recover_prefix',recovered=True),
+            recovered=True,original_raw='private repeated original',tokens=[1,2,3])),
+        dict(kind='closed',launch_id=runtime._launch_id,state={})])
+    runtime._wait_response=lambda *args:(next(replies),0)
+    runtime._accept_state=lambda state:None
+    runtime._read_continuous()
+    value=future.result()
+    assert value['warning']['reason']=='repetition_stop'
+    assert value['recovered'] and value['original_raw']=='private repeated original'
+    assert 'private repeated original' not in str(runtime.snapshot())
+    assert future.generated_tokens==[1,2,3]
+
+
+def test_unsolicited_status_only_updates_cache_and_does_not_complete_future():
+    from concurrent.futures import Future
+    import core.qwen_continuous_process as mod
+    runtime=mod.LocalQwenContinuousProcessRuntime('/tmp/nonexistent-cpu-test-model','npu:7')
+    future=Future();runtime._futures[('request','long')]=future
+    replies=[dict(kind='status',launch_id=runtime._launch_id,continuous=dict(active_sequences=1,
+        events=[dict(request_id='request',segment_id='long',kind='prefill')])),
+        dict(kind='closed',launch_id=runtime._launch_id,state={})]
+    def response(*args):
+        if len(replies)==1:
+            assert not future.done()
+            assert runtime.snapshot()['continuous']['active_sequences']==1
+        return replies.pop(0),0
+    runtime._wait_response=response;runtime._accept_state=lambda state:None
+    runtime._read_continuous()
+    assert not future.done()
+    assert runtime._close_ack.is_set()
+
+
+def test_busy_worker_pushes_status_without_waiting_for_a_result(monkeypatch):
+    import core.qwen_continuous_runtime as mod
+    class Adapter:
+        def __init__(self,*a,**kw):self.active={};self.completed_tokens={}
+        def prefill(self,items):
+            output=[]
+            for row in items:
+                key=(row['request_id'],row['segment_id'])
+                if key[1]=='short':output.append((key,'short result'))
+                else:self.active[key]=0
+            return output
+        def decode(self,keys):
+            time.sleep(.01)
+            for key in keys:self.active[key]+=1
+            return []
+        def cancel(self,key):
+            self.active.pop(key,None);return [(key,RuntimeError('cancelled'))]
+        def snapshot(self):return dict(active_sequences=len(self.active))
+    monkeypatch.setattr(mod,'ContinuousHFAdapter',Adapter)
+    runtime=SimpleNamespace(api=SimpleNamespace(set_device=lambda x:None),device='cpu',max_new_tokens=256,
+        processor=SimpleNamespace(apply_transcription_request=lambda:None),snapshot=lambda:{},close=lambda:None)
+    parent,child=multiprocessing.Pipe();errors=[]
+    def run():
+        try:worker_loop(child,runtime,'push',dict(max_active=16,max_batch_size=16,
+            max_batch_tokens=80000,max_batch_audio_frames=115200,prefill_batch_size=16,
+            online_repetition_enabled=False))
+        except BaseException as exc:errors.append(exc)
+        finally:child.close()
+    owner=threading.Thread(target=run);owner.start()
+    stream=io.BytesIO()
+    with wave.open(stream,'wb') as w:
+        w.setnchannels(1);w.setsampwidth(2);w.setframerate(16000);w.writeframes(b'\0'*16000)
+    def send(operation,**kwargs):_send(parent,dict(operation=operation,launch_id='push',**kwargs))
+    try:
+        send('submit',key=('a','short'),audio=stream.getvalue(),language=None)
+        assert parent.poll(2);first=_receive(parent)[0]
+        assert first['kind']=='result'
+        send('submit',key=('b','long'),audio=stream.getvalue(),language=None)
+        assert parent.poll(2)
+        pushed=_receive(parent)[0]
+        assert pushed['kind']=='status'
+        assert pushed['continuous']['active_sequences']==1
+        assert pushed['continuous']['status_source']=='owner_safe_step_boundary'
+        send('cancel',key=('b','long'));send('close')
+        while True:
+            assert parent.poll(2)
+            if _receive(parent)[0].get('kind')=='closed':break
+        owner.join(2);assert not owner.is_alive() and not errors
+    finally:
+        parent.close();owner.join(2)

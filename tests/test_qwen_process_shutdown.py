@@ -54,6 +54,7 @@ def test_lifespan_process_starts_qwen_closing_before_nn_and_aggregates_failure(m
             stack.enter_context(patch.object(main.settings,'validate_model_backends'))
             stack.enter_context(patch.object(main,'validate_npu_runtime',return_value={'cpu_test':True}))
             stack.enter_context(patch.object(main,'start_vad_pool',AsyncMock()))
+            stack.enter_context(patch.object(main,'preload_qwen_client',AsyncMock()))
             stack.enter_context(patch.object(main,'stop_vad_pool',stop_vad))
             stack.enter_context(patch.object(main,'close_v3_model_pools',close_nn))
             stack.enter_context(patch.object(main,'close_qwen_client',close_qwen))

@@ -1,0 +1,38 @@
+{
+  "passed": true,
+  "source_full_result": "1135 passed, 2 skipped (protected-only), 1 deselected (known hardware probe), 380 subtests passed",
+  "targeted_result": "88 passed",
+  "source_manifest_sha256": "e2c3f4de2e730a0e4de13eea3e36190d580481eed7c8efbd588f94566e91647c",
+  "effective_guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "guard_startup_marker_count": 188,
+  "guard_startup_all_match_effective_sha": true,
+  "intercepts_by_kind": {
+    "device_cli": 8
+  },
+  "allowed_cpu_loopback_binds": 24,
+  "shared_cache_mutation_intercepts": 0,
+  "source_changes": [],
+  "remaining_owned": [],
+  "private_config": "/tmp/qc-source-guarded-final-r2-20261121-gbipjnyl/config.toml",
+  "private_stats": "/tmp/asr-cpu-wmyqx5ak/private-stats.json",
+  "private_TMPDIR": "/tmp/asr-cpu-wmyqx5ak",
+  "source_module_origins": {
+    "origins": {
+      "core.qwen_asr_client": "/home/zhangs/asr_nvidia/core/qwen_asr_client.py",
+      "core.qwen_continuous_process": "/home/zhangs/asr_nvidia/core/qwen_continuous_process.py",
+      "core.qwen_continuous_runtime": "/home/zhangs/asr_nvidia/core/qwen_continuous_runtime.py",
+      "core.qwen_continuous_scheduler": "/home/zhangs/asr_nvidia/core/qwen_continuous_scheduler.py",
+      "api.routes.asr_qwen_common": "/home/zhangs/asr_nvidia/api/routes/asr_qwen_common.py",
+      "utils.incremental_repetition": "/home/zhangs/asr_nvidia/utils/incremental_repetition.py",
+      "utils.qwen_segment_recovery": "/home/zhangs/asr_nvidia/utils/qwen_segment_recovery.py"
+    },
+    "stats_path": "/tmp/asr-cpu-wmyqx5ak/private-stats.json"
+  },
+  "launch_once_markers": {
+    "targeted-launch.once": "162e277e68eaf0180e12061e0bbadc79e8495b0b33fea0917c06e4dfd0ce8f95",
+    "full-launch.once": "a9025765626cdf8ce25f94f01841092107af18738f779631db84159fb6ad59fc"
+  },
+  "raw_log_incomplete": false,
+  "old_failure_retention": "../qc-source-guarded-final-20261121-b6tnd8cf/first-observed-failure-summary.json explicitly marks incomplete old raw log",
+  "scope": "CPU-only source validation; blocked device_cli attempts did not execute npu-smi; no real model weights/CANN/device execution permitted; prior plain CPU run not a clean NPU comparison"
+}

@@ -66,8 +66,9 @@ def main():
                         outputs=[]
                         for i,future in enumerate(futures):
                             try:
-                                text=future.result(timeout=remaining())
-                                outputs.append(dict(index=i,text=text,tokens=getattr(future,'generated_tokens',None)))
+                                value=future.result(timeout=remaining())
+                                value=value if isinstance(value,dict) else dict(text=value,warning=None)
+                                outputs.append(dict(value,index=i,tokens=getattr(future,'generated_tokens',None)))
                             except concurrent.futures.TimeoutError:
                                 raise TimeoutError('continuous benchmark total gate')
                             except Exception as exc:outputs.append(dict(index=i,error=str(exc)))

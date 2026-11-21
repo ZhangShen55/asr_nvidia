@@ -1,3 +1,25 @@
+## 2026-11-21 最终独立八音频结论
+
+**未通过420秒8/8门槛，候选不推广、change保持open（20/25）。** 用户确认的段级恢复/不可恢复警告已实现，设备故障/取消/超时仍失败。独立HTTP测试与CPU压力隔离，业务源码hash冻结通过；正式缺省仍legacy48/384。
+
+|口径|最终clean3ms真实v3结果|
+|---|---|
+|处理完成/严格无警告成功|2/8，均25%|
+|完成请求|a5 389.080083秒；a8 411.050558秒|
+|未完成|6条在420秒闸门删失，不能记为终态业务失败或质量成功|
+|P50/P95|400.065321/409.952034秒，仅完成子集n=2|
+|整轮墙钟|420.959650秒，未达标|
+|警告|两条完整返回0；worker闸门快照4：3丢弃不可恢复、1恢复前缀|
+|关闭|normalexit0，无强制回收，54.699801秒；全部登记身份退出，端口空闲5秒，既有服务保留|
+
+闸门安全步快照（含warmup可能，不能等同正式所有段最终计数）：已完成3961（EOS3957/复读4）、活跃91、实际活跃峰98、逻辑窗口峰128。prefill 876次/217.312秒，decode951次/150.194秒，4052个已接纳成员、平均prefill4.626段。接纳3ms实际poll累计1.143秒，说明不能把所有耗时简单归于等待或“128并发过高”；频繁prefill/KV重排与供给等仍需同源分解验证。独立128段3ms 7.99秒 vs0ms7.84秒没有提速，不能以CPU模拟运输改善推出NPU吞吐提升。
+
+相对文本：旧16/128与新轮仅a8双方完整，旧353/新354段；56处同边界文本变化、0处纯字段变化、1个新独有段。存在书名等明显措辞变化，不能从完成率推准确率。7条缺完整配对（其中新6条未完成），diff标null而非0。完整可搜索原文见full-v3-differences-drain3-clean.html，具体示例见同名-summary.md；人工有效对话召回≥98%仍未知。
+
+有效源码隔离回归1135pass/380subtests；保护40.so151pass/17subtests。先前plainCPU用例有真实预加载/共享stats隔离泄漏，已修三fixture；与其并行的观察3ms轮2/8不可作独立性能证据。本轮未并行该类任务。后续独立fatal-release修复只影响异常清理，另列增量验证，不重写此轮源码身份。
+
+证据：http-a8-drain3-clean-summary.json、http-a8-drain3-clean-shutdown.json、cleanup-verification.json、final-npu-smi.txt。原始服务日志/请求/响应/完整快照保留在logs/qwen-continuous-20261121-a8-drain3-clean。旧失败、强制关闭及不隔离观察数据均保留，不改写。可选专用sender尚未采用。
+
 # 单Qwen连续生成阶段报告（初版，尚未验收完成）
 
 ## 当前结论
@@ -84,3 +106,40 @@ capacity-paired.json的四个owned worker（1657228、1874297、2086220、235314
 1080 passed, 3 skipped, 2 warnings, 356 subtests passed in 326.34s (0:05:26)。运行使用独立TMPDIR、CANN环境、TORCH_DEVICE_BACKEND_AUTOLOAD=0，仅CPU回归。
 
 最终核验128个owned PID出生身份无存活，18083连续6次为空闲；共享uvicorn1601397保持，见cleanup-verification.json。初轮完整八音频的强制关闭失败仍保留，不能由后续小规模exit0覆盖。当前任务16/25，尚未质量/性能完成，不归档、不推广根配置。
+
+## 用户确认后的段级恢复（2026-11-21）
+
+已按用户选择更改为三类段生成异常保守修复/无法恢复警告并继续其它段；设备故障、超时/取消仍失败。continuous API新增processing_status和segment_warnings，全部无法恢复也不能伪装4008或无警告成功。完成率、严格无警告成功率和可用文本请求数分列。旧0/8不改写。
+
+两段真实8.01秒PCM再次NPU验证：静态16.1786秒，continuous保护关闭16.6117秒（两段length_limit告警），保护开启13.0934秒（两段repetition_stop告警），约节省21.18%墙钟；未恢复可信文本，均明确discard_unrecoverable。只代表两段，不能外推整堂课；详细token、原文与资源见anomaly-warning-npu-replay.json/summary。
+
+强循环检测的896条既有真实token回放为0触发，但无人工参考，不能称召回≥98%或零误杀。质量门槛限制见recovery-quality-evidence.md；候选不推广。
+
+
+## 段级warning后的真实8并发（3ms运输补位改动之前）
+
+原始目录`logs/qwen-continuous-20261121-a8-warning/`，精简结果`http-a8-warning-before-transport-summary.json`。同八完整源、A模式、已暖身、单Qwen16/128，测试源码身份检查完整且运行中无变更。
+
+本轮仍为 **0/8处理完成、0/8严格正常成功、0条已返回带警告完整响应**；八条均在420秒闸门时未完成，随后客户端取消。闸门前未再观察到上一轮的两个fatal业务4012；worker累计有3段repetition_stop、action均discard_unrecoverable，说明异常已按段警告继续，但不能把三个丢弃说成经人工确认无有效语音。HTTP summary的warning_segments=0只统计已返回响应，不能据此否认worker三段警告。全批取证停止墙钟420.675553秒，P50/P95因完成n=0不可定义，不能将取消时刻当完成时长。
+
+闸门前最后有效worker采样completed=2970（EOS=2967、warning=3）、active=45；累计prefill 220.949768秒/1110步，decode 153.822638秒/1165步，repacks=1118、cache_reuses=47。逻辑窗口峰值128、worker真实活跃序列峰值76，观测decode最大成员75。这些是worker自启动累计/采样状态，可能含暖身，不是420秒后排空终值。
+
+此版本没有transport.prefill_members直接计数。仅按(completed+active)/prefill_steps=(2970+45)/1110估算平均prefill约2.716成员，依赖无未计取消/失败prefill等假设，不能当精确测量或反推每批分布。
+
+HBM须分口径：驱动采样全卡7峰值41240MB（含既有服务），owned Qwen worker驱动观测峰值25389MB；worker缓存allocator max_allocated=11082.99072265625MB、max_reserved=23694.0MB，后者peak_scope含加载/未重置且不一定实时，不能直接当驱动进程HBM。
+
+本轮正常关闭已通过：exit0、forced=false、remaining_pids=[]、端口连续5秒无监听；TERM至父进程退出206.872060秒。虽接近关闭210秒宽限，不能与旧轮强制退出混淆，也不能把关闭耗时计作请求完成时间。
+
+后续运输3ms候选尚未完成正式八服务验收。`transport-npu-paired.json`的burst128一次稳态：0ms为7.840453秒、3ms为7.989917秒，3ms本轮没有提速；两档均128正常EOS，但有11条模型输出差异，不能说质量等价。首轮暖态10.101/10.333秒单列，不冒称三轮中位。CPU运输测试prefill调用42→9等现象只能说明CPU调度行为，不能作为NPU吞吐提升证据。420秒内八音频完成目标仍未通过。
+
+## 隔离审计更正与最终有效CPU证据
+
+此前未使用完整guard的source全量回归不能标为纯CPU：StatusContract及其它生命周期测试在根preload=true配置下遗漏预加载mock，可能真实加载Qwen权重；状态测试也曾读取共享asr_stats。并行3ms整音频轮次（logs/qwen-continuous-20261121-a8-drain3）因此仅保留观察值，不能当干净单Qwen性能对照。已修三个测试fixture，原断言不放宽。之前1080等未guard回归仅是历史功能结果，设备隔离资格被本审计更正。
+
+真正guarded source全量：1135 passed、2保护专属skip、1既定硬件probe排除、380subtests，242.22秒；targeted88通过。188条有效组合guard启动SHA一致，8次npu-smi在启动前拦截，真实weights/CANN/device执行及共享cache写删0，source_changes和owned残留为空。guard调试首轮9项失败是夹具/runner隔离问题；其重复误启动导致原日志不完整，已如实标注并保留观察摘要，不能冒充完整原始日志。最终r2独立目录报告/原始日志完整。
+
+保护版本最终40.so，151测试+17subtests通过；最终.so真实NPU三段文本与静态一致、旧长段未结束前新段进入，正常关闭。source真实NPU非法语种、运行中取消及注入owned worker故障验证通过；注入故障的强制回收/TBE及resource_tracker告警单列，不当正常关闭成功。
+
+当前正在独立运行clean3ms八音频，不与任何本轮CPU回归/其它NPU测试并行：logs/qwen-continuous-20261121-a8-drain3-clean。最终结论以后续该轮及必要优化后的有效结果为准。
+
+最终清理增量：fatal-release修复避免worker死亡/已关闭Pipe清理盖住原4011/4012，仅所有Future已终态才清去重。源码完整r4隔离目标13pass；单模块重编后实际保护.so增量31pass（含RPC/shutdown/timeout），设备/权重/cache写删0、owned构建/CPU进程归零。业务源码hash无漂移；文档及profile注释变化、TOML值相等已审计。该微小清理修复后没有重新跑NPU或八音频性能，前述HTTP数据对应不可变run源码身份。证据fatal-release-source-cpu.json/fatal-release-protected-audit.json/fatal-release-protected-cpu.json。严格change校验1/1、独立临时合并预览主规格9/9；根主规格未同步、未归档。

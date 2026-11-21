@@ -1,0 +1,19 @@
+# 连续生成段级告警契约（2026-11-21）
+
+按用户最新选择，repetition_stop、length_limit和invalid_output_prefix不再直接使完整音频4012失败；仅这三类进入保守段级恢复。其它执行/设备/传输故障、取消、timeout继续走错误或取消路径，不能当无人声或成功。
+
+## Future结果
+
+continuous模式正常EOS及生成异常均返回字典：text为含language/<asr_text>的原始格式；warning为None或{reason,action,recovered}；recovered为bool；original_raw仅存内部future或授权测试产物。legacy仍返回str，不自动引入警告字段。process结果传输显式保持字典；在线snapshot和最终HTTP不包含original_raw。
+
+正常EOS：warning=None。三类异常调用utils.qwen_segment_recovery.recover_segment_output；能够保留结构可信非循环前缀时action=recover_prefix，否则返回language None<asr_text>且action=discard_unrecoverable。两者都必须有warning，不能把结构可信解释成人工校验正确，也不能将被丢弃段隐藏在完全成功统计里。
+
+恢复只处理已生成文本，不补写缺失内容，不重复发起模型调用；KV资源释放和逐段补位保持。请求完成但有warning应独立统计completed_with_warnings，另列正常EOS段数、恢复/空异常段数及具体差异，不能用请求HTTP200说明无转写损失。
+
+## 有界诊断
+
+end_reasons保留原异常原因，不把无效前缀EOS累计为正常eos。warning_counts、warning_actions为累计计数，recent_warnings仅32条结构摘要（ID/reason/action/recovered/token数/时刻）。fatal error_counts及recent_errors独立，不保存原异常自由文本。原tokenIDs和original_raw仅供授权测试核对触发位置和恢复差异。
+
+## 验证
+
+CPU测试覆盖正常EOS字典、无效前缀空告警、长度耗尽仅影响目标段、worker-reader warning字典/原始文本隔离，以及已有混长KV、持续补位、缓存代际生命周期、Pipe背压和基础设施错误。真实异常段重放工具scripts/replay_qwen_anomalies.py由主Agent在物理NPU7串行执行；默认使用先前定位的audio_a2/audio_a4两段，依次比较static、continuous-off、continuous-on并保留owner关闭证据。CPU证据不替代实际停止token/时间及恢复内容验证。

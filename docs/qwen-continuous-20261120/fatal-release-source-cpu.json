@@ -1,0 +1,22 @@
+{
+  "returncode": 0,
+  "elapsed_s": 1.1065038600936532,
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/home/zhangs/asr_nvidia/tests/test_qwen_release_after_failure.py"
+  ],
+  "output": "/tmp/qc-fatal-release-guarded-20261121-0hgpqbzd",
+  "source_sha256": "24df6ed2aa86fdff7f038d2fdf554b1c43caf858c749b9341ac0cdaf243d0d22",
+  "test_sha256": "3fc1b128b2437c92920e7df86de2bad9a721a48be7371231b03bc000760c91c8",
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "TMPDIR": "/tmp/asr-cpu-xka8y3eb",
+  "guard_root": "/tmp/asr-cpu-xka8y3eb/guard",
+  "device_weight_guard_records": "",
+  "cache_mutation_intercepts": [],
+  "guard_startup": "{\"pid\": 382482, \"guard_sha256\": \"b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164\", \"kind\": \"COMPOSED_GUARD_READY\"}\n",
+  "scope": "targeted source CPU, composed r4+candidate device/weight guard + support cache/stats isolation, no NPU",
+  "passed": true
+}

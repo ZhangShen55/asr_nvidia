@@ -1,0 +1,38 @@
+{
+  "returncode": 0,
+  "elapsed_s": 6.4509897800162435,
+  "stage": "/tmp/qwen-continuous-protected-20261121-tx99hzp0",
+  "origins": {
+    "core.qwen_asr_client": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_asr_client.cpython-310-aarch64-linux-gnu.so",
+    "core.qwen_continuous_scheduler": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_continuous_scheduler.cpython-310-aarch64-linux-gnu.so",
+    "core.qwen_continuous_runtime": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_continuous_runtime.cpython-310-aarch64-linux-gnu.so",
+    "core.qwen_continuous_process": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/qwen_continuous_process.cpython-310-aarch64-linux-gnu.so",
+    "core.segment_pipeline": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/core/segment_pipeline.cpython-310-aarch64-linux-gnu.so",
+    "api.routes.asr_qwen_common": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/api/routes/asr_qwen_common.cpython-310-aarch64-linux-gnu.so",
+    "utils.incremental_repetition": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/utils/incremental_repetition.cpython-310-aarch64-linux-gnu.so",
+    "utils.qwen_segment_recovery": "/tmp/qwen-continuous-protected-20261121-tx99hzp0/utils/qwen_segment_recovery.cpython-310-aarch64-linux-gnu.so"
+  },
+  "source_changed_since_freeze": [
+    "AGENT.md",
+    "README.md",
+    "test/config.qwen-continuous128.toml"
+  ],
+  "actual_extensions": 40,
+  "shared_cache_blocked": [],
+  "device_weight_guard_records": [],
+  "TMPDIR": "/tmp/asr-cpu-_odw5a68",
+  "guard_path": "/tmp/asr-cpu-_odw5a68/guard",
+  "selected": [
+    "/tmp/qwen-continuous-protected-20261121-tx99hzp0/tests/test_qwen_release_after_failure.py",
+    "/tmp/qwen-continuous-protected-20261121-tx99hzp0/tests/test_qwen_continuous_rpc.py",
+    "/tmp/qwen-continuous-protected-20261121-tx99hzp0/tests/test_qwen_process_shutdown.py",
+    "/tmp/qwen-continuous-protected-20261121-tx99hzp0/tests/test_qwen_continuous_timeout_ownership.py"
+  ],
+  "cpu_only": true,
+  "models_loaded": false,
+  "passed": true,
+  "owner": {
+    "pid": 1517929,
+    "birth": 1795232115.0
+  }
+}

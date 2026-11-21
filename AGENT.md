@@ -478,3 +478,11 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 ### 2026-11-20 连续生成实施中
 
 新change `2026-11-20-qwen-continuous-segment-scheduling`保持单Qwen HF/BF16@npu7。generation_mode=legacy缺省保留静态批；continuous候选仅process单实例，online_repetition_enabled缺省false；test/config.qwen-continuous128.toml为8/16/128验证入口，未验收不推广根配置。每段独立结束及KV安全清理后补位；真实短长交错与完整v3八并发420秒为必要验收，离线128段不替代。当前进度以该change tasks及docs/qwen-continuous-20261120为准。
+
+### 2026-11-21 用户确认段级恢复
+
+continuous模式对三类段生成异常做保守恢复/无法恢复警告并继续其它段，不再仅因该段整音频4012。v3新增processing_status和segment_warnings，保留所有原字段/类型；全部不可恢复也须显式警告，不能伪装4008。设备故障、超时及取消仍失败。完成率与严格无警告成功率/可用文本分列。原0/8与强制关闭证据保留，新验证以本change tasks为准，不提前推广或归档。
+
+### 2026-11-21 连续调度最终独立验证检查点
+
+段级恢复已按用户选择实现；最后独立真实A8/16/128仅2/8在420秒内完成（389.08/411.05秒），6条删失，n2子集P50/P95=400.07/409.95秒。全部owned正常退出、端口释放5秒、原PID1601397保留。源码1135项隔离回归及保护151项通过，独立fatal-release清理修复另做增量验证。文本仅一完整配对可比，人工质量真值缺失，不能推广。当前20/25保持open，不同步主规格、不归档；证据docs/qwen-continuous-20261120/REPORT.md。

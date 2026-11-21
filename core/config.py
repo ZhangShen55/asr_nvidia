@@ -188,6 +188,11 @@ class Settings:
         return value
 
     @property
+    def qwen_continuous_admission_drain_ms(self) -> int:
+        # 仅用于Pipe已收到submit后的运输交接，固定总上限、不续期凑满。
+        return self._qwen_bounded_int("continuous_admission_drain_ms", 0, 0, 5)
+
+    @property
     def qwen_continuous_prefill_batch_size(self) -> int:
         return self._qwen_bounded_int("continuous_prefill_batch_size", 16, 1, 128)
 
@@ -530,6 +535,7 @@ class Settings:
         _ = self.qwen_preload_on_startup
         _ = self.qwen_online_repetition_config
         _ = self.qwen_continuous_prefill_batch_size
+        _ = self.qwen_continuous_admission_drain_ms
         if self.qwen_generation_mode == "continuous":
             if self.qwen_execution_mode != "process" or self.qwen_local_instance_count != 1:
                 raise ValueError("continuous 仅支持 process 单Qwen实例")
