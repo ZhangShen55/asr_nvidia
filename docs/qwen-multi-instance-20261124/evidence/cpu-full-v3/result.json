@@ -1,0 +1,1030 @@
+{
+  "returncode": 0,
+  "elapsed_s": 253.81681783031672,
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "device_weight_guard_records": [
+    "1871305 CPU_LOOPBACK_BIND ('::1', 0)",
+    "{\"pid\": 1871305, \"kind\": \"device_cli\", \"target\": \"npu-smi\", \"stack\": [{\"file\": \"/tmp/asr-cpu-botzae92/guard/sitecustomize.py\", \"line\": 115, \"function\": \"_audit\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 1735, \"function\": \"_execute_child\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 971, \"function\": \"__init__\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 503, \"function\": \"run\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 328, \"function\": \"npu_snapshot\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 419, \"function\": \"collect_snapshot\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 444, \"function\": \"status_snapshot\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/concurrent/futures/thread.py\", \"line\": 58, \"function\": \"run\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/concurrent/futures/thread.py\", \"line\": 83, \"function\": \"_worker\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 953, \"function\": \"run\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 1016, \"function\": \"_bootstrap_inner\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 973, \"function\": \"_bootstrap\"}]}",
+    "{\"pid\": 1871305, \"kind\": \"device_cli\", \"target\": \"npu-smi\", \"stack\": [{\"file\": \"/tmp/asr-cpu-botzae92/guard/sitecustomize.py\", \"line\": 115, \"function\": \"_audit\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 1735, \"function\": \"_execute_child\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 971, \"function\": \"__init__\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 503, \"function\": \"run\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 328, \"function\": \"npu_snapshot\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 419, \"function\": \"collect_snapshot\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 444, \"function\": \"status_snapshot\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/concurrent/futures/thread.py\", \"line\": 58, \"function\": \"run\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/concurrent/futures/thread.py\", \"line\": 83, \"function\": \"_worker\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 953, \"function\": \"run\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 1016, \"function\": \"_bootstrap_inner\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 973, \"function\": \"_bootstrap\"}]}",
+    "{\"pid\": 1871305, \"kind\": \"device_cli\", \"target\": \"npu-smi\", \"stack\": [{\"file\": \"/tmp/asr-cpu-botzae92/guard/sitecustomize.py\", \"line\": 115, \"function\": \"_audit\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 1735, \"function\": \"_execute_child\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 971, \"function\": \"__init__\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 503, \"function\": \"run\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 328, \"function\": \"npu_snapshot\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 419, \"function\": \"collect_snapshot\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 444, \"function\": \"status_snapshot\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/concurrent/futures/thread.py\", \"line\": 58, \"function\": \"run\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/concurrent/futures/thread.py\", \"line\": 83, \"function\": \"_worker\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 953, \"function\": \"run\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 1016, \"function\": \"_bootstrap_inner\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 973, \"function\": \"_bootstrap\"}]}",
+    "{\"pid\": 1871305, \"kind\": \"device_cli\", \"target\": \"npu-smi\", \"stack\": [{\"file\": \"/tmp/asr-cpu-botzae92/guard/sitecustomize.py\", \"line\": 115, \"function\": \"_audit\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 1735, \"function\": \"_execute_child\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 971, \"function\": \"__init__\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/subprocess.py\", \"line\": 503, \"function\": \"run\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 328, \"function\": \"npu_snapshot\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 419, \"function\": \"collect_snapshot\"}, {\"file\": \"/home/zhangs/asr_nvidia/core/resource_diagnostics.py\", \"line\": 444, \"function\": \"status_snapshot\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/concurrent/futures/thread.py\", \"line\": 58, \"function\": \"run\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/concurrent/futures/thread.py\", \"line\": 83, \"function\": \"_worker\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 953, \"function\": \"run\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 1016, \"function\": \"_bootstrap_inner\"}, {\"file\": \"/home/zhangs/conda-envs/asr/lib/python3.10/threading.py\", \"line\": 973, \"function\": \"_bootstrap\"}]}",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2840947 CPU_LOOPBACK_BIND ('127.0.0.1', 37039)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2882712 CPU_LOOPBACK_BIND ('127.0.0.1', 37313)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "3814317 CPU_LOOPBACK_BIND ('127.0.0.1', 35939)",
+    "1871305 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "3816442 CPU_LOOPBACK_BIND ('127.0.0.1', 60443)"
+  ],
+  "cache_mutation_intercepts": [],
+  "isolation": {
+    "TMPDIR": "/tmp/asr-cpu-botzae92",
+    "cache_dir": "/tmp/asr-cpu-botzae92/seacraft_asr",
+    "creator_pid": 1870713,
+    "creator_create_time": 1795453446.43,
+    "r4_guard": "/tmp/asr-cam-full-v9-cpu-guard-v4-cicpsxhw/sitecustomize.py",
+    "r4_guard_sha256": "8cbc95bd47e620c25fcb92735038084361c1c57b63404cc2e3b3ff1655c08863",
+    "guard_path": "/tmp/asr-cpu-botzae92/guard",
+    "guard_sha256": "5f112116ccb993275a8c940239d5f699c87da00d17ae7e4b78e96e3fa2b5b121",
+    "plugin_path": "/tmp/asr-cpu-botzae92/plugin",
+    "plugin_sha256": "9de93ba600d9d2b9dd21a1cc283aef46cc658da7a8779d5ac5eedceb62201543",
+    "mode": "source",
+    "source_root": "/home/zhangs/asr_nvidia",
+    "protected_root": "/tmp/qwen-continuous-protected-20261121-tx99hzp0",
+    "scope": "private short TMPDIR before tested Python imports; shared production cache mutation prohibited; metadata reads allowed"
+  },
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/home/zhangs/asr_nvidia/tests",
+    "-k",
+    "not test_status_snapshot_marks_health_as_skipped",
+    "-p",
+    "isolated_cpu_required_plugin"
+  ],
+  "passed": true,
+  "source_changes": [],
+  "remaining_owned": [],
+  "observed_children": [
+    {
+      "pid": 2002390,
+      "birth": 1795453468.39
+    },
+    {
+      "pid": 2005497,
+      "birth": 1795453470.05
+    },
+    {
+      "pid": 2005498,
+      "birth": 1795453470.05
+    },
+    {
+      "pid": 2015036,
+      "birth": 1795453473.06
+    },
+    {
+      "pid": 2027994,
+      "birth": 1795453476.13
+    },
+    {
+      "pid": 2029565,
+      "birth": 1795453476.38
+    },
+    {
+      "pid": 2031869,
+      "birth": 1795453476.64
+    },
+    {
+      "pid": 2034065,
+      "birth": 1795453476.89
+    },
+    {
+      "pid": 2036078,
+      "birth": 1795453477.15
+    },
+    {
+      "pid": 2038373,
+      "birth": 1795453477.41
+    },
+    {
+      "pid": 2057169,
+      "birth": 1795453480.55
+    },
+    {
+      "pid": 2071765,
+      "birth": 1795453483.58
+    },
+    {
+      "pid": 2092552,
+      "birth": 1795453486.64
+    },
+    {
+      "pid": 2107438,
+      "birth": 1795453489.69
+    },
+    {
+      "pid": 2125088,
+      "birth": 1795453492.29
+    },
+    {
+      "pid": 2128510,
+      "birth": 1795453492.75
+    },
+    {
+      "pid": 2144212,
+      "birth": 1795453495.39
+    },
+    {
+      "pid": 2157163,
+      "birth": 1795453497.98
+    },
+    {
+      "pid": 2170238,
+      "birth": 1795453500.59
+    },
+    {
+      "pid": 2171514,
+      "birth": 1795453500.84
+    },
+    {
+      "pid": 2172663,
+      "birth": 1795453501.09
+    },
+    {
+      "pid": 2189371,
+      "birth": 1795453504.4
+    },
+    {
+      "pid": 2190949,
+      "birth": 1795453504.69
+    },
+    {
+      "pid": 2220038,
+      "birth": 1795453508.57
+    },
+    {
+      "pid": 2222969,
+      "birth": 1795453508.95
+    },
+    {
+      "pid": 2224904,
+      "birth": 1795453509.24
+    },
+    {
+      "pid": 2227391,
+      "birth": 1795453509.55
+    },
+    {
+      "pid": 2229396,
+      "birth": 1795453509.81
+    },
+    {
+      "pid": 2231292,
+      "birth": 1795453510.08
+    },
+    {
+      "pid": 2233440,
+      "birth": 1795453510.41
+    },
+    {
+      "pid": 2256757,
+      "birth": 1795453513.44
+    },
+    {
+      "pid": 2268503,
+      "birth": 1795453516.17
+    },
+    {
+      "pid": 2268515,
+      "birth": 1795453516.17
+    },
+    {
+      "pid": 2295309,
+      "birth": 1795453519.56
+    },
+    {
+      "pid": 2299083,
+      "birth": 1795453520.02
+    },
+    {
+      "pid": 2301472,
+      "birth": 1795453520.31
+    },
+    {
+      "pid": 2303332,
+      "birth": 1795453520.76
+    },
+    {
+      "pid": 2304181,
+      "birth": 1795453521.05
+    },
+    {
+      "pid": 2317998,
+      "birth": 1795453524.05
+    },
+    {
+      "pid": 2332645,
+      "birth": 1795453526.64
+    },
+    {
+      "pid": 2350321,
+      "birth": 1795453529.24
+    },
+    {
+      "pid": 2378235,
+      "birth": 1795453531.86
+    },
+    {
+      "pid": 2401278,
+      "birth": 1795453534.87
+    },
+    {
+      "pid": 2404340,
+      "birth": 1795453535.45
+    },
+    {
+      "pid": 2405827,
+      "birth": 1795453535.69
+    },
+    {
+      "pid": 2452035,
+      "birth": 1795453541.13
+    },
+    {
+      "pid": 2480172,
+      "birth": 1795453545.12
+    },
+    {
+      "pid": 2481661,
+      "birth": 1795453545.31
+    },
+    {
+      "pid": 2482772,
+      "birth": 1795453545.47
+    },
+    {
+      "pid": 2482787,
+      "birth": 1795453545.47
+    },
+    {
+      "pid": 2482806,
+      "birth": 1795453545.47
+    },
+    {
+      "pid": 2487618,
+      "birth": 1795453546.06
+    },
+    {
+      "pid": 2488587,
+      "birth": 1795453546.2
+    },
+    {
+      "pid": 2490856,
+      "birth": 1795453546.48
+    },
+    {
+      "pid": 2492047,
+      "birth": 1795453546.63
+    },
+    {
+      "pid": 2492056,
+      "birth": 1795453546.63
+    },
+    {
+      "pid": 2492070,
+      "birth": 1795453546.63
+    },
+    {
+      "pid": 2494287,
+      "birth": 1795453546.83
+    },
+    {
+      "pid": 2494289,
+      "birth": 1795453546.83
+    },
+    {
+      "pid": 2495478,
+      "birth": 1795453546.95
+    },
+    {
+      "pid": 2495482,
+      "birth": 1795453546.95
+    },
+    {
+      "pid": 2496649,
+      "birth": 1795453547.06
+    },
+    {
+      "pid": 2514744,
+      "birth": 1795453548.75
+    },
+    {
+      "pid": 2516223,
+      "birth": 1795453548.89
+    },
+    {
+      "pid": 2518729,
+      "birth": 1795453549.16
+    },
+    {
+      "pid": 2520418,
+      "birth": 1795453549.31
+    },
+    {
+      "pid": 2522280,
+      "birth": 1795453549.46
+    },
+    {
+      "pid": 2522297,
+      "birth": 1795453549.46
+    },
+    {
+      "pid": 2522323,
+      "birth": 1795453549.46
+    },
+    {
+      "pid": 2526092,
+      "birth": 1795453550.18
+    },
+    {
+      "pid": 2527033,
+      "birth": 1795453550.34
+    },
+    {
+      "pid": 2527896,
+      "birth": 1795453550.49
+    },
+    {
+      "pid": 2529051,
+      "birth": 1795453550.64
+    },
+    {
+      "pid": 2529055,
+      "birth": 1795453550.64
+    },
+    {
+      "pid": 2529062,
+      "birth": 1795453550.64
+    },
+    {
+      "pid": 2534326,
+      "birth": 1795453551.21
+    },
+    {
+      "pid": 2535635,
+      "birth": 1795453551.35
+    },
+    {
+      "pid": 2538333,
+      "birth": 1795453551.67
+    },
+    {
+      "pid": 2539669,
+      "birth": 1795453551.82
+    },
+    {
+      "pid": 2539671,
+      "birth": 1795453551.82
+    },
+    {
+      "pid": 2545248,
+      "birth": 1795453552.39
+    },
+    {
+      "pid": 2546670,
+      "birth": 1795453552.52
+    },
+    {
+      "pid": 2549456,
+      "birth": 1795453552.81
+    },
+    {
+      "pid": 2551069,
+      "birth": 1795453552.97
+    },
+    {
+      "pid": 2551070,
+      "birth": 1795453552.97
+    },
+    {
+      "pid": 2551092,
+      "birth": 1795453552.97
+    },
+    {
+      "pid": 2553020,
+      "birth": 1795453553.17
+    },
+    {
+      "pid": 2553024,
+      "birth": 1795453553.17
+    },
+    {
+      "pid": 2554559,
+      "birth": 1795453553.29
+    },
+    {
+      "pid": 2554567,
+      "birth": 1795453553.29
+    },
+    {
+      "pid": 2555645,
+      "birth": 1795453553.39
+    },
+    {
+      "pid": 2559573,
+      "birth": 1795453553.81
+    },
+    {
+      "pid": 2561228,
+      "birth": 1795453553.96
+    },
+    {
+      "pid": 2562817,
+      "birth": 1795453554.11
+    },
+    {
+      "pid": 2562825,
+      "birth": 1795453554.11
+    },
+    {
+      "pid": 2563386,
+      "birth": 1795453554.16
+    },
+    {
+      "pid": 2565128,
+      "birth": 1795453554.36
+    },
+    {
+      "pid": 2565132,
+      "birth": 1795453554.36
+    },
+    {
+      "pid": 2566203,
+      "birth": 1795453554.48
+    },
+    {
+      "pid": 2566204,
+      "birth": 1795453554.48
+    },
+    {
+      "pid": 2567647,
+      "birth": 1795453554.6
+    },
+    {
+      "pid": 2570157,
+      "birth": 1795453554.89
+    },
+    {
+      "pid": 2571606,
+      "birth": 1795453555.03
+    },
+    {
+      "pid": 2572888,
+      "birth": 1795453555.18
+    },
+    {
+      "pid": 2574346,
+      "birth": 1795453555.34
+    },
+    {
+      "pid": 2574348,
+      "birth": 1795453555.34
+    },
+    {
+      "pid": 2578119,
+      "birth": 1795453555.77
+    },
+    {
+      "pid": 2578846,
+      "birth": 1795453555.9
+    },
+    {
+      "pid": 2582490,
+      "birth": 1795453556.31
+    },
+    {
+      "pid": 2586659,
+      "birth": 1795453556.75
+    },
+    {
+      "pid": 2588113,
+      "birth": 1795453556.89
+    },
+    {
+      "pid": 2592589,
+      "birth": 1795453557.32
+    },
+    {
+      "pid": 2597436,
+      "birth": 1795453557.75
+    },
+    {
+      "pid": 2598707,
+      "birth": 1795453557.89
+    },
+    {
+      "pid": 2603092,
+      "birth": 1795453558.32
+    },
+    {
+      "pid": 2604580,
+      "birth": 1795453558.46
+    },
+    {
+      "pid": 2604581,
+      "birth": 1795453558.46
+    },
+    {
+      "pid": 2604587,
+      "birth": 1795453558.46
+    },
+    {
+      "pid": 2607108,
+      "birth": 1795453558.66
+    },
+    {
+      "pid": 2607109,
+      "birth": 1795453558.66
+    },
+    {
+      "pid": 2609408,
+      "birth": 1795453558.88
+    },
+    {
+      "pid": 2620020,
+      "birth": 1795453560.4
+    },
+    {
+      "pid": 2688317,
+      "birth": 1795453566.05
+    },
+    {
+      "pid": 2690515,
+      "birth": 1795453566.48
+    },
+    {
+      "pid": 2694533,
+      "birth": 1795453567.12
+    },
+    {
+      "pid": 2698851,
+      "birth": 1795453567.56
+    },
+    {
+      "pid": 2702313,
+      "birth": 1795453567.94
+    },
+    {
+      "pid": 2711199,
+      "birth": 1795453568.83
+    },
+    {
+      "pid": 2715899,
+      "birth": 1795453569.32
+    },
+    {
+      "pid": 2720179,
+      "birth": 1795453569.75
+    },
+    {
+      "pid": 2724110,
+      "birth": 1795453570.15
+    },
+    {
+      "pid": 2727853,
+      "birth": 1795453570.54
+    },
+    {
+      "pid": 2732707,
+      "birth": 1795453571.03
+    },
+    {
+      "pid": 2736704,
+      "birth": 1795453571.42
+    },
+    {
+      "pid": 2742143,
+      "birth": 1795453571.81
+    },
+    {
+      "pid": 2753873,
+      "birth": 1795453572.71
+    },
+    {
+      "pid": 2759486,
+      "birth": 1795453573.15
+    },
+    {
+      "pid": 2767020,
+      "birth": 1795453573.68
+    },
+    {
+      "pid": 2775000,
+      "birth": 1795453574.22
+    },
+    {
+      "pid": 2781503,
+      "birth": 1795453574.66
+    },
+    {
+      "pid": 2787701,
+      "birth": 1795453575.1
+    },
+    {
+      "pid": 2793911,
+      "birth": 1795453575.63
+    },
+    {
+      "pid": 2797927,
+      "birth": 1795453576.2
+    },
+    {
+      "pid": 2801941,
+      "birth": 1795453576.77
+    },
+    {
+      "pid": 2807642,
+      "birth": 1795453577.32
+    },
+    {
+      "pid": 2811819,
+      "birth": 1795453577.73
+    },
+    {
+      "pid": 2817323,
+      "birth": 1795453578.24
+    },
+    {
+      "pid": 2824054,
+      "birth": 1795453578.85
+    },
+    {
+      "pid": 2830087,
+      "birth": 1795453579.36
+    },
+    {
+      "pid": 2840947,
+      "birth": 1795453580.24
+    },
+    {
+      "pid": 2882712,
+      "birth": 1795453584.36
+    },
+    {
+      "pid": 3000733,
+      "birth": 1795453593.92
+    },
+    {
+      "pid": 3165692,
+      "birth": 1795453608.02
+    },
+    {
+      "pid": 3165693,
+      "birth": 1795453608.02
+    },
+    {
+      "pid": 3170551,
+      "birth": 1795453608.48
+    },
+    {
+      "pid": 3170552,
+      "birth": 1795453608.49
+    },
+    {
+      "pid": 3170554,
+      "birth": 1795453608.49
+    },
+    {
+      "pid": 3170563,
+      "birth": 1795453608.49
+    },
+    {
+      "pid": 3175770,
+      "birth": 1795453608.96
+    },
+    {
+      "pid": 3176144,
+      "birth": 1795453609.0
+    },
+    {
+      "pid": 3176153,
+      "birth": 1795453609.0
+    },
+    {
+      "pid": 3176165,
+      "birth": 1795453609.0
+    },
+    {
+      "pid": 3176179,
+      "birth": 1795453609.0
+    },
+    {
+      "pid": 3176211,
+      "birth": 1795453609.0
+    },
+    {
+      "pid": 3176228,
+      "birth": 1795453609.01
+    },
+    {
+      "pid": 3176247,
+      "birth": 1795453609.01
+    },
+    {
+      "pid": 3182884,
+      "birth": 1795453609.54
+    },
+    {
+      "pid": 3182885,
+      "birth": 1795453609.54
+    },
+    {
+      "pid": 3188399,
+      "birth": 1795453609.98
+    },
+    {
+      "pid": 3188400,
+      "birth": 1795453609.98
+    },
+    {
+      "pid": 3194845,
+      "birth": 1795453610.56
+    },
+    {
+      "pid": 3194856,
+      "birth": 1795453610.56
+    },
+    {
+      "pid": 3201473,
+      "birth": 1795453611.09
+    },
+    {
+      "pid": 3201490,
+      "birth": 1795453611.09
+    },
+    {
+      "pid": 3207684,
+      "birth": 1795453611.54
+    },
+    {
+      "pid": 3207703,
+      "birth": 1795453611.54
+    },
+    {
+      "pid": 3214421,
+      "birth": 1795453612.04
+    },
+    {
+      "pid": 3214423,
+      "birth": 1795453612.05
+    },
+    {
+      "pid": 3220878,
+      "birth": 1795453612.52
+    },
+    {
+      "pid": 3220880,
+      "birth": 1795453612.53
+    },
+    {
+      "pid": 3228925,
+      "birth": 1795453613.17
+    },
+    {
+      "pid": 3228926,
+      "birth": 1795453613.17
+    },
+    {
+      "pid": 3235932,
+      "birth": 1795453613.68
+    },
+    {
+      "pid": 3235933,
+      "birth": 1795453613.68
+    },
+    {
+      "pid": 3235934,
+      "birth": 1795453613.68
+    },
+    {
+      "pid": 3235935,
+      "birth": 1795453613.68
+    },
+    {
+      "pid": 3243276,
+      "birth": 1795453614.21
+    },
+    {
+      "pid": 3243277,
+      "birth": 1795453614.21
+    },
+    {
+      "pid": 3243278,
+      "birth": 1795453614.21
+    },
+    {
+      "pid": 3243282,
+      "birth": 1795453614.21
+    },
+    {
+      "pid": 3243284,
+      "birth": 1795453614.21
+    },
+    {
+      "pid": 3243285,
+      "birth": 1795453614.22
+    },
+    {
+      "pid": 3243287,
+      "birth": 1795453614.22
+    },
+    {
+      "pid": 3243288,
+      "birth": 1795453614.22
+    },
+    {
+      "pid": 3251400,
+      "birth": 1795453614.83
+    },
+    {
+      "pid": 3251423,
+      "birth": 1795453614.83
+    },
+    {
+      "pid": 3256996,
+      "birth": 1795453615.3
+    },
+    {
+      "pid": 3257005,
+      "birth": 1795453615.3
+    },
+    {
+      "pid": 3345347,
+      "birth": 1795453626.9
+    },
+    {
+      "pid": 3386044,
+      "birth": 1795453630.62
+    },
+    {
+      "pid": 3386866,
+      "birth": 1795453630.69
+    },
+    {
+      "pid": 3416267,
+      "birth": 1795453634.55
+    },
+    {
+      "pid": 3418328,
+      "birth": 1795453634.78
+    },
+    {
+      "pid": 3418329,
+      "birth": 1795453634.79
+    },
+    {
+      "pid": 3483538,
+      "birth": 1795453646.49
+    },
+    {
+      "pid": 3483539,
+      "birth": 1795453646.49
+    },
+    {
+      "pid": 3486931,
+      "birth": 1795453647.67
+    },
+    {
+      "pid": 3490749,
+      "birth": 1795453648.16
+    },
+    {
+      "pid": 3499620,
+      "birth": 1795453649.25
+    },
+    {
+      "pid": 3554429,
+      "birth": 1795453657.99
+    },
+    {
+      "pid": 3644951,
+      "birth": 1795453671.34
+    },
+    {
+      "pid": 3650222,
+      "birth": 1795453672.54
+    },
+    {
+      "pid": 3655792,
+      "birth": 1795453673.67
+    },
+    {
+      "pid": 3655793,
+      "birth": 1795453673.67
+    },
+    {
+      "pid": 3666569,
+      "birth": 1795453675.35
+    },
+    {
+      "pid": 3666570,
+      "birth": 1795453675.35
+    },
+    {
+      "pid": 3666571,
+      "birth": 1795453675.35
+    },
+    {
+      "pid": 3666572,
+      "birth": 1795453675.36
+    },
+    {
+      "pid": 3688264,
+      "birth": 1795453678.54
+    },
+    {
+      "pid": 3688301,
+      "birth": 1795453678.54
+    },
+    {
+      "pid": 3700552,
+      "birth": 1795453680.2
+    },
+    {
+      "pid": 3710474,
+      "birth": 1795453681.28
+    },
+    {
+      "pid": 3726337,
+      "birth": 1795453684.15
+    },
+    {
+      "pid": 3741268,
+      "birth": 1795453686.22
+    },
+    {
+      "pid": 3750750,
+      "birth": 1795453687.43
+    },
+    {
+      "pid": 3759264,
+      "birth": 1795453688.54
+    },
+    {
+      "pid": 3768001,
+      "birth": 1795453689.66
+    },
+    {
+      "pid": 3780873,
+      "birth": 1795453691.24
+    },
+    {
+      "pid": 3780874,
+      "birth": 1795453691.24
+    },
+    {
+      "pid": 3803439,
+      "birth": 1795453694.5
+    },
+    {
+      "pid": 3807390,
+      "birth": 1795453695.17
+    },
+    {
+      "pid": 3814317,
+      "birth": 1795453696.86
+    },
+    {
+      "pid": 3816442,
+      "birth": 1795453697.39
+    }
+  ],
+  "source_sha256": {
+    "core/request_telemetry.py": "7c7c0a41e25e8d356bf29f4bfa4fba22a992f74a70e63bd0880976640e3084e7",
+    "core/qwen_continuous_process.py": "13d08cb2774898300066ce69dfeb8813901732d9ae7b645b7453244e0f6d39c7",
+    "core/vad_volume.py": "e97dfdf5cc4dc5a38fc5a5938dc3c20a70e81e09d6c2b50a2212295de624e6a4",
+    "core/progress.py": "8969e793015b8175e2990f5221b6e69e0b8c5072b64ccfa77e55b19e6a67bfb8",
+    "core/models.py": "2d8078998d8b866d35cc011f93acfc32556219adb2e5aed4e82b8502104534a0",
+    "core/qwen_asr_process.py": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e",
+    "core/deployment.py": "107b7c00dd0469c97acadcab34c32182a0321b67bd7e39ee740d1c89feb65966",
+    "core/model_loading.py": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c",
+    "core/async_utils.py": "bbf61919dc7a5b986450c9b00ffed7df0980c99e94c5f16c4f2dca1f35abe5c6",
+    "core/config.py": "f15e65b9a1e4901e199c271957cfe48e2f9fc3e7fcfc5de94f1a10c3fe563a68",
+    "core/qwen_asr_client.py": "48de1329467d9cb279074f2e013c718e06a146a49a772fadb96e4d959890d731",
+    "core/segment_pipeline.py": "90214f5e1e7f95aef77fde336ef971dac8a9fdc703f2fb21273fdeec094eb32a",
+    "core/vad.py": "5977c424850ded7cd67d76708a52fa5750b01461723d6d35b1b5a0fe4a08edb1",
+    "core/npu_resource_status.py": "38dce7800a4e1bbc0fc11a7f4a50a545be3df9aa2e150359b36cb3a6ccc34bb6",
+    "core/logging.py": "30e309f26c3e8ec5ccde044bbb53cf0d1a9084fca4fd8773ae9c2018ff0c64fa",
+    "core/performance_watchdog.py": "6a8bad32fa704c9ccc0cb31a33e485577568393aa3ea2bfff4405b7513231db0",
+    "core/qwen_continuous_runtime.py": "54566e37e25930100d61883d055f19f2aea7637a5ded051113d82dec070fb955",
+    "core/qwen_asr_queue.py": "8e5fb766b31689484076c8b6c1764b2d9120455f4a9e07732d0e02facf636e06",
+    "core/status.py": "4ac95ee0355e1c984dce09132e88d8003eaec0502095cde0c39cda0b4d3f223f",
+    "core/qwen_continuous_scheduler.py": "a4954d5e1b00d54a166ca7c1959aafac3de432c9d7b246340b487bd7abf4db4d",
+    "core/qwen_asr_runtime.py": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe",
+    "core/resource_diagnostics.py": "51b93a8193596e9a1c9b2cfab9a2f162d30cdaaa53f19a10ecee667870e18ae5",
+    "core/local_inference.py": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01",
+    "core/vad_pool.py": "196a4fff84c2b25d156f9840fba6d8e0c1162b4a7a23ef65ac6d4533902505fa",
+    "core/qwen_batch_scheduler.py": "399ffb0e4d8f282b597320c8acd6a0de9cae472d0442a625c37b265bff1ffbfc",
+    "core/cam_process.py": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3",
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/asr_v3.py": "cc27724909893179022a6be4b603e9a6945ba3050b41297a2fb2ece89ac626d0",
+    "api/routes/asr_qwen_common.py": "e3b6ce2cbcf04c61fffc07e59e587ef768dac369aa871665f9a0d67af8c279ec",
+    "api/routes/status.py": "492598502f0707775be7ae5a3b502f829bc6b6d31ff9790d6d6fd4db83f15394",
+    "api/routes/asr_common.py": "5a04bac9bca03c62de15605966c23ae4cc84cd20fe1b44520c43e60152ed29b6",
+    "api/routes/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

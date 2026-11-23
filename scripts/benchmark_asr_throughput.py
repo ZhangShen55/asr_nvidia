@@ -216,11 +216,13 @@ def owned_cache_files(cache_dir, *, max_entries=4096):
 
 class OwnedService:
     """仅操作Popen确定归属、且PID创建时间仍匹配的资源。"""
-    def __init__(self, command, env, host, port, output, *, expected_exit_codes=(0,)):
+    def __init__(self, command, env, host, port, output, *, expected_exit_codes=(0,), cwd=None):
         import psutil
         if host not in ("localhost", "127.0.0.1") or listening(host, port):
             raise RuntimeError("owned启动仅支持空闲本机端口，不接管既有服务")
         self.host, self.port, self.output = host, port, Path(output)
+        # 正式源码入口可配独立工作目录，防止相对日志路径轮转历史项目日志。
+        self.cwd = Path(cwd).resolve() if cwd is not None else ROOT
         # 生产main.py正常TERM必须exit0；裸Python子进程测试可显式采用不同策略。
         self.expected_exit_codes = tuple(expected_exit_codes)
         # 每服务独占短临时根；不继承外部TMPDIR，不删除旧缓存，也不污染父环境。
@@ -229,7 +231,7 @@ class OwnedService:
         child_env = dict(env, TMPDIR=self.temp_dir)
         self.log = (self.output / "service.log").open("w")
         try:
-            self.process = subprocess.Popen(command, cwd=ROOT, env=child_env, stdout=self.log,
+            self.process = subprocess.Popen(command, cwd=self.cwd, env=child_env, stdout=self.log,
                                             stderr=subprocess.STDOUT, start_new_session=True)
         except BaseException:
             self.log.close()
@@ -260,7 +262,8 @@ class OwnedService:
         write_json(self.output / "ownership.json", {"pid": self.process.pid,
                    "identities": self.identities, "host": self.host, "port": self.port,
                    "temp_dir": self.temp_dir, "cache_dir": self.cache_dir,
-                   "temp_dir_scope": "owned service TMPDIR; retained after shutdown, no recursive deletion"})
+                   "temp_dir_scope": "owned service TMPDIR; retained after shutdown, no recursive deletion",
+                   "cwd": str(self.cwd)})
 
     def remaining(self):
         import psutil

@@ -368,6 +368,13 @@ def supervise(command,args):
     try:
         with (args.output/'worker.log').open('w') as log:
             child=subprocess.Popen(command,stdin=subprocess.DEVNULL,stdout=log,stderr=subprocess.STDOUT,start_new_session=True)
+            # 全机children枚举可能慢于短命父进程；先登记Popen根出生身份，
+            # 再扫描后代，否则最终只剩孤儿时会丢失已正常退出的根证据。
+            parent=psutil.Process(child.pid)
+            created=parent.create_time()
+            if os.getsid(child.pid)==child.pid:
+                registered[(child.pid,created)]={"pid":child.pid,"create_time":created,
+                    "sid":child.pid,"cmdline":list(command),"identity_source":"Popen PID/birth/session before descendant scan"}
             register()
             while time.monotonic()<deadline-reserve and not stops and child.poll() is None:
                 register();time.sleep(.05)

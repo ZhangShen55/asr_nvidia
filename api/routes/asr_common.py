@@ -51,6 +51,7 @@ class AsrContext:
     sample_rate: int = 0
     audio_total_s: float = 0.0
     task_id: str = ""
+    request_id: str = ""
     load_audio_time_ms: float = 0.0
 
 

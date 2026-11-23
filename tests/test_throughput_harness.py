@@ -704,3 +704,33 @@ def test_owned_audio_cache_gate_is_readonly_after_normal_shutdown(tmp_path, monk
     assert unrelated.read_bytes() == b"TMPDIR files outside audio cache do not count"
     if state != "missing":
         assert cache.is_dir()
+
+
+def test_owned_service_explicit_cwd_keeps_formal_log_untouched(tmp_path, monkeypatch):
+    source, work, output = (tmp_path / name for name in ("source", "work", "output"))
+    for path in (source, work, output):
+        path.mkdir()
+    sentinel = source / "asr_service.log"
+    sentinel.write_text("historical log must remain")
+    monkeypatch.setattr(harness, "ROOT", source)
+    with socket.socket() as reserve:
+        reserve.bind(("127.0.0.1", 0))
+        port = reserve.getsockname()[1]
+    async def exercise():
+        owner = harness.OwnedService(
+            [sys.executable, "-c", "from pathlib import Path; import time; Path('asr_service.log').write_text('owned runtime log'); time.sleep(30)"],
+            dict(os.environ), "127.0.0.1", port, output, expected_exit_codes=(-15,), cwd=work)
+        try:
+            deadline = asyncio.get_running_loop().time() + 5
+            while not (work / "asr_service.log").exists():
+                assert owner.process.poll() is None
+                if asyncio.get_running_loop().time() >= deadline:
+                    raise TimeoutError("owned log fixture startup")
+                await asyncio.sleep(.02)
+        finally:
+            result = await owner.close(deadline_s=5, observe_s=.05)
+        assert result["passed"]
+        assert json.loads((output / "ownership.json").read_text())["cwd"] == str(work)
+    asyncio.run(exercise())
+    assert sentinel.read_text() == "historical log must remain"
+    assert (work / "asr_service.log").read_text() == "owned runtime log"

@@ -1,0 +1,173 @@
+{
+  "passed": true,
+  "status": "passed",
+  "scope": "real HTTP, observed active windows; no artificial hold",
+  "reason": null,
+  "records": {
+    "B0": {
+      "mode": "B",
+      "started": 7542886.00068708,
+      "response_received": 7542889.68849531,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "B1": {
+      "mode": "B",
+      "started": 7542886.00185118,
+      "response_received": 7542889.68946855,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "B2": {
+      "mode": "B",
+      "started": 7542886.00287258,
+      "response_received": 7542889.69046491,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "B3": {
+      "mode": "B",
+      "started": 7542886.00388609,
+      "response_received": 7542889.68744656,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "fifthB": {
+      "mode": "B",
+      "started": 7542886.99965206,
+      "response_received": 7542887.20142956,
+      "http_status": 200,
+      "code": 4017,
+      "business_complete": false
+    },
+    "A0": {
+      "mode": "A",
+      "started": 7542887.90022813,
+      "response_received": 7542891.59454234,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "A1": {
+      "mode": "A",
+      "started": 7542887.90131914,
+      "response_received": 7542891.11962314,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "fullA": {
+      "mode": "A",
+      "started": 7542888.46352812,
+      "response_received": 7542888.67547848,
+      "http_status": 200,
+      "code": 4013,
+      "business_complete": false
+    },
+    "fullB": {
+      "mode": "B",
+      "started": 7542888.46508655,
+      "response_received": 7542888.87756383,
+      "http_status": 200,
+      "code": 4013,
+      "business_complete": false
+    }
+  },
+  "observations": [
+    {
+      "time": 7542886.07836268,
+      "audio": {
+        "configured_total": 6,
+        "active_total": 0,
+        "waiting_total": 0,
+        "effective_total": 6,
+        "healthy_owners": 6,
+        "leased_owners": 0,
+        "available_owners": 6
+      },
+      "B": {
+        "configured": 4,
+        "active": 0,
+        "waiting": 0,
+        "effective": 4
+      }
+    },
+    {
+      "time": 7542886.9989504,
+      "audio": {
+        "configured_total": 6,
+        "active_total": 4,
+        "waiting_total": 0,
+        "effective_total": 6,
+        "healthy_owners": 6,
+        "leased_owners": 4,
+        "available_owners": 2
+      },
+      "B": {
+        "configured": 4,
+        "active": 4,
+        "waiting": 0,
+        "effective": 4
+      }
+    },
+    {
+      "time": 7542887.58979289,
+      "audio": {
+        "configured_total": 6,
+        "active_total": 4,
+        "waiting_total": 0,
+        "effective_total": 6,
+        "healthy_owners": 6,
+        "leased_owners": 4,
+        "available_owners": 2
+      },
+      "B": {
+        "configured": 4,
+        "active": 4,
+        "waiting": 0,
+        "effective": 4
+      }
+    },
+    {
+      "time": 7542887.97278123,
+      "audio": {
+        "configured_total": 6,
+        "active_total": 4,
+        "waiting_total": 0,
+        "effective_total": 6,
+        "healthy_owners": 6,
+        "leased_owners": 4,
+        "available_owners": 2
+      },
+      "B": {
+        "configured": 4,
+        "active": 4,
+        "waiting": 0,
+        "effective": 4
+      }
+    },
+    {
+      "time": 7542888.46268883,
+      "audio": {
+        "configured_total": 6,
+        "active_total": 6,
+        "waiting_total": 0,
+        "effective_total": 6,
+        "healthy_owners": 6,
+        "leased_owners": 6,
+        "available_owners": 0
+      },
+      "B": {
+        "configured": 4,
+        "active": 4,
+        "waiting": 0,
+        "effective": 4
+      }
+    }
+  ],
+  "elapsed_s": 5.969806500710547
+}

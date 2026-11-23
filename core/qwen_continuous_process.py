@@ -187,8 +187,10 @@ class LocalQwenContinuousProcessRuntime(LocalQwenProcessRuntime):
     def __init__(self, *args, max_active=128, max_batch_size=128,
                  online_repetition_enabled=False, online_repetition_config=None, prefill_batch_size=16,
                  max_batch_tokens=80000, max_batch_audio_frames=115200,
-                 continuous_admission_drain_ms=0, **kwargs):
+                 continuous_admission_drain_ms=0, owner_threads=1, **kwargs):
         import math
+        if type(owner_threads) is not int or not 1 <= owner_threads <= 128:
+            raise ValueError('owner_threads must be an integer within 1..128')
         if type(continuous_admission_drain_ms) not in (int,float) or not math.isfinite(continuous_admission_drain_ms) or not 0<=continuous_admission_drain_ms<=5:
             raise ValueError('continuous_admission_drain_ms must be finite within 0..5')
         kwargs.setdefault('_startup_timeout_s', 120)
@@ -200,7 +202,7 @@ class LocalQwenContinuousProcessRuntime(LocalQwenProcessRuntime):
             online_repetition_config=online_repetition_config,
             prefill_batch_size=min(prefill_batch_size, max_batch_size),
             max_batch_tokens=max_batch_tokens, max_batch_audio_frames=max_batch_audio_frames,
-            transport_drain_s=continuous_admission_drain_ms/1000)
+            transport_drain_s=continuous_admission_drain_ms/1000, owner_threads=owner_threads)
         self._futures = {}
         self._pending_send_started = {}
         self._transport_send_s = 0.0
@@ -367,6 +369,12 @@ class LocalQwenContinuousProcessRuntime(LocalQwenProcessRuntime):
         with self._continuous_lock:
             for key in keys:
                 self._futures.pop(key, None)
+
+    def request_drained(self, request_id):
+        """Local ownership check; no device call and no transport round trip."""
+        with self._continuous_lock:
+            return all(future.done() for key, future in self._futures.items()
+                       if key[0] == str(request_id))
 
     def cancel_segment(self, request_id, segment_id):
         with self._send_lock:

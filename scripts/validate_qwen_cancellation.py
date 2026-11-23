@@ -162,7 +162,8 @@ async def run_validation(sample, *, model_dir, device="npu:7", dtype="bfloat16",
     checkpoint = checkpoint or (lambda: None)
     should_stop = should_stop or (lambda: False)
     observer = Observer()
-    client = QwenAsrClient(local_model_dir=model_dir, local_device=device, local_dtype=dtype,
+    # 该工具保持单份legacy线程推理的取消/同步边界，不随服务新默认切模式。
+    client = QwenAsrClient(generation_mode='legacy', local_model_dir=model_dir, local_device=device, local_dtype=dtype,
                            local_instance_count=1, max_new_tokens=max_new_tokens,
                            request_timeout_s=request_timeout_s, retry_count=0,
                            max_inference_batch_size=1,

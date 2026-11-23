@@ -1,0 +1,86 @@
+{
+  "items": [
+    {
+      "id": "container-model-packaging",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 30
+    },
+    {
+      "id": "local-model-inference-backends",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 10
+    },
+    {
+      "id": "local-model-runtime",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 7
+    },
+    {
+      "id": "local-qwen-asr-inference",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 5
+    },
+    {
+      "id": "npu-910b-runtime",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 3
+    },
+    {
+      "id": "offline-asr-service",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 2
+    },
+    {
+      "id": "qwen-asr-v2-adapter",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 17
+    },
+    {
+      "id": "resource-pressure-diagnostics",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 5
+    },
+    {
+      "id": "service-operations",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 4
+    }
+  ],
+  "summary": {
+    "totals": {
+      "items": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "byType": {
+      "spec": {
+        "items": 9,
+        "passed": 9,
+        "failed": 0
+      }
+    }
+  },
+  "version": "1.0",
+  "root": {
+    "path": "/home/zhangs/asr_nvidia",
+    "source": "nearest"
+  }
+}

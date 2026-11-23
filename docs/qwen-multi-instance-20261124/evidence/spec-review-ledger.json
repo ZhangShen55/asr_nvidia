@@ -1,0 +1,108 @@
+{
+  "preview": "/tmp/qwen-multi-apply-preview-20261124-9kjq4wr6",
+  "main_written": false,
+  "old_changes_written": false,
+  "coverage": [
+    {
+      "capability": "npu-910b-runtime",
+      "main_requirements": 9,
+      "delta_requirements": 0,
+      "preview_requirements": 9,
+      "main_sha256": "5e82e77ee5c0e72bdad40f59574048c92315133ebd21c0be7cf9afc631dd822a",
+      "delta_sha256": null,
+      "preview_sha256": "5e82e77ee5c0e72bdad40f59574048c92315133ebd21c0be7cf9afc631dd822a",
+      "unchanged_main_preserved": true,
+      "new_delta_exact": true
+    },
+    {
+      "capability": "service-operations",
+      "main_requirements": 23,
+      "delta_requirements": 13,
+      "preview_requirements": 27,
+      "main_sha256": "20bcfb297565554c98e696a9c75d5df92159eba7f1dc8356485f419a2cbde64d",
+      "delta_sha256": "4614a04b2777f2a1ec4fa04e4d92883ef01d50409766ff31ec1f970ec1a1e561",
+      "preview_sha256": "e7d0046ef4326060d84ca5e94279c29fcf655aa57e978c0e7d35420b0b5c20c4",
+      "unchanged_main_preserved": true,
+      "new_delta_exact": true
+    },
+    {
+      "capability": "offline-asr-service",
+      "main_requirements": 5,
+      "delta_requirements": 3,
+      "preview_requirements": 6,
+      "main_sha256": "80740078077529e23da948cd23cac1a00a939660dc960b83f3ec1d53e88f9f36",
+      "delta_sha256": "ceb8010b7bbc872e47591d050299c66056bd31454e2e433683bc7fba672a856f",
+      "preview_sha256": "ab4658ac6f3b9f1bdffe34952f19597dd6e9c75d8e70c308c9e92c1db0b2c52e",
+      "unchanged_main_preserved": true,
+      "new_delta_exact": true
+    },
+    {
+      "capability": "local-model-inference-backends",
+      "main_requirements": 8,
+      "delta_requirements": 0,
+      "preview_requirements": 8,
+      "main_sha256": "c4ce9dbbdb0184359e32bafd801931d7850897ab8b1c01d54ca67c0c6e68000b",
+      "delta_sha256": null,
+      "preview_sha256": "c4ce9dbbdb0184359e32bafd801931d7850897ab8b1c01d54ca67c0c6e68000b",
+      "unchanged_main_preserved": true,
+      "new_delta_exact": true
+    },
+    {
+      "capability": "resource-pressure-diagnostics",
+      "main_requirements": 8,
+      "delta_requirements": 6,
+      "preview_requirements": 10,
+      "main_sha256": "7f8be35e0d086530c2dbabdb1dfeb3e090fe14bc42d9f391908888c50b9676cb",
+      "delta_sha256": "8be46100cb1ce21a4637b27a5707690c976a83b622ba8117818644be419469b6",
+      "preview_sha256": "d272e9134c38d730c8e122454e203ae60f0e1b3d1eb25555cb02747aae676037",
+      "unchanged_main_preserved": true,
+      "new_delta_exact": true
+    },
+    {
+      "capability": "local-qwen-asr-inference",
+      "main_requirements": 8,
+      "delta_requirements": 10,
+      "preview_requirements": 15,
+      "main_sha256": "6c48ec7a41806b510b2ca82e72281ffe0b7a4c8e5794d14b06a9d335661a0cbd",
+      "delta_sha256": "71e21b22295858ea2c7730a715c7f1627207df97fcc43b8f3185d5e9a1779bf2",
+      "preview_sha256": "41a3277d709f6a9e46754841cf5333a3f030c90681eb4ef2a017a87187e75d5c",
+      "unchanged_main_preserved": true,
+      "new_delta_exact": true
+    },
+    {
+      "capability": "qwen-asr-v2-adapter",
+      "main_requirements": 49,
+      "delta_requirements": 14,
+      "preview_requirements": 50,
+      "main_sha256": "8711d13837d1422bee081366468cfa5a0e06c049c22aa991c98ab26d6deeb606",
+      "delta_sha256": "fb01dba6e37555ec5ffb1692d8947799029e67f3b8c35c6b7ae9fa13e92e7e3a",
+      "preview_sha256": "17effbf3664ba90082cf8b4796674889e7dd0e9fe1e63c2497029eaf37b04a6c",
+      "unchanged_main_preserved": true,
+      "new_delta_exact": true
+    },
+    {
+      "capability": "local-model-runtime",
+      "main_requirements": 10,
+      "delta_requirements": 7,
+      "preview_requirements": 12,
+      "main_sha256": "b2aa75987ff0c50c34b11d30bf7dcffd871521b18da5372e5268d814b22d1974",
+      "delta_sha256": "5629157b66b38a604eff6581c97b53aa3b3ebfb1297c044ff15b6fd54cae9dd3",
+      "preview_sha256": "2f27a32cf012f9a2fb9b9b57b50eafda59f1e7c926765d0bf7883369c55783de",
+      "unchanged_main_preserved": true,
+      "new_delta_exact": true
+    },
+    {
+      "capability": "container-model-packaging",
+      "main_requirements": 14,
+      "delta_requirements": 0,
+      "preview_requirements": 14,
+      "main_sha256": "4adfcdc5df66bb44ca2fdfd12f887abd3ed6e31e9aa17822c150f52983d0e447",
+      "delta_sha256": null,
+      "preview_sha256": "4adfcdc5df66bb44ca2fdfd12f887abd3ed6e31e9aa17822c150f52983d0e447",
+      "unchanged_main_preserved": true,
+      "new_delta_exact": true
+    }
+  ],
+  "source_conflict_ledger": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-23-qwen-multi-instance-serving/spec-sync-order.md",
+  "outcome": "new delta coverage exact; untouched main requirements retained; old open changes not mechanically imported; sync/archive deferred"
+}

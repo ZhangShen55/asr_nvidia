@@ -40,6 +40,7 @@ class MemoryClipTests(unittest.TestCase):
         async def scenario():
             payload = encode_audio_clip_wav(np.zeros(1600, dtype=np.float32), 16000)
             client = QwenAsrClient("http://legacy-unused", model="model", retry_count=0,
+                                   generation_mode="legacy", local_instance_count=1,
                                    execution_mode="thread", runtime_factory=Runtime)
             try:
                 # filename remains a compatible keyword; the local runner receives

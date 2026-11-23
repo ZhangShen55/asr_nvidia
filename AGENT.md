@@ -31,7 +31,7 @@
 
 - 当前**只有 v3 一条链路**：`POST /v3/seacraft_asr`。v1.1.8（SeACo-Paraformer + PUNC + Whisper）和 v2 路由已下线，代码与模型均已清理，不要"顺手恢复"。
 - FSMN-VAD是固定spawn进程池；CAM++懒加载池可选thread/process（安全默认thread），emotion2vec保持主进程runner。
-- **Qwen3-ASR是本地懒加载原始权重**，BF16 / npu:7；支持独立段物理批执行，单实例同一时刻只持有一个物理执行。当前安全缺省仍batch1、段/全局1/1，候选16/128尚在本轮标定。
+- **Qwen3-ASR使用本地原始权重**，BF16 / npu:7；当前continuous/process、顺序预加载6份owner，每请求独占一份、每份窗口16、全局96，HTTP仍1。纯A6墙钟186.32秒；B4完成但增强驻留后A6真实OOM，尚未通过长期共驻验收，详见文末当前检查点。
 - 对外只有三个接口：`POST /v3/seacraft_asr`、`GET /get_status`、`DELETE /clear_tasks_list`。
 
 ### 业务目标（容易理解错，先看这段）
@@ -162,9 +162,9 @@ Qwen完成即还自身名额，增强队列/汇合受段数和PCM字节预算反
 
 | 层       | 参数                                                | 语义                            | 当前值                 |
 | ------- | ------------------------------------------------- | ----------------------------- | ------------------- |
-| 整音频准入   | `audio_concurrency` / `audio_spk_emo_concurrency` | A（纯转写）+ B（要说话人/情绪）总数 / B 子集上限 | 8 / 4               |
-| Qwen 请求 | `segment_concurrency` / `request_concurrency`     | 单音频内段并发 / 全局段并发               | 1 / 1（完整课堂对照；单Qwen实例）            |
-| 本地模型池   | `speech_campplus_devices` / `emotion2vec_devices` | 数组长度 = 实例数 = 段级推理并发           | 3×npu:7 / 1×npu:7 |
+| 整音频准入 | `audio_concurrency` / `audio_spk_emo_concurrency` | continuous总数由owner数N派生 / B子集上限 | 6 / 4 |
+| Qwen 请求 | `segment_concurrency` / `request_concurrency` | 每音频段窗口S / 全局由N×S派生 | 16 / 96 |
+| 本地增强池 | `speech_campplus_devices` / `emotion2vec_devices` | 数组长度=各自实例数，独立于Qwen N | 1×npu:7 / 1×npu:7（共驻未验收） |
 
 音频准入、Qwen逻辑窗口、物理批大小与模型实例容量分别计数；增加等待任务不增加模型实际计算容量。表中当前值是前次配置快照，新增吞吐候选与实施状态见下一节；历史压测见`docs/cam*`、`docs/vad-pool*`。
 
@@ -486,3 +486,14 @@ continuous模式对三类段生成异常做保守恢复/无法恢复警告并继
 ### 2026-11-21 连续调度最终独立验证检查点
 
 段级恢复已按用户选择实现；最后独立真实A8/16/128仅2/8在420秒内完成（389.08/411.05秒），6条删失，n2子集P50/P95=400.07/409.95秒。全部owned正常退出、端口释放5秒、原PID1601397保留。源码1135项隔离回归及保护151项通过，独立fatal-release清理修复另做增量验证。文本仅一完整配对可比，人工质量真值缺失，不能推广。当前20/25保持open，不同步主规格、不归档；证据docs/qwen-continuous-20261120/REPORT.md。
+
+
+### 2026-11-24正式多实例实施中
+
+用户已apply `2026-11-23-qwen-multi-instance-serving`。正式默认正切换continuous/process、N6/S16、宿主npu7、预加载true；audio=N/global=N×S派生、B4，HTTP保持1。在线复读保护true/运输交接3ms沿用已测noHBM参考，阈值/生成上限不改。增强池独立各1起标定，尚未通过正式NPU验收。此前单实例/384/单步缺省描述仅属历史检查点。实施证据目录`/tmp/qwen-multi-apply-20261124-sduu4fzl`；配置/运行时/增强与控制器唯一作者见setup.json。完整guard CPU及保护回归后才root独占NPU7真实A6/A4/B4/共驻A6。336/真实故障停测；用户已取消8GiBfree提前停止，不恢复或换阈值。保留shared PID1601397。旧change/成绩不改写；本change未必需验收完成不归档。
+
+### 2026-11-24正式多实例验收检查点
+
+实现与测试交付27/29，change保持open：纯A6 6/6、P50/P95=173.24/185.42秒、墙钟186.32秒；A4 4/4、墙钟200.93秒；B4 4/4、P50/P95=289.81/301.37秒、墙钟302.60秒。严格无警告A6 4/6、B4 1/4，不能当准确率认证。CAM真实2775次、emo2226次加549时长skip；CAM持续排队/PCM反压。增强驻留后的A6实际3完成/1失败/2取消，在179.95秒停止，owner5申请22MiB失败、dev7错误207001，真实OOM，整批分位数未知。按test-plan停止后续压力，5.3最终增强池标定与5.6共驻验收未通过，不归档、不改主规格或旧change。
+
+源码1289/379subtests、保护364/244subtests通过；日志隔离与netns增量两边各84及40通过。所有测试/模型owned身份正常exit0、TERM后43.14秒父进程退出、端口空闲≥5秒、PCM为空，共享PID1601397及8007保留。根配置测试后仅补注释，解析值与实测快照完全相同；Docker未构建/验收。报告docs/qwen-multi-instance-20261124/REPORT.md，原始formal-v2和所有失败证据保留。没有继续CAM2/4、修改allocator或新增HBM提前停止线。

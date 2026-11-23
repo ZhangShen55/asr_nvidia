@@ -15,6 +15,7 @@ import unittest
 from api.routes.asr_qwen_common import run_qwen_asr
 from core.vad import VadSegment
 from core.config import settings
+from core.qwen_asr_queue import RequestConcurrency
 from entity.data import AsrRequestParams
 
 
@@ -85,6 +86,9 @@ class SegmentClipLifecycleTests(unittest.TestCase):
             return "积极" if emotion is None else emotion
 
         with ExitStack() as stack:
+            # 每次asyncio.run拥有自己的真实窗口；不复用其它测试已绑定loop的全局信号量。
+            stack.enter_context(patch("api.routes.asr_qwen_common.get_request_concurrency",
+                                      return_value=RequestConcurrency()))
             stack.enter_context(
                 patch("api.routes.asr_qwen_common.detect_segments", _fake_detect)
             )

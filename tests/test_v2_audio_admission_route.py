@@ -293,3 +293,12 @@ class MixedAdmissionIntegrationTests(unittest.IsolatedAsyncioTestCase):
         self.assertEqual(len(responses), 8)
         self.assertTrue(all("language_ratio" in response and "speed_info" in response for response in responses))
         self.assertEqual((manager.active, manager.active_b, manager.waiting), (0, 0, 0))
+
+
+# 本文件冻结旧准入/序列化/错误映射，不用真实owner池；continuous接线由multi_api单独覆盖。
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def explicit_legacy_contract(monkeypatch):
+    monkeypatch.setattr(type(settings), 'qwen_generation_mode', property(lambda self: 'legacy'))

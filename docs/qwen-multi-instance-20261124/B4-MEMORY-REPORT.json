@@ -1,0 +1,3890 @@
+{
+  "scope": "Stopped formal matrix only; standard-library JSON/log analysis, no further NPU/test/load work",
+  "phase_time_series": {
+    "A6": {
+      "status_path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A6/status.jsonl",
+      "status_sha256": "e5a4f79c7a7c2bb6813f96e520482fed545567047d23b1202d66292527b11b10",
+      "poll_count": 208,
+      "valid_hbm_poll_count": 207,
+      "missing_hbm_poll_count": 1,
+      "distinct_resource_timestamps": 35,
+      "poll_gap_s": {
+        "n": 207,
+        "min": 0.7765484796836972,
+        "p50": 0.8046116093173623,
+        "p95": 0.8222499414347112,
+        "max": 5.477698870003223
+      },
+      "resource_sample_gap_s": {
+        "n": 34,
+        "min": 4.36,
+        "p50": 4.8875,
+        "p95": 7.617949999999998,
+        "max": 10.799
+      },
+      "resource_cache_age_s": {
+        "n": 207,
+        "min": 0.0012622401118278503,
+        "p50": 2.4284827494993806,
+        "p95": 4.970813359972089,
+        "max": 10.174030319787562
+      },
+      "hbm7_min_free_mb": 6473,
+      "hbm7_peak_used_mb": 59063,
+      "resource_samples_at_min_free": [
+        {
+          "timestamp": "2026-11-23T17:24:13.726+00:00",
+          "elapsed_s": 183.48672974016517,
+          "hbm_free_mb": 6473,
+          "hbm_used_mb": 59063
+        }
+      ],
+      "cam_waiting": {
+        "n": 208,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "emo_waiting": {
+        "n": 208,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "pcm_active": {
+        "n": 208,
+        "min": 0,
+        "p50": 80,
+        "p95": 96,
+        "max": 97
+      },
+      "pcm_waiting": {
+        "n": 208,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "pcm_active_256_poll_count": 0,
+      "pcm_bytes_peak_observed": 57659136,
+      "sampling_scope": "distinct resource timestamp for HBM; poll count includes TTL-cached repeats; live queue snapshots sampled at GET; gaps not interpolated"
+    },
+    "A4": {
+      "status_path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A4/status.jsonl",
+      "status_sha256": "31b97618ad34a0921642a0c145bf645b95d2eff41f88ae231fc35e356d418a00",
+      "poll_count": 238,
+      "valid_hbm_poll_count": 238,
+      "missing_hbm_poll_count": 0,
+      "distinct_resource_timestamps": 40,
+      "poll_gap_s": {
+        "n": 237,
+        "min": 0.7862200895324349,
+        "p50": 0.8010358000174165,
+        "p95": 0.8135642515495419,
+        "max": 3.9282086603343487
+      },
+      "resource_sample_gap_s": {
+        "n": 39,
+        "min": 4.303,
+        "p50": 4.814,
+        "p95": 6.500400000000003,
+        "max": 8.053
+      },
+      "resource_cache_age_s": {
+        "n": 238,
+        "min": 0.01765200961381197,
+        "p50": 2.355298759881407,
+        "p95": 4.776523640425874,
+        "max": 7.979851979762316
+      },
+      "hbm7_min_free_mb": 2183,
+      "hbm7_peak_used_mb": 63353,
+      "resource_samples_at_min_free": [
+        {
+          "timestamp": "2026-11-23T17:27:11.630+00:00",
+          "elapsed_s": 171.72672818042338,
+          "hbm_free_mb": 2183,
+          "hbm_used_mb": 63353
+        },
+        {
+          "timestamp": "2026-11-23T17:27:16.155+00:00",
+          "elapsed_s": 176.53562881052494,
+          "hbm_free_mb": 2183,
+          "hbm_used_mb": 63353
+        },
+        {
+          "timestamp": "2026-11-23T17:27:21.070+00:00",
+          "elapsed_s": 182.1572117805481,
+          "hbm_free_mb": 2183,
+          "hbm_used_mb": 63353
+        },
+        {
+          "timestamp": "2026-11-23T17:27:25.976+00:00",
+          "elapsed_s": 186.15898770000786,
+          "hbm_free_mb": 2183,
+          "hbm_used_mb": 63353
+        },
+        {
+          "timestamp": "2026-11-23T17:27:30.588+00:00",
+          "elapsed_s": 194.0942647503689,
+          "hbm_free_mb": 2183,
+          "hbm_used_mb": 63353
+        },
+        {
+          "timestamp": "2026-11-23T17:27:38.595+00:00",
+          "elapsed_s": 196.4959384398535,
+          "hbm_free_mb": 2183,
+          "hbm_used_mb": 63353
+        }
+      ],
+      "cam_waiting": {
+        "n": 238,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "emo_waiting": {
+        "n": 238,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "pcm_active": {
+        "n": 238,
+        "min": 0,
+        "p50": 64,
+        "p95": 64,
+        "max": 67
+      },
+      "pcm_waiting": {
+        "n": 238,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "pcm_active_256_poll_count": 0,
+      "pcm_bytes_peak_observed": 35634304,
+      "sampling_scope": "distinct resource timestamp for HBM; poll count includes TTL-cached repeats; live queue snapshots sampled at GET; gaps not interpolated"
+    },
+    "B4": {
+      "status_path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/B4/status.jsonl",
+      "status_sha256": "d96fffe67163abc1238a611dd151b094a9c1c0821df73b5545e2989f2639f544",
+      "poll_count": 345,
+      "valid_hbm_poll_count": 344,
+      "missing_hbm_poll_count": 1,
+      "distinct_resource_timestamps": 57,
+      "poll_gap_s": {
+        "n": 344,
+        "min": 0.8118882803246379,
+        "p50": 0.8382769948802888,
+        "p95": 0.852746438793838,
+        "max": 5.677778899669647
+      },
+      "resource_sample_gap_s": {
+        "n": 56,
+        "min": 4.295,
+        "p50": 5.1185,
+        "p95": 6.5415,
+        "max": 9.373
+      },
+      "resource_cache_age_s": {
+        "n": 344,
+        "min": 0.025275859981775284,
+        "p50": 2.587122735567391,
+        "p95": 4.954349661059678,
+        "max": 9.096283290535212
+      },
+      "hbm7_min_free_mb": 406,
+      "hbm7_peak_used_mb": 65130,
+      "resource_samples_at_min_free": [
+        {
+          "timestamp": "2026-11-23T17:32:31.291+00:00",
+          "elapsed_s": 247.23567324969918,
+          "hbm_free_mb": 406,
+          "hbm_used_mb": 65130
+        },
+        {
+          "timestamp": "2026-11-23T17:32:36.194+00:00",
+          "elapsed_s": 252.27836597058922,
+          "hbm_free_mb": 406,
+          "hbm_used_mb": 65130
+        },
+        {
+          "timestamp": "2026-11-23T17:32:51.258+00:00",
+          "elapsed_s": 267.3312647100538,
+          "hbm_free_mb": 406,
+          "hbm_used_mb": 65130
+        },
+        {
+          "timestamp": "2026-11-23T17:32:55.985+00:00",
+          "elapsed_s": 272.33173514995724,
+          "hbm_free_mb": 406,
+          "hbm_used_mb": 65130
+        },
+        {
+          "timestamp": "2026-11-23T17:33:05.684+00:00",
+          "elapsed_s": 286.3092997800559,
+          "hbm_free_mb": 406,
+          "hbm_used_mb": 65130
+        },
+        {
+          "timestamp": "2026-11-23T17:33:15.057+00:00",
+          "elapsed_s": 290.4711183505133,
+          "hbm_free_mb": 406,
+          "hbm_used_mb": 65130
+        },
+        {
+          "timestamp": "2026-11-23T17:33:26.927+00:00",
+          "elapsed_s": 299.502206210047,
+          "hbm_free_mb": 406,
+          "hbm_used_mb": 65130
+        }
+      ],
+      "cam_waiting": {
+        "n": 345,
+        "min": 0,
+        "p50": 255,
+        "p95": 255,
+        "max": 255
+      },
+      "emo_waiting": {
+        "n": 345,
+        "min": 0,
+        "p50": 0,
+        "p95": 2,
+        "max": 23
+      },
+      "pcm_active": {
+        "n": 345,
+        "min": 0,
+        "p50": 256,
+        "p95": 256,
+        "max": 256
+      },
+      "pcm_waiting": {
+        "n": 345,
+        "min": 0,
+        "p50": 29,
+        "p95": 39,
+        "max": 44
+      },
+      "pcm_active_256_poll_count": 242,
+      "pcm_bytes_peak_observed": 105902656,
+      "sampling_scope": "distinct resource timestamp for HBM; poll count includes TTL-cached repeats; live queue snapshots sampled at GET; gaps not interpolated"
+    },
+    "A6-resident": {
+      "status_path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A6-resident/status.jsonl",
+      "status_sha256": "88529dc8fe5c671f2e5f40d518d6a09c8cda18cc59d0dd49473ab51b491e4149",
+      "poll_count": 197,
+      "valid_hbm_poll_count": 196,
+      "missing_hbm_poll_count": 1,
+      "distinct_resource_timestamps": 34,
+      "poll_gap_s": {
+        "n": 196,
+        "min": 0.8173203896731138,
+        "p50": 0.8380016349256039,
+        "p95": 0.8514147801324725,
+        "max": 5.695484510622919
+      },
+      "resource_sample_gap_s": {
+        "n": 33,
+        "min": 4.197,
+        "p50": 5.072,
+        "p95": 8.270399999999999,
+        "max": 11.799
+      },
+      "resource_cache_age_s": {
+        "n": 196,
+        "min": 0.008603719994425774,
+        "p50": 2.625910739880055,
+        "p95": 5.2113833802286536,
+        "max": 11.183136039413512
+      },
+      "hbm7_min_free_mb": 132,
+      "hbm7_peak_used_mb": 65404,
+      "resource_samples_at_min_free": [
+        {
+          "timestamp": "2026-11-23T17:36:35.700+00:00",
+          "elapsed_s": 179.12307571992278,
+          "hbm_free_mb": 132,
+          "hbm_used_mb": 65404
+        }
+      ],
+      "cam_waiting": {
+        "n": 197,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "emo_waiting": {
+        "n": 197,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "pcm_active": {
+        "n": 197,
+        "min": 0,
+        "p50": 96,
+        "p95": 96,
+        "max": 99
+      },
+      "pcm_waiting": {
+        "n": 197,
+        "min": 0,
+        "p50": 0,
+        "p95": 0,
+        "max": 0
+      },
+      "pcm_active_256_poll_count": 0,
+      "pcm_bytes_peak_observed": 58476096,
+      "sampling_scope": "distinct resource timestamp for HBM; poll count includes TTL-cached repeats; live queue snapshots sampled at GET; gaps not interpolated"
+    }
+  },
+  "phase_results": {
+    "A4": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 179.7449297895655,
+        "p95_s": 199.81024717376567
+      },
+      "completion_subset_latency": {
+        "n": 4,
+        "p50_s": 179.7449297895655,
+        "p95_s": 199.81024717376567
+      },
+      "wall_s": 200.92685962002724,
+      "observation_wall_s": 201.22309947013855,
+      "wall_scope": "first_send_to_last_response",
+      "trigger": null,
+      "warning_free": 1,
+      "warning_segments": 16,
+      "discarded_segments": 13,
+      "target_s": null,
+      "target_200s_met": null,
+      "hbm_free_stop_enabled": false,
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "unknown": []
+      },
+      "stage_validation": {
+        "passed": true,
+        "errors": []
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "status": "completed",
+          "started": 7542338.15865794,
+          "response_received": 7542499.38764217,
+          "elapsed_s": 161.22898423019797,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 728,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "88b6c20c-941f-4b4b-afe3-baae9e9273c5",
+            "filename": "d6ab4b52ac2d40e79daea01f2369fabd-0.wav",
+            "started_monotonic": 7542340.71033438,
+            "ended_monotonic": 7542499.34243919,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 26197549.882,
+              "qwen_ms": 2077345.62,
+              "qwen_calls": 753.0,
+              "vad_ms": 22738.505,
+              "cut_sum_ms": 5656.408,
+              "cut_wall_ms": 128954.427,
+              "segment_ms": 131326.146,
+              "cluster_ms": 0.0,
+              "itn_ms": 3441.4,
+              "cleanup_ms": 18.083,
+              "audio_wait_ms": 196.141,
+              "cut_cpu_ms": 2922.056,
+              "cut_dispatch_wait_ms": 2705.46,
+              "pending_wait_ms": 29.337,
+              "vad_wait_ms": 2.345,
+              "vad_worker_ms": 22732.262,
+              "low_volume_filter_ms": 0.077,
+              "model_load_lock_wait_ms": 0.007
+            }
+          }
+        },
+        {
+          "sample_id": "a2",
+          "status": "completed",
+          "started": 7542338.16014629,
+          "response_received": 7542504.15267133,
+          "elapsed_s": 165.99252503924072,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 4,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 568,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "214be216-ba65-424b-9282-476737071826",
+            "filename": "d6ab4b52ac2d40e79daea01f2369fabd-1.wav",
+            "started_monotonic": 7542340.37293372,
+            "ended_monotonic": 7542504.11642181,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 25524885.594,
+              "qwen_ms": 2164416.817,
+              "qwen_calls": 615.0,
+              "vad_ms": 24005.131,
+              "cut_sum_ms": 7236.811,
+              "cut_wall_ms": 134183.87,
+              "segment_ms": 138692.34,
+              "cluster_ms": 0.0,
+              "itn_ms": 41.692,
+              "cleanup_ms": 17.192,
+              "audio_wait_ms": 190.785,
+              "cut_cpu_ms": 2957.181,
+              "cut_dispatch_wait_ms": 4254.336,
+              "pending_wait_ms": 25.678,
+              "vad_wait_ms": 4.05,
+              "vad_worker_ms": 23997.697,
+              "low_volume_filter_ms": 0.042,
+              "model_load_lock_wait_ms": 0.006
+            }
+          }
+        },
+        {
+          "sample_id": "a3",
+          "status": "completed",
+          "started": 7542338.16122698,
+          "response_received": 7542539.08551756,
+          "elapsed_s": 200.92429057974368,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 1,
+          "discarded": 0,
+          "processing_status": "completed_with_warnings",
+          "segments": 657,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "36b91dd9-c783-4dfd-81cb-e0dd017e1ba6",
+            "filename": "d6ab4b52ac2d40e79daea01f2369fabd-2.wav",
+            "started_monotonic": 7542341.26743385,
+            "ended_monotonic": 7542538.99808841,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 30953523.484,
+              "qwen_ms": 2575595.583,
+              "qwen_calls": 706.0,
+              "vad_ms": 23745.412,
+              "cut_sum_ms": 7364.552,
+              "cut_wall_ms": 158431.745,
+              "segment_ms": 168412.255,
+              "cluster_ms": 0.0,
+              "itn_ms": 4672.067,
+              "cleanup_ms": 17.117,
+              "audio_wait_ms": 188.563,
+              "cut_cpu_ms": 3224.604,
+              "cut_dispatch_wait_ms": 4108.945,
+              "pending_wait_ms": 31.39,
+              "vad_wait_ms": 1.308,
+              "vad_worker_ms": 23740.561,
+              "low_volume_filter_ms": 0.045,
+              "model_load_lock_wait_ms": 0.005
+            }
+          }
+        },
+        {
+          "sample_id": "a4",
+          "status": "completed",
+          "started": 7542338.16227835,
+          "response_received": 7542531.65961289,
+          "elapsed_s": 193.4973345398903,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 11,
+          "discarded": 11,
+          "processing_status": "completed_with_warnings",
+          "segments": 616,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "f002499f-c807-4000-b7e1-3e40c580acba",
+            "filename": "d6ab4b52ac2d40e79daea01f2369fabd-3.wav",
+            "started_monotonic": 7542340.98195303,
+            "ended_monotonic": 7542531.62065802,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 28090596.567,
+              "qwen_ms": 2366838.135,
+              "qwen_calls": 701.0,
+              "vad_ms": 23855.005,
+              "cut_sum_ms": 6751.041,
+              "cut_wall_ms": 145182.437,
+              "segment_ms": 162329.228,
+              "cluster_ms": 0.0,
+              "itn_ms": 3333.373,
+              "cleanup_ms": 17.276,
+              "audio_wait_ms": 198.424,
+              "cut_cpu_ms": 3071.794,
+              "cut_dispatch_wait_ms": 3649.563,
+              "pending_wait_ms": 30.088,
+              "vad_wait_ms": 1.629,
+              "vad_worker_ms": 23849.102,
+              "low_volume_filter_ms": 0.046,
+              "model_load_lock_wait_ms": 0.007
+            }
+          }
+        }
+      ]
+    },
+    "B4": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 289.80871122982353,
+        "p95_s": 301.3683647837024
+      },
+      "completion_subset_latency": {
+        "n": 4,
+        "p50_s": 289.80871122982353,
+        "p95_s": 301.3683647837024
+      },
+      "wall_s": 302.597690329887,
+      "observation_wall_s": 302.9186960598454,
+      "wall_scope": "first_send_to_last_response",
+      "trigger": null,
+      "warning_free": 1,
+      "warning_segments": 11,
+      "discarded_segments": 8,
+      "target_s": null,
+      "target_200s_met": null,
+      "hbm_free_stop_enabled": false,
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "unknown": []
+      },
+      "enhancement_validation": {
+        "passed": true,
+        "errors": [],
+        "pools": {
+          "speech_campplus": {
+            "instance_call_deltas": {
+              "0": 2775
+            },
+            "outcome_deltas": {
+              "success": 2775,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0
+            },
+            "duration_skip_delta": 0
+          },
+          "emotion2vec": {
+            "instance_call_deltas": {
+              "0": 2226
+            },
+            "outcome_deltas": {
+              "success": 2226,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0
+            },
+            "duration_skip_delta": 549
+          }
+        },
+        "scope": "real NN/skip/field evidence, not human-labelled accuracy"
+      },
+      "stage_validation": {
+        "passed": true,
+        "errors": []
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "status": "completed",
+          "started": 7542582.9231067,
+          "response_received": 7542877.3476302,
+          "elapsed_s": 294.4245234997943,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 728,
+          "role_nonnull": 728,
+          "emotion_nonnull": 728,
+          "request_stages": {
+            "request_id": "5f0dc07a-3eb5-4dfd-b0bf-77bcfbbad02a",
+            "filename": "2baa9b7d3a0a4689ac84f15b5a1b6044-0.wav",
+            "started_monotonic": 7542585.09269048,
+            "ended_monotonic": 7542877.2998516,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 16503710.953,
+              "spk_ms": 74205.041,
+              "spk_calls": 753.0,
+              "emo_wait_ms": 40364.824,
+              "emo_ms": 23455.689,
+              "emo_calls": 556.0,
+              "qwen_wait_ms": 38572948.437,
+              "qwen_ms": 2047518.523,
+              "qwen_calls": 753.0,
+              "vad_ms": 23282.951,
+              "cut_sum_ms": 1721715.88,
+              "cut_wall_ms": 234748.712,
+              "segment_ms": 263341.378,
+              "cluster_ms": 668.328,
+              "itn_ms": 3194.952,
+              "cleanup_ms": 16.12,
+              "audio_wait_ms": 198.468,
+              "cut_cpu_ms": 2631.932,
+              "cut_dispatch_wait_ms": 2540.815,
+              "pending_wait_ms": 1716543.259,
+              "vad_wait_ms": 1.371,
+              "vad_worker_ms": 23277.348,
+              "low_volume_filter_ms": 0.076,
+              "model_load_lock_wait_ms": 0.013,
+              "emo_duration_skips": 197.0,
+              "spk_nn_calls": 753.0,
+              "spk_nn_success": 753.0,
+              "emo_nn_calls": 556.0,
+              "emo_nn_success": 556.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a2",
+          "status": "completed",
+          "started": 7542582.92471991,
+          "response_received": 7542855.3768629,
+          "elapsed_s": 272.45214299019426,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 2,
+          "discarded": 1,
+          "processing_status": "completed_with_warnings",
+          "segments": 570,
+          "role_nonnull": 570,
+          "emotion_nonnull": 570,
+          "request_stages": {
+            "request_id": "eff41d7d-01fb-49ce-95cf-35a92469a09b",
+            "filename": "2baa9b7d3a0a4689ac84f15b5a1b6044-1.wav",
+            "started_monotonic": 7542585.35413193,
+            "ended_monotonic": 7542855.33980005,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 13479243.305,
+              "spk_ms": 57039.404,
+              "spk_calls": 615.0,
+              "emo_wait_ms": 46277.044,
+              "emo_ms": 21442.865,
+              "emo_calls": 508.0,
+              "qwen_wait_ms": 34062847.66,
+              "qwen_ms": 2013942.978,
+              "qwen_calls": 615.0,
+              "vad_ms": 24313.215,
+              "cut_sum_ms": 1499166.38,
+              "cut_wall_ms": 219218.978,
+              "segment_ms": 243806.977,
+              "cluster_ms": 351.45,
+              "itn_ms": 39.682,
+              "cleanup_ms": 17.158,
+              "audio_wait_ms": 202.051,
+              "cut_cpu_ms": 2411.567,
+              "cut_dispatch_wait_ms": 2183.013,
+              "pending_wait_ms": 1494571.88,
+              "vad_wait_ms": 1.185,
+              "vad_worker_ms": 24307.927,
+              "low_volume_filter_ms": 0.045,
+              "model_load_lock_wait_ms": 0.007,
+              "emo_nn_calls": 508.0,
+              "emo_nn_success": 508.0,
+              "spk_nn_calls": 615.0,
+              "spk_nn_success": 615.0,
+              "emo_duration_skips": 107.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a3",
+          "status": "completed",
+          "started": 7542582.92590492,
+          "response_received": 7542868.11880388,
+          "elapsed_s": 285.19289895985276,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 1,
+          "discarded": 0,
+          "processing_status": "completed_with_warnings",
+          "segments": 658,
+          "role_nonnull": 658,
+          "emotion_nonnull": 658,
+          "request_stages": {
+            "request_id": "17cfe9d8-7605-4b64-b9e9-18351e7f98bb",
+            "filename": "2baa9b7d3a0a4689ac84f15b5a1b6044-2.wav",
+            "started_monotonic": 7542585.64868332,
+            "ended_monotonic": 7542867.79891404,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 15235201.801,
+              "spk_ms": 64176.777,
+              "spk_calls": 706.0,
+              "emo_wait_ms": 31396.916,
+              "emo_ms": 23408.761,
+              "emo_calls": 579.0,
+              "qwen_wait_ms": 35823759.098,
+              "qwen_ms": 1994659.47,
+              "qwen_calls": 706.0,
+              "vad_ms": 24609.264,
+              "cut_sum_ms": 1660658.646,
+              "cut_wall_ms": 227190.274,
+              "segment_ms": 251055.035,
+              "cluster_ms": 506.725,
+              "itn_ms": 4759.745,
+              "cleanup_ms": 17.647,
+              "audio_wait_ms": 199.093,
+              "cut_cpu_ms": 2697.975,
+              "cut_dispatch_wait_ms": 2626.357,
+              "pending_wait_ms": 1655334.337,
+              "vad_wait_ms": 0.973,
+              "vad_worker_ms": 24604.266,
+              "low_volume_filter_ms": 0.044,
+              "model_load_lock_wait_ms": 0.015,
+              "emo_duration_skips": 127.0,
+              "emo_nn_calls": 579.0,
+              "emo_nn_success": 579.0,
+              "spk_nn_calls": 706.0,
+              "spk_nn_success": 706.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a4",
+          "status": "completed",
+          "started": 7542582.92704849,
+          "response_received": 7542885.52079703,
+          "elapsed_s": 302.5937485396862,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 8,
+          "discarded": 7,
+          "processing_status": "completed_with_warnings",
+          "segments": 619,
+          "role_nonnull": 619,
+          "emotion_nonnull": 619,
+          "request_stages": {
+            "request_id": "55b5540e-7b3a-42e2-b01c-fb95f245aaec",
+            "filename": "2baa9b7d3a0a4689ac84f15b5a1b6044-3.wav",
+            "started_monotonic": 7542585.8702803,
+            "ended_monotonic": 7542885.48190072,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 15815020.991,
+              "spk_ms": 67834.262,
+              "spk_calls": 701.0,
+              "emo_wait_ms": 46283.305,
+              "emo_ms": 24139.642,
+              "emo_calls": 583.0,
+              "qwen_wait_ms": 41647475.004,
+              "qwen_ms": 2369040.221,
+              "qwen_calls": 701.0,
+              "vad_ms": 23431.818,
+              "cut_sum_ms": 1585042.194,
+              "cut_wall_ms": 243569.45,
+              "segment_ms": 271381.308,
+              "cluster_ms": 585.204,
+              "itn_ms": 3128.711,
+              "cleanup_ms": 16.706,
+              "audio_wait_ms": 201.271,
+              "cut_cpu_ms": 2778.986,
+              "cut_dispatch_wait_ms": 2358.75,
+              "pending_wait_ms": 1579904.587,
+              "vad_wait_ms": 1.198,
+              "vad_worker_ms": 23423.861,
+              "low_volume_filter_ms": 0.047,
+              "model_load_lock_wait_ms": 0.016,
+              "emo_duration_skips": 118.0,
+              "emo_nn_calls": 583.0,
+              "emo_nn_success": 583.0,
+              "spk_nn_calls": 701.0,
+              "spk_nn_success": 701.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        }
+      ]
+    },
+    "A6-resident": {
+      "expected": 6,
+      "completed": 3,
+      "complete": false,
+      "passed": false,
+      "all_request_latency": null,
+      "completion_subset_latency": {
+        "n": 3,
+        "p50_s": 164.2674939306453,
+        "p95_s": 173.17424776572733
+      },
+      "wall_s": 179.95267118979245,
+      "observation_wall_s": 179.95267118979245,
+      "wall_scope": "stop_observation",
+      "trigger": "request_failed",
+      "warning_free": 3,
+      "warning_segments": 0,
+      "discarded_segments": 0,
+      "target_s": 200.0,
+      "target_200s_met": false,
+      "hbm_free_stop_enabled": false,
+      "validation": {
+        "passed": false,
+        "errors": [
+          "not_idle:audio_active=2",
+          "not_idle:owner_leased=2",
+          "not_idle:logical_running=24",
+          "not_idle:PCM_active=24",
+          "not_idle:PCM_bytes=13180224",
+          "owner 3 active=13",
+          "owner 4 active=15"
+        ],
+        "unknown": []
+      },
+      "stage_validation": {
+        "passed": false,
+        "errors": [
+          "a2: stage evidence missing for unique upload filename",
+          "a3: stage evidence missing for unique upload filename"
+        ]
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "status": "completed",
+          "started": 7542892.08965618,
+          "response_received": 7543056.35715011,
+          "elapsed_s": 164.2674939306453,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 728,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "705b22e0-1986-4f04-b1f1-df525599551f",
+            "filename": "36218c2edb9a454ba345c01456b2d37e-0.wav",
+            "started_monotonic": 7542895.37083784,
+            "ended_monotonic": 7543056.31136488,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 26628161.176,
+              "qwen_ms": 2093989.054,
+              "qwen_calls": 753.0,
+              "vad_ms": 23404.756,
+              "cut_sum_ms": 14505.453,
+              "cut_wall_ms": 130480.665,
+              "segment_ms": 132932.272,
+              "cluster_ms": 0.0,
+              "itn_ms": 3492.788,
+              "cleanup_ms": 18.063,
+              "audio_wait_ms": 195.387,
+              "cut_cpu_ms": 4094.241,
+              "cut_dispatch_wait_ms": 10382.438,
+              "pending_wait_ms": 29.2,
+              "vad_wait_ms": 4.724,
+              "vad_worker_ms": 23395.364,
+              "low_volume_filter_ms": 0.04,
+              "model_load_lock_wait_ms": 0.008
+            }
+          }
+        },
+        {
+          "sample_id": "a2",
+          "status": "cancelled",
+          "started": 7542892.09132942,
+          "observed_elapsed_s": 179.64941448997706,
+          "request_stages": null
+        },
+        {
+          "sample_id": "a3",
+          "status": "cancelled",
+          "started": 7542892.09262326,
+          "observed_elapsed_s": 179.64757744967937,
+          "request_stages": null
+        },
+        {
+          "sample_id": "a4",
+          "status": "failed",
+          "started": 7542892.09386385,
+          "response_received": 7543070.93341887,
+          "elapsed_s": 178.83955501951277,
+          "http_status": 200,
+          "code": 4012,
+          "processing_status": null,
+          "segments": 0,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "b5510e3e-87af-4d67-b42e-e3a8d8b0f494",
+            "filename": "36218c2edb9a454ba345c01456b2d37e-3.wav",
+            "started_monotonic": 7542896.62194622,
+            "ended_monotonic": 7543070.62093153,
+            "status": "failed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 27763954.533,
+              "qwen_ms": 2374828.343,
+              "qwen_calls": 701.0,
+              "vad_ms": 23717.533,
+              "cut_sum_ms": 15580.1,
+              "cut_wall_ms": 148608.564,
+              "segment_ms": 149423.774,
+              "cluster_ms": 0.0,
+              "itn_ms": 0.0,
+              "cleanup_ms": 19.04,
+              "audio_wait_ms": 197.178,
+              "cut_cpu_ms": 4262.427,
+              "cut_dispatch_wait_ms": 11289.105,
+              "pending_wait_ms": 28.996,
+              "vad_wait_ms": 2.0,
+              "vad_worker_ms": 23710.888,
+              "low_volume_filter_ms": 0.046,
+              "model_load_lock_wait_ms": 0.01
+            }
+          }
+        },
+        {
+          "sample_id": "a5",
+          "status": "completed",
+          "started": 7542892.0950914,
+          "response_received": 7543014.59859562,
+          "elapsed_s": 122.50350422039628,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 431,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "b25138d5-c044-4c15-8c54-74b33897f0c9",
+            "filename": "36218c2edb9a454ba345c01456b2d37e-4.wav",
+            "started_monotonic": 7542895.02228441,
+            "ended_monotonic": 7543014.5555716,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 16540778.534,
+              "qwen_ms": 1446373.371,
+              "qwen_calls": 457.0,
+              "vad_ms": 21868.149,
+              "cut_sum_ms": 3614.354,
+              "cut_wall_ms": 89912.204,
+              "segment_ms": 91781.711,
+              "cluster_ms": 0.0,
+              "itn_ms": 4993.373,
+              "cleanup_ms": 15.399,
+              "audio_wait_ms": 193.834,
+              "cut_cpu_ms": 2037.184,
+              "cut_dispatch_wait_ms": 1557.929,
+              "pending_wait_ms": 19.508,
+              "vad_wait_ms": 3.134,
+              "vad_worker_ms": 21861.355,
+              "low_volume_filter_ms": 0.046,
+              "model_load_lock_wait_ms": 0.018
+            }
+          }
+        },
+        {
+          "sample_id": "a6",
+          "status": "completed",
+          "started": 7542892.09634662,
+          "response_received": 7543066.2602337,
+          "elapsed_s": 174.16388708073646,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 512,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "d663936f-136c-4e1d-bdd6-7c7ef82df97a",
+            "filename": "36218c2edb9a454ba345c01456b2d37e-5.wav",
+            "started_monotonic": 7542895.73422142,
+            "ended_monotonic": 7543066.22265969,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 24801840.302,
+              "qwen_ms": 2197033.781,
+              "qwen_calls": 520.0,
+              "vad_ms": 22271.07,
+              "cut_sum_ms": 8619.816,
+              "cut_wall_ms": 137276.937,
+              "segment_ms": 140115.558,
+              "cluster_ms": 0.0,
+              "itn_ms": 6740.268,
+              "cleanup_ms": 19.324,
+              "audio_wait_ms": 197.18,
+              "cut_cpu_ms": 3150.927,
+              "cut_dispatch_wait_ms": 5443.104,
+              "pending_wait_ms": 26.079,
+              "vad_wait_ms": 2.442,
+              "vad_worker_ms": 22265.348,
+              "low_volume_filter_ms": 0.04,
+              "model_load_lock_wait_ms": 0.009
+            }
+          }
+        }
+      ]
+    }
+  },
+  "allocator_snapshots": {
+    "A6-final-status": {
+      "owners": [
+        {
+          "owner": 0,
+          "pid": 299738,
+          "birth": 1795454331.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 299738,
+            "worker_rss_mb": 2539.12109375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3898.7900390625,
+            "memory_reserved_mb": 5704.0,
+            "max_memory_allocated_mb": 5072.64208984375,
+            "max_memory_reserved_mb": 5704.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 1,
+          "pid": 589784,
+          "birth": 1795454355.2,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 589784,
+            "worker_rss_mb": 2540.9921875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3897.5869140625,
+            "memory_reserved_mb": 5936.0,
+            "max_memory_allocated_mb": 4970.267578125,
+            "max_memory_reserved_mb": 5936.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 2,
+          "pid": 723606,
+          "birth": 1795454378.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 723606,
+            "worker_rss_mb": 2533.03515625,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3920.33837890625,
+            "memory_reserved_mb": 6190.0,
+            "max_memory_allocated_mb": 5099.21630859375,
+            "max_memory_reserved_mb": 6190.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 3,
+          "pid": 877811,
+          "birth": 1795454401.92,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 877811,
+            "worker_rss_mb": 2536.83984375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3970.9931640625,
+            "memory_reserved_mb": 7982.0,
+            "max_memory_allocated_mb": 6435.39990234375,
+            "max_memory_reserved_mb": 7982.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 4,
+          "pid": 991338,
+          "birth": 1795454425.6,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 991338,
+            "worker_rss_mb": 2532.44921875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3905.35302734375,
+            "memory_reserved_mb": 6182.0,
+            "max_memory_allocated_mb": 4993.07373046875,
+            "max_memory_reserved_mb": 6182.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 5,
+          "pid": 1027285,
+          "birth": 1795454448.34,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 1027285,
+            "worker_rss_mb": 2554.2734375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3913.666015625,
+            "memory_reserved_mb": 7196.0,
+            "max_memory_allocated_mb": 5647.93505859375,
+            "max_memory_reserved_mb": 7196.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        }
+      ],
+      "PCM": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 0,
+        "audio_bytes": 0,
+        "waiting": 0,
+        "peak": 158,
+        "peak_audio_bytes": 62674688
+      },
+      "enhancement_pools": {
+        "speech_campplus": {
+          "loaded": false,
+          "instances": 0,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 0.0,
+          "inference_total_ms": 0.0,
+          "calls": 0,
+          "instance_metrics": [],
+          "called_instances": 0,
+          "inference_outcomes": {
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 0,
+          "load_total_ms": 0,
+          "torch_allocated_mb": 0.0,
+          "runtime_hbm_mb": null
+        },
+        "emotion2vec": {
+          "loaded": false,
+          "instances": 0,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 0.0,
+          "inference_total_ms": 0.0,
+          "calls": 0,
+          "instance_metrics": [],
+          "called_instances": 0,
+          "inference_outcomes": {
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 0,
+          "load_total_ms": 0,
+          "torch_allocated_mb": 0.0,
+          "runtime_hbm_mb": null
+        }
+      }
+    },
+    "A4-final-status": {
+      "owners": [
+        {
+          "owner": 0,
+          "pid": 299738,
+          "birth": 1795454331.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 299738,
+            "worker_rss_mb": 2551.87890625,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3915.416015625,
+            "memory_reserved_mb": 8640.0,
+            "max_memory_allocated_mb": 6500.71337890625,
+            "max_memory_reserved_mb": 8640.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 1,
+          "pid": 589784,
+          "birth": 1795454355.2,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 589784,
+            "worker_rss_mb": 2542.109375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 4001.16796875,
+            "memory_reserved_mb": 5936.0,
+            "max_memory_allocated_mb": 5026.88330078125,
+            "max_memory_reserved_mb": 5936.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 2,
+          "pid": 723606,
+          "birth": 1795454378.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 723606,
+            "worker_rss_mb": 2545.8125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3924.0576171875,
+            "memory_reserved_mb": 6898.0,
+            "max_memory_allocated_mb": 5854.63037109375,
+            "max_memory_reserved_mb": 6898.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 3,
+          "pid": 877811,
+          "birth": 1795454401.92,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 877811,
+            "worker_rss_mb": 2536.984375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3913.884765625,
+            "memory_reserved_mb": 7982.0,
+            "max_memory_allocated_mb": 6435.39990234375,
+            "max_memory_reserved_mb": 7982.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 4,
+          "pid": 991338,
+          "birth": 1795454425.6,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 991338,
+            "worker_rss_mb": 2532.44921875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3905.35302734375,
+            "memory_reserved_mb": 6182.0,
+            "max_memory_allocated_mb": 4993.07373046875,
+            "max_memory_reserved_mb": 6182.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 5,
+          "pid": 1027285,
+          "birth": 1795454448.34,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 1027285,
+            "worker_rss_mb": 2554.2734375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3913.666015625,
+            "memory_reserved_mb": 7196.0,
+            "max_memory_allocated_mb": 5647.93505859375,
+            "max_memory_reserved_mb": 7196.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        }
+      ],
+      "PCM": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 0,
+        "audio_bytes": 0,
+        "waiting": 0,
+        "peak": 158,
+        "peak_audio_bytes": 62674688
+      },
+      "enhancement_pools": {
+        "speech_campplus": {
+          "loaded": false,
+          "instances": 0,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 0.0,
+          "inference_total_ms": 0.0,
+          "calls": 0,
+          "instance_metrics": [],
+          "called_instances": 0,
+          "inference_outcomes": {
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 0,
+          "load_total_ms": 0,
+          "torch_allocated_mb": 0.0,
+          "runtime_hbm_mb": null
+        },
+        "emotion2vec": {
+          "loaded": false,
+          "instances": 0,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 0.0,
+          "inference_total_ms": 0.0,
+          "calls": 0,
+          "instance_metrics": [],
+          "called_instances": 0,
+          "inference_outcomes": {
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 0,
+          "load_total_ms": 0,
+          "torch_allocated_mb": 0.0,
+          "runtime_hbm_mb": null
+        }
+      }
+    },
+    "B-warm-status": {
+      "owners": [
+        {
+          "owner": 0,
+          "pid": 299738,
+          "birth": 1795454331.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 299738,
+            "worker_rss_mb": 2551.92578125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.44677734375,
+            "memory_reserved_mb": 8640.0,
+            "max_memory_allocated_mb": 6500.71337890625,
+            "max_memory_reserved_mb": 8640.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 1,
+          "pid": 589784,
+          "birth": 1795454355.2,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 589784,
+            "worker_rss_mb": 2542.12109375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3904.47802734375,
+            "memory_reserved_mb": 5936.0,
+            "max_memory_allocated_mb": 5026.88330078125,
+            "max_memory_reserved_mb": 5936.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 2,
+          "pid": 723606,
+          "birth": 1795454378.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 723606,
+            "worker_rss_mb": 2545.83984375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3905.89990234375,
+            "memory_reserved_mb": 6898.0,
+            "max_memory_allocated_mb": 5854.63037109375,
+            "max_memory_reserved_mb": 6898.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 3,
+          "pid": 877811,
+          "birth": 1795454401.92,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 877811,
+            "worker_rss_mb": 2537.01171875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.11865234375,
+            "memory_reserved_mb": 7982.0,
+            "max_memory_allocated_mb": 6435.39990234375,
+            "max_memory_reserved_mb": 7982.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 4,
+          "pid": 991338,
+          "birth": 1795454425.6,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 991338,
+            "worker_rss_mb": 2532.44921875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3905.35302734375,
+            "memory_reserved_mb": 6182.0,
+            "max_memory_allocated_mb": 4993.07373046875,
+            "max_memory_reserved_mb": 6182.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 5,
+          "pid": 1027285,
+          "birth": 1795454448.34,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 1027285,
+            "worker_rss_mb": 2554.2734375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3913.666015625,
+            "memory_reserved_mb": 7196.0,
+            "max_memory_allocated_mb": 5647.93505859375,
+            "max_memory_reserved_mb": 7196.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        }
+      ],
+      "PCM": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 0,
+        "audio_bytes": 0,
+        "waiting": 0,
+        "peak": 158,
+        "peak_audio_bytes": 62674688
+      },
+      "enhancement_pools": {
+        "speech_campplus": {
+          "loaded": true,
+          "instances": 1,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 13687.59,
+          "inference_total_ms": 4781.2,
+          "calls": 4,
+          "instance_metrics": [
+            {
+              "load_attempts": 1,
+              "load_failures": 0,
+              "load_ms": 21828.399890102446,
+              "load_work_ms": 21827.45302002877,
+              "load_dispatch_wait_ms": 0.9468700736761093,
+              "leases": 4,
+              "wait_ms": 13687.58917041123,
+              "calls": 4,
+              "inference_ms": 4781.204369850457,
+              "success": 4,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0,
+              "instance_index": 0
+            }
+          ],
+          "called_instances": 1,
+          "inference_outcomes": {
+            "success": 4,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 0,
+          "load_total_ms": 21828.4,
+          "torch_allocated_mb": null,
+          "runtime_hbm_mb": null
+        },
+        "emotion2vec": {
+          "loaded": true,
+          "instances": 1,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 8050.7,
+          "inference_total_ms": 2759.08,
+          "calls": 4,
+          "instance_metrics": [
+            {
+              "load_attempts": 1,
+              "load_failures": 0,
+              "load_ms": 15014.438680373132,
+              "load_work_ms": 15012.78848014772,
+              "load_dispatch_wait_ms": 1.6502002254128456,
+              "leases": 4,
+              "wait_ms": 8050.69721955806,
+              "calls": 4,
+              "inference_ms": 2759.0840803459287,
+              "success": 4,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0,
+              "instance_index": 0
+            }
+          ],
+          "called_instances": 1,
+          "inference_outcomes": {
+            "success": 4,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 0,
+          "load_total_ms": 15014.439,
+          "torch_allocated_mb": 627.82,
+          "runtime_hbm_mb": null
+        }
+      }
+    },
+    "B4-final-status": {
+      "owners": [
+        {
+          "owner": 0,
+          "pid": 299738,
+          "birth": 1795454331.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 299738,
+            "worker_rss_mb": 2552.0390625,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3897.0400390625,
+            "memory_reserved_mb": 8758.0,
+            "max_memory_allocated_mb": 6500.71337890625,
+            "max_memory_reserved_mb": 8758.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 1,
+          "pid": 589784,
+          "birth": 1795454355.2,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 589784,
+            "worker_rss_mb": 2545.30078125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3904.04052734375,
+            "memory_reserved_mb": 5972.0,
+            "max_memory_allocated_mb": 5195.7255859375,
+            "max_memory_reserved_mb": 5972.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 2,
+          "pid": 723606,
+          "birth": 1795454378.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 723606,
+            "worker_rss_mb": 2546.2421875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3913.994140625,
+            "memory_reserved_mb": 6974.0,
+            "max_memory_allocated_mb": 5854.63037109375,
+            "max_memory_reserved_mb": 6974.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 3,
+          "pid": 877811,
+          "birth": 1795454401.92,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 877811,
+            "worker_rss_mb": 2537.296875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3929.4169921875,
+            "memory_reserved_mb": 8042.0,
+            "max_memory_allocated_mb": 6435.39990234375,
+            "max_memory_reserved_mb": 8042.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 4,
+          "pid": 991338,
+          "birth": 1795454425.6,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 991338,
+            "worker_rss_mb": 2532.44921875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3905.35302734375,
+            "memory_reserved_mb": 6182.0,
+            "max_memory_allocated_mb": 4993.07373046875,
+            "max_memory_reserved_mb": 6182.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 5,
+          "pid": 1027285,
+          "birth": 1795454448.34,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 1027285,
+            "worker_rss_mb": 2554.2734375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3913.666015625,
+            "memory_reserved_mb": 7196.0,
+            "max_memory_allocated_mb": 5647.93505859375,
+            "max_memory_reserved_mb": 7196.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        }
+      ],
+      "PCM": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 0,
+        "audio_bytes": 0,
+        "waiting": 0,
+        "peak": 256,
+        "peak_audio_bytes": 106744576
+      },
+      "enhancement_pools": {
+        "speech_campplus": {
+          "loaded": true,
+          "instances": 1,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 61045509.33,
+          "inference_total_ms": 268036.69,
+          "calls": 2779,
+          "instance_metrics": [
+            {
+              "load_attempts": 1,
+              "load_failures": 0,
+              "load_ms": 21828.399890102446,
+              "load_work_ms": 21827.45302002877,
+              "load_dispatch_wait_ms": 0.9468700736761093,
+              "leases": 2779,
+              "wait_ms": 61045509.32661444,
+              "calls": 2779,
+              "inference_ms": 268036.6882244125,
+              "success": 2779,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0,
+              "instance_index": 0
+            }
+          ],
+          "called_instances": 1,
+          "inference_outcomes": {
+            "success": 2779,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 0,
+          "load_total_ms": 21828.4,
+          "torch_allocated_mb": null,
+          "runtime_hbm_mb": null
+        },
+        "emotion2vec": {
+          "loaded": true,
+          "instances": 1,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 171548.18,
+          "inference_total_ms": 95206.04,
+          "calls": 2230,
+          "instance_metrics": [
+            {
+              "load_attempts": 1,
+              "load_failures": 0,
+              "load_ms": 15014.438680373132,
+              "load_work_ms": 15012.78848014772,
+              "load_dispatch_wait_ms": 1.6502002254128456,
+              "leases": 2230,
+              "wait_ms": 171548.17832726985,
+              "calls": 2230,
+              "inference_ms": 95206.04050904512,
+              "success": 2230,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0,
+              "instance_index": 0
+            }
+          ],
+          "called_instances": 1,
+          "inference_outcomes": {
+            "success": 2230,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 549,
+          "load_total_ms": 15014.439,
+          "torch_allocated_mb": 627.82,
+          "runtime_hbm_mb": null
+        }
+      }
+    },
+    "A6-resident-pre-status": {
+      "owners": [
+        {
+          "owner": 0,
+          "pid": 299738,
+          "birth": 1795454331.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 299738,
+            "worker_rss_mb": 2552.10546875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.44677734375,
+            "memory_reserved_mb": 8758.0,
+            "max_memory_allocated_mb": 6500.71337890625,
+            "max_memory_reserved_mb": 8758.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 1,
+          "pid": 589784,
+          "birth": 1795454355.2,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 589784,
+            "worker_rss_mb": 2545.33984375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3904.47802734375,
+            "memory_reserved_mb": 5972.0,
+            "max_memory_allocated_mb": 5195.7255859375,
+            "max_memory_reserved_mb": 5972.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 2,
+          "pid": 723606,
+          "birth": 1795454378.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 723606,
+            "worker_rss_mb": 2546.25,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.22802734375,
+            "memory_reserved_mb": 6974.0,
+            "max_memory_allocated_mb": 5854.63037109375,
+            "max_memory_reserved_mb": 6974.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 3,
+          "pid": 877811,
+          "birth": 1795454401.92,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 877811,
+            "worker_rss_mb": 2537.30859375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.33740234375,
+            "memory_reserved_mb": 8042.0,
+            "max_memory_allocated_mb": 6435.39990234375,
+            "max_memory_reserved_mb": 8042.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 4,
+          "pid": 991338,
+          "birth": 1795454425.6,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 991338,
+            "worker_rss_mb": 2532.47265625,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3904.47802734375,
+            "memory_reserved_mb": 6182.0,
+            "max_memory_allocated_mb": 4993.07373046875,
+            "max_memory_reserved_mb": 6182.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 5,
+          "pid": 1027285,
+          "birth": 1795454448.34,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 1027285,
+            "worker_rss_mb": 2554.3828125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.00927734375,
+            "memory_reserved_mb": 7196.0,
+            "max_memory_allocated_mb": 5647.93505859375,
+            "max_memory_reserved_mb": 7196.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        }
+      ],
+      "PCM": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 0,
+        "audio_bytes": 0,
+        "waiting": 0,
+        "peak": 256,
+        "peak_audio_bytes": 106744576
+      },
+      "enhancement_pools": {
+        "speech_campplus": {
+          "loaded": true,
+          "instances": 1,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 61046065.87,
+          "inference_total_ms": 268397.92,
+          "calls": 2783,
+          "instance_metrics": [
+            {
+              "load_attempts": 1,
+              "load_failures": 0,
+              "load_ms": 21828.399890102446,
+              "load_work_ms": 21827.45302002877,
+              "load_dispatch_wait_ms": 0.9468700736761093,
+              "leases": 2783,
+              "wait_ms": 61046065.873433836,
+              "calls": 2783,
+              "inference_ms": 268397.91786298156,
+              "success": 2783,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0,
+              "instance_index": 0
+            }
+          ],
+          "called_instances": 1,
+          "inference_outcomes": {
+            "success": 2783,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 0,
+          "load_total_ms": 21828.4,
+          "torch_allocated_mb": null,
+          "runtime_hbm_mb": null
+        },
+        "emotion2vec": {
+          "loaded": true,
+          "instances": 1,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 171739.1,
+          "inference_total_ms": 95323.21,
+          "calls": 2234,
+          "instance_metrics": [
+            {
+              "load_attempts": 1,
+              "load_failures": 0,
+              "load_ms": 15014.438680373132,
+              "load_work_ms": 15012.78848014772,
+              "load_dispatch_wait_ms": 1.6502002254128456,
+              "leases": 2234,
+              "wait_ms": 171739.0993880108,
+              "calls": 2234,
+              "inference_ms": 95323.2087790966,
+              "success": 2234,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0,
+              "instance_index": 0
+            }
+          ],
+          "called_instances": 1,
+          "inference_outcomes": {
+            "success": 2234,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 549,
+          "load_total_ms": 15014.439,
+          "torch_allocated_mb": 627.82,
+          "runtime_hbm_mb": null
+        }
+      }
+    },
+    "A6-resident-final-status": {
+      "owners": [
+        {
+          "owner": 0,
+          "pid": 299738,
+          "birth": 1795454331.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 299738,
+            "worker_rss_mb": 2552.33984375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3931.93310546875,
+            "memory_reserved_mb": 8758.0,
+            "max_memory_allocated_mb": 6500.71337890625,
+            "max_memory_reserved_mb": 8758.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 1,
+          "pid": 589784,
+          "birth": 1795454355.2,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 589784,
+            "worker_rss_mb": 2548.52734375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3897.6962890625,
+            "memory_reserved_mb": 5262.0,
+            "max_memory_allocated_mb": 5195.7255859375,
+            "max_memory_reserved_mb": 6264.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 2,
+          "pid": 723606,
+          "birth": 1795454378.45,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 723606,
+            "worker_rss_mb": 2546.2578125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3909.61865234375,
+            "memory_reserved_mb": 6974.0,
+            "max_memory_allocated_mb": 5854.63037109375,
+            "max_memory_reserved_mb": 6974.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 3,
+          "pid": 877811,
+          "birth": 1795454401.92,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 877811,
+            "worker_rss_mb": 2552.14453125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 4112.37353515625,
+            "memory_reserved_mb": 7082.0,
+            "max_memory_allocated_mb": 6435.39990234375,
+            "max_memory_reserved_mb": 8042.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 13,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 4,
+          "pid": 991338,
+          "birth": 1795454425.6,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 991338,
+            "worker_rss_mb": 2536.63671875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 4121.56298828125,
+            "memory_reserved_mb": 6710.0,
+            "max_memory_allocated_mb": 4993.07373046875,
+            "max_memory_reserved_mb": 6710.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 15,
+          "worker_alive": true,
+          "failure": null
+        },
+        {
+          "owner": 5,
+          "pid": 1027285,
+          "birth": 1795454448.34,
+          "worker_allocator_snapshot": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 1027285,
+            "worker_rss_mb": 2555.23828125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 4436.95751953125,
+            "memory_reserved_mb": 7322.0,
+            "max_memory_allocated_mb": 6167.14404296875,
+            "max_memory_reserved_mb": 7322.0
+          },
+          "runtime_top_load_delta_allocated_mb": 3889.24560546875,
+          "active_sequences": 0,
+          "worker_alive": true,
+          "failure": null
+        }
+      ],
+      "PCM": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 24,
+        "audio_bytes": 13180224,
+        "waiting": 0,
+        "peak": 256,
+        "peak_audio_bytes": 106744576
+      },
+      "enhancement_pools": {
+        "speech_campplus": {
+          "loaded": true,
+          "instances": 1,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 61046065.87,
+          "inference_total_ms": 268397.92,
+          "calls": 2783,
+          "instance_metrics": [
+            {
+              "load_attempts": 1,
+              "load_failures": 0,
+              "load_ms": 21828.399890102446,
+              "load_work_ms": 21827.45302002877,
+              "load_dispatch_wait_ms": 0.9468700736761093,
+              "leases": 2783,
+              "wait_ms": 61046065.873433836,
+              "calls": 2783,
+              "inference_ms": 268397.91786298156,
+              "success": 2783,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0,
+              "instance_index": 0
+            }
+          ],
+          "called_instances": 1,
+          "inference_outcomes": {
+            "success": 2783,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 0,
+          "load_total_ms": 21828.4,
+          "torch_allocated_mb": null,
+          "runtime_hbm_mb": null
+        },
+        "emotion2vec": {
+          "loaded": true,
+          "instances": 1,
+          "configured_instances": 1,
+          "devices": [
+            "npu:7"
+          ],
+          "wait_total_ms": 171739.1,
+          "inference_total_ms": 95323.21,
+          "calls": 2234,
+          "instance_metrics": [
+            {
+              "load_attempts": 1,
+              "load_failures": 0,
+              "load_ms": 15014.438680373132,
+              "load_work_ms": 15012.78848014772,
+              "load_dispatch_wait_ms": 1.6502002254128456,
+              "leases": 2234,
+              "wait_ms": 171739.0993880108,
+              "calls": 2234,
+              "inference_ms": 95323.2087790966,
+              "success": 2234,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0,
+              "instance_index": 0
+            }
+          ],
+          "called_instances": 1,
+          "inference_outcomes": {
+            "success": 2234,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "duration_skips": 549,
+          "load_total_ms": 15014.439,
+          "torch_allocated_mb": 627.82,
+          "runtime_hbm_mb": null
+        }
+      }
+    }
+  },
+  "B4_pool_deltas": {
+    "speech_campplus": {
+      "calls": 2775,
+      "wait_total_ms": 61031821.739999995,
+      "inference_total_ms": 263255.49,
+      "duration_skips": 0,
+      "mean_wait_ms_per_actual_call": 21993.449275675674,
+      "mean_inference_envelope_ms_per_actual_call": 94.86684324324324
+    },
+    "emotion2vec": {
+      "calls": 2226,
+      "wait_total_ms": 163497.47999999998,
+      "inference_total_ms": 92446.95999999999,
+      "duration_skips": 549,
+      "mean_wait_ms_per_actual_call": 73.44900269541778,
+      "mean_inference_envelope_ms_per_actual_call": 41.53053009883198
+    }
+  },
+  "OOM_evidence": {
+    "path": "/root/ascend/log/debug/plog/plog-1027285_20261124013637029.log",
+    "sha256": "616af31ef7e8e25a547cf3df44d7c910b34f2784a22cad62d4497e3000527173",
+    "owner": 5,
+    "pid": 1027285,
+    "device": 7,
+    "failed_allocation_bytes": 23068672,
+    "failed_allocation_MiB": 22,
+    "lines": [
+      {
+        "line": 1,
+        "text": "[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:36.992.030 [npu_driver.cc:1399]1027285 DevMemAllocHugePageManaged:[INIT][DEFAULT][drv api] halMemAlloc failed:size=23068672(bytes), type=0, moduleId=33, drvFlag=2377900603261207559, drvRetCode=6, device_id=7!"
+      },
+      {
+        "line": 2,
+        "text": "[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.029.408 [npu_driver.cc:1529]1027285 DevMemAllocManaged:[INIT][DEFAULT][drv api] halMemAlloc failed:size=23068672(bytes), type=0, moduleId=33, drvFlag=2377900603261076487, drvRetCode=6, device_id=7!"
+      },
+      {
+        "line": 3,
+        "text": "[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.029.419 [api_error.cc:1247]1027285 DevMalloc:[INIT][DEFAULT]Device malloc failed, size=23068672(bytes), type=1024."
+      },
+      {
+        "line": 4,
+        "text": "[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.029.443 [api_c_memory.cc:47]1027285 rtMalloc:[INIT][DEFAULT]ErrCode=207001, desc=[driver error:out of memory], InnerCode=0x7020016"
+      },
+      {
+        "line": 7,
+        "text": "[ERROR] ASCENDCL(1027285,python):2026-11-24-01:36:37.030.482 [memory.cpp:147]1027285 aclMallocMemInner: [INIT][DEFAULT]alloc device memory failed, runtime result = 207001"
+      },
+      {
+        "line": 9,
+        "text": "[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.120.070 [npu_driver.cc:1399]1027285 DevMemAllocHugePageManaged:[INIT][DEFAULT][drv api] halMemAlloc failed:size=23068672(bytes), type=0, moduleId=33, drvFlag=2377900603261207559, drvRetCode=6, device_id=7!"
+      },
+      {
+        "line": 10,
+        "text": "[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.151.180 [npu_driver.cc:1529]1027285 DevMemAllocManaged:[INIT][DEFAULT][drv api] halMemAlloc failed:size=23068672(bytes), type=0, moduleId=33, drvFlag=2377900603261076487, drvRetCode=6, device_id=7!"
+      },
+      {
+        "line": 11,
+        "text": "[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.151.189 [api_error.cc:1247]1027285 DevMalloc:[INIT][DEFAULT]Device malloc failed, size=23068672(bytes), type=1024."
+      },
+      {
+        "line": 12,
+        "text": "[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.151.206 [api_c_memory.cc:47]1027285 rtMalloc:[INIT][DEFAULT]ErrCode=207001, desc=[driver error:out of memory], InnerCode=0x7020016"
+      },
+      {
+        "line": 15,
+        "text": "[ERROR] ASCENDCL(1027285,python):2026-11-24-01:36:37.151.529 [memory.cpp:147]1027285 aclMallocMemInner: [INIT][DEFAULT]alloc device memory failed, runtime result = 207001"
+      }
+    ],
+    "confirmed": "device allocation failed with driver out of memory, runtime error207001; not merely inferred from top-level4012",
+    "root_cause_limit": "Cache pressure/pool fragmentation/other allocations are possible contributors; these logs do not uniquely attribute OOM to any one of them."
+  },
+  "shutdown": {
+    "passed": true,
+    "forced": false,
+    "exit_code": 0,
+    "remaining_pids": [],
+    "remaining_cache_files": [],
+    "port_observations": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "observe_s": 5,
+    "orphan_cleanup": false,
+    "identities": [
+      [
+        96249,
+        1795454315.62
+      ],
+      [
+        174698,
+        1795454321.06
+      ],
+      [
+        174727,
+        1795454321.06
+      ],
+      [
+        174751,
+        1795454321.06
+      ],
+      [
+        174775,
+        1795454321.07
+      ],
+      [
+        174810,
+        1795454321.07
+      ],
+      [
+        174854,
+        1795454321.07
+      ],
+      [
+        174891,
+        1795454321.07
+      ],
+      [
+        174939,
+        1795454321.07
+      ],
+      [
+        175004,
+        1795454321.08
+      ],
+      [
+        299738,
+        1795454331.45
+      ],
+      [
+        418409,
+        1795454340.34
+      ],
+      [
+        490074,
+        1795454345.64
+      ],
+      [
+        490736,
+        1795454345.7
+      ],
+      [
+        490768,
+        1795454345.7
+      ],
+      [
+        490790,
+        1795454345.71
+      ],
+      [
+        490807,
+        1795454345.71
+      ],
+      [
+        490828,
+        1795454345.71
+      ],
+      [
+        490847,
+        1795454345.71
+      ],
+      [
+        490864,
+        1795454345.71
+      ],
+      [
+        490883,
+        1795454345.71
+      ],
+      [
+        490900,
+        1795454345.71
+      ],
+      [
+        494636,
+        1795454345.98
+      ],
+      [
+        494637,
+        1795454345.98
+      ],
+      [
+        494638,
+        1795454345.98
+      ],
+      [
+        494639,
+        1795454345.98
+      ],
+      [
+        494641,
+        1795454345.99
+      ],
+      [
+        494657,
+        1795454345.99
+      ],
+      [
+        494678,
+        1795454345.99
+      ],
+      [
+        494700,
+        1795454345.99
+      ],
+      [
+        589784,
+        1795454355.2
+      ],
+      [
+        635305,
+        1795454363.84
+      ],
+      [
+        667331,
+        1795454368.89
+      ],
+      [
+        667498,
+        1795454368.95
+      ],
+      [
+        667518,
+        1795454368.96
+      ],
+      [
+        667536,
+        1795454368.96
+      ],
+      [
+        667566,
+        1795454368.96
+      ],
+      [
+        667606,
+        1795454368.96
+      ],
+      [
+        667646,
+        1795454368.96
+      ],
+      [
+        667674,
+        1795454368.96
+      ],
+      [
+        667712,
+        1795454368.97
+      ],
+      [
+        667713,
+        1795454368.97
+      ],
+      [
+        668981,
+        1795454369.22
+      ],
+      [
+        668998,
+        1795454369.22
+      ],
+      [
+        669016,
+        1795454369.22
+      ],
+      [
+        669034,
+        1795454369.22
+      ],
+      [
+        669050,
+        1795454369.23
+      ],
+      [
+        669051,
+        1795454369.23
+      ],
+      [
+        669052,
+        1795454369.23
+      ],
+      [
+        669053,
+        1795454369.24
+      ],
+      [
+        723606,
+        1795454378.45
+      ],
+      [
+        787069,
+        1795454387.36
+      ],
+      [
+        815326,
+        1795454392.37
+      ],
+      [
+        815687,
+        1795454392.43
+      ],
+      [
+        815688,
+        1795454392.43
+      ],
+      [
+        815689,
+        1795454392.43
+      ],
+      [
+        815690,
+        1795454392.43
+      ],
+      [
+        815691,
+        1795454392.43
+      ],
+      [
+        815692,
+        1795454392.44
+      ],
+      [
+        815693,
+        1795454392.44
+      ],
+      [
+        815694,
+        1795454392.44
+      ],
+      [
+        815695,
+        1795454392.44
+      ],
+      [
+        817369,
+        1795454392.72
+      ],
+      [
+        817391,
+        1795454392.72
+      ],
+      [
+        817392,
+        1795454392.73
+      ],
+      [
+        817393,
+        1795454392.73
+      ],
+      [
+        817394,
+        1795454392.73
+      ],
+      [
+        817395,
+        1795454392.73
+      ],
+      [
+        817396,
+        1795454392.74
+      ],
+      [
+        817397,
+        1795454392.74
+      ],
+      [
+        877811,
+        1795454401.92
+      ],
+      [
+        934043,
+        1795454410.68
+      ],
+      [
+        961803,
+        1795454415.99
+      ],
+      [
+        961804,
+        1795454416.05
+      ],
+      [
+        961805,
+        1795454416.05
+      ],
+      [
+        961806,
+        1795454416.06
+      ],
+      [
+        961807,
+        1795454416.06
+      ],
+      [
+        961808,
+        1795454416.06
+      ],
+      [
+        961809,
+        1795454416.06
+      ],
+      [
+        961810,
+        1795454416.06
+      ],
+      [
+        961811,
+        1795454416.06
+      ],
+      [
+        961812,
+        1795454416.06
+      ],
+      [
+        961813,
+        1795454416.31
+      ],
+      [
+        961814,
+        1795454416.31
+      ],
+      [
+        961815,
+        1795454416.31
+      ],
+      [
+        961816,
+        1795454416.32
+      ],
+      [
+        961817,
+        1795454416.32
+      ],
+      [
+        961818,
+        1795454416.32
+      ],
+      [
+        961819,
+        1795454416.32
+      ],
+      [
+        961820,
+        1795454416.32
+      ],
+      [
+        991338,
+        1795454425.6
+      ],
+      [
+        1020311,
+        1795454434.16
+      ],
+      [
+        1026361,
+        1795454439.1
+      ],
+      [
+        1026362,
+        1795454439.16
+      ],
+      [
+        1026363,
+        1795454439.16
+      ],
+      [
+        1026364,
+        1795454439.17
+      ],
+      [
+        1026365,
+        1795454439.17
+      ],
+      [
+        1026366,
+        1795454439.17
+      ],
+      [
+        1026367,
+        1795454439.17
+      ],
+      [
+        1026368,
+        1795454439.17
+      ],
+      [
+        1026369,
+        1795454439.17
+      ],
+      [
+        1026370,
+        1795454439.17
+      ],
+      [
+        1026371,
+        1795454439.37
+      ],
+      [
+        1026372,
+        1795454439.38
+      ],
+      [
+        1026373,
+        1795454439.38
+      ],
+      [
+        1026374,
+        1795454439.38
+      ],
+      [
+        1026375,
+        1795454439.38
+      ],
+      [
+        1026376,
+        1795454439.38
+      ],
+      [
+        1026377,
+        1795454439.38
+      ],
+      [
+        1026378,
+        1795454439.38
+      ],
+      [
+        1027285,
+        1795454448.34
+      ],
+      [
+        1031694,
+        1795454456.95
+      ],
+      [
+        1034959,
+        1795454461.88
+      ],
+      [
+        1034960,
+        1795454461.94
+      ],
+      [
+        1034961,
+        1795454461.94
+      ],
+      [
+        1034962,
+        1795454461.95
+      ],
+      [
+        1034963,
+        1795454461.95
+      ],
+      [
+        1034964,
+        1795454461.95
+      ],
+      [
+        1034965,
+        1795454461.95
+      ],
+      [
+        1034966,
+        1795454461.95
+      ],
+      [
+        1034967,
+        1795454461.95
+      ],
+      [
+        1034968,
+        1795454461.95
+      ],
+      [
+        1035157,
+        1795454462.16
+      ],
+      [
+        1035158,
+        1795454462.16
+      ],
+      [
+        1035159,
+        1795454462.16
+      ],
+      [
+        1035160,
+        1795454462.16
+      ],
+      [
+        1035161,
+        1795454462.17
+      ],
+      [
+        1035162,
+        1795454462.17
+      ],
+      [
+        1035163,
+        1795454462.17
+      ],
+      [
+        1035164,
+        1795454462.17
+      ],
+      [
+        1061054,
+        1795454472.77
+      ],
+      [
+        1073283,
+        1795454478.07
+      ],
+      [
+        1087408,
+        1795454482.55
+      ],
+      [
+        1110599,
+        1795454487.27
+      ],
+      [
+        1135238,
+        1795454491.97
+      ],
+      [
+        1166306,
+        1795454496.66
+      ],
+      [
+        1191715,
+        1795454501.34
+      ],
+      [
+        1231713,
+        1795454506.21
+      ],
+      [
+        1271764,
+        1795454511.1
+      ],
+      [
+        1311086,
+        1795454516.03
+      ],
+      [
+        1349106,
+        1795454520.87
+      ],
+      [
+        1400358,
+        1795454525.66
+      ],
+      [
+        1445391,
+        1795454530.55
+      ],
+      [
+        1491640,
+        1795454535.35
+      ],
+      [
+        1540736,
+        1795454540.2
+      ],
+      [
+        1587989,
+        1795454545.01
+      ],
+      [
+        1655999,
+        1795454549.89
+      ],
+      [
+        1726558,
+        1795454555.44
+      ],
+      [
+        1786355,
+        1795454560.45
+      ],
+      [
+        1847649,
+        1795454565.07
+      ],
+      [
+        1907013,
+        1795454569.89
+      ],
+      [
+        1966335,
+        1795454574.8
+      ],
+      [
+        2049829,
+        1795454580.46
+      ],
+      [
+        2108495,
+        1795454585.32
+      ],
+      [
+        2214184,
+        1795454593.75
+      ],
+      [
+        2268768,
+        1795454598.16
+      ],
+      [
+        2337356,
+        1795454602.98
+      ],
+      [
+        2400966,
+        1795454607.78
+      ],
+      [
+        2465057,
+        1795454612.7
+      ],
+      [
+        2517199,
+        1795454617.49
+      ],
+      [
+        2572567,
+        1795454622.41
+      ],
+      [
+        2620788,
+        1795454627.24
+      ],
+      [
+        2659423,
+        1795454632.02
+      ],
+      [
+        2702850,
+        1795454639.1
+      ],
+      [
+        2778498,
+        1795454650.16
+      ],
+      [
+        2802895,
+        1795454654.9
+      ],
+      [
+        2885937,
+        1795454667.61
+      ],
+      [
+        2913496,
+        1795454671.98
+      ],
+      [
+        2929995,
+        1795454676.74
+      ],
+      [
+        2948712,
+        1795454681.52
+      ],
+      [
+        2967240,
+        1795454686.3
+      ],
+      [
+        2985100,
+        1795454691.06
+      ],
+      [
+        2998021,
+        1795454695.16
+      ],
+      [
+        3029608,
+        1795454700.0
+      ],
+      [
+        3036408,
+        1795454704.86
+      ],
+      [
+        3044541,
+        1795454709.57
+      ],
+      [
+        3053349,
+        1795454714.4
+      ],
+      [
+        3063812,
+        1795454719.2
+      ],
+      [
+        3074807,
+        1795454724.03
+      ],
+      [
+        3098439,
+        1795454728.84
+      ],
+      [
+        3107692,
+        1795454733.61
+      ],
+      [
+        3130043,
+        1795454738.45
+      ],
+      [
+        3144953,
+        1795454743.28
+      ],
+      [
+        3171815,
+        1795454748.12
+      ],
+      [
+        3204164,
+        1795454752.85
+      ],
+      [
+        3229625,
+        1795454757.71
+      ],
+      [
+        3257348,
+        1795454762.53
+      ],
+      [
+        3294544,
+        1795454767.37
+      ],
+      [
+        3322635,
+        1795454772.15
+      ],
+      [
+        3365605,
+        1795454777.0
+      ],
+      [
+        3405640,
+        1795454781.73
+      ],
+      [
+        3447517,
+        1795454786.55
+      ],
+      [
+        3493693,
+        1795454791.4
+      ],
+      [
+        3541782,
+        1795454796.18
+      ],
+      [
+        3587813,
+        1795454801.05
+      ],
+      [
+        3635223,
+        1795454805.86
+      ],
+      [
+        3678361,
+        1795454810.73
+      ],
+      [
+        3724928,
+        1795454815.55
+      ],
+      [
+        3762874,
+        1795454820.38
+      ],
+      [
+        3840538,
+        1795454828.25
+      ],
+      [
+        3898769,
+        1795454833.09
+      ],
+      [
+        3942805,
+        1795454837.89
+      ],
+      [
+        3994811,
+        1795454842.69
+      ],
+      [
+        4043563,
+        1795454847.49
+      ],
+      [
+        4087115,
+        1795454852.28
+      ],
+      [
+        38866,
+        1795454865.05
+      ],
+      [
+        57715,
+        1795454866.68
+      ],
+      [
+        83871,
+        1795454869.46
+      ],
+      [
+        123427,
+        1795454874.28
+      ],
+      [
+        134454,
+        1795454876.05
+      ],
+      [
+        165131,
+        1795454879.07
+      ],
+      [
+        183129,
+        1795454881.15
+      ],
+      [
+        183956,
+        1795454881.21
+      ],
+      [
+        184016,
+        1795454881.21
+      ],
+      [
+        184059,
+        1795454881.21
+      ],
+      [
+        184084,
+        1795454881.22
+      ],
+      [
+        184087,
+        1795454881.22
+      ],
+      [
+        184088,
+        1795454881.22
+      ],
+      [
+        184089,
+        1795454881.22
+      ],
+      [
+        184090,
+        1795454881.22
+      ],
+      [
+        184091,
+        1795454881.22
+      ],
+      [
+        186188,
+        1795454881.44
+      ],
+      [
+        186208,
+        1795454881.44
+      ],
+      [
+        186233,
+        1795454881.45
+      ],
+      [
+        186261,
+        1795454881.45
+      ],
+      [
+        186290,
+        1795454881.45
+      ],
+      [
+        186319,
+        1795454881.45
+      ],
+      [
+        186348,
+        1795454881.45
+      ],
+      [
+        186365,
+        1795454881.45
+      ],
+      [
+        213594,
+        1795454883.97
+      ],
+      [
+        248852,
+        1795454888.82
+      ],
+      [
+        277198,
+        1795454892.69
+      ],
+      [
+        278026,
+        1795454892.76
+      ],
+      [
+        278632,
+        1795454892.83
+      ],
+      [
+        278633,
+        1795454892.83
+      ],
+      [
+        278634,
+        1795454892.83
+      ],
+      [
+        278635,
+        1795454892.83
+      ],
+      [
+        278636,
+        1795454892.83
+      ],
+      [
+        278637,
+        1795454892.84
+      ],
+      [
+        278647,
+        1795454892.84
+      ],
+      [
+        278685,
+        1795454892.84
+      ],
+      [
+        278720,
+        1795454892.84
+      ],
+      [
+        281624,
+        1795454893.14
+      ],
+      [
+        281653,
+        1795454893.14
+      ],
+      [
+        281685,
+        1795454893.15
+      ],
+      [
+        281714,
+        1795454893.15
+      ],
+      [
+        281739,
+        1795454893.15
+      ],
+      [
+        281740,
+        1795454893.15
+      ],
+      [
+        281741,
+        1795454893.16
+      ],
+      [
+        281742,
+        1795454893.16
+      ],
+      [
+        296043,
+        1795454894.65
+      ],
+      [
+        358039,
+        1795454901.02
+      ],
+      [
+        398949,
+        1795454905.55
+      ],
+      [
+        461641,
+        1795454912.27
+      ],
+      [
+        517563,
+        1795454917.06
+      ],
+      [
+        557748,
+        1795454922.05
+      ],
+      [
+        587556,
+        1795454926.2
+      ],
+      [
+        632238,
+        1795454931.22
+      ],
+      [
+        686988,
+        1795454937.44
+      ],
+      [
+        725104,
+        1795454942.96
+      ],
+      [
+        769599,
+        1795454948.94
+      ],
+      [
+        807980,
+        1795454954.82
+      ],
+      [
+        852362,
+        1795454960.64
+      ],
+      [
+        886029,
+        1795454965.99
+      ],
+      [
+        923079,
+        1795454971.19
+      ],
+      [
+        957649,
+        1795454976.91
+      ],
+      [
+        984773,
+        1795454981.98
+      ],
+      [
+        1006388,
+        1795454987.28
+      ],
+      [
+        1027451,
+        1795454992.95
+      ],
+      [
+        1049465,
+        1795454997.98
+      ],
+      [
+        1072567,
+        1795455002.93
+      ],
+      [
+        1101649,
+        1795455007.94
+      ],
+      [
+        1129414,
+        1795455013.07
+      ],
+      [
+        1155938,
+        1795455017.89
+      ],
+      [
+        1199520,
+        1795455023.14
+      ],
+      [
+        1231973,
+        1795455028.02
+      ],
+      [
+        1265352,
+        1795455033.44
+      ],
+      [
+        1323824,
+        1795455038.96
+      ],
+      [
+        1368317,
+        1795455044.08
+      ],
+      [
+        1411802,
+        1795455049.14
+      ],
+      [
+        1459861,
+        1795455054.51
+      ],
+      [
+        1513104,
+        1795455060.15
+      ],
+      [
+        1547158,
+        1795455065.06
+      ],
+      [
+        1587233,
+        1795455070.23
+      ],
+      [
+        1624223,
+        1795455075.44
+      ],
+      [
+        1659511,
+        1795455081.06
+      ],
+      [
+        1712334,
+        1795455086.35
+      ],
+      [
+        1756208,
+        1795455091.41
+      ],
+      [
+        1793544,
+        1795455096.47
+      ],
+      [
+        1836129,
+        1795455101.35
+      ],
+      [
+        1888378,
+        1795455106.56
+      ],
+      [
+        1954407,
+        1795455112.46
+      ],
+      [
+        2004219,
+        1795455117.39
+      ],
+      [
+        2053452,
+        1795455122.67
+      ],
+      [
+        2103982,
+        1795455127.63
+      ],
+      [
+        2140400,
+        1795455132.75
+      ],
+      [
+        2180365,
+        1795455137.85
+      ],
+      [
+        2221260,
+        1795455142.92
+      ],
+      [
+        2274094,
+        1795455147.99
+      ],
+      [
+        2313529,
+        1795455152.83
+      ],
+      [
+        2353242,
+        1795455157.96
+      ],
+      [
+        2397286,
+        1795455162.97
+      ],
+      [
+        2426841,
+        1795455167.98
+      ],
+      [
+        2462836,
+        1795455172.77
+      ],
+      [
+        2492071,
+        1795455177.82
+      ],
+      [
+        2536753,
+        1795455182.53
+      ],
+      [
+        2573661,
+        1795455187.56
+      ],
+      [
+        2641182,
+        1795455196.49
+      ],
+      [
+        2685808,
+        1795455203.9
+      ],
+      [
+        2693474,
+        1795455208.12
+      ],
+      [
+        2719390,
+        1795455215.86
+      ],
+      [
+        2730871,
+        1795455222.4
+      ],
+      [
+        2741021,
+        1795455227.0
+      ],
+      [
+        2757202,
+        1795455231.96
+      ],
+      [
+        2771522,
+        1795455236.06
+      ],
+      [
+        2783083,
+        1795455241.01
+      ],
+      [
+        2804829,
+        1795455246.15
+      ],
+      [
+        2835171,
+        1795455251.38
+      ],
+      [
+        2861291,
+        1795455256.46
+      ],
+      [
+        2883555,
+        1795455261.45
+      ],
+      [
+        2925654,
+        1795455267.33
+      ],
+      [
+        2972211,
+        1795455272.2
+      ],
+      [
+        3013160,
+        1795455277.3
+      ],
+      [
+        3058926,
+        1795455282.39
+      ],
+      [
+        3096107,
+        1795455287.39
+      ],
+      [
+        3124778,
+        1795455292.46
+      ],
+      [
+        3162237,
+        1795455297.33
+      ],
+      [
+        3202747,
+        1795455302.55
+      ],
+      [
+        3244969,
+        1795455307.76
+      ],
+      [
+        3290837,
+        1795455312.61
+      ],
+      [
+        3332919,
+        1795455317.71
+      ],
+      [
+        3392037,
+        1795455322.78
+      ],
+      [
+        3416957,
+        1795455327.78
+      ],
+      [
+        3446126,
+        1795455332.82
+      ],
+      [
+        3536280,
+        1795455342.71
+      ],
+      [
+        3572813,
+        1795455347.77
+      ],
+      [
+        3612905,
+        1795455352.79
+      ],
+      [
+        3651862,
+        1795455358.36
+      ],
+      [
+        3695427,
+        1795455362.91
+      ],
+      [
+        3728918,
+        1795455367.92
+      ],
+      [
+        3786061,
+        1795455372.98
+      ],
+      [
+        3832556,
+        1795455377.98
+      ],
+      [
+        3926864,
+        1795455392.44
+      ],
+      [
+        3962686,
+        1795455396.97
+      ]
+    ]
+  },
+  "matrix_complete": false,
+  "resource_recovery": {
+    "passed": null,
+    "observation_complete": true,
+    "hbm_observed": true,
+    "status": "unknown",
+    "before": {
+      "index": 7,
+      "available": true,
+      "status": "observed",
+      "hbm_used_mb": 15908,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 49628,
+      "chip": 0,
+      "bus_id": "0000:42:00.0"
+    },
+    "after": {
+      "index": 7,
+      "available": true,
+      "status": "observed",
+      "hbm_used_mb": 15910,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 49626,
+      "chip": 0,
+      "bus_id": "0000:42:00.0"
+    },
+    "used_delta_mb": 2,
+    "free_delta_mb": -2,
+    "external_process_changes": [
+      {
+        "pid": 1601397,
+        "chip": 0,
+        "before_mb": 12417,
+        "after_mb": 12417,
+        "delta_mb": 0
+      }
+    ],
+    "owned_normal_exit": true,
+    "near_background": null,
+    "scope": "physical NPU7 actual MB evidence plus owned exit; nonzero aggregate delta requires shared-load review, no replacement free threshold",
+    "reason": "recovery not verified: inspect NPU7 numeric evidence, external changes and owned cleanup; unknown is not zero"
+  },
+  "sources": [
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A4/summary.json",
+      "sha256": "dae279356968b4b7259d7124272e6f6e0ebff6fe32effc142928936468a9ea04"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/B4/summary.json",
+      "sha256": "6ad85c97bdb51abf771fbf21d1299a59eedffaaf88ebd47e800b94253d7ed259"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A6-resident/summary.json",
+      "sha256": "9c10419f0334976242b6b655a7c53c41f8e3089e2c4c5c507706b355d261af34"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A6-final-status.json",
+      "sha256": "241790686595ed9eb869ef7d517e3b3c694bb6370c45b0eef57a4a4077dfaf4b"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A4-final-status.json",
+      "sha256": "d3f1b1c7277b41966f300bd20b4b1835a85b4d483271d751e758740c6f4b9537"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/B-warm-status.json",
+      "sha256": "46a17a067d5ae23a6fe5d887e3f503d582cefd786af70229a28974c18b380c85"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/B4-final-status.json",
+      "sha256": "aab460c4e803ab5a8b43f5e31e768b43a904108d286096e082f4ca7fb2d86d01"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A6-resident-pre-status.json",
+      "sha256": "61c34310a07f907cde8518e1aeeba9cb597106521b418e0d67b13f1ea0c98cf2"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A6-resident-final-status.json",
+      "sha256": "0ec53aaf4d0d51f98fd24031e7e8c8d01a5d71ab17178396f464241f50462ce8"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/shutdown.json",
+      "sha256": "ca49c7d2d1d724727339c6e9a54fafc367a57c290f73056d45208fc931958c1d"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/run.json",
+      "sha256": "7835c562f777be3c419e2c3f5f520f0ab2cd13a4de6a35815e36da9f22b0d60b"
+    }
+  ],
+  "unit_scope": "npu-smi raw hbm_*_mb kept as reported MB; worker_allocator *_mb are allocator snapshot units; cumulative maxima not summed or subtracted as work",
+  "interpretation_limits": [
+    "B4 queue times are across-task accumulated waits; do not add them to request wall clock.",
+    "Sampled HBM minima are not instantaneous fault-time memory availability; resource gaps up to11.799s exist.",
+    "Worker allocator snapshots may be cached at last RPC/status, do not treat top-level load deltas as current allocator usage.",
+    "reserved-allocated cannot all be declared immediately releasable: allocator block layout, live references, stream/runtime ownership and fragmentation are not resolved here.",
+    "No sums of independently-timed maximum allocator peaks are used; same-phase per-owner snapshots are preserved individually.",
+    "14400frames/10000tokens per owner are input/admission estimates, not HBM reservation or total coexistence guarantees.",
+    "No new NPU load, CAM2/4 experiment, model call, device command, source/config/task edit or deletion performed."
+  ]
+}

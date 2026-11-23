@@ -204,7 +204,7 @@ def test_client_repeated_cancel_keeps_busy_until_actual_spawn_worker_reads(tmp_p
     with wave.open(stream,'wb') as wav:
         wav.setparams((1,2,16000,0,'NONE','not compressed'));wav.writeframes(bytes(16000*2))
     async def scenario():
-        client=QwenAsrClient(local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,
+        client=QwenAsrClient(generation_mode="legacy", local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,
             max_inference_batch_size=2,batch_wait_timeout_ms=10,
             runtime_factory=lambda *args:LocalQwenProcessRuntime(*args,_runtime_factory=__name__+':CpuRuntime',
                                                            _startup_timeout_s=5,_close_timeout_s=.5))
@@ -277,7 +277,7 @@ def test_real_client_dead_worker_is_unavailable4011_and_close_preserves_exit17(t
     from core.qwen_asr_client import QwenAsrClient,QwenAsrUnavailableError
     config=tmp_path/'fake.json';config.write_text(json.dumps({'events':str(tmp_path/'events'),'die_on_transcribe':True}))
     async def scenario():
-        client=QwenAsrClient(local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=1,
+        client=QwenAsrClient(generation_mode="legacy", local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=1,
             runtime_factory=lambda *args:LocalQwenProcessRuntime(*args,_runtime_factory=__name__+':CpuRuntime',
                                                            _startup_timeout_s=5,_close_timeout_s=.5))
         with pytest.raises(QwenAsrUnavailableError) as error:
@@ -295,7 +295,7 @@ def test_real_client_fault_close_raises_aggregate_after_resource_reap(tmp_path,o
     from core.qwen_asr_client import QwenAsrClient
     config=tmp_path/'fake.json';config.write_text(json.dumps(dict(events=str(tmp_path/'events'),**options)))
     async def scenario():
-        client=QwenAsrClient(local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,
+        client=QwenAsrClient(generation_mode="legacy", local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,
             runtime_factory=lambda *args:LocalQwenProcessRuntime(*args,_runtime_factory=__name__+':CpuRuntime',
                                                            _startup_timeout_s=5,_close_timeout_s=.5))
         await client.discover_model()
@@ -322,7 +322,7 @@ def test_real_client_model_and_language_errors_preserve_existing_codes_and_clean
     config=tmp_path/'fake.json'
     config.write_text(json.dumps({'events':str(tmp_path/'events'),'forward_error':whole_forward_error}))
     async def scenario():
-        client=QwenAsrClient(local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,max_inference_batch_size=3,
+        client=QwenAsrClient(generation_mode="legacy", local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,max_inference_batch_size=3,
             runtime_factory=lambda *args:LocalQwenProcessRuntime(*args,_runtime_factory=__name__+':CpuRuntime',
                                                            _startup_timeout_s=5,_close_timeout_s=.5))
         try:
@@ -378,7 +378,7 @@ def test_process_client_shutdown_grace_waits_or_aborts_only_owned_worker(tmp_pat
     gate=tmp_path/'finish';events=tmp_path/'events'
     config=tmp_path/'fake.json';config.write_text(json.dumps({'events':str(events),'gate':str(gate)}))
     async def scenario():
-        client=QwenAsrClient(local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,
+        client=QwenAsrClient(generation_mode="legacy", local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,
             runtime_factory=lambda *args:LocalQwenProcessRuntime(*args,_runtime_factory=__name__+':CpuRuntime',
                                                                _startup_timeout_s=5,_close_timeout_s=.5,_abort_timeout_s=.5))
         request=asyncio.create_task(client.transcribe_bytes(wav_bytes()))
@@ -530,7 +530,7 @@ def test_parent_fd_break_during_owned_work_reaps_worker_before_unavailable(tmp_p
     option='gate' if operation=='transcribe' else 'load_gate'
     config.write_text(json.dumps({'events':str(events),option:str(gate)}))
     async def scenario():
-        client=QwenAsrClient(local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=1,
+        client=QwenAsrClient(generation_mode="legacy", local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=1,
             runtime_factory=lambda *args:LocalQwenProcessRuntime(*args,_runtime_factory=__name__+':CpuRuntime',
                                                                _startup_timeout_s=5,_close_timeout_s=.5,_abort_timeout_s=.5))
         request=asyncio.create_task(client.transcribe_bytes(wav_bytes()) if operation=='transcribe' else client.discover_model())
@@ -562,7 +562,7 @@ def test_unconfirmed_rpc_fault_keeps_real_lease_until_death_and_shutdown_can_rea
     gate=tmp_path/'finish';events=tmp_path/'events';config=tmp_path/'fake.json'
     config.write_text(json.dumps({'events':str(events),'gate':str(gate)}))
     async def scenario():
-        client=QwenAsrClient(local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,
+        client=QwenAsrClient(generation_mode="legacy", local_model_dir=str(config),local_instance_count=1,execution_mode='process',retry_count=0,
             runtime_factory=lambda *args:LocalQwenProcessRuntime(*args,_runtime_factory=__name__+':CpuRuntime',
                                                                _startup_timeout_s=5,_close_timeout_s=.5,_abort_timeout_s=.5))
         request=asyncio.create_task(client.transcribe_bytes(wav_bytes()))

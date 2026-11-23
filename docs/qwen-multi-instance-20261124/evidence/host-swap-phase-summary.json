@@ -1,0 +1,34 @@
+{
+  "A6": {
+    "distinct_resource_samples": 35,
+    "host_available_min_bytes": 1868862464000,
+    "host_swap_used_max_bytes": 0,
+    "backend_rss_max_bytes": 2565988352,
+    "backend_swap_max_bytes": 0,
+    "scope": "host total plus parent backend only; cached TTL resource samples, not sum of all model processes"
+  },
+  "A4": {
+    "distinct_resource_samples": 40,
+    "host_available_min_bytes": 1869472358400,
+    "host_swap_used_max_bytes": 0,
+    "backend_rss_max_bytes": 2036727808,
+    "backend_swap_max_bytes": 0,
+    "scope": "host total plus parent backend only; cached TTL resource samples, not sum of all model processes"
+  },
+  "B4": {
+    "distinct_resource_samples": 57,
+    "host_available_min_bytes": 1856147177472,
+    "host_swap_used_max_bytes": 0,
+    "backend_rss_max_bytes": 5086638080,
+    "backend_swap_max_bytes": 0,
+    "scope": "host total plus parent backend only; cached TTL resource samples, not sum of all model processes"
+  },
+  "A6-resident": {
+    "distinct_resource_samples": 34,
+    "host_available_min_bytes": 1855128686592,
+    "host_swap_used_max_bytes": 0,
+    "backend_rss_max_bytes": 5691469824,
+    "backend_swap_max_bytes": 0,
+    "scope": "host total plus parent backend only; cached TTL resource samples, not sum of all model processes"
+  }
+}

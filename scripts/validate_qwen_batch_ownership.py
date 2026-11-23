@@ -144,7 +144,8 @@ async def run_validation(wav_bytes, *, model_dir, dtype='bfloat16', max_new_toke
                 # 仅观测：super finally已完成busy归还，不重写生产租约/调度逻辑。
                 probe.event('instance_release_observed', batch_id=batch_id,
                             busy=self.snapshot()['busy'], available=self._available.qsize())
-    client = ObservedClient(local_model_dir=model_dir, local_device='npu:7', local_dtype=dtype,
+    # 本工具检验静态物理批的所有权；不继承正式continuous owner默认。
+    client = ObservedClient(generation_mode='legacy', local_model_dir=model_dir, local_device='npu:7', local_dtype=dtype,
                           local_instance_count=1, max_new_tokens=max_new_tokens, retry_count=0,
                           request_timeout_s=request_timeout_s, max_inference_batch_size=8,
                           batch_wait_timeout_ms=20, max_batch_audio_frames=102400,

@@ -6,8 +6,9 @@ from datetime import datetime
 
 from core.config import settings
 from core.logging import setup_logging
-from core.qwen_asr_client import close_qwen_client, preload_qwen_client
+from core.qwen_asr_client import close_qwen_client, preload_qwen_client, get_qwen_client
 from core.models import close_v3_model_pools
+from core.qwen_asr_queue import get_slot_manager
 from core.vad_pool import start_vad_pool, stop_vad_pool
 from core.deployment import validate_npu_runtime
 from core.async_utils import await_completion
@@ -100,6 +101,8 @@ async def lifespan(app: FastAPI):
         # 放在同一个finally内且先于就绪：加载失败也关闭部分VAD/Qwen，不留半就绪服务。
         if getattr(settings, "qwen_preload_on_startup", False) and settings.qwen_asr_enabled:
             await preload_qwen_client()
+            if settings.qwen_generation_mode == "continuous":
+                get_slot_manager().bind_owner_pool(await get_qwen_client())
         yield
     finally:
         # 启动部分失败同样回收；调用方重复取消也不能遗弃正在关闭的资源。
@@ -144,7 +147,7 @@ def run_server(argv=None):
     parser.add_argument("--host", default="0.0.0.0")
     parser.add_argument("--port", type=int, default=8083)
     parser.add_argument("--workers", type=int, choices=(1,), default=1)
-    parser.add_argument("--timeout-graceful-shutdown", type=int, default=180)
+    parser.add_argument("--timeout-graceful-shutdown", type=int, default=30)
     args = parser.parse_args(argv)
 
     def exit_after_shutdown(_signum, _frame):

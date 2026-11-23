@@ -207,24 +207,28 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 | `local_model_dir` | `/home/model/Qwen3-ASR-1.7B-hf` | 原始 HF 权重与 processor 目录 |
 | `local_device` | `npu:7` | 宿主目标 NPU；容器仅映射物理 7 时使用逻辑 `npu:0` |
 | `local_dtype` | `bfloat16` | 支持 bfloat16/float16/float32；默认采用已验证 BF16 |
-| `local_instance_count` | `1` | 独立权重实例数；每实例每次执行一个物理批，批内可含多个独立段 |
+| `generation_mode` | `continuous` | 正式多owner连续生成；旧静态批必须显式legacy |
+| `preload_on_startup` | `true` | continuous就绪前顺序加载全部owner；legacy缺省false |
+| `owner_threads` | `1` | 每owner CPU线程预算，父进程OMP/MKL另行配置 |
+| `continuous_prefill_batch_size` | `min(16,S)` | 每owner每轮prefill上限，显式不得超过该派生值 |
+| `local_instance_count` | `6` | continuous的owner数N，范围1～8；显式legacy缺省1 |
 | `max_new_tokens` | `256` | 每段生成上限 |
-| `segment_concurrency` | `1` | 单音频Qwen阶段逻辑在途段上限（含本阶段等候/执行/收尾，不含已完成Qwen的增强等待），范围1～128 |
-| `request_concurrency` | `1` | 全局Qwen逻辑在途段上限，范围1～4096，与实际批大小及权重份数分开 |
-| `audio_concurrency` | `8` | A+B 同时处理的音频总数 |
+| `segment_concurrency` | `16` | continuous每音频及其owner逻辑活跃窗口S，范围1～128；legacy缺省1 |
+| `request_concurrency` | `N×S=96` | continuous由N×S派生，不在模板重复赋值；legacy缺省1 |
+| `audio_concurrency` | `N=6` | continuous由N派生；legacy缺省8 |
 | `audio_spk_emo_concurrency` | `4` | 请求任一增强能力的 B 类整音频上限，必须为正整数 |
 | `queue_max_size` | `64` | A+B 共享等待队列容量 |
 | `queue_wait_timeout_s` | `0` | `0` = 队列满立即拒绝；`>0` 才排队等待，超时返回 `4010` |
 | `request_timeout_s` | `120` | 单次 Qwen 请求超时（秒） |
 | `retry_count` | `2` | Qwen 请求失败重试次数 |
 | `speaker_similarity_threshold` | `0.30` | CAM++ 说话人聚类的余弦相似度阈值（按实测 sweep 取值，阈值过高会严重过分割） |
-| `execution_mode` | `thread` | `thread`或`process`，后者支持经校验1～8配置实例，每份spawn子进程加载一份同HF Qwen（实际NPU合格数量另看报告）；HTTP服务仍为一个，设备沿用配置/容器映射，修改需重启 |
-| `process_shutdown_grace_s` | `30` | 仅显式关闭模型进程的宽限，有限正数≤300秒，独立于推理timeout；超期只回收拥有的PID/创建时间并报告关闭失败，修改需重启 |
-| `max_inference_batch_size` | `1` | 物理批大小上限，1～384；根缺省保持兼容值，384仅纯组件已测，完整/增强共驻待验收 |
+| `execution_mode` | `process` | continuous必须process；显式legacy缺省thread |
+| `process_shutdown_grace_s` | `120` | continuous模型关闭宽限；legacy缺省30，超期回收仍记关闭失败 |
+| `max_inference_batch_size` | `S=16` | continuous每owner物理步上限，显式不得超过S；legacy缺省1 |
 | `batch_wait_timeout_ms` | `10` | 凑批等待上限，毫秒，0～1000；尾批不无限等待 |
 | `batch_max_duration_ratio` | `4.0` | 同一物理批最长/最短有效STFT帧数比，有限数1～64；按至少8000样本后的帧数计算，32.0仅为独立候选，不改变批大小或实例数 |
-| `max_batch_audio_frames` | `102400` | 估算的padding后100Hz特征帧预算，1～10000000；最长成员帧数×批成员数 |
-| `max_batch_tokens` | `78336` | 保守估计的整批token预算，1～10000000；与processor实测shape分别记录 |
+| `max_batch_audio_frames` | `14400` | continuous每owner帧预算，不随N放大；legacy缺省102400 |
+| `max_batch_tokens` | `10000` | continuous每owner估算token预算，含生成预留；legacy缺省78336 |
 | `pending_segment_limit` | `256` | 全局实际开工且尚未汇合的段预算，1～4096；同时作为每音频元任务worker上限，两个计数独立 |
 | `pending_audio_bytes_limit` | `268435456` | 在途PCM字节预算（256MiB），范围1MiB～4GiB；达到预算则反压，单段超预算明确失败 |
 
@@ -272,10 +276,10 @@ CPU原始AutoModel与原生NPU保持同一既有行为；服务段级过滤独�
 
 | 参数 | 含义 | 默认值 |
 |------|------|--------|
-| `audio_concurrency` | 同时处于处理中的 A+B **音频文件**总数 | 8 |
+| `audio_concurrency` | 同时处于处理中的 A+B **音频文件**总数 | continuous派生N=6，legacy缺省8 |
 | `audio_spk_emo_concurrency` | 总音频中请求增强能力的 B 类音频数量 | 4 |
-| `segment_concurrency` | **单个音频内**同时执行本地转写的 VAD 段任务数 | 1 |
-| `request_concurrency` | **所有音频合计**本地转写任务数上限 | 1 |
+| `segment_concurrency` | **单个音频内**同时执行本地转写的 VAD 段任务数 | continuous缺省16，legacy缺省1 |
+| `request_concurrency` | **所有音频合计**本地转写任务数上限 | continuous派生N×S=96，legacy缺省1 |
 
 上述配置均在重启后生效，每个服务实例独立限流。旧配置缺少新增的
 `audio_spk_emo_concurrency` 时同样采用 **4**，升级后增强音频并发会受此上限限制。
@@ -551,7 +555,7 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 
 ### 单Qwen持续生成候选（2026-11-20）
 
-`[qwen_asr].generation_mode`支持`legacy`（缺省，原静态批）或`continuous`（逐段持续生成）；后者仅支持process、单实例，request_concurrency不得超过max_inference_batch_size。`online_repetition_enabled`为严格bool，缺省false，独立于生成后repetition_guard_enabled。候选配置`test/config.qwen-continuous128.toml`为音频8、每音频16、全局128；尚未完成真实8并发验收，不自动替换根48/384配置。配置变更需重启。
+旧2026-11-20实验版本的`generation_mode`缺省legacy且限制continuous单实例；该限制已由2026-11-24正式多owner配置替代，见文末迁移说明。`online_repetition_enabled`为严格bool，缺省false，独立于生成后repetition_guard_enabled。候选配置`test/config.qwen-continuous128.toml`为音频8、每音频16、全局128；尚未完成真实8并发验收，不自动替换根48/384配置。配置变更需重启。
 
 连续生成每段独立EOS和KV，底层仍按步批量计算。复读停止/未EOS达到长度上限按4012失败，不视为完整成功；取消不提前回收设备资源。只对明确未接收容量拒绝最多重试3次（总4次尝试）、首次拒绝后30秒内，未知执行状态不重发。状态摘要不记录正文。
 
@@ -578,3 +582,17 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 在线强循环判据新增`online_repetition_strong_tail_min_chars=96`、`online_repetition_strong_tail_min_ratio=95`（1～100百分比）、`online_repetition_strong_tail_repeats_per_second=4`，其余为严格正整数；与异常长度路径并列，仍需多次新增token确认。候选来源为两条真实循环轨迹和既有正常输出回放，不代表人工准确率或最优阈值。统计分列处理完成、严格无警告成功和可用文本，警告不能默算质量成功。
 
 `continuous_admission_drain_ms`为0～5毫秒严格整数，缺省0保留即时poll旧行为；候选3ms只在本轮收到新submit后用于Pipe发送者交接的固定总预算，deadline不续期，prefill已满/容量满/closing立即停止，无新submit不增加等待。它不恢复整批generate屏障，也不重置原100ms组批等待。根配置保留0、独立候选3，需NPU实测。
+
+### 正式多owner配置与迁移（2026-11-24）
+
+当前loader及根/Docker模板采用 `generation_mode="continuous"`、`execution_mode="process"`、`preload_on_startup=true`、N=6、S=16；HTTP `instance_count=1` 不变。总音频容量派生为N=6，全局Qwen逻辑窗口派生为N×S=96。每条请求动态租用一个健康owner，到整音频全部分支安全收尾才归还；一条音频尾段不能借空闲owner扩大S。历史单实例/128/384章节只描述原版本与实验，不代表新默认或已通过本轮验收。
+
+根/Docker模板不再写 `audio_concurrency`、`request_concurrency`、`max_inference_batch_size`、`continuous_prefill_batch_size`。continuous物理步缺省S，显式值只能1～S；prefill缺省min(16,S)，显式不能超过此值。旧audio/global显式值相等时给迁移提示，冲突、bool、字符串或越界在就绪前失败；应删除重复字段，或明确选择 `generation_mode="legacy"` 保留原独立容量配置。仅改N/S后重启即可更新派生配置，不需要跟着修改多份总量。legacy静态批行为仍使用其原独立参数和缺省，不暗中切换执行方式。
+
+每owner帧/token预算为14400/10000，N变化不放大这两项。S或生成上限变化时校验最短单段估算可接纳性，长段和多成员超预算仍须拆分/反压并报告；这不是HBM保证。每owner CPU线程预算 `owner_threads=1`，父进程 `OMP_NUM_THREADS=4 MKL_NUM_THREADS=4` 独立设置。全服务共享PCM预算为256段/256MiB，不复制N份。`audio_spk_emo_concurrency=4` 是B配置上限，有效B容量不超过健康Qwen数，健康下降不提前释放原请求。
+
+CAM++和emotion2vec数组独立，各1为本轮测试候选，实际B4已4/4完成；增强驻留后的A6发生真实OOM，尚未确定可长期共驻的最终池配置，2/4档已按故障停止条件暂停。N变化不复制增强池。VAD保持八CPU。宿主只验证npu:7，Docker仅映射物理7时使用逻辑npu:0，按可见设备核对。配置修改后需重启；本轮未部署Docker。预加载仅顺序装载权重/processor，真实forward暖身与性能计时另行验收；本轮源码/保护回归和正常关闭通过；纯A6墙钟186.32秒、B4墙钟302.60秒，但共驻验收失败，change保持开放，不能视为稳定部署配置。完整证据见[正式测试报告](docs/qwen-multi-instance-20261124/REPORT.md)。
+
+continuous保留已批准并用于noHBM参考的在线复读保护 `online_repetition_enabled=true` 与 `continuous_admission_drain_ms=3`（收到提交后的有界IPC交接），不改变检测阈值或max_new_tokens；显式legacy缺省仍false/0。3ms不是重新等待凑整批或续期长等待，不影响无新段的decode周期。本次默认迁移不另行更换prefill/KV算法。
+
+本轮仅宿主根配置实测，Docker未构建/上线；模板保留原有VAD过滤和CAM thread模式等环境差异，不能套用宿主成绩。原始计时配置与当前根配置解析值完全相等，测试后只补充验收注释。

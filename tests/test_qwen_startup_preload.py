@@ -17,7 +17,7 @@ def configured(tmp_path, text):
 
 
 def test_preload_omission_retains_lazy_default(tmp_path):
-    assert configured(tmp_path, '[qwen_asr]\n').qwen_preload_on_startup is False
+    assert configured(tmp_path, '[qwen_asr]\ngeneration_mode="legacy"\n').qwen_preload_on_startup is False
 
 
 @pytest.mark.parametrize('value, expected', [('true', True), ('false', False)])
@@ -35,6 +35,7 @@ def test_bad_preload_rejected_even_if_qwen_disabled(tmp_path, value):
 @pytest.mark.parametrize('name, b_limit', [('config.qwen128.toml', 4), ('config.qwen128-b8.toml', 8)])
 def test_profiles_separate_complete_audio_from_logical_and_physical_segments(name, b_limit):
     settings = Settings(str(Path(__file__).resolve().parents[1] / 'test' / name))
+    settings._cfg['qwen_asr']['generation_mode'] = 'legacy'
     settings.validate_model_backends()
     assert settings.qwen_preload_on_startup is True
     assert settings.qwen_execution_mode == 'process'
@@ -74,7 +75,7 @@ class CpuLoadRuntime:
 
 
 def cpu_client(count=2, mode='thread'):
-    return QwenAsrClient(model='display-name', local_model_dir='/not-a-real-model',
+    return QwenAsrClient(generation_mode='legacy', model='display-name', local_model_dir='/not-a-real-model',
                          local_device='npu:7', local_dtype='bfloat16',
                          local_instance_count=count, execution_mode=mode,
                          runtime_factory=CpuLoadRuntime, request_timeout_s=10,
@@ -165,6 +166,7 @@ def patch_lifespan(monkeypatch, *, enabled=True, preload=True, fail=False, block
     import main
     events = []
     settings = SimpleNamespace(qwen_preload_on_startup=preload, qwen_asr_enabled=enabled,
+                               qwen_generation_mode='legacy',
                                resource_sample_interval_s=1, qwen_execution_mode='thread',
                                qwen_audio_spk_emo_concurrency=4, log_path='unused',
                                validate_model_backends=lambda: None)

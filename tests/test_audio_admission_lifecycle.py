@@ -173,3 +173,12 @@ class AudioLifecycleTests(unittest.IsolatedAsyncioTestCase):
                     await task
                 self.assertFalse(audio_path.exists())
                 self.assertEqual(manager.active, 0)
+
+
+# 本文件冻结旧准入/序列化/错误映射，不用真实owner池；continuous接线由multi_api单独覆盖。
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def explicit_legacy_contract(monkeypatch):
+    monkeypatch.setattr(type(settings), 'qwen_generation_mode', property(lambda self: 'legacy'))

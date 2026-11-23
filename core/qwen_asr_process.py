@@ -131,6 +131,13 @@ def _worker(connection, runtime_args, factory_path, launch_id, launch_config):
             factory = getattr(factory, attribute)
         runtime = factory(*runtime_args)
         if launch_config.get('continuous_options') is not None:
+            threads = launch_config['continuous_options'].get('owner_threads', 1)
+            os.environ['OMP_NUM_THREADS'] = str(threads)
+            os.environ['MKL_NUM_THREADS'] = str(threads)
+            if factory_path == 'core.qwen_asr_runtime:LocalQwenRuntime':
+                import torch
+                torch.set_num_threads(threads)
+                torch.set_num_interop_threads(threads)
             runtime.ensure_loaded()
         ready_config = dict(launch_config, factory_identity=_factory_identity(factory_path),
                             model_identity=_model_identity(runtime_args[0]),
@@ -142,6 +149,10 @@ def _worker(connection, runtime_args, factory_path, launch_id, launch_config):
                            'launch_config':dict(ready_config,worker_entry_identity=_factory_identity(__name__+':_worker')),
                            'worker_entry_module_file':__file__, 'state':_state(runtime),
                            'preload_observation':{
+                               'omp_num_threads':os.environ.get('OMP_NUM_THREADS'),
+                               'mkl_num_threads':os.environ.get('MKL_NUM_THREADS'),
+                               'torch_num_threads':getattr(sys.modules.get('torch'), 'get_num_threads', lambda: None)(),
+                               'torch_num_interop_threads':getattr(sys.modules.get('torch'), 'get_num_interop_threads', lambda: None)(),
                                'runtime_module_file':getattr(sys.modules.get(type(runtime).__module__), '__file__', None),
                                'torch_imported':'torch' in sys.modules,
                                'torch_npu_imported':'torch_npu' in sys.modules,

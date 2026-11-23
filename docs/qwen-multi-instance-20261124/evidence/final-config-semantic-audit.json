@@ -1,0 +1,7 @@
+{
+  "parsed_root_equals_real_test_config": true,
+  "only_comments_changed_after_test": true,
+  "raw_run_config_sha256": "2010e6438281f38893b86e8e53caad37a9363bd19e652228489a0fbd1cca83b8",
+  "final_root_config_sha256": "ea371bf1611de8f3f70806b44f3c4b73afa0d63ca71045e5bba1c5c8d1114656",
+  "docker_scope": "N/S、每owner预算、派生容量和独立池一致；路径/设备映射及原有VAD过滤、CAM执行模式等环境差异保留，Docker未构建或验收"
+}

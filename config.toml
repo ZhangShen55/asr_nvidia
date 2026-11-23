@@ -1,6 +1,5 @@
-# 单Qwen预加载/48-384候选：仅纯组件384已测，完整/增强共驻未验收；从项目根启动。
-# 384为全局语音段窗口和物理批上限，不是384个完整音频请求。
-# frames=900×384，tokens=(ceil(900/8)+256+256)×384；pending512避免旧256先反压。
+# 2026-11-24：纯A6通过（墙钟186.32s），B4完成（302.60s）；增强驻留后A6真实OOM，尚未通过长期共驻验收。
+# continuous多owner正式配置：N=6、S=16；变更后重启，性能验收另行记录。
 instance_count = 1
 
 [log]
@@ -24,14 +23,14 @@ remove_interjections = true
 failure_mode = "passthrough"
 
 [qwen_asr]
+owner_threads = 1 # 每owner CPU线程预算；父进程OMP/MKL=4独立设置
 # 已收到新段后的IPC运输交接总上限0～5ms；不续期凑满，不影响空闲/无新段周期。
-continuous_admission_drain_ms = 0
-# 每轮prefill至多1～128段，完成后推进decode；仅continuous使用，16为待实测候选。
-continuous_prefill_batch_size = 16
-# continuous为逐段持续生成候选，仅process单实例；切换需重启，legacy保留现有行为。
-generation_mode = "legacy"
-# 生成中复读停止开关，与生成后文本折叠独立；候选须通过质量验收后启用。
-online_repetition_enabled = false
+continuous_admission_drain_ms = 3
+# physical步缺省随S，prefill缺省min(16,S)，模板不重复固定。
+# continuous按请求动态租用独立owner；legacy须显式选择保留旧行为。
+generation_mode = "continuous"
+# continuous保留已批准的生成中复读保护，与生成后文本折叠独立；阈值不变。
+online_repetition_enabled = true
 # 生成中复读候选阈值：至少观察量 + 异常长度 + 尾部循环 + 持续确认共同生效；非实测最优值。
 # 仅在线停止使用，与下方生成后修复阈值独立；修改需重启。
 online_repetition_min_generated_tokens = 32 # 最少已生成token
@@ -47,21 +46,19 @@ online_repetition_confirmations = 2 # 不同正文增长观测连续确认次数
 online_repetition_strong_tail_min_chars = 96
 online_repetition_strong_tail_min_ratio = 95
 online_repetition_strong_tail_repeats_per_second = 4 # 强循环最少重复次数随音频时长增长
-preload_on_startup = true # 启动预加载权重，不是所有shape已推理暖身
+preload_on_startup = true # 就绪前顺序加载所有owner，不等于forward暖身
 execution_mode = "process"
 process_shutdown_grace_s = 120
-batch_max_duration_ratio = 32.0
+batch_max_duration_ratio = 32.0 # 仅显式legacy长度分桶使用；continuous逐段入队不使用此等待策略
 enabled = true
 model = ""                              # 可选本地模型显示名称
 local_model_dir = "/home/model/Qwen3-ASR-1.7B-hf"
 # ASCEND_VISIBLE_DEVICES 指定宿主物理卡；容器内设备编号从0重新映射，单映射7时使用npu:0
 local_device = "npu:7"                  # 宿主指定物理卡7；容器仅映射卡7时按实际映射使用逻辑npu:0
 local_dtype = "bfloat16"
-local_instance_count = 1                # 每增加一个实例即复制一份权重
+local_instance_count = 6 # N：独立模型进程数，HTTP仍为1
 max_new_tokens = 256
-segment_concurrency = 48
-request_concurrency = 384
-audio_concurrency = 8                   # A+B 同时处理的音频总数
+segment_concurrency = 16 # S：每请求在其owner内的活跃段上限
 audio_spk_emo_concurrency = 4           # B 类音频上限（请求说话人、情绪或角色识别）
 queue_max_size = 64                     # A+B 共享等待队列容量
 queue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排队等待
@@ -70,16 +67,12 @@ retry_count = 2                         # Qwen 请求失败重试次数
 speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）
 
 # 以下组批及PCM预算修改后需重启生效。
-# 单次Qwen真实物理批的成员上限（1～384），不是完整音频HTTP并发数；实际还受供给和下列预算限制。
-max_inference_batch_size = 384
-# 组批最多等待的毫秒数（0～1000）；到期执行已有就绪段，不强等凑满384。
+# audio=N、global=N×S由loader派生，不在模板重复维护。
+# 仅显式legacy组批等待（0～1000ms）；continuous使用逐段补位及独立transport交接。
 batch_wait_timeout_ms = 100
-# 单批估算音频帧预算：最长成员补齐后的100Hz特征帧数×成员数；此值按900×384设置，不是HBM容量保证。
-max_batch_audio_frames = 345600
-# 单批估算token预算：(ceil(最长补齐帧数/8)+max_new_tokens+256提示预留)×成员数；按900帧×384取整留量，非实际生成量。
-max_batch_tokens = 240000
-# 全服务活动PCM段数预算；独立于Qwen逻辑窗口384，避免旧256段上限先限制供给，预算满时反压等待。
-pending_segment_limit = 512
+max_batch_audio_frames = 14400 # 每owner预算，不随N放大；非HBM保证
+max_batch_tokens = 10000 # 每owner输入及生成估算预算
+pending_segment_limit = 256 # 全服务共享PCM预算，不按N复制
 # 全服务活动原PCM字节预算（256MiB），与段数预算同时生效；不含模型、前端、IPC及临时工作buffer，满时反压等待。
 pending_audio_bytes_limit = 268435456
 
@@ -131,8 +124,8 @@ open_v2_emotion = true   # emotion2vec 情绪
 speech_campplus_execution_mode = "process"
 speech_campplus_process_startup_timeout_s = 60
 speech_campplus_process_shutdown_grace_s = 30
-speech_campplus_devices = ["npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7"]
-emotion2vec_devices = ["npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7"]
+speech_campplus_devices = ["npu:7"] # 独立增强池，各1起步，待真实B4标定
+emotion2vec_devices = ["npu:7"] # 与Qwen owner数独立
 
 speech_campplus_prefetch_queue_depth = 0
 emotion2vec_prefetch_queue_depth = 0

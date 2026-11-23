@@ -148,7 +148,11 @@ async def run_bounded_segments(segments, process, worker_count, *, fail_fast=Fal
 
 
 async def gather_owned_branches(awaitables):
-    """取消一段时取消未开始分支，并等所有已启动分支收尾再归还PCM预算。"""
+    """一次创建全部分支Task，再等待汇合；共享设备不保证kernel物理同时执行。
+
+    取消一段时取消未开始分支，并等所有已启动分支收尾再归还PCM预算。
+    各分支自己安全归还模型/credit，不以本次汇合充当Qwen整批屏障。
+    """
     tasks = [asyncio.create_task(item) for item in awaitables]
     try:
         return await asyncio.gather(*tasks, return_exceptions=True)

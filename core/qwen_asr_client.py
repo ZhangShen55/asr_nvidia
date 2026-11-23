@@ -5,6 +5,7 @@ import asyncio
 from concurrent.futures import ThreadPoolExecutor
 import logging
 import time
+import threading
 from pathlib import Path
 from typing import Optional
 
@@ -76,14 +77,18 @@ class QwenAsrClient:
                                 if generation_mode is None else generation_mode)
         if self.generation_mode not in {'legacy', 'continuous'}:
             raise ValueError('generation_mode must be legacy or continuous')
-        if self.generation_mode == 'continuous' and (self.execution_mode != 'process' or count != 1):
-            raise ValueError('continuous generation requires one process model owner')
+        if self.generation_mode == 'continuous' and self.execution_mode != 'process':
+            raise ValueError('continuous generation requires process model owners')
+        if self.generation_mode == 'continuous' and count > 8:
+            raise ValueError('continuous owner count must be within 1..8')
+        self._segment_capacity = int(getattr(settings, 'qwen_segment_concurrency', 16))
         if runtime_factory is not None:
             factory = runtime_factory
         elif self.generation_mode == 'continuous':
             from core.qwen_continuous_process import LocalQwenContinuousProcessRuntime
             factory = lambda *args: LocalQwenContinuousProcessRuntime(*args,
-                max_active=int(getattr(settings, 'qwen_request_concurrency', 128)),
+                max_active=self._segment_capacity,
+                owner_threads=int(getattr(settings, 'qwen_owner_threads', 1)),
                 max_batch_size=int(max_inference_batch_size if max_inference_batch_size is not None else
                                    getattr(settings, 'qwen_max_inference_batch_size', 128)),
                 prefill_batch_size=int(getattr(settings, 'qwen_continuous_prefill_batch_size', 16)),
@@ -115,6 +120,15 @@ class QwenAsrClient:
         self._discovery_lock = asyncio.Lock()
         self._discovering_all = False
         self._execution_failures = 0
+        # Request leases, unlike legacy batch leases, survive segment completion
+        # until API cleanup has drained enhancement and temporary resources.
+        self._owner_lock = threading.RLock()
+        self._request_owners = {}
+        self._owner_requests = {}
+        self._owner_releasing = set()
+        self._pool_initialized = False
+        self._startup_failed = False
+        self._startup_rollback_errors = []
         self._batch_scheduler = BatchScheduler(
             self._execute_batch, workers=count,
             batch_size=int(max_inference_batch_size if max_inference_batch_size is not None else
@@ -133,7 +147,7 @@ class QwenAsrClient:
         if self.generation_mode == 'continuous':
             from core.qwen_continuous_scheduler import ContinuousScheduler
             self._batch_scheduler = ContinuousScheduler(self._execute_sequence,
-                capacity=int(getattr(settings, 'qwen_request_concurrency', 128)),
+                capacity=count * self._segment_capacity,
                 audio_frame_budget=self._batch_scheduler.audio_frame_budget,
                 token_budget=self._batch_scheduler.token_budget, max_new_tokens=tokens)
         if self.base_url:
@@ -183,13 +197,143 @@ class QwenAsrClient:
             self._waiting -= 1
 
     async def preload(self):
+        if self.generation_mode == 'continuous':
+            return await self.ensure_owner_pool()
         # 启动预加载复用全体租约/取消排空流程，显示model名不能跳过真实加载。
         name = await self._discover_all_process_runtimes()
         if not all(runtime.loaded and not runtime.failure for runtime in self._runtimes):
             raise QwenAsrUnavailableError()
         return name
 
+    async def ensure_owner_pool(self):
+        """One sequential cold start, with complete rollback on partial failure."""
+        if self.generation_mode != 'continuous':
+            return await self.discover_model()
+        async with self._discovery_lock:
+            if self._closing or self._startup_failed:
+                raise QwenAsrUnavailableError()
+            if self._pool_initialized:
+                if self.owner_capacity_snapshot()['healthy']:
+                    return self._discovered_model
+                raise QwenAsrUnavailableError()
+            self._discovering_all = True
+            try:
+                for runtime in self._runtimes:
+                    if self._closing or runtime.failure:
+                        raise QwenAsrUnavailableError()
+                    await self._run_owned(runtime.ensure_loaded)
+                    if self._closing or not runtime.loaded or runtime.failure:
+                        raise QwenAsrUnavailableError()
+                if self.owner_capacity_snapshot()['healthy'] != len(self._runtimes):
+                    raise QwenAsrUnavailableError()
+                self._pool_initialized = True
+                self._discovered_model = self.model or Path(self.local_model_dir).name
+                return self._discovered_model
+            except BaseException as original:
+                self._startup_failed = True
+                # Rollback includes constructors not yet started and the failed
+                # owner. Never keep partially loaded capacity after cold failure.
+                for runtime in self._runtimes:
+                    begin = getattr(runtime, 'begin_closing', None)
+                    if begin is not None:
+                        begin()
+                for index, runtime in enumerate(self._runtimes):
+                    try:
+                        await await_completion(asyncio.to_thread(runtime.close))
+                    except BaseException as exc:
+                        self._startup_rollback_errors.append({'index': index, 'type': type(exc).__name__})
+                if isinstance(original, asyncio.CancelledError):
+                    raise
+                raise QwenAsrUnavailableError('Qwen owner pool startup failed and rolled back') from original
+            finally:
+                self._discovering_all = False
+
+    def owner_capacity_snapshot(self, states=None):
+        """Cached runtime/OS health only: no spawn, load, or busy-worker RPC."""
+        with self._owner_lock:
+            owners = []
+            for index, runtime in enumerate(self._runtimes):
+                snapshot = getattr(runtime, 'snapshot', None)
+                state = states[index] if states is not None else (snapshot() if callable(snapshot) else {})
+                healthy = bool(runtime.loaded and not runtime.failure and not self._closing
+                               and not self._startup_failed and not state.get('model_worker', {}).get('closing')
+                               and state.get('model_worker', {}).get('worker_alive') is not False)
+                request = self._owner_requests.get(index)
+                owners.append({'index': index, 'healthy': healthy, 'loaded': bool(runtime.loaded),
+                    'request_id': request, 'leased': index in self._owner_requests,
+                    'releasing': request in self._owner_releasing,
+                    'available': healthy and index not in self._owner_requests,
+                    'failure': runtime.failure, 'device': getattr(runtime, 'device', self.local_device),
+                    'closing': bool(self._closing or state.get('model_worker', {}).get('closing')
+                                    or (request is not None and not healthy)),
+                    'segment_capacity': self._segment_capacity,
+                    'active_sequences': state.get('continuous', {}).get('active_sequences'),
+                    'model_worker': state.get('model_worker', {})})
+            return {'configured': len(self._runtimes), 'healthy': sum(o['healthy'] for o in owners),
+                    'leased': len(self._owner_requests), 'available': sum(o['available'] for o in owners),
+                    'segment_capacity_per_owner': self._segment_capacity,
+                    'configured_global_segments': len(self._runtimes)*self._segment_capacity,
+                    'initialized': self._pool_initialized, 'startup_failed': self._startup_failed,
+                    'rollback_errors': list(self._startup_rollback_errors), 'owners': owners}
+
+    def try_acquire_owner(self, request_id):
+        """Synchronous grant: caller holds the audio admission lock."""
+        request_id = str(request_id)
+        with self._owner_lock:
+            if request_id in self._request_owners:
+                raise ValueError('request already owns a Qwen lease')
+            state = self.owner_capacity_snapshot()
+            if not state['healthy']:
+                raise QwenAsrUnavailableError()
+            for owner in state['owners']:
+                if owner['available']:
+                    index = owner['index']
+                    self._request_owners[request_id] = index
+                    self._owner_requests[index] = request_id
+                    return index
+            return None
+
+    async def prepare_owner_release(self, request_id):
+        """Wait/validate owned segment cleanup, without returning the audio owner."""
+        request_id = str(request_id)
+        with self._owner_lock:
+            index = self._request_owners.get(request_id)
+        if index is None:
+            return
+        await await_completion(asyncio.to_thread(self._runtimes[index].release_request, request_id))
+        with self._owner_lock:
+            if self._request_owners.get(request_id) == index:
+                self._owner_releasing.add(request_id)
+
+    def release_owner_nowait(self, request_id):
+        """Final atomic return under admission lock; never return live segment state."""
+        request_id = str(request_id)
+        with self._owner_lock:
+            index = self._request_owners.get(request_id)
+            if index is None:
+                return
+            drained = getattr(self._runtimes[index], 'request_drained', None)
+            if callable(drained) and not drained(request_id):
+                raise RuntimeError('Qwen owner still has live owned segments')
+            self._request_owners.pop(request_id)
+            self._owner_requests.pop(index, None)
+            self._owner_releasing.discard(request_id)
+            self._changed.set()
+
+    def _request_runtime(self, request_id):
+        with self._owner_lock:
+            index = self._request_owners.get(str(request_id))
+            if index is None:
+                # Embedded single-owner tools predate HTTP audio leases. The
+                # formal HTTP route always binds, even for N1.
+                if len(self._runtimes) == 1 and not self._owner_requests:
+                    return self._runtimes[0]
+                raise QwenAsrUnavailableError('request has no Qwen owner lease')
+            return self._runtimes[index]
+
     async def discover_model(self):
+        if self.generation_mode == 'continuous':
+            return await self.ensure_owner_pool()
         if self.execution_mode == "process" and len(self._runtimes) > 1:
             return await self._discover_all_process_runtimes()
         if self.model:
@@ -217,6 +361,8 @@ class QwenAsrClient:
             self._changed.set()
 
     async def _discover_all_process_runtimes(self):
+        if self.generation_mode == 'continuous':
+            return await self.ensure_owner_pool()
         # 一位发现者取得全部租约；其它发现者先等锁，不能各持一份后互等。
         async with self._discovery_lock:
             if self._closing:
@@ -312,13 +458,9 @@ class QwenAsrClient:
     async def _execute_sequence(self, member):
         # Discovery is serialized; after it completes there is no whole-model lease.
         # All member futures are routed by the single worker's device owner.
-        runtime = self._runtimes[0]
-        try:
-            async with self._discovery_lock:
-                if not runtime.loaded:
-                    await self._run_owned(runtime.ensure_loaded)
-        except LocalModelUnavailable as exc:
-            raise QwenAsrUnavailableError() from exc
+        if not self._pool_initialized:
+            await self.ensure_owner_pool()
+        runtime = self._request_runtime(member.request_id)
         if self._closing or runtime.failure:
             raise QwenAsrUnavailableError()
         rejected_at = None
@@ -473,7 +615,12 @@ class QwenAsrClient:
     def release_request(self, request_id):
         """Forget deduplication only after the parent's owned segments have drained."""
         if self.generation_mode == 'continuous':
-            self._runtimes[0].release_request(str(request_id))
+            with self._owner_lock:
+                index = self._request_owners.get(str(request_id))
+            if index is not None:
+                self._runtimes[index].release_request(str(request_id))
+            elif len(self._runtimes) == 1:
+                self._runtimes[0].release_request(str(request_id))
 
     async def transcribe(self, audio_path: str, language: Optional[str] = None) -> str:
         data = await asyncio.to_thread(Path(audio_path).read_bytes)
@@ -484,8 +631,16 @@ class QwenAsrClient:
         batch_snapshot = (self._batch_scheduler.snapshot() if recent_batch_limit is None else
                           self._batch_scheduler.snapshot(recent_limit=recent_batch_limit))
         if self.generation_mode == 'continuous':
-            details[0]['busy'] = bool(batch_snapshot['running_members'])
+            with self._owner_lock:
+                for index, detail in enumerate(details):
+                    detail.update(request_id=self._owner_requests.get(index),
+                        leased=index in self._owner_requests,
+                        busy=bool(detail.get('continuous', {}).get('active_sequences', 0)))
+            owner_pool = self.owner_capacity_snapshot(details)
+        else:
+            owner_pool = None
         return {
+            **({'owner_pool': owner_pool} if owner_pool is not None else {}),
             **({"generation_mode": self.generation_mode} if self.generation_mode == "continuous" else {}),
             "execution_mode": self.execution_mode,
             "memory_process_scope": "model_worker" if self.execution_mode == "process" else "service_process",
@@ -498,7 +653,8 @@ class QwenAsrClient:
             "loaded": any(x["loaded"] for x in details),
             "loading": any(x.get("loading") for x in details),
             "configured_instances": len(details),
-            "capacity": sum(x["loaded"] and not x.get("failure") for x in details),
+            "capacity": (owner_pool['healthy'] if owner_pool is not None else
+                         sum(x["loaded"] and not x.get("failure") for x in details)),
             "busy": sum(bool(item.get("busy")) for item in details), "waiting": self._waiting + batch_snapshot["waiting"],
             "batch_scheduler": batch_snapshot,
             "failed_instances": sum(bool(x.get("failure")) for x in details),
@@ -512,6 +668,15 @@ class QwenAsrClient:
         self._closing = True
         self._changed.set()
         await self._batch_scheduler.close(QwenAsrUnavailableError())
+        if self.generation_mode == 'continuous':
+            # Closing a model is not a substitute for the API's owned enhancement
+            # and temporary-resource drain. Keep whole-audio leases until release.
+            while True:
+                self._changed.clear()
+                with self._owner_lock:
+                    if not self._request_owners:
+                        break
+                await self._changed.wait()
         if self.execution_mode == "process" and len(self._runtimes) > 1:
             # discovery和drain都要持全体索引，不能各持一部分后互等。
             async with self._discovery_lock:
@@ -662,7 +827,17 @@ def get_qwen_status(*, recent_batch_limit=None):
     device = getattr(settings, "qwen_local_device", "npu:7")
     dtype = getattr(settings, "qwen_local_dtype", "bfloat16")
     mode = settings.qwen_execution_mode
+    continuous = getattr(settings, 'qwen_generation_mode', 'legacy') == 'continuous'
     return {
+        **({'generation_mode': 'continuous', 'owner_pool': {
+            'configured': count, 'healthy': 0, 'leased': 0, 'available': 0,
+            'initialized': False, 'startup_failed': False, 'rollback_errors': [],
+            'segment_capacity_per_owner': settings.qwen_segment_concurrency,
+            'configured_global_segments': count*settings.qwen_segment_concurrency,
+            'owners': [{'index': i, 'healthy': False, 'loaded': False, 'leased': False,
+                        'available': False, 'request_id': None, 'device': device,
+                        'failure': None, 'model_worker': {}} for i in range(count)]
+        }} if continuous else {}),
         "execution_mode": mode,
         "memory_process_scope": "model_worker" if mode == "process" else "service_process",
         "configured_model_workers": count if mode == "process" else 0,

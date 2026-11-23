@@ -1,0 +1,630 @@
+{
+  "sources": {
+    "summary": {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A6/summary.json",
+      "sha256": "6cea3f930bae646bfabfe63233129ad719333e2ac1bd0ca0446ba3a5b5dad2a5"
+    },
+    "after": {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/A6-final-status.json",
+      "sha256": "241790686595ed9eb869ef7d517e3b3c694bb6370c45b0eef57a4a4077dfaf4b"
+    },
+    "warmup": {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/warmup-final-status.json",
+      "sha256": "99ca725f9b1243b0d126006c51c9e052eca499b7bdce94734bd60e26c53f51ca"
+    }
+  },
+  "scope": "A6 only; 3 JSON files, subtract warmup cumulative counters per identical PID/birth; no status.jsonl scan, no device/model commands",
+  "summary": {
+    "completed": 6,
+    "expected": 6,
+    "wall_s": 186.3236831696704,
+    "all_request_latency": {
+      "n": 6,
+      "p50_s": 173.24173637013882,
+      "p95_s": 185.42084605712444
+    },
+    "warning_free": 4,
+    "warning_segments": 13,
+    "discarded_segments": 11,
+    "target_200s_met": true
+  },
+  "requests": [
+    {
+      "sample_id": "a1",
+      "owner": 1,
+      "request_id": "ae343227-9288-47cf-9beb-ea89b4acd00e",
+      "http_latency_s": 158.76359444018453,
+      "route_envelope_s": 155.95188712049276,
+      "before_route_envelope_s": 2.764742319472134,
+      "warnings": 0,
+      "discarded": 0,
+      "response_segments": 729,
+      "phases_ms": {
+        "spk_wait_ms": 0.0,
+        "spk_ms": 0.0,
+        "spk_calls": 0.0,
+        "emo_wait_ms": 0.0,
+        "emo_ms": 0.0,
+        "emo_calls": 0.0,
+        "qwen_wait_ms": 24970717.061,
+        "qwen_ms": 2002271.525,
+        "qwen_calls": 753.0,
+        "vad_ms": 24394.465,
+        "cut_sum_ms": 10063.731,
+        "cut_wall_ms": 124604.043,
+        "segment_ms": 127117.784,
+        "cluster_ms": 0.0,
+        "itn_ms": 3676.119,
+        "cleanup_ms": 17.605,
+        "audio_wait_ms": 22.221,
+        "cut_cpu_ms": 3954.021,
+        "cut_dispatch_wait_ms": 6081.738,
+        "pending_wait_ms": 28.369,
+        "vad_wait_ms": 1.151,
+        "vad_worker_ms": 24389.782,
+        "low_volume_filter_ms": 0.039,
+        "model_load_lock_wait_ms": 0.006
+      },
+      "notes": "qwen_wait/qwen_ms/cut_sum/cut_cpu/cut_dispatch are accumulated across segment tasks; cut_wall/segment are overlapping envelopes, not additive CPU/device time"
+    },
+    {
+      "sample_id": "a2",
+      "owner": 3,
+      "request_id": "14fedec2-2fce-42bd-8bf1-1e87a4e1a8e2",
+      "http_latency_s": 176.52125480026007,
+      "route_envelope_s": 173.50570358056575,
+      "before_route_envelope_s": 2.9803876699879766,
+      "warnings": 4,
+      "discarded": 2,
+      "response_segments": 568,
+      "phases_ms": {
+        "spk_wait_ms": 0.0,
+        "spk_ms": 0.0,
+        "spk_calls": 0.0,
+        "emo_wait_ms": 0.0,
+        "emo_ms": 0.0,
+        "emo_calls": 0.0,
+        "qwen_wait_ms": 26437654.578,
+        "qwen_ms": 2343618.457,
+        "qwen_calls": 615.0,
+        "vad_ms": 23713.768,
+        "cut_sum_ms": 19493.482,
+        "cut_wall_ms": 146087.937,
+        "segment_ms": 149126.798,
+        "cluster_ms": 0.0,
+        "itn_ms": 38.863,
+        "cleanup_ms": 16.872,
+        "audio_wait_ms": 22.631,
+        "cut_cpu_ms": 4053.258,
+        "cut_dispatch_wait_ms": 15415.702,
+        "pending_wait_ms": 24.853,
+        "vad_wait_ms": 1.736,
+        "vad_worker_ms": 23707.879,
+        "low_volume_filter_ms": 0.048,
+        "model_load_lock_wait_ms": 0.007
+      },
+      "notes": "qwen_wait/qwen_ms/cut_sum/cut_cpu/cut_dispatch are accumulated across segment tasks; cut_wall/segment are overlapping envelopes, not additive CPU/device time"
+    },
+    {
+      "sample_id": "a3",
+      "owner": 4,
+      "request_id": "47b2febb-76d0-446f-bb93-b6643a3baec9",
+      "http_latency_s": 182.72428470943123,
+      "route_envelope_s": 179.6754878796637,
+      "before_route_envelope_s": 3.006605110131204,
+      "warnings": 0,
+      "discarded": 0,
+      "response_segments": 659,
+      "phases_ms": {
+        "spk_wait_ms": 0.0,
+        "spk_ms": 0.0,
+        "spk_calls": 0.0,
+        "emo_wait_ms": 0.0,
+        "emo_ms": 0.0,
+        "emo_calls": 0.0,
+        "qwen_wait_ms": 27155678.232,
+        "qwen_ms": 2335114.096,
+        "qwen_calls": 706.0,
+        "vad_ms": 25402.138,
+        "cut_sum_ms": 13999.859,
+        "cut_wall_ms": 145133.797,
+        "segment_ms": 148848.424,
+        "cluster_ms": 0.0,
+        "itn_ms": 4683.442,
+        "cleanup_ms": 16.959,
+        "audio_wait_ms": 23.022,
+        "cut_cpu_ms": 4485.245,
+        "cut_dispatch_wait_ms": 9486.472,
+        "pending_wait_ms": 28.516,
+        "vad_wait_ms": 0.885,
+        "vad_worker_ms": 25397.669,
+        "low_volume_filter_ms": 0.04,
+        "model_load_lock_wait_ms": 0.004
+      },
+      "notes": "qwen_wait/qwen_ms/cut_sum/cut_cpu/cut_dispatch are accumulated across segment tasks; cut_wall/segment are overlapping envelopes, not additive CPU/device time"
+    },
+    {
+      "sample_id": "a4",
+      "owner": 5,
+      "request_id": "7661f9ed-cb44-43fa-9504-df629cf07084",
+      "http_latency_s": 186.31969983968884,
+      "route_envelope_s": 183.15921163000166,
+      "before_route_envelope_s": 3.0330228600651026,
+      "warnings": 9,
+      "discarded": 9,
+      "response_segments": 618,
+      "phases_ms": {
+        "spk_wait_ms": 0.0,
+        "spk_ms": 0.0,
+        "spk_calls": 0.0,
+        "emo_wait_ms": 0.0,
+        "emo_ms": 0.0,
+        "emo_calls": 0.0,
+        "qwen_wait_ms": 26713272.907,
+        "qwen_ms": 2337643.777,
+        "qwen_calls": 701.0,
+        "vad_ms": 23376.136,
+        "cut_sum_ms": 13001.109,
+        "cut_wall_ms": 144512.894,
+        "segment_ms": 155730.975,
+        "cluster_ms": 0.0,
+        "itn_ms": 3341.394,
+        "cleanup_ms": 16.677,
+        "audio_wait_ms": 23.928,
+        "cut_cpu_ms": 4259.707,
+        "cut_dispatch_wait_ms": 8714.096,
+        "pending_wait_ms": 27.665,
+        "vad_wait_ms": 0.866,
+        "vad_worker_ms": 23372.095,
+        "low_volume_filter_ms": 0.038,
+        "model_load_lock_wait_ms": 0.003
+      },
+      "notes": "qwen_wait/qwen_ms/cut_sum/cut_cpu/cut_dispatch are accumulated across segment tasks; cut_wall/segment are overlapping envelopes, not additive CPU/device time"
+    },
+    {
+      "sample_id": "a5",
+      "owner": 0,
+      "request_id": "c6401628-5635-488d-a856-381b8e7c85ad",
+      "http_latency_s": 116.02909267973155,
+      "route_envelope_s": 113.0699316598475,
+      "before_route_envelope_s": 2.619636599905789,
+      "warnings": 0,
+      "discarded": 0,
+      "response_segments": 431,
+      "phases_ms": {
+        "spk_wait_ms": 0.0,
+        "spk_ms": 0.0,
+        "spk_calls": 0.0,
+        "emo_wait_ms": 0.0,
+        "emo_ms": 0.0,
+        "emo_calls": 0.0,
+        "qwen_wait_ms": 15022555.281,
+        "qwen_ms": 1345360.331,
+        "qwen_calls": 457.0,
+        "vad_ms": 22443.978,
+        "cut_sum_ms": 3967.511,
+        "cut_wall_ms": 83259.201,
+        "segment_ms": 85359.729,
+        "cluster_ms": 0.0,
+        "itn_ms": 4538.973,
+        "cleanup_ms": 15.428,
+        "audio_wait_ms": 22.143,
+        "cut_cpu_ms": 2081.776,
+        "cut_dispatch_wait_ms": 1868.072,
+        "pending_wait_ms": 17.907,
+        "vad_wait_ms": 53.664,
+        "vad_worker_ms": 22386.908,
+        "low_volume_filter_ms": 0.05,
+        "model_load_lock_wait_ms": 0.006
+      },
+      "notes": "qwen_wait/qwen_ms/cut_sum/cut_cpu/cut_dispatch are accumulated across segment tasks; cut_wall/segment are overlapping envelopes, not additive CPU/device time"
+    },
+    {
+      "sample_id": "a6",
+      "owner": 2,
+      "request_id": "1c7ea421-5d94-432d-96bc-044b508ac7d9",
+      "http_latency_s": 169.96221794001758,
+      "route_envelope_s": 167.1407227292657,
+      "before_route_envelope_s": 2.7890234207734466,
+      "warnings": 0,
+      "discarded": 0,
+      "response_segments": 512,
+      "phases_ms": {
+        "spk_wait_ms": 0.0,
+        "spk_ms": 0.0,
+        "spk_calls": 0.0,
+        "emo_wait_ms": 0.0,
+        "emo_ms": 0.0,
+        "emo_calls": 0.0,
+        "qwen_wait_ms": 23583483.233,
+        "qwen_ms": 2133757.191,
+        "qwen_calls": 520.0,
+        "vad_ms": 22732.749,
+        "cut_sum_ms": 8721.978,
+        "cut_wall_ms": 132701.154,
+        "segment_ms": 136695.459,
+        "cluster_ms": 0.0,
+        "itn_ms": 6884.272,
+        "cleanup_ms": 17.093,
+        "audio_wait_ms": 22.909,
+        "cut_cpu_ms": 2991.386,
+        "cut_dispatch_wait_ms": 5708.834,
+        "pending_wait_ms": 22.041,
+        "vad_wait_ms": 1.195,
+        "vad_worker_ms": 22728.599,
+        "low_volume_filter_ms": 0.04,
+        "model_load_lock_wait_ms": 0.005
+      },
+      "notes": "qwen_wait/qwen_ms/cut_sum/cut_cpu/cut_dispatch are accumulated across segment tasks; cut_wall/segment are overlapping envelopes, not additive CPU/device time"
+    }
+  ],
+  "owners": [
+    {
+      "owner": 0,
+      "sample_id": "a5",
+      "request_id": "c6401628-5635-488d-a856-381b8e7c85ad",
+      "owner_identity_unchanged": true,
+      "pid": 299738,
+      "birth": 1795454331.45,
+      "mapping_scope": "retained owner event tail contains exactly this A6 request_id, completed delta equals request qwen_calls",
+      "completed_delta": 457,
+      "phase_wall_s_delta": {
+        "prefill": 39.87594850268215,
+        "decode": 41.45663167629391
+      },
+      "steps_delta": {
+        "prefill": 279,
+        "decode": 526
+      },
+      "repacks_delta": 406,
+      "cache_reuses_delta": 120,
+      "transport_counter_delta": {
+        "accepted_per_drain": {
+          "2": 87,
+          "4": 7,
+          "3": 23,
+          "5": 4,
+          "9": 1,
+          "1": 157
+        },
+        "poll_wait_calls": 189,
+        "poll_wait_timeouts": 153,
+        "prefill_calls": 279,
+        "received_submits": 457,
+        "prefill_members": 457,
+        "poll_wait_s": 0.4965859353542328
+      },
+      "observed_peak_active_cumulative": 16,
+      "observed_peak_kv_bytes_cumulative": 252657664,
+      "warmup_peak_kv_bytes": 18120704,
+      "final_kv_bytes": 0,
+      "final_kv_storage_bytes": 0,
+      "end_reasons_delta": {
+        "eos": 457
+      },
+      "warning_counts_delta": {},
+      "unknown": {
+        "processor_wall_s": null,
+        "model_forward_wall_s": null,
+        "npu_kernel_wall_s": null,
+        "kv_copy_wall_s": null,
+        "total_generated_tokens": null
+      },
+      "prefill_members_per_call_delta": 1.6379928315412187
+    },
+    {
+      "owner": 1,
+      "sample_id": "a1",
+      "request_id": "ae343227-9288-47cf-9beb-ea89b4acd00e",
+      "owner_identity_unchanged": true,
+      "pid": 589784,
+      "birth": 1795454355.2,
+      "mapping_scope": "retained owner event tail contains exactly this A6 request_id, completed delta equals request qwen_calls",
+      "completed_delta": 753,
+      "phase_wall_s_delta": {
+        "prefill": 69.2126488275826,
+        "decode": 50.74166140705347
+      },
+      "steps_delta": {
+        "prefill": 367,
+        "decode": 562
+      },
+      "repacks_delta": 502,
+      "cache_reuses_delta": 60,
+      "transport_counter_delta": {
+        "accepted_per_drain": {
+          "4": 22,
+          "2": 118,
+          "3": 65,
+          "6": 3,
+          "8": 1,
+          "9": 1,
+          "1": 147,
+          "5": 9,
+          "7": 1
+        },
+        "poll_wait_calls": 297,
+        "poll_wait_timeouts": 249,
+        "prefill_calls": 367,
+        "received_submits": 753,
+        "prefill_members": 753,
+        "poll_wait_s": 0.8292096545919776
+      },
+      "observed_peak_active_cumulative": 16,
+      "observed_peak_kv_bytes_cumulative": 212058112,
+      "warmup_peak_kv_bytes": 18120704,
+      "final_kv_bytes": 0,
+      "final_kv_storage_bytes": 0,
+      "end_reasons_delta": {
+        "eos": 753
+      },
+      "warning_counts_delta": {},
+      "unknown": {
+        "processor_wall_s": null,
+        "model_forward_wall_s": null,
+        "npu_kernel_wall_s": null,
+        "kv_copy_wall_s": null,
+        "total_generated_tokens": null
+      },
+      "prefill_members_per_call_delta": 2.0517711171662127
+    },
+    {
+      "owner": 2,
+      "sample_id": "a6",
+      "request_id": "1c7ea421-5d94-432d-96bc-044b508ac7d9",
+      "owner_identity_unchanged": true,
+      "pid": 723606,
+      "birth": 1795454378.45,
+      "mapping_scope": "retained owner event tail contains exactly this A6 request_id, completed delta equals request qwen_calls",
+      "completed_delta": 520,
+      "phase_wall_s_delta": {
+        "prefill": 53.91049328073859,
+        "decode": 72.8545581959188
+      },
+      "steps_delta": {
+        "prefill": 368,
+        "decode": 877
+      },
+      "repacks_delta": 592,
+      "cache_reuses_delta": 285,
+      "transport_counter_delta": {
+        "accepted_per_drain": {
+          "4": 3,
+          "2": 80,
+          "3": 19,
+          "6": 1,
+          "5": 2,
+          "1": 261,
+          "7": 2
+        },
+        "poll_wait_calls": 196,
+        "poll_wait_timeouts": 168,
+        "prefill_calls": 368,
+        "received_submits": 520,
+        "prefill_members": 520,
+        "poll_wait_s": 0.5350761730223894
+      },
+      "observed_peak_active_cumulative": 16,
+      "observed_peak_kv_bytes_cumulative": 266993664,
+      "warmup_peak_kv_bytes": 18120704,
+      "final_kv_bytes": 0,
+      "final_kv_storage_bytes": 0,
+      "end_reasons_delta": {
+        "eos": 520
+      },
+      "warning_counts_delta": {},
+      "unknown": {
+        "processor_wall_s": null,
+        "model_forward_wall_s": null,
+        "npu_kernel_wall_s": null,
+        "kv_copy_wall_s": null,
+        "total_generated_tokens": null
+      },
+      "prefill_members_per_call_delta": 1.4130434782608696
+    },
+    {
+      "owner": 3,
+      "sample_id": "a2",
+      "request_id": "14fedec2-2fce-42bd-8bf1-1e87a4e1a8e2",
+      "owner_identity_unchanged": true,
+      "pid": 877811,
+      "birth": 1795454401.92,
+      "mapping_scope": "retained owner event tail contains exactly this A6 request_id, completed delta equals request qwen_calls",
+      "completed_delta": 615,
+      "phase_wall_s_delta": {
+        "prefill": 67.64658412244171,
+        "decode": 73.59391160216182
+      },
+      "steps_delta": {
+        "prefill": 367,
+        "decode": 737
+      },
+      "repacks_delta": 544,
+      "cache_reuses_delta": 193,
+      "transport_counter_delta": {
+        "accepted_per_drain": {
+          "2": 100,
+          "4": 11,
+          "3": 37,
+          "6": 1,
+          "9": 1,
+          "1": 213,
+          "11": 2,
+          "5": 2
+        },
+        "poll_wait_calls": 260,
+        "poll_wait_timeouts": 209,
+        "prefill_calls": 367,
+        "received_submits": 615,
+        "prefill_members": 615,
+        "poll_wait_s": 0.6928311223164201
+      },
+      "observed_peak_active_cumulative": 16,
+      "observed_peak_kv_bytes_cumulative": 248184832,
+      "warmup_peak_kv_bytes": 18120704,
+      "final_kv_bytes": 0,
+      "final_kv_storage_bytes": 0,
+      "end_reasons_delta": {
+        "length_limit": 1,
+        "eos": 611,
+        "repetition_stop": 3
+      },
+      "warning_counts_delta": {
+        "length_limit": 1,
+        "repetition_stop": 3
+      },
+      "unknown": {
+        "processor_wall_s": null,
+        "model_forward_wall_s": null,
+        "npu_kernel_wall_s": null,
+        "kv_copy_wall_s": null,
+        "total_generated_tokens": null
+      },
+      "prefill_members_per_call_delta": 1.67574931880109
+    },
+    {
+      "owner": 4,
+      "sample_id": "a3",
+      "request_id": "47b2febb-76d0-446f-bb93-b6643a3baec9",
+      "owner_identity_unchanged": true,
+      "pid": 991338,
+      "birth": 1795454425.6,
+      "mapping_scope": "retained owner event tail contains exactly this A6 request_id, completed delta equals request qwen_calls",
+      "completed_delta": 706,
+      "phase_wall_s_delta": {
+        "prefill": 71.38025532197207,
+        "decode": 64.7925293724984
+      },
+      "steps_delta": {
+        "prefill": 384,
+        "decode": 688
+      },
+      "repacks_delta": 558,
+      "cache_reuses_delta": 130,
+      "transport_counter_delta": {
+        "accepted_per_drain": {
+          "2": 112,
+          "4": 13,
+          "3": 47,
+          "6": 2,
+          "13": 1,
+          "8": 3,
+          "1": 198,
+          "5": 7,
+          "7": 1
+        },
+        "poll_wait_calls": 283,
+        "poll_wait_timeouts": 233,
+        "prefill_calls": 384,
+        "received_submits": 706,
+        "prefill_members": 706,
+        "poll_wait_s": 0.7505434844642878
+      },
+      "observed_peak_active_cumulative": 16,
+      "observed_peak_kv_bytes_cumulative": 223756288,
+      "warmup_peak_kv_bytes": 18120704,
+      "final_kv_bytes": 0,
+      "final_kv_storage_bytes": 0,
+      "end_reasons_delta": {
+        "eos": 706
+      },
+      "warning_counts_delta": {},
+      "unknown": {
+        "processor_wall_s": null,
+        "model_forward_wall_s": null,
+        "npu_kernel_wall_s": null,
+        "kv_copy_wall_s": null,
+        "total_generated_tokens": null
+      },
+      "prefill_members_per_call_delta": 1.8385416666666667
+    },
+    {
+      "owner": 5,
+      "sample_id": "a4",
+      "request_id": "7661f9ed-cb44-43fa-9504-df629cf07084",
+      "owner_identity_unchanged": true,
+      "pid": 1027285,
+      "birth": 1795454448.34,
+      "mapping_scope": "retained owner event tail contains exactly this A6 request_id, completed delta equals request qwen_calls",
+      "completed_delta": 701,
+      "phase_wall_s_delta": {
+        "prefill": 70.62466856371611,
+        "decode": 74.06456234771758
+      },
+      "steps_delta": {
+        "prefill": 403,
+        "decode": 790
+      },
+      "repacks_delta": 575,
+      "cache_reuses_delta": 215,
+      "transport_counter_delta": {
+        "accepted_per_drain": {
+          "2": 125,
+          "4": 15,
+          "3": 41,
+          "6": 1,
+          "10": 2,
+          "8": 1,
+          "1": 215,
+          "5": 1,
+          "7": 2
+        },
+        "poll_wait_calls": 291,
+        "poll_wait_timeouts": 252,
+        "prefill_calls": 403,
+        "received_submits": 701,
+        "prefill_members": 701,
+        "poll_wait_s": 0.8011100180447102
+      },
+      "observed_peak_active_cumulative": 16,
+      "observed_peak_kv_bytes_cumulative": 224215040,
+      "warmup_peak_kv_bytes": 18120704,
+      "final_kv_bytes": 0,
+      "final_kv_storage_bytes": 0,
+      "end_reasons_delta": {
+        "eos": 692,
+        "repetition_stop": 9
+      },
+      "warning_counts_delta": {
+        "repetition_stop": 9
+      },
+      "unknown": {
+        "processor_wall_s": null,
+        "model_forward_wall_s": null,
+        "npu_kernel_wall_s": null,
+        "kv_copy_wall_s": null,
+        "total_generated_tokens": null
+      },
+      "prefill_members_per_call_delta": 1.739454094292804
+    }
+  ],
+  "final_pcm": {
+    "limit": 256,
+    "byte_limit": 268435456,
+    "active": 0,
+    "audio_bytes": 0,
+    "waiting": 0,
+    "peak": 158,
+    "peak_audio_bytes": 62674688
+  },
+  "final_capacity": {
+    "configured": 6,
+    "healthy": 6,
+    "leased": 0,
+    "available": 6,
+    "segment_capacity_per_owner": 16,
+    "configured_global_segments": 96,
+    "initialized": true,
+    "startup_failed": false,
+    "rollback_errors": []
+  },
+  "global_sequence_count_delta": 3752,
+  "global_peak_inflight_cumulative": 96,
+  "interpretation_limits": [
+    "Across-owner wall envelopes overlap and MUST NOT be summed into end-to-end latency or kernel utilization.",
+    "phase_wall_s separates prefill/decode envelopes only; processor/forward/transfer/sync/KV-copy components are not present in these snapshots.",
+    "KV peak values are cumulative maxima, not subtractable work counters; final zero KV verifies this round drained, not total device HBM reclaimed.",
+    "ITN and clip-dispatch measurements show candidate tail/host scheduling costs, but these three snapshots cannot prove event-loop blocking causality.",
+    "No B4 conclusion or accuracy certification follows from this A6 analysis."
+  ]
+}

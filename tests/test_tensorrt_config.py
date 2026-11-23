@@ -35,7 +35,7 @@ class NpuConfigTests(unittest.TestCase):
                 _ = self.config(f'[vad]\nvad_device=[{value}]\n').vad_device
 
     def test_local_qwen_config_has_strict_types(self):
-        cfg = self.config('')
+        cfg = self.config('[qwen_asr]\ngeneration_mode="legacy"\n')
         self.assertEqual(cfg.qwen_local_device, 'npu:7')
         self.assertEqual(cfg.qwen_local_dtype, 'bfloat16')
         self.assertEqual(cfg.qwen_local_instance_count, 1)

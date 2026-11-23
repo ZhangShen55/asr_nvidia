@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def config(tmp_path, literal):
     p = tmp_path / 'candidate.toml'
-    p.write_text('[qwen_asr]\nmax_inference_batch_size=' + literal + '\n')
+    p.write_text('[qwen_asr]\ngeneration_mode="legacy"\nmax_inference_batch_size=' + literal + '\n')
     return Settings(str(p))
 
 
@@ -36,30 +36,31 @@ def test_bad_or_unmeasured_physical_batch_rejected_before_loading(tmp_path, lite
 
 
 @pytest.mark.parametrize('name', ['config.toml', 'docker/config.toml'])
-def test_shipped_host_384_and_container_defaults_match_selected_profiles(name):
+def test_shipped_templates_use_formal_multi_owner_profile(name):
     settings = Settings(str(ROOT / name))
     settings.validate_model_backends()
-    host = name == 'config.toml'
-    assert settings.qwen_local_instance_count == 1
-    assert settings.qwen_segment_concurrency == (48 if host else 1)
-    assert settings.qwen_request_concurrency == (384 if host else 1)
-    assert settings.qwen_max_inference_batch_size == (384 if host else 1)
-    assert settings.qwen_preload_on_startup is host
+    assert settings.qwen_generation_mode == 'continuous'
+    assert settings.qwen_local_instance_count == 6
+    assert settings.qwen_segment_concurrency == 16
+    assert settings.qwen_request_concurrency == 96
+    assert settings.qwen_max_inference_batch_size == 16
+    assert settings.qwen_preload_on_startup is True
     qwen = settings._cfg['qwen_asr']
-    expected = dict(max_inference_batch_size=384 if host else 1,
-                    batch_wait_timeout_ms=100 if host else 10,
-                    batch_max_duration_ratio=32.0 if host else 4.0,
-                    max_batch_audio_frames=345600 if host else 102400,
-                    max_batch_tokens=240000 if host else 78336,
-                    pending_segment_limit=512 if host else 256,
+    expected = dict(max_batch_audio_frames=14400,
+                    max_batch_tokens=10000,
+                    pending_segment_limit=256,
                     pending_audio_bytes_limit=268435456)
     assert {k: qwen[k] for k in expected} == expected
+    assert not {'audio_concurrency', 'request_concurrency', 'max_inference_batch_size',
+                'continuous_prefill_batch_size'}.intersection(qwen)
 
 
 def test_384_profiles_have_room_beyond_384_and_only_B_admission_differs():
     configurations = []
     for name, limit in [('config.qwen384.toml', 4), ('config.qwen384-b8.toml', 8)]:
         cfg = Settings(str(ROOT / 'test' / name))
+        # 384静态批是历史legacy候选，不继承新的continuous缺省。
+        cfg._cfg['qwen_asr']['generation_mode'] = 'legacy'
         cfg.validate_model_backends()
         assert cfg.qwen_local_instance_count == 1
         assert cfg.qwen_execution_mode == 'process'

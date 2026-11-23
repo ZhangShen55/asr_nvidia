@@ -24,7 +24,7 @@ def test_retry_refilters_cancelled_members_and_preserves_result_owner(cancel_all
                 return {'loaded':True,'loading':False,'failure':None}
             def close(self):
                 pass
-        client = QwenAsrClient(execution_mode="thread", runtime_factory=Runtime, retry_count=1, local_instance_count=1,
+        client = QwenAsrClient(generation_mode="legacy", execution_mode="thread", runtime_factory=Runtime, retry_count=1, local_instance_count=1,
                                max_inference_batch_size=2, batch_wait_timeout_ms=10)
         first = asyncio.create_task(client.transcribe_bytes(wav(), language='Chinese',request_id='a',segment_index=0))
         second = asyncio.create_task(client.transcribe_bytes(wav(), language='English',request_id='b',segment_index=1))
@@ -95,7 +95,7 @@ def test_actual_runtime_failed_decode_keeps_attempt_timing_ownership_on_retry_ca
                 raise RuntimeError('first read/decode fails after actual generate')
             return ['language English<asr_text>survivor'] * ids.shape[0]
         runtime.processor.batch_decode = decode
-        client = QwenAsrClient(execution_mode="thread", runtime_factory=lambda *_:runtime, retry_count=1, local_instance_count=1,
+        client = QwenAsrClient(generation_mode="legacy", execution_mode="thread", runtime_factory=lambda *_:runtime, retry_count=1, local_instance_count=1,
                                max_inference_batch_size=2, batch_wait_timeout_ms=10)
         first = asyncio.create_task(client.transcribe_bytes(wav(),language='auto',request_id='a',segment_index=0))
         second = asyncio.create_task(client.transcribe_bytes(wav(),language='en',request_id='b',segment_index=1))

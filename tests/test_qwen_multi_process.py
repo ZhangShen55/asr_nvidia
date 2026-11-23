@@ -53,6 +53,7 @@ def make_client(tmp_path, count, options=None, **kwargs):
         return runtime
 
     parameters = dict(
+        generation_mode="legacy",
         local_model_dir=str(tmp_path / "configured-model"), local_device="npu:7",
         local_dtype="bfloat16", local_instance_count=count, max_new_tokens=256,
         execution_mode="process", runtime_factory=factory, retry_count=0,

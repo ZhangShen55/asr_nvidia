@@ -56,6 +56,8 @@ class AudioLease:
 
     category: str
     snapshot: dict
+    request_id: str | None = None
+    owner_index: int | None = None
 
 
 @dataclass(eq=False)
@@ -66,6 +68,7 @@ class _AudioWaiter:
     future: asyncio.Future
     state: str = "waiting"
     lease: AudioLease | None = None
+    request_id: str | None = None
 
 
 class AudioSlotManager:
@@ -86,7 +89,37 @@ class AudioSlotManager:
         self._sequence = 0
         self._leases: set[AudioLease] = set()
         self._lock = asyncio.Lock()
+        self._owner_pool = None
         self._publish()
+
+    def bind_owner_pool(self, client) -> None:
+        """No I/O: admission and owner assignment subsequently share this lock."""
+        if getattr(client, 'generation_mode', None) != 'continuous':
+            return
+        if self._owner_pool is not None and self._owner_pool is not client:
+            old = self._owner_pool
+            task = getattr(old, '_close_task', None)
+            idle = not (self._active or self._active_b or self.waiting or self._leases or self._lock.locked())
+            closed = (task is not None and task.done() and not task.cancelled()
+                      and task.exception() is None
+                      and getattr(old, '_shutdown_state', {}).get('phase') == 'closed')
+            if not idle or not closed:
+                raise RuntimeError('audio manager cannot replace a live or closing owner pool')
+            previous = old.owner_capacity_snapshot()
+            reaped = all(owner.get('model_worker', {}).get('resource_reaped') is True
+                         and (owner.get('model_worker', {}).get('worker_alive') is False
+                              or (owner.get('model_worker', {}).get('worker_pid') is None
+                                  and owner.get('model_worker', {}).get('worker_alive') is None))
+                         for owner in previous['owners'])
+            if previous['leased'] or not reaped:
+                raise RuntimeError('old owner pool resources are not confirmed reaped')
+        if client.owner_capacity_snapshot()['configured'] != self.capacity:
+            raise ValueError('audio capacity must equal configured Qwen owners')
+        self._owner_pool = client
+        self._publish()
+
+    def _owner_capacity(self):
+        return self._owner_pool.owner_capacity_snapshot() if self._owner_pool is not None else None
 
     @property
     def active(self) -> int:
@@ -105,33 +138,62 @@ class AudioSlotManager:
         return len(self._queues["B"])
 
     def _state(self) -> dict:
-        return {
+        state = {
             "audioConcurrency": {"configured_total": self.capacity,
                                  "active_total": self._active, "waiting_total": self.waiting},
             "spkEmoConcurrency": {"configured": self.spk_emo_capacity,
                                   "active": self._active_b, "waiting": self.waiting_b},
         }
+        owners = self._owner_capacity()
+        if owners is not None:
+            state['audioConcurrency'].update(effective_total=owners['healthy'],
+                healthy_owners=owners['healthy'], leased_owners=owners['leased'],
+                available_owners=owners['available'])
+            state['spkEmoConcurrency']['effective'] = min(self.spk_emo_capacity, owners['healthy'])
+        return state
 
     def _publish(self) -> None:
         # 一次替换整份快照，供同步状态接口（可能在线程中）读取。
         self._snapshot = self._state()
 
     def snapshot(self) -> dict:
-        return copy.deepcopy(self._snapshot)
+        state = copy.deepcopy(self._snapshot)
+        owners = self._owner_capacity()
+        if owners is not None:
+            state['audioConcurrency'].update(effective_total=owners['healthy'],
+                healthy_owners=owners['healthy'], leased_owners=owners['leased'],
+                available_owners=owners['available'])
+            state['spkEmoConcurrency']['effective'] = min(self.spk_emo_capacity, owners['healthy'])
+        return state
 
     def _eligible(self, category: str) -> bool:
-        return self._active < self.capacity and (
-            category == "A" or self._active_b < self.spk_emo_capacity)
+        owners = self._owner_capacity()
+        total = self.capacity if owners is None else owners['healthy']
+        b_capacity = min(self.spk_emo_capacity, total)
+        # A dead owner's closing lease still counts active. It must not prevent
+        # a different healthy/free owner from being granted within configured N.
+        return (self._active < self.capacity and (owners is None or owners['available'] > 0)
+                and (category == "A" or self._active_b < b_capacity))
 
-    def _grant(self, category: str) -> AudioLease:
+    def _grant(self, category: str, request_id=None) -> AudioLease | None:
+        owner_index = None
+        if self._owner_pool is not None:
+            if request_id is None:
+                raise ValueError('continuous audio admission requires request_id')
+            owner_index = self._owner_pool.try_acquire_owner(str(request_id))
+            if owner_index is None:
+                return None
         self._active += 1
         self._active_b += int(category == "B")
-        lease = AudioLease(category, self._state())
+        lease = AudioLease(category, self._state(), str(request_id) if request_id is not None else None,
+                           owner_index)
         self._leases.add(lease)
         return lease
 
     def _release(self, lease: AudioLease) -> None:
         if lease in self._leases:
+            if self._owner_pool is not None and lease.request_id is not None:
+                self._owner_pool.release_owner_nowait(lease.request_id)
             self._leases.remove(lease)
             self._active -= 1
             self._active_b -= int(lease.category == "B")
@@ -145,6 +207,17 @@ class AudioSlotManager:
                     waiter.state = "expired"
                     if not waiter.future.done():
                         waiter.future.set_exception(QueueTimeoutError(snapshot=self._state()))
+        owners = self._owner_capacity()
+        if owners is not None and not owners['healthy']:
+            from core.qwen_asr_client import QwenAsrUnavailableError
+            for queue in self._queues.values():
+                while queue:
+                    waiter = queue.popleft()
+                    waiter.state = 'expired'
+                    if not waiter.future.done():
+                        waiter.future.set_exception(QwenAsrUnavailableError())
+            self._publish()
+            return
         while self._active < self.capacity:
             candidates = [queue[0] for category, queue in self._queues.items()
                           if queue and self._eligible(category)]
@@ -152,30 +225,48 @@ class AudioSlotManager:
                 break
             waiter = min(candidates, key=lambda entry: entry.sequence)
             self._queues[waiter.category].popleft()
-            waiter.lease = self._grant(waiter.category)
+            waiter.lease = self._grant(waiter.category, waiter.request_id)
+            if waiter.lease is None:
+                self._queues[waiter.category].appendleft(waiter)
+                break
             waiter.state = "granted"
             waiter.future.set_result(waiter.lease)
         self._publish()
 
-    async def acquire(self, category: str = "A") -> AudioLease:
+    async def acquire(self, category: str = "A", *, request_id=None) -> AudioLease:
         if category not in self._queues:
             raise ValueError("音频分类必须是 A 或 B")
+        if self._owner_pool is not None:
+            if request_id is None:
+                raise ValueError('continuous audio admission requires request_id')
+            # Lazy discovery must never hold admission while awaiting model IO.
+            await self._owner_pool.ensure_owner_pool()
         async with self._lock:
             self._dispatch()
+            # Discovery happened before this lock. All owners can fail while a
+            # new caller waits for it; that caller must get 4011 just like the
+            # queued waiters, rather than a misleading capacity-zero 4013.
+            owners = self._owner_capacity()
+            if owners is not None and not owners['healthy']:
+                from core.qwen_asr_client import QwenAsrUnavailableError
+                raise QwenAsrUnavailableError()
             if self._eligible(category) and not self._queues[category]:
-                lease = self._grant(category)
-                self._publish()
-                return lease
+                lease = self._grant(category, request_id)
+                if lease is not None:
+                    self._publish()
+                    return lease
             if self.wait_timeout_s <= 0:
-                if self._active >= self.capacity:
-                    raise QueueFullError(active=self._active, capacity=self.capacity, snapshot=self._state())
-                raise SpkEmoQueueFullError(active=self._active_b, capacity=self.spk_emo_capacity,
+                owners = self._owner_capacity()
+                total = self.capacity if owners is None else owners['healthy']
+                if self._active >= self.capacity or (owners is not None and not owners['available']):
+                    raise QueueFullError(active=self._active, capacity=total, snapshot=self._state())
+                raise SpkEmoQueueFullError(active=self._active_b, capacity=min(self.spk_emo_capacity,total),
                                           snapshot=self._state())
             if self.waiting >= self.queue_max_size:
                 raise QueueFullError(reason="waiting_full", snapshot=self._state())
             self._sequence += 1
             waiter = _AudioWaiter(category, self._sequence, self._clock() + self.wait_timeout_s,
-                                  asyncio.get_running_loop().create_future())
+                                  asyncio.get_running_loop().create_future(), request_id=request_id)
             self._queues[category].append(waiter)
             self._publish()
         try:
@@ -209,6 +300,8 @@ class AudioSlotManager:
             return self.snapshot()
 
     async def release(self, lease: AudioLease) -> None:
+        if self._owner_pool is not None and lease.request_id is not None and lease in self._leases:
+            await await_completion(self._owner_pool.prepare_owner_release(lease.request_id))
         await await_completion(self._release_and_dispatch(lease))
 
     async def _release_and_dispatch(self, lease: AudioLease) -> None:

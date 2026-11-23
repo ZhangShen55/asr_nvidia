@@ -1,0 +1,30 @@
+{
+  "status": "passed",
+  "mode": "source",
+  "origins": {},
+  "actual_so_count": 0,
+  "bad_origins": [],
+  "required_nodes": {
+    "test_protected_spawn_reports_real_worker_entry_artifact_when_requested": [
+      "skipped"
+    ],
+    "test_protected_stage_plan_resolves_actual_core_artifact_without_import": [
+      "skipped"
+    ],
+    "test_real_spawn_core_worker_entry_matches_current_module_and_optional_so": [
+      "passed"
+    ],
+    "test_owned_tmpdir_isolates_actual_source_and_protected_cache_helpers": [
+      "passed",
+      "passed"
+    ]
+  },
+  "skipped_call_nodes": [
+    "test_cam_process.py::test_protected_spawn_reports_real_worker_entry_artifact_when_requested",
+    "test_qwen_process_benchmark.py::test_protected_stage_plan_resolves_actual_core_artifact_without_import"
+  ],
+  "torch_npu_imported": false,
+  "global_cache_mutation_attempts": [],
+  "guard_ready_records": 170,
+  "errors": []
+}

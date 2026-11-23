@@ -4,7 +4,8 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, Mock, patch
+from types import SimpleNamespace
 
 from fastapi.testclient import TestClient
 
@@ -25,9 +26,13 @@ class StatusContractTests(unittest.TestCase):
         # never load it, close another test's model, or read/reset shared stats.
         with tempfile.TemporaryDirectory(prefix="status-contract-") as private:
             stats_path = str(Path(private) / "asr_stats.json")
+            fake_client = object()
+            binding = Mock()
             with patch("main.start_vad_pool", new=AsyncMock()), \
                     patch("main.stop_vad_pool", new=AsyncMock()), \
                     patch("main.preload_qwen_client", new=AsyncMock(return_value="cpu-fixture")) as preload, \
+                    patch("main.get_qwen_client", new=AsyncMock(return_value=fake_client)) as get_client, \
+                    patch("main.get_slot_manager", return_value=SimpleNamespace(bind_owner_pool=binding)), \
                     patch("main.close_qwen_client", new=AsyncMock()), \
                     patch("utils.asr_stats.STATS_FILE", stats_path), \
                     patch("main.validate_npu_runtime", return_value={"unit_test": True}):
@@ -35,8 +40,16 @@ class StatusContractTests(unittest.TestCase):
                     result = client.get("/get_status").json()
                 if settings.qwen_preload_on_startup:
                     preload.assert_awaited_once()
+                    if settings.qwen_generation_mode == "continuous":
+                        get_client.assert_awaited_once()
+                        binding.assert_called_once_with(fake_client)
+                    else:
+                        get_client.assert_not_awaited()
+                        binding.assert_not_called()
                 else:
                     preload.assert_not_awaited()
+                    get_client.assert_not_awaited()
+                    binding.assert_not_called()
                 return result
 
     def test_status_contains_fixed_engine_id_and_version(self):
@@ -50,7 +63,7 @@ class StatusContractTests(unittest.TestCase):
 
     def test_status_contains_local_model_details(self):
         # This fixture tests ordered 3/1 capacity serialization, independent of
-        # the production profile's valid 8/8 deployment choice.
+        # the independent production pool sizes.
         with patch.dict(settings._cfg, {"model_device_pool": {
             "speech_campplus_devices": ["npu:7"] * 3,
             "emotion2vec_devices": ["npu:7"],
@@ -170,8 +183,8 @@ class ConfigFileStructureTests(unittest.TestCase):
     def test_model_device_arrays_use_host_or_container_npu(self):
         for name in ("config.toml", "docker/config.toml"):
             devices = self._load(name)["model_device_pool"]
-            self.assertEqual(devices["emotion2vec_devices"], ["npu:7"] * 8 if name == "config.toml" else ["npu:0"])
-            self.assertEqual(devices["speech_campplus_devices"], ["npu:7"] * 8 if name == "config.toml" else ["npu:0"] * 3)
+            self.assertEqual(devices["emotion2vec_devices"], ["npu:7" if name == "config.toml" else "npu:0"])
+            self.assertEqual(devices["speech_campplus_devices"], ["npu:7" if name == "config.toml" else "npu:0"])
 
     def test_log_path_and_vad_threshold_are_nested(self):
         expected_log_paths = {

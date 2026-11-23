@@ -98,6 +98,12 @@ def test_blocking_submit_keeps_loop_live_and_cancel_owns_late_acceptance():
                 submitted.set_exception(BackendCancelled('cancelled'))
         client = object.__new__(candidate.QwenAsrClient)
         client._runtimes = [Runtime()]
+        # The production client has already completed pool discovery and audio
+        # admission before a sequence reaches this send/cancel ownership probe.
+        client._pool_initialized = True
+        client._owner_lock = threading.RLock()
+        client._request_owners = {'r': 0}
+        client._owner_requests = {0: 'r'}
         client._discovery_lock = asyncio.Lock()
         client._closing = False
         client.request_timeout_s = 120

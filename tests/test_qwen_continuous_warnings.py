@@ -58,7 +58,9 @@ def test_all_unrecoverable_is_explicit_completed_with_warnings_not_no_speech():
 
 def test_normal_continuous_adds_complete_status_without_changing_legacy():
     async def scenario():
-        legacy, *_ = await run_contract()
+        legacy_cfg = dict(settings._cfg.get('qwen_asr', {}), generation_mode='legacy')
+        with patch.dict(settings._cfg, {'qwen_asr': legacy_cfg}):
+            legacy, *_ = await run_contract()
         normal, *_ = await run_continuous(raw_texts=[
             structured('language Chinese<asr_text>，今天学习。'),
             structured('language English<asr_text>Hello class.')])

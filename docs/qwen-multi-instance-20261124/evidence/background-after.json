@@ -1,0 +1,1172 @@
+{
+  "timestamp": "2026-11-23T17:37:29.489+00:00",
+  "host": {
+    "available": true,
+    "total_bytes": 2158585421824,
+    "available_bytes": 1915730087936,
+    "free_bytes": 1496007176192,
+    "available_ratio": 0.8874932947139114,
+    "swap_total_bytes": 4294963200,
+    "swap_free_bytes": 4294963200,
+    "swap_used_bytes": 0
+  },
+  "vmstat": {
+    "available": true,
+    "page_size_bytes": 4096,
+    "swap_in_pages": 0,
+    "swap_out_pages": 0,
+    "swap_in_bytes": 0,
+    "swap_out_bytes": 0
+  },
+  "backend": {
+    "available": false,
+    "reason": "\u672a\u63d0\u4f9b\u540e\u7aef PID"
+  },
+  "process_tree": [],
+  "services": {
+    "backend": [],
+    "vad": []
+  },
+  "qwen_execution": "unknown_without_model_status",
+  "npu": {
+    "available": true,
+    "npus": [
+      {
+        "index": 0,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:C1:00.0",
+        "available": true,
+        "hbm_used_mb": 57959,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 7577,
+        "utilization_aicore": 4
+      },
+      {
+        "index": 1,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:C2:00.0",
+        "available": true,
+        "hbm_used_mb": 60078,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 5458,
+        "utilization_aicore": 0
+      },
+      {
+        "index": 2,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:81:00.0",
+        "available": true,
+        "hbm_used_mb": 59111,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 6425,
+        "utilization_aicore": 0
+      },
+      {
+        "index": 3,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:82:00.0",
+        "available": true,
+        "hbm_used_mb": 59799,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 5737,
+        "utilization_aicore": 0
+      },
+      {
+        "index": 4,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:01:00.0",
+        "available": true,
+        "hbm_used_mb": 57643,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 7893,
+        "utilization_aicore": 0
+      },
+      {
+        "index": 5,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:02:00.0",
+        "available": true,
+        "hbm_used_mb": 57919,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 7617,
+        "utilization_aicore": 0
+      },
+      {
+        "index": 6,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:41:00.0",
+        "available": true,
+        "hbm_used_mb": 57657,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 7879,
+        "utilization_aicore": 0
+      },
+      {
+        "index": 7,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:42:00.0",
+        "available": true,
+        "hbm_used_mb": 15910,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 49626,
+        "utilization_aicore": 0
+      }
+    ],
+    "compute_apps": [
+      {
+        "index": 0,
+        "chip": 0,
+        "pid": 4112061,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40275,
+        "process_identity": {
+          "pid": 4112061,
+          "start_ticks": "691381961",
+          "sid": 3403031,
+          "create_time": 1794826145.61
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4112061,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3403031,
+          "rss_bytes": 4214239232,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4219756544,
+            "pss_bytes": 3213104128,
+            "private_clean_bytes": 1572864,
+            "private_dirty_bytes": 3115909120,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 0,
+        "chip": 0,
+        "pid": 1601373,
+        "process_name": "uvicorn",
+        "memory_mb": 14106,
+        "process_identity": {
+          "pid": 1601373,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601373,
+          "state": "R (running)",
+          "name": "uvicorn",
+          "ppid": 1601364,
+          "rss_bytes": 8003522560,
+          "swap_bytes": 0,
+          "threads": 1068,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 8005763072,
+            "pss_bytes": 6689929216,
+            "private_clean_bytes": 65536,
+            "private_dirty_bytes": 6048657408,
+            "swap_bytes": 0
+          },
+          "fd_count": 112
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 1,
+        "chip": 0,
+        "pid": 1601377,
+        "process_name": "uvicorn",
+        "memory_mb": 16345,
+        "process_identity": {
+          "pid": 1601377,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601377,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601366,
+          "rss_bytes": 8246984704,
+          "swap_bytes": 0,
+          "threads": 1072,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 8250368000,
+            "pss_bytes": 6918672384,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 6261403648,
+            "swap_bytes": 0
+          },
+          "fd_count": 112
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 1,
+        "chip": 0,
+        "pid": 4107101,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40280,
+        "process_identity": {
+          "pid": 4107101,
+          "start_ticks": "691381907",
+          "sid": 3397317,
+          "create_time": 1794826145.07
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4107101,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3397317,
+          "rss_bytes": 4207321088,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4213215232,
+            "pss_bytes": 3206726656,
+            "private_clean_bytes": 1572864,
+            "private_dirty_bytes": 3109580800,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 2,
+        "chip": 0,
+        "pid": 1601380,
+        "process_name": "uvicorn",
+        "memory_mb": 15380,
+        "process_identity": {
+          "pid": 1601380,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601380,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601369,
+          "rss_bytes": 8432517120,
+          "swap_bytes": 0,
+          "threads": 1068,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 8435765248,
+            "pss_bytes": 7113950208,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 6466166784,
+            "swap_bytes": 0
+          },
+          "fd_count": 112
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 2,
+        "chip": 0,
+        "pid": 4141894,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40280,
+        "process_identity": {
+          "pid": 4141894,
+          "start_ticks": "691382246",
+          "sid": 3403624,
+          "create_time": 1794826148.46
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4141894,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3403624,
+          "rss_bytes": 4209733632,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4216037376,
+            "pss_bytes": 3209548800,
+            "private_clean_bytes": 1441792,
+            "private_dirty_bytes": 3112542208,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 3,
+        "chip": 0,
+        "pid": 1601384,
+        "process_name": "uvicorn",
+        "memory_mb": 16070,
+        "process_identity": {
+          "pid": 1601384,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601384,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601371,
+          "rss_bytes": 7849775104,
+          "swap_bytes": 0,
+          "threads": 1068,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7852199936,
+            "pss_bytes": 6513220608,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 5848887296,
+            "swap_bytes": 0
+          },
+          "fd_count": 110
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 3,
+        "chip": 0,
+        "pid": 4102212,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40278,
+        "process_identity": {
+          "pid": 4102212,
+          "start_ticks": "691381844",
+          "sid": 3404688,
+          "create_time": 1794826144.44
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4102212,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3404688,
+          "rss_bytes": 4199874560,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4206186496,
+            "pss_bytes": 3199534080,
+            "private_clean_bytes": 1572864,
+            "private_dirty_bytes": 3102339072,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 4,
+        "chip": 0,
+        "pid": 4106711,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40278,
+        "process_identity": {
+          "pid": 4106711,
+          "start_ticks": "691381902",
+          "sid": 3400666,
+          "create_time": 1794826145.02
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4106711,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3400666,
+          "rss_bytes": 4212293632,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4218687488,
+            "pss_bytes": 3212035072,
+            "private_clean_bytes": 1585152,
+            "private_dirty_bytes": 3114827776,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 4,
+        "chip": 0,
+        "pid": 1601399,
+        "process_name": "uvicorn",
+        "memory_mb": 13914,
+        "process_identity": {
+          "pid": 1601399,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601399,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601375,
+          "rss_bytes": 7936528384,
+          "swap_bytes": 0,
+          "threads": 682,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7939096576,
+            "pss_bytes": 6605807616,
+            "private_clean_bytes": 65536,
+            "private_dirty_bytes": 5947174912,
+            "swap_bytes": 0
+          },
+          "fd_count": 112
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 5,
+        "chip": 0,
+        "pid": 4139533,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40280,
+        "process_identity": {
+          "pid": 4139533,
+          "start_ticks": "691382223",
+          "sid": 3398362,
+          "create_time": 1794826148.23
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4139533,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3398362,
+          "rss_bytes": 4205899776,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4212240384,
+            "pss_bytes": 3205743616,
+            "private_clean_bytes": 1441792,
+            "private_dirty_bytes": 3108737024,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 5,
+        "chip": 0,
+        "pid": 1601390,
+        "process_name": "uvicorn",
+        "memory_mb": 14188,
+        "process_identity": {
+          "pid": 1601390,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601390,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601378,
+          "rss_bytes": 7899561984,
+          "swap_bytes": 0,
+          "threads": 1069,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7901814784,
+            "pss_bytes": 6620675072,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 6013992960,
+            "swap_bytes": 0
+          },
+          "fd_count": 110
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 6,
+        "chip": 0,
+        "pid": 4128690,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40278,
+        "process_identity": {
+          "pid": 4128690,
+          "start_ticks": "691382120",
+          "sid": 3404633,
+          "create_time": 1794826147.2
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4128690,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3404633,
+          "rss_bytes": 4212658176,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4218286080,
+            "pss_bytes": 3211650048,
+            "private_clean_bytes": 1572864,
+            "private_dirty_bytes": 3114455040,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 6,
+        "chip": 0,
+        "pid": 1601396,
+        "process_name": "uvicorn",
+        "memory_mb": 13928,
+        "process_identity": {
+          "pid": 1601396,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601396,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601382,
+          "rss_bytes": 7830638592,
+          "swap_bytes": 0,
+          "threads": 1068,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7832825856,
+            "pss_bytes": 6529640448,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 5901041664,
+            "swap_bytes": 0
+          },
+          "fd_count": 110
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 7,
+        "chip": 0,
+        "pid": 1601397,
+        "process_name": "uvicorn",
+        "memory_mb": 12417,
+        "process_identity": {
+          "pid": 1601397,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601397,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601385,
+          "rss_bytes": 7608918016,
+          "swap_bytes": 0,
+          "threads": 1069,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7612350464,
+            "pss_bytes": 6301533184,
+            "private_clean_bytes": 65536,
+            "private_dirty_bytes": 5664718848,
+            "swap_bytes": 0
+          },
+          "fd_count": 110
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      }
+    ],
+    "memory_scope": "npu-smi device HBM aggregate; includes other processes and runtime allocations",
+    "service_compute_apps": [],
+    "other_compute_apps": [
+      {
+        "index": 0,
+        "chip": 0,
+        "pid": 4112061,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40275,
+        "process_identity": {
+          "pid": 4112061,
+          "start_ticks": "691381961",
+          "sid": 3403031,
+          "create_time": 1794826145.61
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4112061,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3403031,
+          "rss_bytes": 4214239232,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4219756544,
+            "pss_bytes": 3213104128,
+            "private_clean_bytes": 1572864,
+            "private_dirty_bytes": 3115909120,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 0,
+        "chip": 0,
+        "pid": 1601373,
+        "process_name": "uvicorn",
+        "memory_mb": 14106,
+        "process_identity": {
+          "pid": 1601373,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601373,
+          "state": "R (running)",
+          "name": "uvicorn",
+          "ppid": 1601364,
+          "rss_bytes": 8003522560,
+          "swap_bytes": 0,
+          "threads": 1068,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 8005763072,
+            "pss_bytes": 6689929216,
+            "private_clean_bytes": 65536,
+            "private_dirty_bytes": 6048657408,
+            "swap_bytes": 0
+          },
+          "fd_count": 112
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 1,
+        "chip": 0,
+        "pid": 1601377,
+        "process_name": "uvicorn",
+        "memory_mb": 16345,
+        "process_identity": {
+          "pid": 1601377,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601377,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601366,
+          "rss_bytes": 8246984704,
+          "swap_bytes": 0,
+          "threads": 1072,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 8250368000,
+            "pss_bytes": 6918672384,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 6261403648,
+            "swap_bytes": 0
+          },
+          "fd_count": 112
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 1,
+        "chip": 0,
+        "pid": 4107101,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40280,
+        "process_identity": {
+          "pid": 4107101,
+          "start_ticks": "691381907",
+          "sid": 3397317,
+          "create_time": 1794826145.07
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4107101,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3397317,
+          "rss_bytes": 4207321088,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4213215232,
+            "pss_bytes": 3206726656,
+            "private_clean_bytes": 1572864,
+            "private_dirty_bytes": 3109580800,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 2,
+        "chip": 0,
+        "pid": 1601380,
+        "process_name": "uvicorn",
+        "memory_mb": 15380,
+        "process_identity": {
+          "pid": 1601380,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601380,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601369,
+          "rss_bytes": 8432517120,
+          "swap_bytes": 0,
+          "threads": 1068,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 8435765248,
+            "pss_bytes": 7113950208,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 6466166784,
+            "swap_bytes": 0
+          },
+          "fd_count": 112
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 2,
+        "chip": 0,
+        "pid": 4141894,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40280,
+        "process_identity": {
+          "pid": 4141894,
+          "start_ticks": "691382246",
+          "sid": 3403624,
+          "create_time": 1794826148.46
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4141894,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3403624,
+          "rss_bytes": 4209733632,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4216037376,
+            "pss_bytes": 3209548800,
+            "private_clean_bytes": 1441792,
+            "private_dirty_bytes": 3112542208,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 3,
+        "chip": 0,
+        "pid": 1601384,
+        "process_name": "uvicorn",
+        "memory_mb": 16070,
+        "process_identity": {
+          "pid": 1601384,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601384,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601371,
+          "rss_bytes": 7849775104,
+          "swap_bytes": 0,
+          "threads": 1068,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7852199936,
+            "pss_bytes": 6513220608,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 5848887296,
+            "swap_bytes": 0
+          },
+          "fd_count": 110
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 3,
+        "chip": 0,
+        "pid": 4102212,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40278,
+        "process_identity": {
+          "pid": 4102212,
+          "start_ticks": "691381844",
+          "sid": 3404688,
+          "create_time": 1794826144.44
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4102212,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3404688,
+          "rss_bytes": 4199874560,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4206186496,
+            "pss_bytes": 3199534080,
+            "private_clean_bytes": 1572864,
+            "private_dirty_bytes": 3102339072,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 4,
+        "chip": 0,
+        "pid": 4106711,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40278,
+        "process_identity": {
+          "pid": 4106711,
+          "start_ticks": "691381902",
+          "sid": 3400666,
+          "create_time": 1794826145.02
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4106711,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3400666,
+          "rss_bytes": 4212293632,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4218687488,
+            "pss_bytes": 3212035072,
+            "private_clean_bytes": 1585152,
+            "private_dirty_bytes": 3114827776,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 4,
+        "chip": 0,
+        "pid": 1601399,
+        "process_name": "uvicorn",
+        "memory_mb": 13914,
+        "process_identity": {
+          "pid": 1601399,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601399,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601375,
+          "rss_bytes": 7936528384,
+          "swap_bytes": 0,
+          "threads": 682,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7939096576,
+            "pss_bytes": 6605807616,
+            "private_clean_bytes": 65536,
+            "private_dirty_bytes": 5947174912,
+            "swap_bytes": 0
+          },
+          "fd_count": 112
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 5,
+        "chip": 0,
+        "pid": 4139533,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40280,
+        "process_identity": {
+          "pid": 4139533,
+          "start_ticks": "691382223",
+          "sid": 3398362,
+          "create_time": 1794826148.23
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4139533,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3398362,
+          "rss_bytes": 4205899776,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4212240384,
+            "pss_bytes": 3205743616,
+            "private_clean_bytes": 1441792,
+            "private_dirty_bytes": 3108737024,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 5,
+        "chip": 0,
+        "pid": 1601390,
+        "process_name": "uvicorn",
+        "memory_mb": 14188,
+        "process_identity": {
+          "pid": 1601390,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601390,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601378,
+          "rss_bytes": 7899561984,
+          "swap_bytes": 0,
+          "threads": 1069,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7901814784,
+            "pss_bytes": 6620675072,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 6013992960,
+            "swap_bytes": 0
+          },
+          "fd_count": 110
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 6,
+        "chip": 0,
+        "pid": 4128690,
+        "process_name": "VLLMEngineCor",
+        "memory_mb": 40278,
+        "process_identity": {
+          "pid": 4128690,
+          "start_ticks": "691382120",
+          "sid": 3404633,
+          "create_time": 1794826147.2
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 4128690,
+          "state": "S (sleeping)",
+          "name": "VLLM::EngineCor",
+          "ppid": 3404633,
+          "rss_bytes": 4212658176,
+          "swap_bytes": 0,
+          "threads": 281,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 4218286080,
+            "pss_bytes": 3211650048,
+            "private_clean_bytes": 1572864,
+            "private_dirty_bytes": 3114455040,
+            "swap_bytes": 0
+          },
+          "fd_count": 149
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 6,
+        "chip": 0,
+        "pid": 1601396,
+        "process_name": "uvicorn",
+        "memory_mb": 13928,
+        "process_identity": {
+          "pid": 1601396,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601396,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601382,
+          "rss_bytes": 7830638592,
+          "swap_bytes": 0,
+          "threads": 1068,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7832825856,
+            "pss_bytes": 6529640448,
+            "private_clean_bytes": 0,
+            "private_dirty_bytes": 5901041664,
+            "swap_bytes": 0
+          },
+          "fd_count": 110
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      },
+      {
+        "index": 7,
+        "chip": 0,
+        "pid": 1601397,
+        "process_name": "uvicorn",
+        "memory_mb": 12417,
+        "process_identity": {
+          "pid": 1601397,
+          "start_ticks": "405116550",
+          "sid": 1596617,
+          "create_time": 1791963491.5
+        },
+        "process_resource": {
+          "available": true,
+          "pid": 1601397,
+          "state": "S (sleeping)",
+          "name": "uvicorn",
+          "ppid": 1601385,
+          "rss_bytes": 7608918016,
+          "swap_bytes": 0,
+          "threads": 1069,
+          "alive": true,
+          "memory": {
+            "available": true,
+            "rss_bytes": 7612350464,
+            "pss_bytes": 6301533184,
+            "private_clean_bytes": 65536,
+            "private_dirty_bytes": 5664718848,
+            "swap_bytes": 0
+          },
+          "fd_count": 110
+        },
+        "process_resource_scope": "OS RSS/PSS at this resource collection; independent of cached worker allocator/last RPC peaks"
+      }
+    ]
+  },
+  "cache": {
+    "available": true,
+    "path": "/tmp/seacraft_asr",
+    "files": 0,
+    "bytes": 0,
+    "disk_free_bytes": 1063952080896,
+    "disk_total_bytes": 1079292710912,
+    "disk_free_ratio": 0.9857864045027811
+  },
+  "status": null,
+  "health": {
+    "available": false,
+    "reason": "\u72b6\u6001\u63a5\u53e3\u91c7\u6837\u8df3\u8fc7\u81ea\u8c03\u7528\u5065\u5eb7\u68c0\u67e5"
+  }
+}

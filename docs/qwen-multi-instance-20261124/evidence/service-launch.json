@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "/home/zhangs/asr_nvidia/main.py",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "18083",
+    "--workers",
+    "1",
+    "--timeout-graceful-shutdown",
+    "30"
+  ],
+  "cwd": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/formal-m6-s16-v2/service-cwd",
+  "CONFIG_PATH": "/home/zhangs/asr_nvidia/config.toml",
+  "runtime_configuration_changed": false
+}

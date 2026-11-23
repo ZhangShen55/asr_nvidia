@@ -56,7 +56,7 @@ class ClientDispatchCancellationTests(unittest.IsolatedAsyncioTestCase):
         import asyncio
         from core.qwen_asr_client import QwenAsrClient
         from tests.test_local_qwen_runtime import FakeRuntime,until
-        client=QwenAsrClient(retry_count=0,execution_mode="thread", runtime_factory=FakeRuntime,local_instance_count=2)
+        client=QwenAsrClient(generation_mode="legacy", retry_count=0,execution_mode="thread", runtime_factory=FakeRuntime,local_instance_count=2)
         client._runtimes[0].failure='unavailable'
         runtime=client._runtimes[1]; runtime.block=True
         first=asyncio.create_task(client.transcribe_bytes(wav(),request_id='first'))
@@ -92,7 +92,7 @@ class ClientLanguageIsolationTests(unittest.IsolatedAsyncioTestCase):
         import asyncio
         from core.qwen_asr_client import QwenAsrClient,QwenAsrUnsupportedLanguageError
         runtime,calls=self.runtime()
-        client=QwenAsrClient(retry_count=0,execution_mode="thread", runtime_factory=lambda *_:runtime,max_inference_batch_size=3)
+        client=QwenAsrClient(generation_mode="legacy", retry_count=0,execution_mode="thread", runtime_factory=lambda *_:runtime,local_instance_count=1,max_inference_batch_size=3)
         with patch('core.qwen_asr_runtime.move_inputs',side_effect=lambda x,**kw:x):
             results=await asyncio.gather(*(client.transcribe_bytes(wav(),lang,request_id=str(i))
                                           for i,lang in enumerate(['auto','en','unsupported-language'])),return_exceptions=True)
@@ -111,7 +111,7 @@ class ClientLanguageIsolationTests(unittest.IsolatedAsyncioTestCase):
         import asyncio
         from core.qwen_asr_client import QwenAsrClient,QwenAsrUnsupportedLanguageError
         runtime,calls=self.runtime()
-        client=QwenAsrClient(retry_count=0,execution_mode="thread", runtime_factory=lambda *_:runtime,max_inference_batch_size=2)
+        client=QwenAsrClient(generation_mode="legacy", retry_count=0,execution_mode="thread", runtime_factory=lambda *_:runtime,local_instance_count=1,max_inference_batch_size=2)
         results=await asyncio.gather(*(client.transcribe_bytes(wav(),'unsupported-language',request_id=str(i))
                                       for i in range(2)),return_exceptions=True)
         self.assertTrue(all(isinstance(x,QwenAsrUnsupportedLanguageError) for x in results))
@@ -127,7 +127,7 @@ class ClientLanguageIsolationTests(unittest.IsolatedAsyncioTestCase):
         runtime,calls=self.runtime()
         runtime.processor.batch_decode=lambda ids,**kw:[
             'language English<asr_text>valid-member', 'malformed-prefix']
-        client=QwenAsrClient(retry_count=0,execution_mode="thread", runtime_factory=lambda *_:runtime,max_inference_batch_size=3)
+        client=QwenAsrClient(generation_mode="legacy", retry_count=0,execution_mode="thread", runtime_factory=lambda *_:runtime,local_instance_count=1,max_inference_batch_size=3)
         try:
             with patch('core.qwen_asr_runtime.move_inputs',side_effect=lambda x,**kw:x):
                 results=await asyncio.gather(*(client.transcribe_bytes(wav(),lang,request_id=str(i),segment_index=i)

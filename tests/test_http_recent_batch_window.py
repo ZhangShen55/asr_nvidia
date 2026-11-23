@@ -149,6 +149,7 @@ def test_client_and_getter_keep_full_history_by_default(monkeypatch):
             return {"loaded": True, "failure": None}
 
     client = QwenAsrClient(
+        generation_mode="legacy",
         runtime_factory=FakeRuntime, execution_mode="thread", local_instance_count=1,
     )
     client._batch_scheduler = make_scheduler()

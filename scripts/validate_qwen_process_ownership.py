@@ -145,7 +145,8 @@ async def run_validation(wav_bytes, *, model_dir, dtype='bfloat16', max_new_toke
                 probe.event('client_instance_returned', phase=probe.phase, batch_id=batch_id,
                             busy=self.snapshot()['busy'], available=self._available.qsize())
 
-    client = Client(local_model_dir=model_dir, local_device='npu:7', local_dtype=dtype,
+    # 此处验证legacy静态批RPC读完后的进程所有权，不发送continuous submit。
+    client = Client(generation_mode='legacy', local_model_dir=model_dir, local_device='npu:7', local_dtype=dtype,
                     local_instance_count=1, max_new_tokens=max_new_tokens, retry_count=0,
                     request_timeout_s=120, max_inference_batch_size=8, batch_wait_timeout_ms=30,
                     max_batch_audio_frames=102400, max_batch_tokens=78336, batch_max_duration_ratio=4,

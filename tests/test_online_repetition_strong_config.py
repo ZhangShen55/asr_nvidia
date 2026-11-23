@@ -14,7 +14,7 @@ def test_strong_threshold_settings_are_typed(tmp_path):
 
 def test_transport_budget_is_bounded_and_typed(tmp_path):
     p=tmp_path/"transport.toml"
-    p.write_text("")
+    p.write_text('[qwen_asr]\ngeneration_mode="legacy"\n')
     assert Settings(config_path=str(p)).qwen_continuous_admission_drain_ms == 0
     for v in [0,3,5]:
         p.write_text('[qwen_asr]\ncontinuous_admission_drain_ms='+str(v)+'\n')

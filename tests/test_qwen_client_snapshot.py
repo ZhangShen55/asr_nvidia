@@ -17,7 +17,7 @@ def test_client_snapshot_reads_batch_snapshot_once_and_preserves_response():
         def close(self):
             pass
     async def scenario():
-        client = QwenAsrClient(execution_mode="thread", runtime_factory=Runtime, local_instance_count=2,
+        client = QwenAsrClient(generation_mode="legacy", execution_mode="thread", runtime_factory=Runtime, local_instance_count=2,
                                local_model_dir='/cpu-test-no-model', local_device='npu:7', local_dtype='bfloat16')
         batch_state = {'waiting':37, 'recent_batches':[
             {'batch_id':batch, 'members':[{'request_id':str(i//16), 'segment_index':i%16} for i in range(128)]}

@@ -14,6 +14,7 @@ from core.async_utils import await_completion
 from core.config import settings
 from core.models import ModelUnavailableError, validate_v3_capabilities
 from core.qwen_asr_queue import QueueFullError, QueueTimeoutError, get_slot_manager
+from core.qwen_asr_client import get_qwen_client, QwenAsrUnavailableError
 from core.request_telemetry import new_request_id, record_request, begin_request, update_active, end_request
 from core.vad_pool import VadPoolError
 from entity.data import AsrRequestParams, get_asr_params
@@ -57,7 +58,14 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
         wait_started = time.perf_counter()
         try:
             try:
-                lease = await slots.acquire(capabilities.category)
+                if settings.qwen_generation_mode == "continuous":
+                    # 懒加载在准入锁之外完成；真正授予仍由slot与owner原子联动。
+                    client = await get_qwen_client()
+                    await client.ensure_owner_pool()
+                    slots.bind_owner_pool(client)
+                    lease = await slots.acquire(capabilities.category, request_id=request_id)
+                else:
+                    lease = await slots.acquire(capabilities.category)
                 admission.update(outcome="admitted", snapshot=lease.snapshot)
                 try:
                     # request_id 在准入前生成，覆盖音频准备、VAD、推理和清理的完整处理周期。
@@ -68,6 +76,10 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
                     logger.exception("[V3] 写入处理中任务列表失败 request_id=%s", request_id)
             finally:
                 audio_wait_ms = (time.perf_counter() - wait_started) * 1000
+        except QwenAsrUnavailableError as exc:
+            admission.update(outcome="rejected", reason="qwen_unavailable", snapshot=slots.snapshot())
+            response = {"msg": exc.message, "code": exc.code}
+            return response
         except (QueueFullError, QueueTimeoutError) as exc:
             admission.update(outcome="timeout" if isinstance(exc, QueueTimeoutError) else "rejected",
                              reason=exc.reason, snapshot=exc.snapshot)
@@ -81,6 +93,8 @@ async def api_asr_v3(request: AsrRequestParams = Depends(get_asr_params)):
             if err:
                 response = err
                 return response
+            # task_id继续用于原音频/显示归属；owner只认准入前生成的请求ID。
+            ctx.request_id = request_id
             try:
                 response = await run_qwen_asr(ctx)
                 return response

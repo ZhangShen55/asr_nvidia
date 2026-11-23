@@ -13,7 +13,7 @@ def test_process_default_factory_constructor_and_global_status_stay_lazy(tmp_pat
     from core.qwen_asr_process import LocalQwenProcessRuntime
     async def scenario():
         with patch('core.qwen_asr_process.multiprocessing.get_context',side_effect=AssertionError('must not spawn')):
-            client=QwenAsrClient(local_model_dir=str(tmp_path),local_device='npu:0',execution_mode='process')
+            client=QwenAsrClient(generation_mode='legacy',local_instance_count=1,local_model_dir=str(tmp_path),local_device='npu:0',execution_mode='process')
             assert isinstance(client._runtimes[0],LocalQwenProcessRuntime)
             state=client.snapshot()
             assert state['execution_mode']=='process' and state['memory_process_scope']=='model_worker'
@@ -48,6 +48,7 @@ def test_lifespan_process_starts_qwen_closing_before_nn_and_aggregates_failure(m
             else:assert not began.is_set()
             if fail_nn:raise RuntimeError('controlled NN close failure')
         with ExitStack() as stack:
+            stack.enter_context(patch.object(Settings,'qwen_generation_mode',new_callable=PropertyMock,return_value='legacy'))
             stack.enter_context(patch.object(Settings,'qwen_execution_mode',new_callable=PropertyMock,return_value=mode))
             for name in ('_set_process_name','setup_logging','cleanup_stale_service_cache','reset_stats'):
                 stack.enter_context(patch.object(main,name))

@@ -1,0 +1,117 @@
+{
+  "generated_utc": "2026-11-23T17:52:09.613023+00:00",
+  "read_only_runtime_audit": true,
+  "remaining_owned_identities": [],
+  "controller_original_identity_alive": false,
+  "shared_pid": 1601397,
+  "shared_birth": 1791963491.5,
+  "shared_birth_preserved": true,
+  "shared_listening_ports": [
+    8007
+  ],
+  "test_port": 18083,
+  "test_port_observations_listening": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "port_observation_s": 5.360549010336399,
+  "cache_files": [],
+  "raw_shutdown_passed": true,
+  "shutdown_forced": false,
+  "exit_code": 0,
+  "oom_log_source": "/root/ascend/log/debug/plog/plog-1027285_20261124013637029.log",
+  "oom_log_sha256": "616af31ef7e8e25a547cf3df44d7c910b34f2784a22cad62d4497e3000527173",
+  "examples": [
+    {
+      "report": "baseline_vs_formal_A6",
+      "bg": "228.34",
+      "ed": "229.03",
+      "left": {
+        "segment_text": "pests.",
+        "bg": "228.34",
+        "ed": "229.03",
+        "speed": 34,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      },
+      "right": {
+        "segment_text": "pesticides.",
+        "bg": "228.34",
+        "ed": "229.03",
+        "speed": 34,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      },
+      "verified_against_original_responses": true
+    },
+    {
+      "report": "baseline_vs_formal_A6",
+      "bg": "355.34",
+      "ed": "361.55",
+      "left": {
+        "segment_text": "So after class, would you please help them to join this group?",
+        "bg": "355.34",
+        "ed": "361.55",
+        "speed": 46,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      },
+      "right": {
+        "segment_text": "So after class, would you please help them to join this cooking?",
+        "bg": "355.34",
+        "ed": "361.55",
+        "speed": 46,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      },
+      "verified_against_original_responses": true
+    },
+    {
+      "report": "A4_vs_B4",
+      "bg": "414.47",
+      "ed": "422.48",
+      "left": {
+        "segment_text": "EAP. So I'm also giving you some introduction to EAP.",
+        "bg": "414.47",
+        "ed": "422.48",
+        "speed": 29,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      },
+      "right": {
+        "segment_text": "EAP. So, I'm also giving you some introduction to EAP.",
+        "bg": "414.47",
+        "ed": "422.48",
+        "speed": 29,
+        "segment_words": [],
+        "role": "spk_0",
+        "emotion": "平淡"
+      },
+      "verified_against_original_responses": true
+    }
+  ]
+}

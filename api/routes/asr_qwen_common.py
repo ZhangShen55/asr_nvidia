@@ -342,15 +342,24 @@ async def _speaker_embedding(audio_array, sample_rate):
     async with pool.lease() as leased:
         wait_ms = (time.perf_counter() - lease_started) * 1000
         infer_started = time.perf_counter()
+        nn_outcome = "failed"
         try:
             model, device = leased if isinstance(leased, tuple) else (
                 leased, settings.model_device_speech_campplus)
-            return await run_in_thread(_run, model, device)
+            result = await run_in_thread(_run, model, device)
+            nn_outcome = "success" if result is not None and result.numel() else "empty"
+            return result if nn_outcome == "success" else None
+        except asyncio.CancelledError:
+            nn_outcome = "cancelled"
+            raise
         finally:
             infer_ms = (time.perf_counter() - infer_started) * 1000
             record_inference = getattr(pool, "record_inference", None)
             if record_inference is not None:
                 record_inference(wait_ms, infer_ms)
+            record_outcome = getattr(pool, "record_outcome", None)
+            if callable(record_outcome):
+                record_outcome(nn_outcome)
             stats = _phase_stats()
             stats["spk_wait_ms"] += wait_ms
             stats["spk_ms"] += infer_ms
@@ -362,6 +371,10 @@ async def _segment_emotion(audio_array, sample_rate, duration_s):
     validate_v3_capabilities(need_emotion=True)
     samples = len(audio_array)
     if samples < round(EMOTION_MIN_DURATION_S * sample_rate) or samples > round(EMOTION_MAX_DURATION_S * sample_rate):
+        # 时长外是规则skip，不占模型实例，也不能计NN调用成功。
+        record_skip = getattr(get_model_pool("emotion2vec"), "record_skip", None)
+        if callable(record_skip):
+            record_skip()
         return "平淡"
 
     def _run(model, device):
@@ -382,15 +395,24 @@ async def _segment_emotion(audio_array, sample_rate, duration_s):
     async with pool.lease() as leased:
         wait_ms = (time.perf_counter() - lease_started) * 1000
         infer_started = time.perf_counter()
+        nn_outcome = "failed"
         try:
             model, device = leased if isinstance(leased, tuple) else (
                 leased, settings.model_device_emotion2vec)
-            return await run_in_thread(_run, model, device)
+            result = await run_in_thread(_run, model, device)
+            nn_outcome = "success" if result else "empty"
+            return result
+        except asyncio.CancelledError:
+            nn_outcome = "cancelled"
+            raise
         finally:
             infer_ms = (time.perf_counter() - infer_started) * 1000
             record_inference = getattr(pool, "record_inference", None)
             if record_inference is not None:
                 record_inference(wait_ms, infer_ms)
+            record_outcome = getattr(pool, "record_outcome", None)
+            if callable(record_outcome):
+                record_outcome(nn_outcome)
             stats = _phase_stats()
             stats["emo_wait_ms"] += wait_ms
             stats["emo_ms"] += infer_ms
@@ -683,7 +705,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         qwen_credit = None
         segment_failed = False
         try:
-            # 先per-audio16再global128，首文件不能预切256 PCM挡住后ready文件。
+            # 先每音频窗口再全局窗口，防止首文件预切大量PCM挡住其它已就绪音频。
             qwen_wait_started = time.perf_counter()
             await concurrency.acquire(segment_semaphore)
             qwen_credit = _QwenCredit(concurrency, segment_semaphore)
@@ -725,7 +747,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
                     concurrency,
                     filename=f"{getattr(ctx, 'task_id', 'audio')}-{index}.wav",
                     segment_semaphore=segment_semaphore,
-                    request_id=str(getattr(ctx, "task_id", "audio")), segment_index=index,
+                    request_id=str(getattr(ctx, "request_id", "") or getattr(ctx, "task_id", "audio")), segment_index=index,
                     qwen_credit=qwen_credit,
                 )
             ]
@@ -807,7 +829,7 @@ async def run_qwen_asr(ctx: AsrContext) -> dict:
         try:
             progress.close()
         finally:
-            await await_completion(release_qwen_request(str(getattr(ctx, "task_id", "audio"))))
+            await await_completion(release_qwen_request(str(getattr(ctx, "request_id", "") or getattr(ctx, "task_id", "audio"))))
     phase["segment_ms"] = (time.perf_counter() - segment_started) * 1000
     stats["segment_ms"] = phase["segment_ms"]
     if phase["cut_wall_started"] is not None and phase["cut_wall_ended"] is not None:

@@ -6,12 +6,14 @@ import threading
 import time
 from collections import deque
 from contextlib import asynccontextmanager
+from contextvars import ContextVar
 from typing import Any, Dict
 
 import torch
 
 from core.config import settings
 from core.async_utils import await_completion, run_in_thread
+from core.request_telemetry import record_enhancement_phase
 from core.local_inference import (
     InstanceFailure, TorchRunner, TorchNpuRunner, backend_for_device, npu_api,
 )
@@ -196,6 +198,38 @@ class ModelPool:
         self.inference_total_ms = 0.0
         self.calls = 0
         self.last_wait_ms = 0.0
+        self._leased_instance = ContextVar(f"{name}_leased_instance", default=None)
+        self._instance_metrics = []
+        self._outcomes = dict.fromkeys(("success", "empty", "failed", "cancelled"), 0)
+        self.duration_skips = 0
+
+    def _metrics_for(self, index):
+        # 固定池最多只有配置数组那么多记录，不保留逐段日志或模型引用。
+        while len(self._instance_metrics) <= index:
+            self._instance_metrics.append(dict.fromkeys((
+                "load_attempts", "load_failures", "load_ms", "load_work_ms",
+                "load_dispatch_wait_ms", "leases", "wait_ms", "calls", "inference_ms",
+                "success", "empty", "failed", "cancelled",
+            ), 0))
+        return self._instance_metrics[index]
+
+    def _record_phase(self, key, value):
+        prefix = {"speech_campplus": "spk", "emotion2vec": "emo"}.get(self.name)
+        if prefix is not None:
+            record_enhancement_phase(f"{prefix}_{key}", value)
+
+    def _metrics_status(self):
+        metrics = [dict(row, instance_index=index) for index, row in enumerate(self._instance_metrics)]
+        return {
+            "telemetry_scope": "since_last_close; host elapsed includes dispatch/device wait, not kernel time",
+            "instance_metrics": metrics,
+            "called_instances": sum(row["calls"] > 0 for row in metrics),
+            "unattributed_calls": max(0, self.calls - sum(row["calls"] for row in metrics)),
+            "inference_outcomes": dict(self._outcomes),
+            "unclassified_calls": max(0, self.calls - sum(self._outcomes.values())),
+            "duration_skips": self.duration_skips,
+            "load_total_ms": round(sum(row["load_ms"] for row in metrics), 3),
+        }
 
     @property
     def configured_instances(self) -> int:
@@ -300,7 +334,11 @@ class ModelPool:
 
     async def ensure_loaded(self, *, observe_process: bool = True) -> None:
         self._check_enabled()
+        loading_needed = len(self.models) < self.configured_instances
+        lock_started = time.perf_counter()
         async with self._load_lock:
+            if loading_needed:
+                self._record_phase("load_lock_wait_ms", (time.perf_counter() - lock_started) * 1000)
             self._check_enabled()
             if len(self.models) >= self.configured_instances:
                 self.refresh_status(observe_process=observe_process)
@@ -357,12 +395,35 @@ class ModelPool:
         while len(self.models) < len(devices):
             self._check_enabled()
             configured_device = devices[len(self.models)]
+            metrics = self._metrics_for(len(self.models))
+            metrics["load_attempts"] += 1
+            load_started = time.perf_counter()
+            work_ms = 0.0
+
+            def timed_build():
+                nonlocal work_ms
+                work_started = time.perf_counter()
+                try:
+                    return self._build_instance(configured_device)
+                finally:
+                    work_ms = (time.perf_counter() - work_started) * 1000
+
             model, device, allocated, failure = None, configured_device, 0.0, None
             try:
-                model, device, allocated = await run_in_thread(self._build_instance, configured_device)
+                model, device, allocated = await run_in_thread(timed_build)
             except Exception as exc:  # noqa: BLE001
                 failure = str(exc)
                 logger.exception("[模型池] %s %s 副本加载失败", self.name, configured_device)
+            finally:
+                elapsed_ms = (time.perf_counter() - load_started) * 1000
+                dispatch_ms = max(0.0, elapsed_ms - work_ms)
+                for key, value in (("load_ms", elapsed_ms), ("load_work_ms", work_ms),
+                                   ("load_dispatch_wait_ms", dispatch_ms)):
+                    metrics[key] += value
+                    self._record_phase(key, value)
+                if failure is not None:
+                    metrics["load_failures"] += 1
+                    self._record_phase("load_failures", 1)
             if self._closing and self.execution_mode == "process":
                 # loading线程刚返回也不能晚发布READY或继续构建后面的实例。
                 for entry in self._owned_process_entries():
@@ -415,6 +476,7 @@ class ModelPool:
         now = time.perf_counter()
         oldest = min([t for _, t in self._waiters] + list(self._admission_waiters.values()), default=now)
         local_model_status[self.name].update({
+            **self._metrics_status(),
             "instances": healthy,
             "available_instances": 0 if self._closing else max(0, healthy - busy),
             "busy": busy,
@@ -501,6 +563,8 @@ class ModelPool:
             else:
                 health = "healthy" if healthy else ("failed" if attempted else "not_loaded")
             details.append({
+                "instance_index": index,
+                "telemetry": dict(self._instance_metrics[index]) if index < len(self._instance_metrics) else None,
                 "configured_device": device, "configured_backend": backend,
                 "busy": index < len(self.locks) and self.locks[index].locked(),
                 "execution_mode": getattr(observed, "execution_mode", "thread"),
@@ -517,6 +581,7 @@ class ModelPool:
         now = time.perf_counter()
         oldest = min([t for _, t in self._waiters] + list(self._admission_waiters.values()), default=now)
         entry.update({
+            **self._metrics_status(),
             "execution_mode": self.execution_mode,
             "model_workers": worker_states,
             "loaded": (any(model is not None and getattr(model, "execution_mode", "thread") != "process"
@@ -653,7 +718,11 @@ class ModelPool:
             index, model, wait_ms = selected
             self.wait_total_ms += wait_ms
             self.last_wait_ms = wait_ms
+            metrics = self._metrics_for(index)
+            metrics["leases"] += 1
+            metrics["wait_ms"] += wait_ms
             self.refresh_status(observe_process=False)
+            instance_token = self._leased_instance.set(index)
             try:
                 if self._return_device:
                     yield model, self.devices[index]
@@ -679,6 +748,7 @@ class ModelPool:
                             logger.exception("[模型池] 故障实例清理失败: %s", self.name)
                 raise
             finally:
+                self._leased_instance.reset(instance_token)
                 await await_completion(self._release(index))
         except asyncio.CancelledError:
             await await_completion(self._withdraw_waiter(token, future, selected))
@@ -724,10 +794,33 @@ class ModelPool:
             self._condition.notify_all()
 
     def record_inference(self, wait_ms: float, inference_ms: float) -> None:
-        """记录一次模型池租约等待和实际推理耗时。"""
+        """实际NN调用包络；不把时长skip或仅租到实例视为调用/成功。"""
         self.calls += 1
         self.inference_total_ms += max(0.0, float(inference_ms))
         self.last_wait_ms = max(0.0, float(wait_ms))
+        index = self._leased_instance.get()
+        if index is not None:
+            metrics = self._metrics_for(index)
+            metrics["calls"] += 1
+            metrics["inference_ms"] += max(0.0, float(inference_ms))
+        self._record_phase("nn_calls", 1)
+        self.refresh_status(observe_process=False)
+
+    def record_outcome(self, outcome: str) -> None:
+        """由调用方在真实收尾后分类，空embedding和取消不能充当成功。"""
+        if outcome not in self._outcomes:
+            return
+        self._outcomes[outcome] += 1
+        index = self._leased_instance.get()
+        if index is not None:
+            self._metrics_for(index)[outcome] += 1
+        self._record_phase(f"nn_{outcome}", 1)
+        self.refresh_status(observe_process=False)
+
+    def record_skip(self) -> None:
+        """时长外按原平淡规则返回，不加载/租实例、不增加NN调用数。"""
+        self.duration_skips += 1
+        self._record_phase("duration_skips", 1)
         self.refresh_status(observe_process=False)
 
     async def close(self) -> None:
@@ -796,6 +889,9 @@ class ModelPool:
             self.inference_total_ms = 0.0
             self.calls = 0
             self.last_wait_ms = 0.0
+            self._instance_metrics.clear()
+            self._outcomes = dict.fromkeys(self._outcomes, 0)
+            self.duration_skips = 0
             self.handoff_total_ms = 0.0
             self.handoff_count = 0
             self.last_handoff_ms = 0.0
@@ -830,7 +926,9 @@ async def load_v3_models_if_needed(need_role: bool = False, need_emotion: bool =
     """按请求开关懒加载对应模型池。"""
     global _model_spk_v3, _model_emotion_v3
     validate_v3_capabilities(need_role, need_emotion)
+    lock_started = time.perf_counter()
     async with _model_lock:
+        record_enhancement_phase("model_load_lock_wait_ms", (time.perf_counter() - lock_started) * 1000)
         if need_role:
             await _MODEL_POOLS["speech_campplus"].ensure_loaded()
             if not any(_MODEL_POOLS["speech_campplus"]._is_healthy(model)

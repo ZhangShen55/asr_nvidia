@@ -175,14 +175,14 @@ class Settings:
 
     @property
     def qwen_preload_on_startup(self) -> bool:
-        value = self._cfg.get("qwen_asr", {}).get("preload_on_startup", False)
+        value = self._cfg.get("qwen_asr", {}).get("preload_on_startup", self.qwen_generation_mode == "continuous")
         if type(value) is not bool:
             raise ValueError("[qwen_asr].preload_on_startup 必须是bool")
         return value
 
     @property
     def qwen_generation_mode(self) -> str:
-        value = self._cfg.get("qwen_asr", {}).get("generation_mode", "legacy")
+        value = self._cfg.get("qwen_asr", {}).get("generation_mode", "continuous")
         if type(value) is not str or value not in {"legacy", "continuous"}:
             raise ValueError("[qwen_asr].generation_mode 必须是 legacy 或 continuous")
         return value
@@ -190,15 +190,21 @@ class Settings:
     @property
     def qwen_continuous_admission_drain_ms(self) -> int:
         # 仅用于Pipe已收到submit后的运输交接，固定总上限、不续期凑满。
-        return self._qwen_bounded_int("continuous_admission_drain_ms", 0, 0, 5)
+        return self._qwen_bounded_int("continuous_admission_drain_ms", 3 if self.qwen_generation_mode == "continuous" else 0, 0, 5)
 
     @property
     def qwen_continuous_prefill_batch_size(self) -> int:
-        return self._qwen_bounded_int("continuous_prefill_batch_size", 16, 1, 128)
+        limit = min(16, self.qwen_segment_concurrency) if self.qwen_generation_mode == "continuous" else 128
+        return self._qwen_bounded_int("continuous_prefill_batch_size", min(16, limit), 1, limit)
+
+    @property
+    def qwen_owner_threads(self) -> int:
+        """每个Qwen进程的CPU线程预算，不乘实例数复制父进程线程配置。"""
+        return self._qwen_bounded_int("owner_threads", 1, 1, 128)
 
     @property
     def qwen_online_repetition_enabled(self) -> bool:
-        value = self._cfg.get("qwen_asr", {}).get("online_repetition_enabled", False)
+        value = self._cfg.get("qwen_asr", {}).get("online_repetition_enabled", self.qwen_generation_mode == "continuous")
         if type(value) is not bool:
             raise ValueError("[qwen_asr].online_repetition_enabled 必须是bool")
         return value
@@ -225,7 +231,7 @@ class Settings:
 
     @property
     def qwen_execution_mode(self) -> str:
-        value = self._cfg.get("qwen_asr", {}).get("execution_mode", "thread")
+        value = self._cfg.get("qwen_asr", {}).get("execution_mode", "process" if self.qwen_generation_mode == "continuous" else "thread")
         if not isinstance(value, str) or value not in {"thread", "process"}:
             raise ValueError("[qwen_asr].execution_mode 必须是 thread 或 process")
         return value
@@ -233,7 +239,7 @@ class Settings:
     @property
     def qwen_process_shutdown_grace_s(self) -> float:
         # 只约束显式关闭后的宽限期，不改变单次推理timeout及取消的收尾语义。
-        value = self._cfg.get("qwen_asr", {}).get("process_shutdown_grace_s", 30)
+        value = self._cfg.get("qwen_asr", {}).get("process_shutdown_grace_s", 120 if self.qwen_generation_mode == "continuous" else 30)
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not 0 < value <= 300:
             raise ValueError("[qwen_asr].process_shutdown_grace_s 必须是0~300秒内正有限数")
         return float(value)
@@ -259,7 +265,7 @@ class Settings:
 
     @property
     def qwen_local_instance_count(self) -> int:
-        return self._qwen_positive_int("local_instance_count", 1)
+        return self._qwen_bounded_int("local_instance_count", 6 if self.qwen_generation_mode == "continuous" else 1, 1, 8)
 
     @property
     def qwen_max_new_tokens(self) -> int:
@@ -273,7 +279,9 @@ class Settings:
 
     @property
     def qwen_max_inference_batch_size(self) -> int:
-        # 缺省仍单批；384仅有纯Qwen组件证据，完整/增强共驻须用独立profile验收。
+        # continuous每owner随S派生；legacy保留原单批缺省和独立组件标定范围。
+        if self.qwen_generation_mode == "continuous":
+            return self._qwen_bounded_int("max_inference_batch_size", self.qwen_segment_concurrency, 1, self.qwen_segment_concurrency)
         return self._qwen_bounded_int("max_inference_batch_size", 1, 1, 384)
 
     @property
@@ -290,12 +298,12 @@ class Settings:
     @property
     def qwen_max_batch_audio_frames(self) -> int:
         """padding后100Hz音频特征帧预算，单位为批成员数乘最长帧数。"""
-        return self._qwen_bounded_int("max_batch_audio_frames", 102400, 1, 10000000)
+        return self._qwen_bounded_int("max_batch_audio_frames", 14400 if self.qwen_generation_mode == "continuous" else 102400, 1, 10000000)
 
     @property
     def qwen_max_batch_tokens(self) -> int:
         """保守估计批token预算；实际processor输入形状另行观测。"""
-        return self._qwen_bounded_int("max_batch_tokens", 78336, 1, 10000000)
+        return self._qwen_bounded_int("max_batch_tokens", 10000 if self.qwen_generation_mode == "continuous" else 78336, 1, 10000000)
 
     @property
     def qwen_pending_segment_limit(self) -> int:
@@ -308,16 +316,32 @@ class Settings:
     @property
     def qwen_segment_concurrency(self) -> int:
         """单音频Qwen逻辑在途窗口；不包含已完成Qwen的增强等待。"""
-        return self._qwen_bounded_int("segment_concurrency", 1, 1, 128)
+        return self._qwen_bounded_int("segment_concurrency", 16 if self.qwen_generation_mode == "continuous" else 1, 1, 128)
+
+    def _qwen_derived_capacity(self, key: str, expected: int, upper: int) -> int:
+        section = self._cfg.get("qwen_asr", {})
+        if key in section:
+            value = self._qwen_bounded_int(key, expected, 1, upper)
+            if value != expected:
+                raise ValueError(f"continuous [qwen_asr].{key} 必须等于派生值 {expected}；请删除旧显式配置或明确选择legacy")
+            warned = getattr(self, "_derived_capacity_warnings", set())
+            if key not in warned:
+                logger.warning("[配置迁移] continuous %s=%s 已由N/S派生，请删除重复配置", key, expected)
+                self._derived_capacity_warnings = warned | {key}
+        return expected
 
     @property
     def qwen_request_concurrency(self) -> int:
         """全局在途本地转写数；与模型实例执行容量分别计数。"""
+        if self.qwen_generation_mode == "continuous":
+            return self._qwen_derived_capacity("request_concurrency", self.qwen_local_instance_count * self.qwen_segment_concurrency, 4096)
         return self._qwen_bounded_int("request_concurrency", 1, 1, 4096)
 
     @property
     def qwen_audio_concurrency(self) -> int:
         """同时处理的 A+B 音频文件总数上限。"""
+        if self.qwen_generation_mode == "continuous":
+            return self._qwen_derived_capacity("audio_concurrency", self.qwen_local_instance_count, 8)
         return max(1, int(self._cfg.get("qwen_asr", {}).get("audio_concurrency", 8)))
 
     @property
@@ -537,10 +561,14 @@ class Settings:
         _ = self.qwen_continuous_prefill_batch_size
         _ = self.qwen_continuous_admission_drain_ms
         if self.qwen_generation_mode == "continuous":
-            if self.qwen_execution_mode != "process" or self.qwen_local_instance_count != 1:
-                raise ValueError("continuous 仅支持 process 单Qwen实例")
-            if self.qwen_request_concurrency > self.qwen_max_inference_batch_size:
-                raise ValueError("continuous request_concurrency 不得超过 max_inference_batch_size")
+            if self.qwen_execution_mode != "process":
+                raise ValueError("continuous 仅支持 process 模型进程")
+            _ = (self.qwen_audio_concurrency, self.qwen_request_concurrency, self.qwen_owner_threads)
+            # 前端最短0.5秒补至100帧，token预留为ceil(frames/8)+生成上限+256。
+            # 校验至少能接纳一个最短段；长段按实际长度拆批/拒绝，不静默扩预算。
+            minimum_tokens = math.ceil(100 / 8) + self.qwen_max_new_tokens + 256
+            if self.qwen_max_batch_audio_frames < 100 or self.qwen_max_batch_tokens < minimum_tokens:
+                raise ValueError("continuous 每owner frame/token预算不足以接纳单段；请显式调整预算或max_new_tokens")
         _ = self.vad_device
         for name in ("speech_campplus", "emotion2vec"):
             self._model_pool_devices(name)

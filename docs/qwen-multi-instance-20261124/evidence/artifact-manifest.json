@@ -1,0 +1,296 @@
+{
+  "generated_utc": "2026-11-23T17:58:54.611688+00:00",
+  "scope": "tracked report and copied evidence; self excluded; original larger traces retained at formal-v2",
+  "files": [
+    {
+      "path": "docs/qwen-multi-instance-20261124/B4-MEMORY-REPORT.json",
+      "bytes": 103309,
+      "sha256": "93e4ed2fed71824c3730adb4835721daa197c7ac589d5ae1d753e0e55c30a629"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/B4-MEMORY-REPORT.md",
+      "bytes": 8440,
+      "sha256": "c922625b9ec61d22400d640890b378ec45a7b56c539229e65c1dc415ae21cf8d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/REPORT.md",
+      "bytes": 10223,
+      "sha256": "a6e3bfa7819fd9942d3eba3bfed1a72ea011c9d70ce1eccc4d117bdcb18642d1"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/a6-phase-analysis.json",
+      "bytes": 20020,
+      "sha256": "8889e5aac8175a7ba95244bc1a9692503eb04f2f960a41e11324401711952eb5"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/a6-phase-analysis.md",
+      "bytes": 5121,
+      "sha256": "6aa465c5a0fcac81f6934e9fc6660995a85fef4fb3a53f3840a40f2ca62b2db4"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/differences/A4_vs_B4.html",
+      "bytes": 5047017,
+      "sha256": "b189e2f463d4066f617117db6cc09d53c858eb4ee5f281c71a526755dd240b01"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/differences/A4_vs_B4.json",
+      "bytes": 3995633,
+      "sha256": "29c96adb3f922f327006af76c019c59c68e1e846f433df67146891d8ad54fc9f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/differences/A4_vs_B4.md",
+      "bytes": 1278,
+      "sha256": "20b1c1854d5baa51e22a1a48081085c72dda0116ccf9b8f701a5786f80a8b8d6"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/differences/baseline_vs_formal_A6.html",
+      "bytes": 988374,
+      "sha256": "e831354475ddc6ca96ca5c330b0d75f6197b0139ea61d0103067c0cc402f936f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/differences/baseline_vs_formal_A6.json",
+      "bytes": 1152926,
+      "sha256": "ce621e37305f5781e761107db4b2da88827217f96d1d3a5c5706c34cadc0bd9e"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/differences/baseline_vs_formal_A6.md",
+      "bytes": 1391,
+      "sha256": "25504f3a51eb13c5dcf294cc1fd54c77cc4fdcfe626848fc7f929207dcab5ecc"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/A4/summary.json",
+      "bytes": 7444,
+      "sha256": "dae279356968b4b7259d7124272e6f6e0ebff6fe32effc142928936468a9ea04"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/A6/summary.json",
+      "bytes": 10752,
+      "sha256": "6cea3f930bae646bfabfe63233129ad719333e2ac1bd0ca0446ba3a5b5dad2a5"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/A6-resident/summary.json",
+      "bytes": 8275,
+      "sha256": "9c10419f0334976242b6b655a7c53c41f8e3089e2c4c5c507706b355d261af34"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/B-cold-warmup/summary.json",
+      "bytes": 8774,
+      "sha256": "2436f0fd126b4d13bd18e694154c1998f19260838ee4d830dc11be831fc2e36e"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/B4/summary.json",
+      "bytes": 9319,
+      "sha256": "6ad85c97bdb51abf771fbf21d1299a59eedffaaf88ebd47e800b94253d7ed259"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/admission-probes/summary.json",
+      "bytes": 3913,
+      "sha256": "b0d2018e4912718c368ab88982456d537d39353ef57338de23d9f299824b42cb"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/background-after.json",
+      "bytes": 34636,
+      "sha256": "22830ea7d1ebe4a843b6736a8798884b7248428da8b8ca9a31fddffb3eedfc37"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/background-before.json",
+      "bytes": 34637,
+      "sha256": "f7e46ed1344cb5d627d5981282f3d8a1f45054d4327a954c9bcbe4516440f5d0"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/change-validation.json",
+      "bytes": 483,
+      "sha256": "0d5c6115428c2748b1b82118098c65fd3e68168d8cc9dae69f35b97a1af288ac"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/config.toml",
+      "bytes": 7346,
+      "sha256": "2010e6438281f38893b86e8e53caad37a9363bd19e652228489a0fbd1cca83b8"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-full-v3/owner.json",
+      "bytes": 40,
+      "sha256": "485c1a450bd87883d244929f840e745f73d6e80a742d846865069ca749a724d5"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-full-v3/pytest-summary.txt",
+      "bytes": 91,
+      "sha256": "6bbb0df3873d7272096277b670b5a057fb4f2e09243df063b20784213b0cb3a3"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-full-v3/required-node-evidence.json",
+      "bytes": 914,
+      "sha256": "107a381dad0819e4f04d19d43c5472d95140c4cfb8c1f2866dd0159333f361d0"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-full-v3/result.json",
+      "bytes": 26625,
+      "sha256": "b6e14b2363b81e02636ed6cc6aac2029e9aa2177b16a37dc346abfec68a4a937"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-log-isolation-protected/owner.json",
+      "bytes": 40,
+      "sha256": "31ff52e7002ce633347763535707fec059ffc133ace1f64ab1d22a5c9f7a27b5"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-log-isolation-protected/pytest-summary.txt",
+      "bytes": 20,
+      "sha256": "e8331903f8ae23deedac7c1816b4da976b7e82a9272a4d04b19a2e1eced2808f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-log-isolation-protected/required-node-evidence.json",
+      "bytes": 5119,
+      "sha256": "f58c09a37cb9c3e2ca845262737cb2c5f71a5909100448118f0038aba9f83181"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-log-isolation-protected/result.json",
+      "bytes": 7881,
+      "sha256": "7b9d09848ccaaa8893a8411afe0ec0d78d8bba6fb8a0b258fc18badf0513c3c2"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-log-isolation-source/owner.json",
+      "bytes": 40,
+      "sha256": "363f3bae1617e90f45b0c1395880be000b63bef4e2e11a4fc1a65dc0d5d6c477"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-log-isolation-source/pytest-summary.txt",
+      "bytes": 20,
+      "sha256": "76ae6adf3458b87fc96456b32299b92c02660e7b28d9cbb42ccfebf9322d8486"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-log-isolation-source/result.json",
+      "bytes": 5444,
+      "sha256": "c3e75e894d8f58665aa101bf3ef6c1333d5d23abcf2c6c6dbf8dd0948ca31906"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-namespace-protected/owner.json",
+      "bytes": 40,
+      "sha256": "d836281b8d6ee3a8eec8d4e6eb3d0f8bae366b8b13da990c3dae9716bb25f986"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-namespace-protected/pytest-summary.txt",
+      "bytes": 19,
+      "sha256": "91a83005c56e1ef00dfe598fff3ed32c6ea8a2ec329b4eaa31c55eec3ca9137e"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-namespace-protected/required-node-evidence.json",
+      "bytes": 5119,
+      "sha256": "f58c09a37cb9c3e2ca845262737cb2c5f71a5909100448118f0038aba9f83181"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-namespace-protected/result.json",
+      "bytes": 7045,
+      "sha256": "70c291aeccdf01aab858e3bd6fbf06b9a1fb67aaaec1d2f1c67a89260dc831b6"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-namespace-source/owner.json",
+      "bytes": 40,
+      "sha256": "f9f9ca38c1e7ee23ddfe0085c861f3655cdfb61db74e8ea92115036a4cdbde9a"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-namespace-source/pytest-summary.txt",
+      "bytes": 19,
+      "sha256": "1b44a6509f95e800a17455c96692c9e2cb88dc9e68858c0ff35e53fb9559037b"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-namespace-source/result.json",
+      "bytes": 4628,
+      "sha256": "303853f11dd2c930ef1d677f0d82df72d1c26139cb655bacf3ac270c029381e9"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-protected-v1/owner.json",
+      "bytes": 40,
+      "sha256": "3d78013db3353c1fabb23366b6bc8ded521dc193f9fbbbbab5f3a22e433e8fd4"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-protected-v1/pytest-summary.txt",
+      "bytes": 53,
+      "sha256": "c8a4e9842800f2786dc9964d51fbdd24385a48ba5ee400f73f298bd2f97afd40"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-protected-v1/required-node-evidence.json",
+      "bytes": 5119,
+      "sha256": "f58c09a37cb9c3e2ca845262737cb2c5f71a5909100448118f0038aba9f83181"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/cpu-protected-v1/result.json",
+      "bytes": 10469,
+      "sha256": "0874ed6511aae0080dbb874a8b4e21ccd227a36852d18fd227823a8bece68160"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/final-config-semantic-audit.json",
+      "bytes": 468,
+      "sha256": "5f2bc7119c3a334649e3a850f8870299d21e4a11ffdc4a10622022da5ae769c1"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/host-swap-phase-summary.json",
+      "bytes": 1292,
+      "sha256": "466ba347c9e2726816c4ae63b8b869e99ffbe43e72babc46e7c3cb927c4d58bd"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/inputs.json",
+      "bytes": 3458,
+      "sha256": "876a4c3cd710c7043863e9ade4d4006fc0a3e247862fd2c0f4d74513cfdf5327"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/main-validation.json",
+      "bytes": 1553,
+      "sha256": "3ef34dfff504ac03810d718412e2a7dd205bbc41e3e4fa08641d84b4d9a547d1"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/merged-preview-validation.json",
+      "bytes": 1578,
+      "sha256": "3d1a48d16c7b53f251f573a38ceec966c157df3705da11e3bb4e3eb096a0905d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/owner-coverage.json",
+      "bytes": 11330,
+      "sha256": "d05fd61e755b391a55c085238c41c78b1d8919dce511c91f05986afe7b32978d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/owner5-cann-oom.log",
+      "bytes": 3056,
+      "sha256": "616af31ef7e8e25a547cf3df44d7c910b34f2784a22cad62d4497e3000527173"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/root-cleanup-and-text-audit.json",
+      "bytes": 2816,
+      "sha256": "1fe1b4e7fa684dddd1dfc4c6dc14d156aeccc8c8e57fece9d7e9092c7fe463a1"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/run.json",
+      "bytes": 85677,
+      "sha256": "7835c562f777be3c419e2c3f5f520f0ab2cd13a4de6a35815e36da9f22b0d60b"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/service-launch.json",
+      "bytes": 433,
+      "sha256": "29cae9dd998da3ad7bca7d15cc5f468ab8dbd12b1014a2bfac870a586bc4ac87"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/shutdown.json",
+      "bytes": 17417,
+      "sha256": "ca49c7d2d1d724727339c6e9a54fafc367a57c290f73056d45208fc931958c1d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/source-after.json",
+      "bytes": 10824,
+      "sha256": "38e6c3038d300c18c724b2f127fc2700b8afd06655d16da3eb6fa02aa8adfe37"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/source-before.json",
+      "bytes": 10824,
+      "sha256": "38e6c3038d300c18c724b2f127fc2700b8afd06655d16da3eb6fa02aa8adfe37"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/evidence/spec-review-ledger.json",
+      "bytes": 4694,
+      "sha256": "1bdf0344f3c07f2f862b4da86355454fd7476d089d4c6537c632ce3a5eecf2b4"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/tools/compare_results.py",
+      "bytes": 22272,
+      "sha256": "7471545cde05cea65788938fd05aa561d5892df8611af7ddeee506193db094b8"
+    }
+  ]
+}

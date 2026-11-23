@@ -205,6 +205,9 @@ async def until(predicate):
 
 class LocalClientTests(unittest.IsolatedAsyncioTestCase):
     def make_client(self, **kwargs):
+        kwargs.setdefault("generation_mode", "legacy")
+        kwargs.setdefault("local_instance_count", 1)
+        kwargs.setdefault("max_inference_batch_size", 1)
         return QwenAsrClient("http://unused", retry_count=0, execution_mode="thread", runtime_factory=FakeRuntime, **kwargs)
 
     async def test_language_and_discovery_without_http(self):

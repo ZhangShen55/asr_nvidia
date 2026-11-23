@@ -892,3 +892,25 @@ class FaultInjectionTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+# 本文件冻结旧准入/序列化/错误映射，不用真实owner池；continuous接线由multi_api单独覆盖。
+import pytest
+
+
+@pytest.fixture(autouse=True)
+def explicit_legacy_contract(monkeypatch):
+    monkeypatch.setattr(type(settings), 'qwen_generation_mode', property(lambda self: 'legacy'))
+    from api.routes import asr_qwen_common as pipeline
+    from core import qwen_asr_queue as queue
+    # unittest中的多个asyncio.run拥有不同loop，不能复用已绑定旧loop的全局Semaphore。
+    # 每loop使用真实且同配置的RequestConcurrency，保留窗口/取消语义，不用无限容量桩。
+    by_loop = {}
+    def concurrency_for_current_loop():
+        loop = asyncio.get_running_loop()
+        if loop not in by_loop:
+            by_loop[loop] = RequestConcurrency()
+        return by_loop[loop]
+    monkeypatch.setattr(pipeline, 'get_request_concurrency', concurrency_for_current_loop)
+    monkeypatch.setattr(queue, '_slot_manager', None)
+    monkeypatch.setattr(queue, '_request_concurrency', None)
