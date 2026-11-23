@@ -1,0 +1,293 @@
+diff --git a/scripts/benchmark_qwen200.py b/scripts/benchmark_qwen200.py
+--- a/scripts/benchmark_qwen200.py
++++ b/scripts/benchmark_qwen200.py
+@@ -481,7 +481,8 @@
+         started, started_utc = time.monotonic(), utc_now()
+         watchdog = Qwen200Watchdog(started, hard_s=args.diagnostic_wall_timeout_s,
+             target_s=getattr(args, "target_s", 200), no_progress_s=args.no_progress_s,
+-            enable_eta_stop=getattr(args, "enable_eta_stop", False), expected_requests=len(samples))
++            enable_eta_stop=getattr(args, "enable_eta_stop", False), expected_requests=len(samples),
++        disable_hbm_free_stop=getattr(args, 'disable_hbm_free_stop', False))
+         async def status_call():
+             if status_fn:
+                 return await status_fn()
+@@ -598,7 +599,9 @@
+                                               getattr(args, "target_s", 200))
+             summary.update(batch_started_utc=started_utc, batch_ended_utc=utc_now(), mode=args.mode,
+                            concurrency=args.concurrency, service_ownership="owned" if owner else "external_nonowned",
+-                           failure=failure, diagnostic_trigger=asdict(trigger) if trigger else None)
++                           failure=failure, diagnostic_trigger=asdict(trigger) if trigger else None,
++                           hbm_free_stop_enabled=not getattr(args,'disable_hbm_free_stop',False),
++                           configured_hbm_free_threshold_mb=8192)
+             write_json(output / "summary.json", summary)
+     return summary
+ 
+@@ -723,7 +726,9 @@
+         result=await warmup_one(child,folder,request_fn=request_fn,status_fn=status_fn)
+         result['upload_filename']=row['upload_filename']
+         results.append(result)
+-        resources, red = Qwen200Watchdog(time.monotonic()).resource_sample(result.get('last_status',{}))
++        resources, red = Qwen200Watchdog(time.monotonic(),
++            disable_hbm_free_stop=getattr(args,'disable_hbm_free_stop',False)).resource_sample(result.get('last_status',{}))
++        result['resource_observation']=resources
+         if red:
+             result.update(complete=False,status='resource_aborted',resource_trigger=red,resources=resources)
+         if not result['complete']: break
+@@ -731,6 +736,7 @@
+     final_status=results[-1].get('last_status',{}) if results else {}
+     record=dict(kind=('eight_real_http_warmup_clips' if getattr(args,'expected_requests',8)==8 else 'six_real_http_warmup_clips') if manifest_path else 'one_real_http_warmup_clip',
+                 expected_requests=getattr(args,'expected_requests',8),
++                hbm_free_stop_enabled=not getattr(args,'disable_hbm_free_stop',False),
+                 complete=complete,status='completed' if complete else 'failed',records=results,
+                 last_status=final_status,elapsed_s=sum(r['elapsed_s'] for r in results))
+     if complete and getattr(args,'expected_qwen_workers',None) is not None:
+@@ -776,6 +782,8 @@
+     import httpx
+     output=Path(output);probe_fn=probe_fn or readonly_card7_probe
+     interval=getattr(args,'startup_resource_interval_s',2.0)
++    disable_hbm=getattr(args,'disable_hbm_free_stop',False)
++    if type(disable_hbm) is not bool:raise ValueError('disable_hbm_free_stop必须为显式bool')
+     begin=time.monotonic();deadline=begin+args.startup_timeout_s
+     probe_task=status_task=None;probe_started=None;latest_probe=None;ready_status=None;ready_at=None
+     next_probe=begin;next_status=begin
+@@ -796,7 +804,10 @@
+                     try:row=probe_task.result()
+                     except Exception as exc:row=dict(available=False,card=7,reason=repr(exc))
+                     row=dict(row,monotonic=time.monotonic(),probe_started_monotonic=probe_started,
+-                             startup_elapsed_s=time.monotonic()-begin,utc=utc_now(),threshold_hbm_free_mb=8192,
++                             startup_elapsed_s=time.monotonic()-begin,utc=utc_now(),
++                             hbm_free_stop_enabled=not disable_hbm,
++                             threshold_hbm_free_mb=None if disable_hbm else 8192,
++                             configured_hbm_free_threshold_mb=8192,
+                              unit='MiB of driver-reported free HBM')
+                     with(output/'startup-resource.jsonl').open('a')as stream:
+                         stream.write(json.dumps(row,ensure_ascii=True)+'\n')
+@@ -807,7 +818,7 @@
+                         trigger=dict(reason='startup_resource_unobservable',observation=row)
+                         write_json(output/'startup-trigger.json',trigger)
+                         raise StartupResourceAbort(trigger)
+-                    if free<8192:
++                    if not disable_hbm and free<8192:
+                         trigger=dict(reason='startup_resource_hbm_free',observation=row,
+                                      observed=free,threshold=8192,unit='MiB',card=7)
+                         write_json(output/'startup-trigger.json',trigger)
+@@ -932,6 +943,8 @@
+     parser.add_argument("--startup-resource-interval-s",type=float,default=2,
+                         help="启动未ready时只读卡7 driver采样间隔，缺省2秒")
+     parser.add_argument("--target-s", type=float, default=200)
++    parser.add_argument("--disable-hbm-free-stop",action="store_true",
++                        help="仅显式关闭低剩余HBM阈值停止，保留采样、OOM/故障/其它资源与时间闸门")
+     parser.add_argument("--enable-eta-stop", action="store_true", help="仅充分验证可信证据后启用；缺证据永不ETA早停")
+     parser.add_argument("--expected-model-instances", type=int, help="可选预热后健康容量校验；A只校验VAD，不要求增强加载")
+     for name, default in (("diagnostic-wall-timeout-s",336), ("monitor-interval-s",1),
+diff --git a/core/qwen200_watchdog.py b/core/qwen200_watchdog.py
+--- a/core/qwen200_watchdog.py
++++ b/core/qwen200_watchdog.py
+@@ -7,7 +7,7 @@
+ from core.performance_watchdog import DiagnosticTrigger, percentile
+ 
+ 
+-RULE_VERSION = 'qwen200-v2-explicit-count-report-only-20261123'
++RULE_VERSION = 'qwen200-v3-explicit-hbm-policy-report-only-20261123'
+ 
+ 
+ def finite(value):
+@@ -30,6 +30,7 @@
+ class Qwen200Watchdog:
+     def __init__(self, started, *, clock=time.monotonic, hard_s=336.0, target_s=200.0,
+                  no_progress_s=120.0, enable_eta_stop=False, min_hbm_free_mb=8192.0,
++                 disable_hbm_free_stop=False,
+                  min_host_available_bytes=16*1024**3, expected_requests=8):
+         if not all(finite(v) and v > 0 for v in (hard_s, target_s, no_progress_s, min_hbm_free_mb)):
+             raise ValueError('验证门槛必须为有限正数')
+@@ -37,6 +38,9 @@
+             raise ValueError('不得放宽200目标或336硬截止')
+         self.started, self.clock, self.hard_s, self.target_s = started, clock, hard_s, target_s
+         self.no_progress_s, self.enable_eta_stop = no_progress_s, bool(enable_eta_stop)
++        if type(disable_hbm_free_stop) is not bool:
++            raise ValueError('disable_hbm_free_stop必须为显式bool')
++        self.disable_hbm_free_stop = disable_hbm_free_stop
+         self.min_hbm_free_mb = min_hbm_free_mb
+         self.min_host_available_bytes = min_host_available_bytes
+         if type(expected_requests) is not int or expected_requests not in (6,8):
+@@ -63,7 +67,10 @@
+         stamp = diag.get('timestamp')
+         age = diag.get('sampling', {}).get('age_s')
+         resources = {'driver_card': 7, 'hbm_free_mb': None, 'host_available_bytes': None,
+-                     'resource_age_s': age, 'sample_timestamp': stamp, 'swap_streak': self.swap_streak}
++                     'resource_age_s': age, 'sample_timestamp': stamp, 'swap_streak': self.swap_streak,
++                     'hbm_free_stop_enabled':not self.disable_hbm_free_stop,
++                     'configured_hbm_free_threshold_mb':self.min_hbm_free_mb,
++                     'effective_hbm_free_threshold_mb':None if self.disable_hbm_free_stop else self.min_hbm_free_mb}
+         # 其它卡的高占用与本轮无关；过旧快照只标未知，不拿来触发红线。
+         if finite(age) and age > 15:
+             resources['unknown_reason'] = 'stale_resource_snapshot'
+@@ -75,7 +82,8 @@
+         host = diag.get('host', {})
+         if host.get('available') and finite(host.get('available_bytes')):
+             resources['host_available_bytes'] = host['available_bytes']
+-        if resources['hbm_free_mb'] is not None and resources['hbm_free_mb'] < self.min_hbm_free_mb:
++        if (not self.disable_hbm_free_stop and resources['hbm_free_mb'] is not None
++                and resources['hbm_free_mb'] < self.min_hbm_free_mb):
+             return resources, ('resource_hbm_free', resources['hbm_free_mb'], self.min_hbm_free_mb)
+         if resources['host_available_bytes'] is not None and resources['host_available_bytes'] < self.min_host_available_bytes:
+             return resources, ('resource_host_available', resources['host_available_bytes'], self.min_host_available_bytes)
+diff --git a/tests/test_qwen200_nohbm.py b/tests/test_qwen200_nohbm.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_qwen200_nohbm.py
+@@ -0,0 +1,154 @@
++"""显式只停用低HBM阈值，三阶段真实入口的替身契约；不触碰硬件。"""
++import argparse
++import asyncio
++import importlib.util
++import json
++from pathlib import Path
++from types import SimpleNamespace
++import pytest
++from core.qwen200_watchdog import Qwen200Watchdog
++
++ROOT=Path(__file__).resolve().parents[1]
++spec=importlib.util.spec_from_file_location('qwen200_nohbm_controller',ROOT/'scripts/benchmark_qwen200.py')
++mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
++
++
++def status(free=5000):
++    return {'resourceDiagnostics':{'timestamp':'0','sampling':{'age_s':0},'npu':{'npus':[
++        {'index':0,'available':True,'hbm_free_mb':1}, {'index':7,'available':True,'hbm_free_mb':free}]}}}
++
++
++def records():return [dict(status='running') for _ in range(6)]
++
++
++def args(**changes):
++    value=dict(url='http://127.0.0.1:18083',mode='A',concurrency=6,expected_requests=6,
++               diagnostic_wall_timeout_s=.2,target_s=.1,no_progress_s=120,monitor_interval_s=.002,
++               diagnostic_window_s=.005,enable_eta_stop=False,disable_hbm_free_stop=True,
++               startup_resource_interval_s=.01,startup_timeout_s=1)
++    value.update(changes);return argparse.Namespace(**value)
++
++
++def test_cli_flag_is_explicit_default_false_and_keeps_other_limits():
++    base=['--manifest','x','--output','x','--mode','A','--concurrency','6','--expected-requests','6']
++    default=mod.parse_args(base);explicit=mod.parse_args([*base,'--disable-hbm-free-stop'])
++    assert default.disable_hbm_free_stop is False and explicit.disable_hbm_free_stop is True
++    assert explicit.target_s==200 and explicit.diagnostic_wall_timeout_s==336
++    assert explicit.no_progress_s==120 and explicit.shutdown_timeout_s==210 and explicit.observe_s==5
++
++
++def test_default_low_hbm_still_red_but_flag_only_disables_that_condition():
++    enabled=Qwen200Watchdog(0,clock=lambda:1,expected_requests=6)
++    assert enabled.sample(records(),status()).reason=='resource_hbm_free'
++    disabled=Qwen200Watchdog(0,clock=lambda:1,expected_requests=6,disable_hbm_free_stop=True)
++    assert disabled.sample(records(),status()) is None
++    assert disabled.latest_resource['hbm_free_mb']==5000
++    assert disabled.latest_resource['hbm_free_stop_enabled'] is False
++    assert disabled.latest_resource['effective_hbm_free_threshold_mb'] is None
++    assert disabled.latest_resource['configured_hbm_free_threshold_mb']==8192
++
++
++@pytest.mark.parametrize('bad',['false',1,None])
++def test_flag_requires_real_bool(bad):
++    with pytest.raises(ValueError):Qwen200Watchdog(0,disable_hbm_free_stop=bad)
++
++
++def test_threshold_legality_is_preserved_even_when_disabled():
++    with pytest.raises(ValueError):Qwen200Watchdog(0,min_hbm_free_mb=-1,disable_hbm_free_stop=True)
++
++
++@pytest.mark.parametrize('condition,reason',[
++    ('failed','resource_qwen_failure'),('execution','resource_qwen_failure'),
++    ('dead','resource_owned_worker_dead'),('host','resource_host_available')])
++def test_other_resource_or_worker_failures_remain_active(condition,reason):
++    s=status()
++    if condition=='failed':s['qwenModel']={'failed_instances':1}
++    elif condition=='execution':s['qwenModel']={'execution_failures':1}
++    elif condition=='dead':s['qwenModel']={'model_workers':[{'started':True,'worker_alive':False}]}
++    else:s['resourceDiagnostics']['host']={'available':True,'available_bytes':1}
++    w=Qwen200Watchdog(0,clock=lambda:1,expected_requests=6,disable_hbm_free_stop=True)
++    assert w.sample(records(),s).reason==reason
++
++
++def test_swap_still_stops_under_disabled_hbm():
++    now=[0];w=Qwen200Watchdog(0,clock=lambda:now[0],expected_requests=6,disable_hbm_free_stop=True)
++    trigger=None
++    for i in range(4):
++        now[0]=i;s=status();s['resourceDiagnostics']['timestamp']=str(i)
++        s['resourceDiagnostics']['vmstat']={'available':True,'swap_in_bytes':i,'swap_out_bytes':0}
++        trigger=w.sample(records(),s)
++    assert trigger.reason=='resource_sustained_swap'
++
++
++@pytest.mark.parametrize('elapsed,reason',[(120,'no_progress'),(336,'batch_hard_deadline')])
++def test_no_progress_and_hard336_cannot_be_disabled(elapsed,reason):
++    now=[0];w=Qwen200Watchdog(0,clock=lambda:now[0],expected_requests=6,disable_hbm_free_stop=True)
++    assert w.sample(records(),status()) is None
++    now[0]=elapsed;assert w.sample(records(),status()).reason==reason
++
++
++def test_failed_request_oom_signal_not_hidden():
++    r=records();r[0]['status']='failed'
++    w=Qwen200Watchdog(0,clock=lambda:1,expected_requests=6,disable_hbm_free_stop=True)
++    assert w.sample(r,status()).reason=='request_failed'
++
++
++class Owner:
++    def __init__(self,p):self.startup_stop_path=str(p/'stop.json');self.process=SimpleNamespace(poll=lambda:None);self.expected_exit_codes=(0,)
++    def register(self):pass
++
++
++def test_startup_flag_skips_only_free_threshold_and_retains_observation(tmp_path):
++    owner=Owner(tmp_path)
++    async def ready():return {'ready':True}
++    result=asyncio.run(mod.wait_for_startup(args(),owner,tmp_path,
++        probe_fn=lambda:dict(available=True,card=7,free_hbm_mb=5000),status_fn=ready))
++    assert result['ready'] and not Path(owner.startup_stop_path).exists()
++    rows=[json.loads(line) for line in(tmp_path/'startup-resource.jsonl').read_text().splitlines()]
++    assert rows and all(r['free_hbm_mb']==5000 and r['hbm_free_stop_enabled'] is False
++                        and r['threshold_hbm_free_mb'] is None and r['configured_hbm_free_threshold_mb']==8192 for r in rows)
++
++
++def test_startup_unknown_still_fails_closed_with_flag(tmp_path):
++    owner=Owner(tmp_path)
++    async def ready():return {'ready':True}
++    with pytest.raises(mod.StartupResourceAbort) as caught:
++        asyncio.run(mod.wait_for_startup(args(),owner,tmp_path,
++            probe_fn=lambda:dict(available=False,card=7,reason='unobservable'),status_fn=ready))
++    assert caught.value.trigger['reason']=='startup_resource_unobservable'
++    assert Path(owner.startup_stop_path).exists() and owner.expected_exit_codes==(0,)
++
++
++@pytest.mark.parametrize('disabled,should_complete',[(False,False),(True,True)])
++def test_warmup_flag_propagates_through_all_six_real_entry_shapes(monkeypatch,tmp_path,disabled,should_complete):
++    manifest=tmp_path/'six.json';manifest.write_text(json.dumps([dict(path='/not-read',upload_filename=f'audio-{i}.wav') for i in range(6)]))
++    async def warmup_one(*a,**kw):return dict(complete=True,status='completed',elapsed_s=1,last_status=status())
++    monkeypatch.setattr(mod,'warmup_one',warmup_one)
++    result=asyncio.run(mod.warmup(args(warmup_manifest=str(manifest),expected_qwen_workers=None,
++                                      disable_hbm_free_stop=disabled),tmp_path))
++    assert result['complete'] is should_complete
++    assert len(result['records'])==(6 if disabled else 1)
++    assert result['hbm_free_stop_enabled'] is (not disabled)
++    assert result['records'][0]['resource_observation']['hbm_free_stop_enabled'] is (not disabled)
++
++
++def test_warmup_worker_failure_remains_fatal_with_flag(monkeypatch,tmp_path):
++    manifest=tmp_path/'six.json';manifest.write_text(json.dumps([dict(path='/not-read',upload_filename=f'audio-{i}.wav') for i in range(6)]))
++    s=status();s['qwenModel']={'failed_instances':1}
++    async def warmup_one(*a,**kw):return dict(complete=True,status='completed',elapsed_s=1,last_status=s)
++    monkeypatch.setattr(mod,'warmup_one',warmup_one)
++    result=asyncio.run(mod.warmup(args(warmup_manifest=str(manifest),expected_qwen_workers=None),tmp_path))
++    assert not result['complete'] and result['records'][0]['resource_trigger'][0]=='resource_qwen_failure'
++
++
++@pytest.mark.parametrize('disabled,should_complete',[(False,False),(True,True)])
++def test_formal_constructor_receives_flag(monkeypatch,tmp_path,disabled,should_complete):
++    async def request(sample,fields):
++        await asyncio.sleep(.04);return {'segments':[{'segment_text':'真实入口替身'}]}
++    async def get_status():return status()
++    samples=[dict(sample_id=str(i),sha256=str(i),audio_seconds=1,path='/not-read') for i in range(6)]
++    result=asyncio.run(mod.run_round(args(disable_hbm_free_stop=disabled),samples,tmp_path,
++                                   request_fn=request,status_fn=get_status))
++    assert result['complete'] is should_complete and result['hbm_free_stop_enabled'] is (not disabled)
++    if disabled:assert result['processed_completed']==6
++    else:assert result['diagnostic_trigger']['reason']=='resource_hbm_free'

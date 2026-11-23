@@ -1,5 +1,5 @@
 {
-  "utc": "2026-11-23T10:28:42.323608+00:00",
+  "utc": "2026-11-23T11:24:39.635215+00:00",
   "cases": [
     "b0-formal",
     "b0-preflight",
@@ -8,11 +8,12 @@
     "m6-capacity",
     "m6-formal",
     "m6n6-formal",
+    "m6n6-nohbm-formal",
     "m8-capacity",
     "m8-formal",
     "s1-preflight"
   ],
-  "owned_birth_identities_checked": 998,
+  "owned_birth_identities_checked": 1164,
   "remaining_owned": [],
   "remaining_listeners": [],
   "failed_shutdown_cases": [],
@@ -33,5 +34,5 @@
     ]
   },
   "passed": true,
-  "scope": "all ten started service cases; retained stage/log; not a full performance pass"
+  "scope": "all eleven service cases normally reaped; does not imply quality or8audio acceptance"
 }

@@ -1,0 +1,354 @@
+{
+  "scope": "read-only stored run/admission metadata, no HTTP or hardware calls",
+  "run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal/run.json",
+  "actual_cli_disable_hbm_free_stop": true,
+  "actual_experiment_environment": {
+    "QWEN200_EXPERIMENT_WORKERS": "6",
+    "QWEN200_MODEL_THREADS": "1",
+    "QWEN200_ROUTING_MANIFEST": "/tmp/qwen200-20261123-j9r2czoi/assets/inputs-six.json",
+    "QWEN200_EXPERIMENT_SOURCES": "6"
+  },
+  "actual_arguments": {
+    "concurrency": 6,
+    "expected_requests": 6,
+    "expected_qwen_workers": 6,
+    "target_s": 200,
+    "diagnostic_wall_timeout_s": 336,
+    "no_progress_s": 120,
+    "enable_eta_stop": false,
+    "config": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm/test/config.qwen200-m6n6.toml",
+    "manifest": "/tmp/qwen200-20261123-j9r2czoi/assets/inputs-six.json",
+    "warmup_manifest": "/tmp/qwen200-20261123-j9r2czoi/assets/warmup-six.json"
+  },
+  "recorded_source_root": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm",
+  "business_sha_checks": [
+    {
+      "path": "api/__init__.py",
+      "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "identical": true
+    },
+    {
+      "path": "api/routes/__init__.py",
+      "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "identical": true
+    },
+    {
+      "path": "api/routes/asr_common.py",
+      "expected_sha256": "c0f753a105107daec0070e80b684dca25c2af3cb3306260ea3a4b46a586c10b9",
+      "observed_sha256": "c0f753a105107daec0070e80b684dca25c2af3cb3306260ea3a4b46a586c10b9",
+      "identical": true
+    },
+    {
+      "path": "api/routes/asr_qwen_common.py",
+      "expected_sha256": "4be388d03cf4c546f0b3119caa9451e95c91676110199e98f1becfd1e366db3e",
+      "observed_sha256": "4be388d03cf4c546f0b3119caa9451e95c91676110199e98f1becfd1e366db3e",
+      "identical": true
+    },
+    {
+      "path": "api/routes/asr_v3.py",
+      "expected_sha256": "786d13733d413c71b2f8bb93f57f5fcb276d762420fc74a9cde740775442d1a6",
+      "observed_sha256": "786d13733d413c71b2f8bb93f57f5fcb276d762420fc74a9cde740775442d1a6",
+      "identical": true
+    },
+    {
+      "path": "api/routes/status.py",
+      "expected_sha256": "492598502f0707775be7ae5a3b502f829bc6b6d31ff9790d6d6fd4db83f15394",
+      "observed_sha256": "492598502f0707775be7ae5a3b502f829bc6b6d31ff9790d6d6fd4db83f15394",
+      "identical": true
+    },
+    {
+      "path": "core/__init__.py",
+      "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "identical": true
+    },
+    {
+      "path": "core/async_utils.py",
+      "expected_sha256": "bbf61919dc7a5b986450c9b00ffed7df0980c99e94c5f16c4f2dca1f35abe5c6",
+      "observed_sha256": "bbf61919dc7a5b986450c9b00ffed7df0980c99e94c5f16c4f2dca1f35abe5c6",
+      "identical": true
+    },
+    {
+      "path": "core/cam_process.py",
+      "expected_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3",
+      "observed_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3",
+      "identical": true
+    },
+    {
+      "path": "core/config.py",
+      "expected_sha256": "1d6fbb4221b4bf77fc10eaa90d31c6fb802ff66dc4936579274dc225d1621855",
+      "observed_sha256": "1d6fbb4221b4bf77fc10eaa90d31c6fb802ff66dc4936579274dc225d1621855",
+      "identical": true
+    },
+    {
+      "path": "core/deployment.py",
+      "expected_sha256": "107b7c00dd0469c97acadcab34c32182a0321b67bd7e39ee740d1c89feb65966",
+      "observed_sha256": "107b7c00dd0469c97acadcab34c32182a0321b67bd7e39ee740d1c89feb65966",
+      "identical": true
+    },
+    {
+      "path": "core/local_inference.py",
+      "expected_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01",
+      "observed_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01",
+      "identical": true
+    },
+    {
+      "path": "core/logging.py",
+      "expected_sha256": "30e309f26c3e8ec5ccde044bbb53cf0d1a9084fca4fd8773ae9c2018ff0c64fa",
+      "observed_sha256": "30e309f26c3e8ec5ccde044bbb53cf0d1a9084fca4fd8773ae9c2018ff0c64fa",
+      "identical": true
+    },
+    {
+      "path": "core/model_loading.py",
+      "expected_sha256": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c",
+      "observed_sha256": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c",
+      "identical": true
+    },
+    {
+      "path": "core/models.py",
+      "expected_sha256": "c789e8ce89563834cd310a989aa1f17915c6eba2c580d53c3b3a8d3d24530af0",
+      "observed_sha256": "c789e8ce89563834cd310a989aa1f17915c6eba2c580d53c3b3a8d3d24530af0",
+      "identical": true
+    },
+    {
+      "path": "core/npu_resource_status.py",
+      "expected_sha256": "38dce7800a4e1bbc0fc11a7f4a50a545be3df9aa2e150359b36cb3a6ccc34bb6",
+      "observed_sha256": "38dce7800a4e1bbc0fc11a7f4a50a545be3df9aa2e150359b36cb3a6ccc34bb6",
+      "identical": true
+    },
+    {
+      "path": "core/performance_watchdog.py",
+      "expected_sha256": "6a8bad32fa704c9ccc0cb31a33e485577568393aa3ea2bfff4405b7513231db0",
+      "observed_sha256": "6a8bad32fa704c9ccc0cb31a33e485577568393aa3ea2bfff4405b7513231db0",
+      "identical": true
+    },
+    {
+      "path": "core/progress.py",
+      "expected_sha256": "8969e793015b8175e2990f5221b6e69e0b8c5072b64ccfa77e55b19e6a67bfb8",
+      "observed_sha256": "8969e793015b8175e2990f5221b6e69e0b8c5072b64ccfa77e55b19e6a67bfb8",
+      "identical": true
+    },
+    {
+      "path": "core/qwen_asr_client.py",
+      "expected_sha256": "6ce781cefe1a641c91b9fbec88b6c7911606d1f15ead314782032ef08211c7d6",
+      "observed_sha256": "6ce781cefe1a641c91b9fbec88b6c7911606d1f15ead314782032ef08211c7d6",
+      "identical": true
+    },
+    {
+      "path": "core/qwen_asr_process.py",
+      "expected_sha256": "0d4ff4212dacb98d5c8959f9b415a09a9a3fef12c757992fb2ca9e3747432e7b",
+      "observed_sha256": "0d4ff4212dacb98d5c8959f9b415a09a9a3fef12c757992fb2ca9e3747432e7b",
+      "identical": true
+    },
+    {
+      "path": "core/qwen_asr_queue.py",
+      "expected_sha256": "325b4e3f39c50ec0137261eca182b91ca0e7bf8557ffd15ccc5e2f3b764b4024",
+      "observed_sha256": "325b4e3f39c50ec0137261eca182b91ca0e7bf8557ffd15ccc5e2f3b764b4024",
+      "identical": true
+    },
+    {
+      "path": "core/qwen_asr_runtime.py",
+      "expected_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe",
+      "observed_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe",
+      "identical": true
+    },
+    {
+      "path": "core/qwen_batch_scheduler.py",
+      "expected_sha256": "399ffb0e4d8f282b597320c8acd6a0de9cae472d0442a625c37b265bff1ffbfc",
+      "observed_sha256": "399ffb0e4d8f282b597320c8acd6a0de9cae472d0442a625c37b265bff1ffbfc",
+      "identical": true
+    },
+    {
+      "path": "core/qwen_continuous_process.py",
+      "expected_sha256": "23999110ce85be9d90d4afcf421dec3e3d869cc3b1eea0ca56d5fdf2ca5b3a9c",
+      "observed_sha256": "23999110ce85be9d90d4afcf421dec3e3d869cc3b1eea0ca56d5fdf2ca5b3a9c",
+      "identical": true
+    },
+    {
+      "path": "core/qwen_continuous_runtime.py",
+      "expected_sha256": "732ad8f0ed7f7f06250c0b294d33486a2184cda14b3f062823e43a990998dba7",
+      "observed_sha256": "732ad8f0ed7f7f06250c0b294d33486a2184cda14b3f062823e43a990998dba7",
+      "identical": true
+    },
+    {
+      "path": "core/qwen_continuous_scheduler.py",
+      "expected_sha256": "a4954d5e1b00d54a166ca7c1959aafac3de432c9d7b246340b487bd7abf4db4d",
+      "observed_sha256": "a4954d5e1b00d54a166ca7c1959aafac3de432c9d7b246340b487bd7abf4db4d",
+      "identical": true
+    },
+    {
+      "path": "core/request_telemetry.py",
+      "expected_sha256": "ca0fea11f527e7c16827b13ed302e92c7b7ef130bec94264e6adc7ca5e805c9f",
+      "observed_sha256": "ca0fea11f527e7c16827b13ed302e92c7b7ef130bec94264e6adc7ca5e805c9f",
+      "identical": true
+    },
+    {
+      "path": "core/resource_diagnostics.py",
+      "expected_sha256": "51b93a8193596e9a1c9b2cfab9a2f162d30cdaaa53f19a10ecee667870e18ae5",
+      "observed_sha256": "51b93a8193596e9a1c9b2cfab9a2f162d30cdaaa53f19a10ecee667870e18ae5",
+      "identical": true
+    },
+    {
+      "path": "core/segment_pipeline.py",
+      "expected_sha256": "049e1d99bc0557b88e24259d7d1e8f570e3bed2a94dd2b93ef1238bdf7ba4d9d",
+      "observed_sha256": "049e1d99bc0557b88e24259d7d1e8f570e3bed2a94dd2b93ef1238bdf7ba4d9d",
+      "identical": true
+    },
+    {
+      "path": "core/status.py",
+      "expected_sha256": "4ac95ee0355e1c984dce09132e88d8003eaec0502095cde0c39cda0b4d3f223f",
+      "observed_sha256": "4ac95ee0355e1c984dce09132e88d8003eaec0502095cde0c39cda0b4d3f223f",
+      "identical": true
+    },
+    {
+      "path": "core/vad.py",
+      "expected_sha256": "5977c424850ded7cd67d76708a52fa5750b01461723d6d35b1b5a0fe4a08edb1",
+      "observed_sha256": "5977c424850ded7cd67d76708a52fa5750b01461723d6d35b1b5a0fe4a08edb1",
+      "identical": true
+    },
+    {
+      "path": "core/vad_pool.py",
+      "expected_sha256": "196a4fff84c2b25d156f9840fba6d8e0c1162b4a7a23ef65ac6d4533902505fa",
+      "observed_sha256": "196a4fff84c2b25d156f9840fba6d8e0c1162b4a7a23ef65ac6d4533902505fa",
+      "identical": true
+    },
+    {
+      "path": "core/vad_volume.py",
+      "expected_sha256": "e97dfdf5cc4dc5a38fc5a5938dc3c20a70e81e09d6c2b50a2212295de624e6a4",
+      "observed_sha256": "e97dfdf5cc4dc5a38fc5a5938dc3c20a70e81e09d6c2b50a2212295de624e6a4",
+      "identical": true
+    },
+    {
+      "path": "entity/__init__.py",
+      "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "identical": true
+    },
+    {
+      "path": "entity/data.py",
+      "expected_sha256": "4596ff74847397fdf2628433f79f3110c72c13219e7a7b49353bb3cdf65776ea",
+      "observed_sha256": "4596ff74847397fdf2628433f79f3110c72c13219e7a7b49353bb3cdf65776ea",
+      "identical": true
+    },
+    {
+      "path": "main.py",
+      "expected_sha256": "5f008f6745b1f07a77ae272da34a5b40282ccc9e8092eaddaed4099f543cbdf3",
+      "observed_sha256": "5f008f6745b1f07a77ae272da34a5b40282ccc9e8092eaddaed4099f543cbdf3",
+      "identical": true
+    },
+    {
+      "path": "model_status_runtime.py",
+      "expected_sha256": "5e1a7c044ee04973e8b42ba74d1b83bb20215f424a98a8221e6511cff1cd545a",
+      "observed_sha256": "5e1a7c044ee04973e8b42ba74d1b83bb20215f424a98a8221e6511cff1cd545a",
+      "identical": true
+    },
+    {
+      "path": "telemetry_runtime.py",
+      "expected_sha256": "7d71697732fb30f712048f93cadc075b2a394da2945eaed9c7a787968c7cdc89",
+      "observed_sha256": "7d71697732fb30f712048f93cadc075b2a394da2945eaed9c7a787968c7cdc89",
+      "identical": true
+    },
+    {
+      "path": "test/config.qwen200-m6n6.toml",
+      "expected_sha256": "a53214e76f92620bfcc28b932a0b76f9f6db56000938285347c810ed8efae856",
+      "observed_sha256": "a53214e76f92620bfcc28b932a0b76f9f6db56000938285347c810ed8efae856",
+      "identical": true
+    },
+    {
+      "path": "utils/__init__.py",
+      "expected_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "observed_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "identical": true
+    },
+    {
+      "path": "utils/asr_stats.py",
+      "expected_sha256": "1d3c0cefe775978503e8074c05e5fba347c196e7259e394ec409833c72bce351",
+      "observed_sha256": "1d3c0cefe775978503e8074c05e5fba347c196e7259e394ec409833c72bce351",
+      "identical": true
+    },
+    {
+      "path": "utils/audio_utils.py",
+      "expected_sha256": "17ab6dfabda8fda6ead01f8cba785dda98278b4ea170330ab96d8df14d3a651d",
+      "observed_sha256": "17ab6dfabda8fda6ead01f8cba785dda98278b4ea170330ab96d8df14d3a651d",
+      "identical": true
+    },
+    {
+      "path": "utils/feature_utils.py",
+      "expected_sha256": "8f0c1fafab3f2d60398e53c9bcaf7d6f93f69a1aad2b4cb603866d12e457bef7",
+      "observed_sha256": "8f0c1fafab3f2d60398e53c9bcaf7d6f93f69a1aad2b4cb603866d12e457bef7",
+      "identical": true
+    },
+    {
+      "path": "utils/incremental_repetition.py",
+      "expected_sha256": "5b3f63f86ad9c34e0176ceef7985f4e7a0c49aac7d13e5662b9d32bdd82e2bb8",
+      "observed_sha256": "5b3f63f86ad9c34e0176ceef7985f4e7a0c49aac7d13e5662b9d32bdd82e2bb8",
+      "identical": true
+    },
+    {
+      "path": "utils/itn.py",
+      "expected_sha256": "5005178357003f716d819739b85f81b4dbe67e4d2764c9a3133244470fa3d0c0",
+      "observed_sha256": "5005178357003f716d819739b85f81b4dbe67e4d2764c9a3133244470fa3d0c0",
+      "identical": true
+    },
+    {
+      "path": "utils/qwen_response.py",
+      "expected_sha256": "f48464ad4aa8648b4d7639a2d486cf9980a6a12866209fb9bd5893aed8a198fd",
+      "observed_sha256": "f48464ad4aa8648b4d7639a2d486cf9980a6a12866209fb9bd5893aed8a198fd",
+      "identical": true
+    },
+    {
+      "path": "utils/qwen_segment_recovery.py",
+      "expected_sha256": "eb4cdf7ea9238b82fc45efc38d4a6b02e2df1636ab38d87ed9c59d383c2d730b",
+      "observed_sha256": "eb4cdf7ea9238b82fc45efc38d4a6b02e2df1636ab38d87ed9c59d383c2d730b",
+      "identical": true
+    },
+    {
+      "path": "utils/repetition.py",
+      "expected_sha256": "02be6e84270414d30be39f721876553577760c62c59aaa695bf0d9ef94c4f0ef",
+      "observed_sha256": "02be6e84270414d30be39f721876553577760c62c59aaa695bf0d9ef94c4f0ef",
+      "identical": true
+    },
+    {
+      "path": "utils/text_postprocess.py",
+      "expected_sha256": "3ee74af7164a2cda2f9ab56d06ee092159516c3dbbefdb99807d5e605e447530",
+      "observed_sha256": "3ee74af7164a2cda2f9ab56d06ee092159516c3dbbefdb99807d5e605e447530",
+      "identical": true
+    }
+  ],
+  "all_recorded_business_sha_match_baseline": true,
+  "source_unchanged_during_round": true,
+  "first_startup_resource": {
+    "available": true,
+    "card": 7,
+    "free_hbm_mb": 49627,
+    "reason": null,
+    "source": "OS npu-smi info driver aggregate, no torch/NPU initialization",
+    "monotonic": 7520187.11198704,
+    "probe_started_monotonic": 7520185.52969797,
+    "startup_elapsed_s": 1.7929752999916673,
+    "utc": "2026-11-23T11:15:13.762103+00:00",
+    "hbm_free_stop_enabled": false,
+    "threshold_hbm_free_mb": null,
+    "configured_hbm_free_threshold_mb": 8192,
+    "unit": "MiB of driver-reported free HBM"
+  },
+  "controller_sha256": "b28ffd60a94c093b48e1b31fea88c84ed6444e63146e415f8525803aa1172fe1",
+  "config_identity": {
+    "path": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm/test/config.qwen200-m6n6.toml",
+    "sha256": "a53214e76f92620bfcc28b932a0b76f9f6db56000938285347c810ed8efae856"
+  },
+  "manifest_identity": {
+    "path": "/tmp/qwen200-20261123-j9r2czoi/assets/inputs-six.json",
+    "sha256": "e611abfe8edbd0c9b8de9885d2dc95c9c2b7a5b045c9337f713577b0855d608f"
+  },
+  "warmup_manifest_identity": {
+    "path": "/tmp/qwen200-20261123-j9r2czoi/assets/warmup-six.json",
+    "sha256": "c4db85457ce0999d7aeaf1d4fd367588f2b046bffd6d9550966a4a4dc2292fdd"
+  },
+  "actual_flag_runtime_verified_by_first_startup_sample": true,
+  "limits": [
+    "Stored source identity verifies the recorded files/config, not an external replay. CPU evidence is owned by controller agent."
+  ]
+}

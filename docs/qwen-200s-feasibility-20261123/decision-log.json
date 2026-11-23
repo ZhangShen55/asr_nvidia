@@ -1,5 +1,5 @@
 {
-  "status": "explicit_M6N6_verification_finished_one_complete_resource_stop",
+  "status": "user_explicit_noHBM_six_complete_under200_quality_unreviewed",
   "target_s": 200,
   "resource_free_hbm_mb": 8192,
   "hard_deadline_s": 336,
@@ -63,6 +63,25 @@
     "resource_free_mib": 6387,
     "resource_threshold_mib": 8192,
     "normal_exit0": true,
+    "production_changes": false
+  },
+  "noHBM_full6": {
+    "hbm_free_stop_enabled": false,
+    "all_http_returned": 6,
+    "strict_no_warning": 3,
+    "warning_segments": 16,
+    "recovered": 3,
+    "unrecoverable_discarded": 13,
+    "p50_s": 169.545595404692,
+    "p95_s": 193.3360070628114,
+    "wall_s": 194.80893781036139,
+    "min_observed_hbm_free_mib": 6323,
+    "observed_inference_oom": false,
+    "trigger": null,
+    "normal_exit0": true,
+    "six_audio_single_round_time_target_met": true,
+    "quality_passed": false,
+    "eight_audio_target_proven": false,
     "production_changes": false
   }
 }

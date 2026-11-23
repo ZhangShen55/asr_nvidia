@@ -1,0 +1,19 @@
+{
+  "case": "m6n6-nohbm-formal",
+  "stage": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm",
+  "comparison": "same six original a1-a6/full6/models6/16-96, only experimental HBM-free stop disabled",
+  "hbm_free_stop_enabled": false,
+  "hbm_stop_threshold_mib": null,
+  "target_s": 200,
+  "hard_s": 336,
+  "other_stops_retained": [
+    "no_progress",
+    "host_pressure",
+    "swap",
+    "request_failed",
+    "qwen_failure",
+    "owned_worker_dead",
+    "owned_service_exit"
+  ],
+  "production_changes": false
+}

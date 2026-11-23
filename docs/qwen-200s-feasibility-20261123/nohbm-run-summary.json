@@ -1,0 +1,100 @@
+{
+  "status": "completed_with_warnings",
+  "complete": true,
+  "expected": 6,
+  "processed_completed": 6,
+  "successful": 3,
+  "strict_success_rate": 0.5,
+  "processing_completion_rate": 1.0,
+  "warning_segments": 16,
+  "unrecoverable_segments": 13,
+  "batch_elapsed_s": 194.80893781036139,
+  "all_request_latency": {
+    "n": 6,
+    "p50_s": 169.545595404692,
+    "p95_s": 193.3360070628114,
+    "scope": "all processed completions including explicit warnings"
+  },
+  "target_time_met_before_cleanup": true,
+  "target_passed": true,
+  "classification": "time_target_met_quality_unreviewed",
+  "diagnostic_trigger": null,
+  "hbm_free_stop_enabled": false,
+  "source_identity_complete": true,
+  "source_changed_during_round": false,
+  "case": "m6n6-nohbm-formal",
+  "records": [
+    {
+      "sample_id": "a1",
+      "http_status": 200,
+      "status": "completed",
+      "processing_status": "complete",
+      "warning_count": 0,
+      "unrecoverable_segment_count": 0,
+      "elapsed_s": 157.57430147007108,
+      "has_usable_text": true
+    },
+    {
+      "sample_id": "a2",
+      "http_status": 200,
+      "status": "completed",
+      "processing_status": "completed_with_warnings",
+      "warning_count": 4,
+      "unrecoverable_segment_count": 2,
+      "elapsed_s": 174.3772658696398,
+      "has_usable_text": true
+    },
+    {
+      "sample_id": "a3",
+      "http_status": 200,
+      "status": "completed",
+      "processing_status": "completed_with_warnings",
+      "warning_count": 1,
+      "unrecoverable_segment_count": 0,
+      "elapsed_s": 194.53118695039302,
+      "has_usable_text": true
+    },
+    {
+      "sample_id": "a4",
+      "http_status": 200,
+      "status": "completed",
+      "processing_status": "completed_with_warnings",
+      "warning_count": 11,
+      "unrecoverable_segment_count": 11,
+      "elapsed_s": 189.75046740006655,
+      "has_usable_text": true
+    },
+    {
+      "sample_id": "a5",
+      "http_status": 200,
+      "status": "completed",
+      "processing_status": "complete",
+      "warning_count": 0,
+      "unrecoverable_segment_count": 0,
+      "elapsed_s": 115.83592669013888,
+      "has_usable_text": true
+    },
+    {
+      "sample_id": "a6",
+      "http_status": 200,
+      "status": "completed",
+      "processing_status": "complete",
+      "warning_count": 0,
+      "unrecoverable_segment_count": 0,
+      "elapsed_s": 164.71392493974417,
+      "has_usable_text": true
+    }
+  ],
+  "asset_changes": [],
+  "shutdown": {
+    "passed": true,
+    "normal_exit0": true,
+    "forced": false,
+    "exit_code": 0,
+    "remaining_pids": [],
+    "remaining_cache_files": [],
+    "observe_s": 5,
+    "term_to_parent_exit_s": 26.044364910572767
+  },
+  "raw_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal"
+}

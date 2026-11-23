@@ -1,0 +1,144 @@
+{
+  "scope": "read-only final controller metadata audit for user-authorized no-free-HBM-stop6model/6audio16/96 round; no CPU suite, NPU or HTTP request",
+  "utc": "2026-11-23T11:24:28.072175+00:00",
+  "source_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal",
+  "checks": {
+    "six_complete_real_requests": true,
+    "CLI_explicit_disable_true": true,
+    "startup_disabled_actual_metadata": true,
+    "warmup_disabled_actual_metadata": true,
+    "formal_disabled_actual_metadata": true,
+    "actual_below_old_threshold_without_trigger": true,
+    "source_frozen": true,
+    "assets_frozen": true,
+    "controller_matches68CPU_freeze": true,
+    "full_n6_quantiles_correct": true,
+    "strict3_warning3_denominators_correct": true,
+    "warning16_unrecoverable13_match_responses": true,
+    "all_six_nonempty_only_not_accuracy": true,
+    "full_wall_common_start_and_last_response": true,
+    "single_round_time_goal_met": true,
+    "warnings_not_hidden": true,
+    "no_exact_speedup_fabricated": true,
+    "normal_cleanup": true,
+    "summary_cleanup_consistent": true,
+    "port5s_PCMempty": true,
+    "old_M2_deviation_retained": true
+  },
+  "passed": true,
+  "passed_scope": "controller policy/complete-n6 statistics/source/cleanup consistency; one-round time result only, not overall quality/stability acceptance",
+  "authorization_scope": "latest explicit user requested disabling the8GiB free-HBM stop only; host/swap/worker/OOM/time/cleanup remain enforced in frozen controller",
+  "hbm_policy_evidence": {
+    "disable_hbm_free_stop_arg": true,
+    "startup_probe_count": 66,
+    "startup_min_free_mib": 23481,
+    "warmup_resource_count": 6,
+    "warmup_min_free_mib": 22270,
+    "formal_status_card7_observations": 139,
+    "formal_min_free_mib": 6323,
+    "formal_below8192_samples": 47,
+    "formal_latest_policy": {
+      "driver_card": 7,
+      "hbm_free_mb": 6323,
+      "host_available_bytes": 1872077451264,
+      "resource_age_s": 4.734245520085096,
+      "sample_timestamp": "2026-11-23T11:21:23.263+00:00",
+      "swap_streak": 0,
+      "hbm_free_stop_enabled": false,
+      "configured_hbm_free_threshold_mb": 8192.0,
+      "effective_hbm_free_threshold_mb": null
+    },
+    "source": "actual startup/warmup/formal saved observations, no new hardware query"
+  },
+  "metrics": {
+    "completed": 6,
+    "expected": 6,
+    "strict_without_warning": 3,
+    "completed_with_warnings": 3,
+    "processing_completion_rate": 1,
+    "strict_success_rate": 0.5,
+    "P50_s": 169.545595404692,
+    "P95_s": 193.3360070628114,
+    "wall_s": 194.80893781036139,
+    "warnings": 16,
+    "unrecoverable_warning_segments": 13,
+    "warning_reasons": {
+      "length_limit": 1,
+      "repetition_stop": 15
+    },
+    "warning_actions": {
+      "recover_prefix": 3,
+      "discard_unrecoverable": 13
+    },
+    "nonempty_text_requests": 6,
+    "exact_speedup": null,
+    "quality_accepted": false,
+    "three_round_stability_proven": false
+  },
+  "requests": [
+    {
+      "sample_id": "a1",
+      "elapsed_s": 157.57430147007108,
+      "processing_status": "complete",
+      "warnings": 0,
+      "unrecoverable": 0,
+      "nonempty_text": true,
+      "metadata_consistent": true
+    },
+    {
+      "sample_id": "a2",
+      "elapsed_s": 174.3772658696398,
+      "processing_status": "completed_with_warnings",
+      "warnings": 4,
+      "unrecoverable": 2,
+      "nonempty_text": true,
+      "metadata_consistent": true
+    },
+    {
+      "sample_id": "a3",
+      "elapsed_s": 194.53118695039302,
+      "processing_status": "completed_with_warnings",
+      "warnings": 1,
+      "unrecoverable": 0,
+      "nonempty_text": true,
+      "metadata_consistent": true
+    },
+    {
+      "sample_id": "a4",
+      "elapsed_s": 189.75046740006655,
+      "processing_status": "completed_with_warnings",
+      "warnings": 11,
+      "unrecoverable": 11,
+      "nonempty_text": true,
+      "metadata_consistent": true
+    },
+    {
+      "sample_id": "a5",
+      "elapsed_s": 115.83592669013888,
+      "processing_status": "complete",
+      "warnings": 0,
+      "unrecoverable": 0,
+      "nonempty_text": true,
+      "metadata_consistent": true
+    },
+    {
+      "sample_id": "a6",
+      "elapsed_s": 164.71392493974417,
+      "processing_status": "complete",
+      "warnings": 0,
+      "unrecoverable": 0,
+      "nonempty_text": true,
+      "metadata_consistent": true
+    }
+  ],
+  "normal_exit0": true,
+  "close_s": 26.044364910572767,
+  "cleanup_included_in_processing_wall": false,
+  "limits": [
+    "target_passed indicates one-round<=200s plus normal cleanup; it does not mean warning-free transcription or reviewed quality.",
+    "Only6sources and one completed round were measured; cannot claim original8source200s feasibility or three-round stability.",
+    "13unrecoverable warning segments require text/source review; nonempty6/6 does not establish dialogue recall or accuracy.",
+    "Previous6input HBM-enabled round was censored, so an exact end-to-end speedup ratio is unavailable.",
+    "Owned process/port cleanup is taken from recorded shutdown evidence; root separately verifies all batch birth identities."
+  ]
+}

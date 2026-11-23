@@ -1,0 +1,66 @@
+{
+  "utc": "2026-11-23T10:42:15.157991+00:00",
+  "scope": "only explicit low-free-HBM abort policy changed in isolated controller/helper; application, model and input workload unchanged",
+  "root": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm",
+  "predecessor": "/tmp/qwen200-20261123-j9r2czoi/m6n6",
+  "cpu_audit": "/tmp/qwen200-20261123-j9r2czoi/assets/nohbm-controller-cpu-v1/result.json",
+  "cpu_result": "68 passed in8.58s",
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "source_sha256": {
+    "scripts/benchmark_qwen200.py": "b28ffd60a94c093b48e1b31fea88c84ed6444e63146e415f8525803aa1172fe1",
+    "core/qwen200_watchdog.py": "5659c323771bfc8e88564a946a5191b56d2801701d7795d526d11162c023061b",
+    "tests/test_qwen200_controller.py": "f17915ad1c81486692016410a064f9f3e2240d3ae5767d88e08442a218334d89",
+    "tests/test_qwen200_startup.py": "5521ee79767dc41226261b88dfea0bff692437ecf81246aef79036e7ae200548",
+    "tests/test_qwen200_six.py": "6b3dac237b2094d6a747a7c33b76f715e37536820b26e14b685a2d2939d51535",
+    "tests/test_qwen200_nohbm.py": "81cadd5cb4effaf5f04faab7c181654e1dcb1009b615abfdbea85adba1cb849d"
+  },
+  "source_changes_during_tests": [],
+  "remaining_owned_cpu": [],
+  "owned_cpu_identities_checked": [
+    {
+      "pid": 447527,
+      "birth": 1795430481.59
+    },
+    {
+      "pid": 490942,
+      "birth": 1795430486.61
+    },
+    {
+      "pid": 447527,
+      "birth": 1795430480.59
+    }
+  ],
+  "child_shutdown_proofs": [
+    {
+      "path": "/tmp/asr-cpu-9wl3iwee/pytest-of-root/pytest-0/test_owned_close_stopfile_pres0/shutdown.json",
+      "passed": true,
+      "remaining_pids": [],
+      "forced": false
+    }
+  ],
+  "patch": "/tmp/qwen200-20261123-j9r2czoi/assets/nohbm-controller.patch",
+  "patch_sha256": "8bb0b171d7ae5f4a4903105ad73bd0d5732cfa97202b8f3a2e1b672264c2cfb1",
+  "explicit_cli": "--disable-hbm-free-stop",
+  "default_disable_hbm_free_stop": false,
+  "candidate_disable_hbm_free_stop": true,
+  "three_phase_coverage": [
+    "startup OS probe",
+    "warmup resource_sample",
+    "formal Qwen200Watchdog"
+  ],
+  "preserved": [
+    "actual HBM sampling",
+    "startup unobservable fail-closed",
+    "host available memory",
+    "sustained swap",
+    "worker failure/death",
+    "failed requests/OOM propagation",
+    "200 target",
+    "336 hard gate",
+    "no-progress",
+    "cooperative stopfile and owned cleanup"
+  ],
+  "metadata": "hbm_free_stop_enabled=False, effective/startup threshold=None, configured threshold8192 and actual free remain visible",
+  "business_baseline_audit": "/tmp/qwen200-20261123-j9r2czoi/assets/nohbm-business-baseline-audit.json",
+  "ready_for_root_serial_NPU": true
+}

@@ -1,0 +1,1380 @@
+{
+  "sample_id": "a5",
+  "scope": "only paired complete fullaudio across preceding m6n6 and nohbm; exact response bg/ed+occurrence alignment; all segment textchanges retained",
+  "old_response": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-formal/response-4.json",
+  "new_response": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal/response-4.json",
+  "old_response_sha256": "e124dd30df85a740b799d945d00dfb564757a3db13d71a28e0aa46cfa34aa030",
+  "new_response_sha256": "f58e800102d94977a8b4e151fd3fe7f2cfb428e46cba8dd7dd0cd5b1b388919c",
+  "old_text_chars": 12024,
+  "new_text_chars": 12017,
+  "old_segment_count": 431,
+  "new_segment_count": 431,
+  "matched_boundaries": 431,
+  "unchanged_text_segments": 399,
+  "text_changed_count": 32,
+  "field_only_changed_count": 0,
+  "old_only_count": 0,
+  "new_only_count": 0,
+  "all_text_changes": [
+    {
+      "bg": "0.00",
+      "ed": "1.16",
+      "occurrence": 0,
+      "old_index": 0,
+      "new_index": 0,
+      "old_text": "Last session, I'm for this.",
+      "new_text": "Ask the session off today.",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 0,
+          "old_end": 2,
+          "new_start": 0,
+          "new_end": 1,
+          "old": "La",
+          "new": "A"
+        },
+        {
+          "tag": "insert",
+          "old_start": 3,
+          "old_end": 3,
+          "new_start": 2,
+          "new_end": 4,
+          "old": "",
+          "new": "k "
+        },
+        {
+          "tag": "insert",
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 5,
+          "new_end": 7,
+          "old": "",
+          "new": "he"
+        },
+        {
+          "tag": "delete",
+          "old_start": 12,
+          "old_end": 13,
+          "new_start": 15,
+          "new_end": 15,
+          "old": ",",
+          "new": ""
+        },
+        {
+          "tag": "replace",
+          "old_start": 14,
+          "old_end": 18,
+          "new_start": 16,
+          "new_end": 17,
+          "old": "I'm ",
+          "new": "o"
+        },
+        {
+          "tag": "replace",
+          "old_start": 19,
+          "old_end": 21,
+          "new_start": 18,
+          "new_end": 19,
+          "old": "or",
+          "new": "f"
+        },
+        {
+          "tag": "replace",
+          "old_start": 23,
+          "old_end": 26,
+          "new_start": 21,
+          "new_end": 25,
+          "old": "his",
+          "new": "oday"
+        }
+      ]
+    },
+    {
+      "bg": "195.10",
+      "ed": "201.66",
+      "occurrence": 0,
+      "old_index": 34,
+      "new_index": 34,
+      "old_text": "充钱的，人，，人民币玩家，对你就可以在里面，，进入了之后呢，。",
+      "new_text": "充钱的，，人民币玩家，对你就可以在里面，，进入了之后呢，。",
+      "character_opcodes": [
+        {
+          "tag": "delete",
+          "old_start": 3,
+          "old_end": 5,
+          "new_start": 3,
+          "new_end": 3,
+          "old": "，人",
+          "new": ""
+        }
+      ]
+    },
+    {
+      "bg": "299.00",
+      "ed": "300.40",
+      "occurrence": 0,
+      "old_index": 49,
+      "new_index": 49,
+      "old_text": "你们自己的事情。",
+      "new_text": "你们自己的视频。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 5,
+          "old_end": 7,
+          "new_start": 5,
+          "new_end": 7,
+          "old": "事情",
+          "new": "视频"
+        }
+      ]
+    },
+    {
+      "bg": "321.93",
+      "ed": "329.94",
+      "occurrence": 0,
+      "old_index": 53,
+      "new_index": 53,
+      "old_text": "是用 Python 组这个这个部分组成的。然后呢，这个它的好处就是它可以可可视化，就是你运行了一个代码之后呢，它",
+      "new_text": "是用 Python 组这个这个部分组成的，然后呢，这个它的好处就是它可以可可视化，就是你运行了一个代码之后呢，它。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 20,
+          "old_end": 21,
+          "new_start": 20,
+          "new_end": 21,
+          "old": "。",
+          "new": "，"
+        },
+        {
+          "tag": "insert",
+          "old_start": 56,
+          "old_end": 56,
+          "new_start": 56,
+          "new_end": 57,
+          "old": "",
+          "new": "。"
+        }
+      ]
+    },
+    {
+      "bg": "346.48",
+      "ed": "354.49",
+      "occurrence": 0,
+      "old_index": 57,
+      "new_index": 57,
+      "old_text": "function，describe that word，我们可以看一个视频，这个是一个，James professor。",
+      "new_text": "function，describe that word，我们可以看一个视频，这个是一个，James Professor。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 50,
+          "old_end": 51,
+          "new_start": 50,
+          "new_end": 51,
+          "old": "p",
+          "new": "P"
+        }
+      ]
+    },
+    {
+      "bg": "466.83",
+      "ed": "470.51",
+      "occurrence": 0,
+      "old_index": 73,
+      "new_index": 73,
+      "old_text": "得到它对应的一个结果。我们看这样一个例子。",
+      "new_text": "得到它对应的一个结果，我们看这样一个例子。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 10,
+          "old_end": 11,
+          "new_start": 10,
+          "new_end": 11,
+          "old": "。",
+          "new": "，"
+        }
+      ]
+    },
+    {
+      "bg": "481.42",
+      "ed": "489.43",
+      "occurrence": 0,
+      "old_index": 75,
+      "new_index": 75,
+      "old_text": "看得出来，他是一个，就是不肯定是不在一个一个一个一个这个单，就是一一个一。",
+      "new_text": "看得出来，他是一个，就是不肯定是不在一个一个一个一个这个单，就是一一个一一。",
+      "character_opcodes": [
+        {
+          "tag": "insert",
+          "old_start": 36,
+          "old_end": 36,
+          "new_start": 36,
+          "new_end": 37,
+          "old": "",
+          "new": "一"
+        }
+      ]
+    },
+    {
+      "bg": "497.60",
+      "ed": "504.75",
+      "occurrence": 0,
+      "old_index": 77,
+      "new_index": 77,
+      "old_text": "所以呢，我们就必须去用一些方法去拟合它，比如说，我可以调这个它的斜率。",
+      "new_text": "所以呢，我们就必须去用一些方法去拟合它。比如说，我可以调这个它的斜率。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 19,
+          "old_end": 20,
+          "new_start": 19,
+          "new_end": 20,
+          "old": "，",
+          "new": "。"
+        }
+      ]
+    },
+    {
+      "bg": "611.79",
+      "ed": "619.80",
+      "occurrence": 0,
+      "old_index": 93,
+      "new_index": 93,
+      "old_text": "但这个这是最上面的，不是。，然后解释一下它为什么不是。然后下面就是这个锐度函锐度函数，这个莫尔的函数，还。",
+      "new_text": "但这个这是最上面的，不是。，然后解释一下它为什么不是。然后下面就是锐锐步函数，这个冒烟的函数，还。",
+      "character_opcodes": [
+        {
+          "tag": "delete",
+          "old_start": 33,
+          "old_end": 35,
+          "new_start": 33,
+          "new_end": 33,
+          "old": "这个",
+          "new": ""
+        },
+        {
+          "tag": "delete",
+          "old_start": 36,
+          "old_end": 38,
+          "new_start": 34,
+          "new_end": 34,
+          "old": "度函",
+          "new": ""
+        },
+        {
+          "tag": "replace",
+          "old_start": 39,
+          "old_end": 40,
+          "new_start": 35,
+          "new_end": 36,
+          "old": "度",
+          "new": "步"
+        },
+        {
+          "tag": "replace",
+          "old_start": 45,
+          "old_end": 47,
+          "new_start": 41,
+          "new_end": 43,
+          "old": "莫尔",
+          "new": "冒烟"
+        }
+      ]
+    },
+    {
+      "bg": "686.29",
+      "ed": "694.30",
+      "occurrence": 0,
+      "old_index": 104,
+      "new_index": 104,
+      "old_text": "那可以，刚才说这个为什么这个线性的这个积分函数它不叫积分函数，它为什么不能用呢？，比如说我们有一个这个。",
+      "new_text": "那可以，刚才说这个为什么这个线性的这个奇偶函数，它不叫奇偶函数，它为什么不能用呢？，比如说我们有一个这个。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 19,
+          "old_end": 21,
+          "new_start": 19,
+          "new_end": 21,
+          "old": "积分",
+          "new": "奇偶"
+        },
+        {
+          "tag": "insert",
+          "old_start": 23,
+          "old_end": 23,
+          "new_start": 23,
+          "new_end": 24,
+          "old": "",
+          "new": "，"
+        },
+        {
+          "tag": "replace",
+          "old_start": 26,
+          "old_end": 28,
+          "new_start": 27,
+          "new_end": 29,
+          "old": "积分",
+          "new": "奇偶"
+        }
+      ]
+    },
+    {
+      "bg": "713.99",
+      "ed": "722.00",
+      "occurrence": 0,
+      "old_index": 108,
+      "new_index": 108,
+      "old_text": "那这个是我们单独的是一个输入的情况，就是一个输入，然后通过叠加这个激活函数可以变成。",
+      "new_text": "那这个是我们单纯是一个输入的情况，就是一个输入，然后通过叠加这个激活函数可以变成。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 7,
+          "old_end": 9,
+          "new_start": 7,
+          "new_end": 8,
+          "old": "独的",
+          "new": "纯"
+        }
+      ]
+    },
+    {
+      "bg": "902.17",
+      "ed": "910.18",
+      "occurrence": 0,
+      "old_index": 132,
+      "new_index": 132,
+      "old_text": "坐标轴往后延伸，它其实是有很多的波峰波谷，但是它其实是一个单纯单调递增的。那，通过不。",
+      "new_text": "坐标轴往后延伸，它其实是有很多的波峰波谷，但是它其实是一个单纯单调递增的。那，通过不",
+      "character_opcodes": [
+        {
+          "tag": "delete",
+          "old_start": 42,
+          "old_end": 43,
+          "new_start": 42,
+          "new_end": 42,
+          "old": "。",
+          "new": ""
+        }
+      ]
+    },
+    {
+      "bg": "1027.30",
+      "ed": "1035.31",
+      "occurrence": 0,
+      "old_index": 150,
+      "new_index": 150,
+      "old_text": "课上讲的都会，考试全不会。然后就是，那这个其实在可能在术语里面叫做过敏核的一个现象。",
+      "new_text": "课上讲的都会，考试全不会。然后就是，那这个其实，在可能在术语里面叫做过敏核的一个现象。",
+      "character_opcodes": [
+        {
+          "tag": "insert",
+          "old_start": 23,
+          "old_end": 23,
+          "new_start": 23,
+          "new_end": 24,
+          "old": "",
+          "new": "，"
+        }
+      ]
+    },
+    {
+      "bg": "1082.54",
+      "ed": "1086.21",
+      "occurrence": 0,
+      "old_index": 158,
+      "new_index": 158,
+      "old_text": "是，就是给大家看一下怎么如何去使用这个 Jupiter。",
+      "new_text": "就是给大家看一下怎么如何去使用这个 Jupiter。",
+      "character_opcodes": [
+        {
+          "tag": "delete",
+          "old_start": 0,
+          "old_end": 2,
+          "new_start": 0,
+          "new_end": 0,
+          "old": "是，",
+          "new": ""
+        }
+      ]
+    },
+    {
+      "bg": "1196.22",
+      "ed": "1204.23",
+      "occurrence": 0,
+      "old_index": 174,
+      "new_index": 174,
+      "old_text": "那750784位的向量，如果说单纯的用一个线性的函数，就是不断的给给大家。",
+      "new_text": "那700五个784位的向量，如果说单纯的用一个线性的函数，就是不断的给给大家。",
+      "character_opcodes": [
+        {
+          "tag": "delete",
+          "old_start": 2,
+          "old_end": 3,
+          "new_start": 2,
+          "new_end": 2,
+          "old": "5",
+          "new": ""
+        },
+        {
+          "tag": "insert",
+          "old_start": 4,
+          "old_end": 4,
+          "new_start": 3,
+          "new_end": 6,
+          "old": "",
+          "new": "0五个"
+        }
+      ]
+    },
+    {
+      "bg": "1212.24",
+      "ed": "1220.25",
+      "occurrence": 0,
+      "old_index": 176,
+      "new_index": 176,
+      "old_text": "这个数字其实是很难的，所以一定要是用是一个非线性的，就是这样这样非线性的，把这个484位的向量，然后输出成一个。",
+      "new_text": "这个数字其实是很难的，所以一定要是用是一个非线性的，就是这样这样非线性的，把这个484维的向量，然后输出成一个。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 43,
+          "old_end": 44,
+          "new_start": 43,
+          "new_end": 44,
+          "old": "位",
+          "new": "维"
+        }
+      ]
+    },
+    {
+      "bg": "1299.67",
+      "ed": "1305.15",
+      "occurrence": 0,
+      "old_index": 187,
+      "new_index": 187,
+      "old_text": "下面其实这个是数据集不同的数据集大小，就是。",
+      "new_text": "下面其实这个是数据集，不同的数据集大小，就是。",
+      "character_opcodes": [
+        {
+          "tag": "insert",
+          "old_start": 10,
+          "old_end": 10,
+          "new_start": 10,
+          "new_end": 11,
+          "old": "",
+          "new": "，"
+        }
+      ]
+    },
+    {
+      "bg": "1454.21",
+      "ed": "1462.22",
+      "occurrence": 0,
+      "old_index": 207,
+      "new_index": 207,
+      "old_text": "So you'll hear just give you a very wonderful um demo um you know some fundamentals and the basics.",
+      "new_text": "So you're here just to give you a very wonderful um demo, um you know some fundamentals and the basics.",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 7,
+          "old_end": 9,
+          "new_start": 7,
+          "new_end": 9,
+          "old": "ll",
+          "new": "re"
+        },
+        {
+          "tag": "delete",
+          "old_start": 12,
+          "old_end": 13,
+          "new_start": 12,
+          "new_end": 12,
+          "old": "a",
+          "new": ""
+        },
+        {
+          "tag": "insert",
+          "old_start": 14,
+          "old_end": 14,
+          "new_start": 13,
+          "new_end": 14,
+          "old": "",
+          "new": "e"
+        },
+        {
+          "tag": "insert",
+          "old_start": 19,
+          "old_end": 19,
+          "new_start": 19,
+          "new_end": 22,
+          "old": "",
+          "new": " to"
+        },
+        {
+          "tag": "insert",
+          "old_start": 53,
+          "old_end": 53,
+          "new_start": 56,
+          "new_end": 57,
+          "old": "",
+          "new": ","
+        }
+      ]
+    },
+    {
+      "bg": "1581.83",
+      "ed": "1589.84",
+      "occurrence": 0,
+      "old_index": 237,
+      "new_index": 237,
+      "old_text": "王博，你别跟我琢磨这个，我就想不起来，所以我才不跟你讲。",
+      "new_text": "王博，你别跟我琢磨这个，我真想不起来，所以我才不跟你讲。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 13,
+          "old_end": 14,
+          "new_start": 13,
+          "new_end": 14,
+          "old": "就",
+          "new": "真"
+        }
+      ]
+    },
+    {
+      "bg": "1591.17",
+      "ed": "1598.60",
+      "occurrence": 0,
+      "old_index": 238,
+      "new_index": 238,
+      "old_text": "哈哈哈哈哈！加班，加班，加班，也是来接个茶。",
+      "new_text": "哈哈哈哈哈！加班，加班，加班，加班，一个。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 15,
+          "old_end": 19,
+          "new_start": 15,
+          "new_end": 19,
+          "old": "也是来接",
+          "new": "加班，一"
+        },
+        {
+          "tag": "delete",
+          "old_start": 20,
+          "old_end": 21,
+          "new_start": 20,
+          "new_end": 20,
+          "old": "茶",
+          "new": ""
+        }
+      ]
+    },
+    {
+      "bg": "1679.65",
+      "ed": "1684.01",
+      "occurrence": 0,
+      "old_index": 256,
+      "new_index": 256,
+      "old_text": "这个数据的，注意，你看嘛，是。",
+      "new_text": "这个持续的，注意，注意，注意，没事。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 2,
+          "old_end": 4,
+          "new_start": 2,
+          "new_end": 4,
+          "old": "数据",
+          "new": "持续"
+        },
+        {
+          "tag": "replace",
+          "old_start": 9,
+          "old_end": 12,
+          "new_start": 9,
+          "new_end": 11,
+          "old": "你看嘛",
+          "new": "注意"
+        },
+        {
+          "tag": "replace",
+          "old_start": 13,
+          "old_end": 14,
+          "new_start": 12,
+          "new_end": 17,
+          "old": "是",
+          "new": "注意，没事"
+        }
+      ]
+    },
+    {
+      "bg": "1766.90",
+      "ed": "1774.91",
+      "occurrence": 0,
+      "old_index": 274,
+      "new_index": 274,
+      "old_text": "直到半年，就它不是一种，对，它是每很久才。他们是，它是行吗？那我不对，我们是轮着，对，它每周。",
+      "new_text": "直到半年，就它不是一种，对，它是每很久才。他们是，它是行吗？那我不对，我们是轮着。对，它每周。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 40,
+          "old_end": 41,
+          "new_start": 40,
+          "new_end": 41,
+          "old": "，",
+          "new": "。"
+        }
+      ]
+    },
+    {
+      "bg": "1782.10",
+      "ed": "1790.11",
+      "occurrence": 0,
+      "old_index": 277,
+      "new_index": 277,
+      "old_text": "到时候，反正我们这个，因为我们要决定这个登记，汇报的顺序这些有没有区别？",
+      "new_text": "到时候，反正我们这个，因为我们要决定这个登记汇报的顺序。",
+      "character_opcodes": [
+        {
+          "tag": "delete",
+          "old_start": 22,
+          "old_end": 23,
+          "new_start": 22,
+          "new_end": 22,
+          "old": "，",
+          "new": ""
+        },
+        {
+          "tag": "replace",
+          "old_start": 28,
+          "old_end": 36,
+          "new_start": 27,
+          "new_end": 28,
+          "old": "这些有没有区别？",
+          "new": "。"
+        }
+      ]
+    },
+    {
+      "bg": "1948.98",
+      "ed": "1956.99",
+      "occurrence": 0,
+      "old_index": 309,
+      "new_index": 309,
+      "old_text": "只要都微信自客都来，对他本身，而且我把直播和录播都关了，哦，因为这。",
+      "new_text": "只要都微信自客都来，因为他本身，而且我把直播和录播都关了，哦，因为这。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 10,
+          "old_end": 11,
+          "new_start": 10,
+          "new_end": 12,
+          "old": "对",
+          "new": "因为"
+        }
+      ]
+    },
+    {
+      "bg": "2051.77",
+      "ed": "2055.04",
+      "occurrence": 0,
+      "old_index": 331,
+      "new_index": 331,
+      "old_text": "草，这不会呀，不会，你给。",
+      "new_text": "草，这不会呀？不会，你给。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 6,
+          "old_end": 7,
+          "new_start": 6,
+          "new_end": 7,
+          "old": "，",
+          "new": "？"
+        }
+      ]
+    },
+    {
+      "bg": "2065.09",
+      "ed": "2073.10",
+      "occurrence": 0,
+      "old_index": 336,
+      "new_index": 336,
+      "old_text": "不是不是你量问题，你看整个城市里面，很多这种天然的多不少，也是的，因为主要是这样子，就是。",
+      "new_text": "不是不是你量问题，你看整个城市里面，摩这种天然店多不少，也是的，因为主要是这样子，就是。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 18,
+          "old_end": 20,
+          "new_start": 18,
+          "new_end": 19,
+          "old": "很多",
+          "new": "摩"
+        },
+        {
+          "tag": "replace",
+          "old_start": 24,
+          "old_end": 25,
+          "new_start": 23,
+          "new_end": 24,
+          "old": "的",
+          "new": "店"
+        }
+      ]
+    },
+    {
+      "bg": "2080.19",
+      "ed": "2081.51",
+      "occurrence": 0,
+      "old_index": 339,
+      "new_index": 339,
+      "old_text": "人是父亲了。",
+      "new_text": "人是动物。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 2,
+          "old_end": 5,
+          "new_start": 2,
+          "new_end": 4,
+          "old": "父亲了",
+          "new": "动物"
+        }
+      ]
+    },
+    {
+      "bg": "2140.43",
+      "ed": "2143.20",
+      "occurrence": 0,
+      "old_index": 356,
+      "new_index": 356,
+      "old_text": "行行行，导师，确实，那你现在导师。",
+      "new_text": "行行行，懂，确实，那你现在懂？",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 4,
+          "old_end": 6,
+          "new_start": 4,
+          "new_end": 5,
+          "old": "导师",
+          "new": "懂"
+        },
+        {
+          "tag": "replace",
+          "old_start": 14,
+          "old_end": 17,
+          "new_start": 13,
+          "new_end": 15,
+          "old": "导师。",
+          "new": "懂？"
+        }
+      ]
+    },
+    {
+      "bg": "2144.51",
+      "ed": "2145.05",
+      "occurrence": 0,
+      "old_index": 357,
+      "new_index": 357,
+      "old_text": "走！",
+      "new_text": "什么狗？",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 0,
+          "old_end": 2,
+          "new_start": 0,
+          "new_end": 4,
+          "old": "走！",
+          "new": "什么狗？"
+        }
+      ]
+    },
+    {
+      "bg": "2179.96",
+      "ed": "2180.94",
+      "occurrence": 0,
+      "old_index": 370,
+      "new_index": 370,
+      "old_text": "尿白血。",
+      "new_text": "要滑雪。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 0,
+          "old_end": 3,
+          "new_start": 0,
+          "new_end": 3,
+          "old": "尿白血",
+          "new": "要滑雪"
+        }
+      ]
+    },
+    {
+      "bg": "2307.51",
+      "ed": "2308.45",
+      "occurrence": 0,
+      "old_index": 411,
+      "new_index": 411,
+      "old_text": "感觉你上背更好看。",
+      "new_text": "感觉你上背不好看。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 5,
+          "old_end": 6,
+          "new_start": 5,
+          "new_end": 6,
+          "old": "更",
+          "new": "不"
+        }
+      ]
+    },
+    {
+      "bg": "2330.50",
+      "ed": "2331.80",
+      "occurrence": 0,
+      "old_index": 422,
+      "new_index": 422,
+      "old_text": "画的刘若英了。",
+      "new_text": "画的刘若飞了。",
+      "character_opcodes": [
+        {
+          "tag": "replace",
+          "old_start": 4,
+          "old_end": 5,
+          "new_start": 4,
+          "new_end": 5,
+          "old": "英",
+          "new": "飞"
+        }
+      ]
+    }
+  ],
+  "all_field_only_changes": [],
+  "all_old_only": [],
+  "all_new_only": [],
+  "full_text_character_diff": [
+    {
+      "tag": "replace",
+      "old_start": 0,
+      "old_end": 2,
+      "new_start": 0,
+      "new_end": 1,
+      "old": "La",
+      "new": "A"
+    },
+    {
+      "tag": "insert",
+      "old_start": 3,
+      "old_end": 3,
+      "new_start": 2,
+      "new_end": 4,
+      "old": "",
+      "new": "k "
+    },
+    {
+      "tag": "insert",
+      "old_start": 4,
+      "old_end": 4,
+      "new_start": 5,
+      "new_end": 7,
+      "old": "",
+      "new": "he"
+    },
+    {
+      "tag": "delete",
+      "old_start": 12,
+      "old_end": 13,
+      "new_start": 15,
+      "new_end": 15,
+      "old": ",",
+      "new": ""
+    },
+    {
+      "tag": "replace",
+      "old_start": 14,
+      "old_end": 18,
+      "new_start": 16,
+      "new_end": 17,
+      "old": "I'm ",
+      "new": "o"
+    },
+    {
+      "tag": "replace",
+      "old_start": 19,
+      "old_end": 21,
+      "new_start": 18,
+      "new_end": 19,
+      "old": "or",
+      "new": "f"
+    },
+    {
+      "tag": "replace",
+      "old_start": 23,
+      "old_end": 26,
+      "new_start": 21,
+      "new_end": 25,
+      "old": "his",
+      "new": "oday"
+    },
+    {
+      "tag": "delete",
+      "old_start": 1501,
+      "old_end": 1503,
+      "new_start": 1500,
+      "new_end": 1500,
+      "old": "人，",
+      "new": ""
+    },
+    {
+      "tag": "replace",
+      "old_start": 2081,
+      "old_end": 2083,
+      "new_start": 2078,
+      "new_end": 2080,
+      "old": "事情",
+      "new": "视频"
+    },
+    {
+      "tag": "replace",
+      "old_start": 2227,
+      "old_end": 2228,
+      "new_start": 2224,
+      "new_end": 2225,
+      "old": "。",
+      "new": "，"
+    },
+    {
+      "tag": "insert",
+      "old_start": 2263,
+      "old_end": 2263,
+      "new_start": 2260,
+      "new_end": 2261,
+      "old": "",
+      "new": "。"
+    },
+    {
+      "tag": "replace",
+      "old_start": 2402,
+      "old_end": 2403,
+      "new_start": 2400,
+      "new_end": 2401,
+      "old": "p",
+      "new": "P"
+    },
+    {
+      "tag": "replace",
+      "old_start": 3339,
+      "old_end": 3340,
+      "new_start": 3337,
+      "new_end": 3338,
+      "old": "。",
+      "new": "，"
+    },
+    {
+      "tag": "insert",
+      "old_start": 3428,
+      "old_end": 3428,
+      "new_start": 3426,
+      "new_end": 3427,
+      "old": "",
+      "new": "一"
+    },
+    {
+      "tag": "replace",
+      "old_start": 3456,
+      "old_end": 3457,
+      "new_start": 3455,
+      "new_end": 3456,
+      "old": "，",
+      "new": "。"
+    },
+    {
+      "tag": "delete",
+      "old_start": 4028,
+      "old_end": 4030,
+      "new_start": 4027,
+      "new_end": 4027,
+      "old": "这个",
+      "new": ""
+    },
+    {
+      "tag": "delete",
+      "old_start": 4031,
+      "old_end": 4033,
+      "new_start": 4028,
+      "new_end": 4028,
+      "old": "度函",
+      "new": ""
+    },
+    {
+      "tag": "replace",
+      "old_start": 4034,
+      "old_end": 4035,
+      "new_start": 4029,
+      "new_end": 4030,
+      "old": "度",
+      "new": "步"
+    },
+    {
+      "tag": "replace",
+      "old_start": 4040,
+      "old_end": 4042,
+      "new_start": 4035,
+      "new_end": 4037,
+      "old": "莫尔",
+      "new": "冒烟"
+    },
+    {
+      "tag": "replace",
+      "old_start": 4439,
+      "old_end": 4441,
+      "new_start": 4434,
+      "new_end": 4436,
+      "old": "积分",
+      "new": "奇偶"
+    },
+    {
+      "tag": "insert",
+      "old_start": 4443,
+      "old_end": 4443,
+      "new_start": 4438,
+      "new_end": 4439,
+      "old": "",
+      "new": "，"
+    },
+    {
+      "tag": "replace",
+      "old_start": 4446,
+      "old_end": 4448,
+      "new_start": 4442,
+      "new_end": 4444,
+      "old": "积分",
+      "new": "奇偶"
+    },
+    {
+      "tag": "replace",
+      "old_start": 4604,
+      "old_end": 4606,
+      "new_start": 4600,
+      "new_end": 4601,
+      "old": "独的",
+      "new": "纯"
+    },
+    {
+      "tag": "delete",
+      "old_start": 5534,
+      "old_end": 5535,
+      "new_start": 5529,
+      "new_end": 5529,
+      "old": "。",
+      "new": ""
+    },
+    {
+      "tag": "insert",
+      "old_start": 6216,
+      "old_end": 6216,
+      "new_start": 6210,
+      "new_end": 6211,
+      "old": "",
+      "new": "，"
+    },
+    {
+      "tag": "delete",
+      "old_start": 6471,
+      "old_end": 6473,
+      "new_start": 6466,
+      "new_end": 6466,
+      "old": "是，",
+      "new": ""
+    },
+    {
+      "tag": "delete",
+      "old_start": 7086,
+      "old_end": 7087,
+      "new_start": 7079,
+      "new_end": 7079,
+      "old": "5",
+      "new": ""
+    },
+    {
+      "tag": "insert",
+      "old_start": 7088,
+      "old_end": 7088,
+      "new_start": 7080,
+      "new_end": 7083,
+      "old": "",
+      "new": "0五个"
+    },
+    {
+      "tag": "replace",
+      "old_start": 7219,
+      "old_end": 7220,
+      "new_start": 7214,
+      "new_end": 7215,
+      "old": "位",
+      "new": "维"
+    },
+    {
+      "tag": "insert",
+      "old_start": 7682,
+      "old_end": 7682,
+      "new_start": 7677,
+      "new_end": 7678,
+      "old": "",
+      "new": "，"
+    },
+    {
+      "tag": "replace",
+      "old_start": 8265,
+      "old_end": 8267,
+      "new_start": 8261,
+      "new_end": 8263,
+      "old": "ll",
+      "new": "re"
+    },
+    {
+      "tag": "delete",
+      "old_start": 8270,
+      "old_end": 8271,
+      "new_start": 8266,
+      "new_end": 8266,
+      "old": "a",
+      "new": ""
+    },
+    {
+      "tag": "insert",
+      "old_start": 8272,
+      "old_end": 8272,
+      "new_start": 8267,
+      "new_end": 8268,
+      "old": "",
+      "new": "e"
+    },
+    {
+      "tag": "insert",
+      "old_start": 8277,
+      "old_end": 8277,
+      "new_start": 8273,
+      "new_end": 8276,
+      "old": "",
+      "new": " to"
+    },
+    {
+      "tag": "insert",
+      "old_start": 8311,
+      "old_end": 8311,
+      "new_start": 8310,
+      "new_end": 8311,
+      "old": "",
+      "new": ","
+    },
+    {
+      "tag": "replace",
+      "old_start": 9227,
+      "old_end": 9228,
+      "new_start": 9227,
+      "new_end": 9228,
+      "old": "就",
+      "new": "真"
+    },
+    {
+      "tag": "replace",
+      "old_start": 9258,
+      "old_end": 9262,
+      "new_start": 9258,
+      "new_end": 9262,
+      "old": "也是来接",
+      "new": "加班，一"
+    },
+    {
+      "tag": "delete",
+      "old_start": 9263,
+      "old_end": 9264,
+      "new_start": 9263,
+      "new_end": 9263,
+      "old": "茶",
+      "new": ""
+    },
+    {
+      "tag": "replace",
+      "old_start": 9480,
+      "old_end": 9482,
+      "new_start": 9479,
+      "new_end": 9481,
+      "old": "数据",
+      "new": "持续"
+    },
+    {
+      "tag": "replace",
+      "old_start": 9487,
+      "old_end": 9490,
+      "new_start": 9486,
+      "new_end": 9488,
+      "old": "你看嘛",
+      "new": "注意"
+    },
+    {
+      "tag": "replace",
+      "old_start": 9491,
+      "old_end": 9492,
+      "new_start": 9489,
+      "new_end": 9494,
+      "old": "是",
+      "new": "注意，没事"
+    },
+    {
+      "tag": "replace",
+      "old_start": 9893,
+      "old_end": 9894,
+      "new_start": 9895,
+      "new_end": 9896,
+      "old": "，",
+      "new": "。"
+    },
+    {
+      "tag": "delete",
+      "old_start": 9953,
+      "old_end": 9954,
+      "new_start": 9955,
+      "new_end": 9955,
+      "old": "，",
+      "new": ""
+    },
+    {
+      "tag": "replace",
+      "old_start": 9959,
+      "old_end": 9967,
+      "new_start": 9960,
+      "new_end": 9961,
+      "old": "这些有没有区别？",
+      "new": "。"
+    },
+    {
+      "tag": "replace",
+      "old_start": 10747,
+      "old_end": 10748,
+      "new_start": 10741,
+      "new_end": 10743,
+      "old": "对",
+      "new": "因为"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11178,
+      "old_end": 11179,
+      "new_start": 11173,
+      "new_end": 11174,
+      "old": "，",
+      "new": "？"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11249,
+      "old_end": 11251,
+      "new_start": 11244,
+      "new_end": 11245,
+      "old": "很多",
+      "new": "摩"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11255,
+      "old_end": 11256,
+      "new_start": 11249,
+      "new_end": 11250,
+      "old": "的",
+      "new": "店"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11306,
+      "old_end": 11309,
+      "new_start": 11300,
+      "new_end": 11302,
+      "old": "父亲了",
+      "new": "动物"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11444,
+      "old_end": 11446,
+      "new_start": 11437,
+      "new_end": 11438,
+      "old": "导师",
+      "new": "懂"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11454,
+      "old_end": 11457,
+      "new_start": 11446,
+      "new_end": 11448,
+      "old": "导师。",
+      "new": "懂？"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11458,
+      "old_end": 11460,
+      "new_start": 11449,
+      "new_end": 11453,
+      "old": "走！",
+      "new": "什么狗？"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11535,
+      "old_end": 11538,
+      "new_start": 11528,
+      "new_end": 11531,
+      "old": "尿白血",
+      "new": "要滑雪"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11851,
+      "old_end": 11852,
+      "new_start": 11844,
+      "new_end": 11845,
+      "old": "更",
+      "new": "不"
+    },
+    {
+      "tag": "replace",
+      "old_start": 11929,
+      "old_end": 11930,
+      "new_start": 11922,
+      "new_end": 11923,
+      "old": "英",
+      "new": "飞"
+    }
+  ],
+  "unpaired_other_five": {
+    "samples": [
+      "a1",
+      "a2",
+      "a3",
+      "a4",
+      "a6"
+    ],
+    "comparison_available": false,
+    "difference_count": null,
+    "reason": "previous round cancelled these5; no complete response available"
+  },
+  "accuracy_scope": "No reference transcript or correctness scoring; exact text differences are not accuracy gains/losses."
+}
