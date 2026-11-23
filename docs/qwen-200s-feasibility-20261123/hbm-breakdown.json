@@ -1,0 +1,170 @@
+{
+  "rows": [
+    {
+      "case": "b0-preflight",
+      "snapshot": "initial-status.json",
+      "workers": [
+        {
+          "pid": 2894770,
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 2894770,
+            "worker_rss_mb": 2123.83984375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3889.24560546875,
+            "memory_reserved_mb": 4296.0,
+            "max_memory_allocated_mb": 3889.24560546875,
+            "max_memory_reserved_mb": 4296.0
+          }
+        }
+      ],
+      "driver_process_samples": [],
+      "scope": "allocator cached safe boundary and driver collection are not exactly simultaneous"
+    },
+    {
+      "case": "b0-preflight",
+      "snapshot": "warmup-final-status.json",
+      "workers": [
+        {
+          "pid": 2894770,
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 2894770,
+            "worker_rss_mb": 2495.03125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.00927734375,
+            "memory_reserved_mb": 4390.0,
+            "max_memory_allocated_mb": 3945.14111328125,
+            "max_memory_reserved_mb": 4390.0
+          }
+        }
+      ],
+      "driver_process_samples": [
+        {
+          "pid": 2894770,
+          "memory_mb": 4651
+        }
+      ],
+      "scope": "allocator cached safe boundary and driver collection are not exactly simultaneous"
+    },
+    {
+      "case": "m2-preflight",
+      "snapshot": "warmup-final-status.json",
+      "workers": [
+        {
+          "pid": 3711798,
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 3711798,
+            "worker_rss_mb": 2498.640625,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.44677734375,
+            "memory_reserved_mb": 4390.0,
+            "max_memory_allocated_mb": 3945.14111328125,
+            "max_memory_reserved_mb": 4390.0
+          }
+        },
+        {
+          "pid": 3854387,
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 3854387,
+            "worker_rss_mb": 2497.984375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3904.47802734375,
+            "memory_reserved_mb": 4390.0,
+            "max_memory_allocated_mb": 3945.14111328125,
+            "max_memory_reserved_mb": 4390.0
+          }
+        }
+      ],
+      "driver_process_samples": [
+        {
+          "pid": 3854387,
+          "memory_mb": 4651
+        },
+        {
+          "pid": 3711798,
+          "memory_mb": 4651
+        }
+      ],
+      "scope": "allocator cached safe boundary and driver collection are not exactly simultaneous"
+    },
+    {
+      "case": "b0-formal",
+      "snapshot": "diagnostic-status.json",
+      "workers": [
+        {
+          "pid": 1312088,
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 1312088,
+            "worker_rss_mb": 2593.078125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 5942.60498046875,
+            "memory_reserved_mb": 42558.0,
+            "max_memory_allocated_mb": 14624.35205078125,
+            "max_memory_reserved_mb": 42558.0
+          }
+        }
+      ],
+      "driver_process_samples": [
+        {
+          "pid": 1312088,
+          "memory_mb": 43971
+        }
+      ],
+      "scope": "allocator cached safe boundary and driver collection are not exactly simultaneous"
+    },
+    {
+      "case": "m2-formal",
+      "snapshot": "diagnostic-status.json",
+      "workers": [
+        {
+          "pid": 780456,
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 780456,
+            "worker_rss_mb": 2581.30078125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 4803.71240234375,
+            "memory_reserved_mb": 12058.0,
+            "max_memory_allocated_mb": 8464.6962890625,
+            "max_memory_reserved_mb": 12058.0
+          }
+        },
+        {
+          "pid": 890119,
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 890119,
+            "worker_rss_mb": 2572.28125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 5599.3916015625,
+            "memory_reserved_mb": 30422.0,
+            "max_memory_allocated_mb": 11086.0712890625,
+            "max_memory_reserved_mb": 30422.0
+          }
+        }
+      ],
+      "driver_process_samples": [
+        {
+          "pid": 780456,
+          "memory_mb": 12978
+        },
+        {
+          "pid": 890119,
+          "memory_mb": 29628
+        }
+      ],
+      "scope": "allocator cached safe boundary and driver collection are not exactly simultaneous"
+    }
+  ],
+  "basic_loaded_tensor_mib": 3889.24560546875,
+  "basic_loaded_reserved_mib": 4296,
+  "single_short_warm_driver_process_mb": 4651,
+  "eight_short_warm_base_estimate_gib": 36.3359375,
+  "eight_instances_actually_verified": false,
+  "allocator_semantics_source": "installed torch_npu/npu/memory.py docstrings read without importing NPU; allocated=tensor bytes; reserved=caching allocator managed bytes",
+  "causal_limits": "reserved-allocated does not prove fragmentation/leak or immediately reusable contiguous space"
+}

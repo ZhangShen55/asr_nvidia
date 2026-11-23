@@ -44,3 +44,7 @@ S1仅短准入，完整八文件未测；M4/M8、组合、三轮200秒复验未�
 五次已启动服务均normalexit0、无forced、所有登记PID出生身份退出、私有PCM空、端口每轮至少5秒空闲；既有PID1601397保留。B0/M2正式轮TERM到父进程退出分别56.206/56.863秒，单列，不计入正式处理墙钟。见cleanup-verification.json与checkpoint-npu-smi.txt。
 
 原始日志保留logs/qwen-200s-feasibility-20261123/；冻结实验补丁在experimental-patches/，仅验证资产，不是正式业务改造。新change仍open，旧change及其420秒成绩不改写。
+
+## 单实例HBM补充核对
+
+刚加载后的tensor allocated3889.25MiB（3.80GiB）、reserved4296MiB（4.20GiB）；相同短clip暖身后，driver单Qwen进程4651MB（约4.54GiB），双实例各4651MB。此前41.56GiB是完整动态负载下allocator reserved，包含当前allocated，不能与权重/KV再相加。停止采样点allocated5.80GiB几乎可由约3.80GiB加载张量及约2.01GiB KV存储解释，live峰14.28GiB说明还有推理临时张量/工作区；reserved与current差额约35.76GiB，但是否为可复用缓存、碎片/等待事件等需更多allocator统计，不能认定泄漏。代码动态KV布局的index_select/pad/cat与逐token扩展会产生不同形状临时张量，是待证的保留空间增长机制。8实例仅短暖身基础线性估计约36.3GiB，未实际验证8份，更不代表能承载8份完整负载。原始数值与口径见hbm-breakdown.json。
