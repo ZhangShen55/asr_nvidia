@@ -1,0 +1,53 @@
+{
+  "utc": "2026-11-23T09:45:07.334474+00:00",
+  "scope": "M6N6 experiment controller only; explicit6 requests/warmups/concurrency, default8 protocol retained; no client/config authority modification",
+  "root": "/tmp/qwen200-20261123-j9r2czoi/m6n6",
+  "cpu_audit": "/tmp/qwen200-20261123-j9r2czoi/assets/m6n6-controller-cpu-v1/result.json",
+  "cpu_result": "47 passed in8.16s",
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "source_sha256": {
+    "scripts/benchmark_qwen200.py": "2e4c8b9858baf4be0a053541d2c106d3d0fb6a199d115e8e4143b9d403b99e2b",
+    "core/qwen200_watchdog.py": "8116d0d9654dae781c431f772026baa95f3a4904b09856d85de3842e8eb7fc1e",
+    "tests/test_qwen200_controller.py": "f17915ad1c81486692016410a064f9f3e2240d3ae5767d88e08442a218334d89",
+    "tests/test_qwen200_startup.py": "5521ee79767dc41226261b88dfea0bff692437ecf81246aef79036e7ae200548",
+    "tests/test_qwen200_six.py": "6b3dac237b2094d6a747a7c33b76f715e37536820b26e14b685a2d2939d51535"
+  },
+  "source_changed_during_tests": [],
+  "remaining_owned_cpu": [],
+  "owned_cpu_identities_checked": [
+    {
+      "pid": 3357358,
+      "birth": 1795427060.89
+    },
+    {
+      "pid": 3417689,
+      "birth": 1795427065.95
+    },
+    {
+      "pid": 3357358,
+      "birth": 1795427059.89
+    }
+  ],
+  "child_shutdown_proofs": [
+    {
+      "path": "/tmp/asr-cpu-ss6myqhg/pytest-of-root/pytest-0/test_owned_close_stopfile_pres0/shutdown.json",
+      "passed": true,
+      "remaining_pids": [],
+      "forced": false
+    }
+  ],
+  "patch": "/tmp/qwen200-20261123-j9r2czoi/assets/m6n6-controller.patch",
+  "patch_sha256": "abb5dae4d8f3385a1e1cc6dd0dbcf658919a89cd7afe236d20d5a4a3462b6a4b",
+  "expected_requests_default": 8,
+  "new_explicit_expected_requests": 6,
+  "goal_s": 200,
+  "hard_stop_s": 336,
+  "free_hbm_red_mib": 8192,
+  "startup_interval_s": 2,
+  "startup_timeout_cli_may_be_s": 600,
+  "HTTP_drain_s": 30,
+  "model_grace_s": "unchanged, configured120",
+  "cleanup_deadline_s": 210,
+  "port_observe_min_s": 5,
+  "ready_for_root_serial_NPU": true
+}

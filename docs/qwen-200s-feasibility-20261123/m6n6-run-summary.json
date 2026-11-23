@@ -1,0 +1,205 @@
+{
+  "case": "m6n6-formal",
+  "full_http_expected": 6,
+  "full_http_completed": 1,
+  "strict_no_warning_completed": 1,
+  "cancelled": 5,
+  "full_request_p50_p95": null,
+  "completed_subset": {
+    "n": 1,
+    "p50_s": 117.65985373035073,
+    "p95_s": 117.65985373035073,
+    "scope": "all processed completions including explicit warnings"
+  },
+  "formal_wall_s": 123.53315885923803,
+  "resource_trigger": {
+    "card": 7,
+    "free_hbm_mib": 6387,
+    "threshold_mib": 8192,
+    "reason": "resource_hbm_free"
+  },
+  "records": [
+    {
+      "sample_id": "a1",
+      "status": "cancelled",
+      "elapsed_s": 123.24848111066967,
+      "processing_status": null,
+      "warning_count": null
+    },
+    {
+      "sample_id": "a2",
+      "status": "cancelled",
+      "elapsed_s": 123.24794622976333,
+      "processing_status": null,
+      "warning_count": null
+    },
+    {
+      "sample_id": "a3",
+      "status": "cancelled",
+      "elapsed_s": 123.24762857984751,
+      "processing_status": null,
+      "warning_count": null
+    },
+    {
+      "sample_id": "a4",
+      "status": "cancelled",
+      "elapsed_s": 123.2473260499537,
+      "processing_status": null,
+      "warning_count": null
+    },
+    {
+      "sample_id": "a5",
+      "status": "completed",
+      "elapsed_s": 117.65985373035073,
+      "processing_status": "complete",
+      "warning_count": 0
+    },
+    {
+      "sample_id": "a6",
+      "status": "cancelled",
+      "elapsed_s": 123.245868739672,
+      "processing_status": null,
+      "warning_count": null
+    }
+  ],
+  "snapshot_formal_segment_total": 2904,
+  "worker_snapshots": [
+    {
+      "worker": 0,
+      "sample_id": "a1",
+      "snapshot_formal_segments": 563,
+      "active": 15,
+      "allocated_mib": 4054.611328125,
+      "reserved_mib": 5522.0,
+      "individual_peak_allocated_mib": 5007.03515625,
+      "prefill_calls": 281,
+      "prefill_members": 578,
+      "decode_steps": 423,
+      "sender_pending": 0,
+      "kv_storage_mib": 160.234375,
+      "phase_host_s": {
+        "prefill": 51.009992773644626,
+        "decode": 39.841550189070404
+      }
+    },
+    {
+      "worker": 1,
+      "sample_id": "a2",
+      "snapshot_formal_segments": 464,
+      "active": 16,
+      "allocated_mib": 4105.70947265625,
+      "reserved_mib": 7484.0,
+      "individual_peak_allocated_mib": 5810.71044921875,
+      "prefill_calls": 266,
+      "prefill_members": 480,
+      "decode_steps": 477,
+      "sender_pending": 0,
+      "kv_storage_mib": 229.90625,
+      "phase_host_s": {
+        "prefill": 47.930634380318224,
+        "decode": 43.49248031992465
+      }
+    },
+    {
+      "worker": 2,
+      "sample_id": "a3",
+      "snapshot_formal_segments": 507,
+      "active": 13,
+      "allocated_mib": 4110.08154296875,
+      "reserved_mib": 6274.0,
+      "individual_peak_allocated_mib": 5084.23681640625,
+      "prefill_calls": 263,
+      "prefill_members": 520,
+      "decode_steps": 460,
+      "sender_pending": 1,
+      "kv_storage_mib": 212.84375,
+      "phase_host_s": {
+        "prefill": 48.21339798159897,
+        "decode": 40.79396022763103
+      }
+    },
+    {
+      "worker": 3,
+      "sample_id": "a4",
+      "snapshot_formal_segments": 509,
+      "active": 14,
+      "allocated_mib": 4111.75,
+      "reserved_mib": 7254.0,
+      "individual_peak_allocated_mib": 5687.00537109375,
+      "prefill_calls": 277,
+      "prefill_members": 523,
+      "decode_steps": 459,
+      "sender_pending": 0,
+      "kv_storage_mib": 221.484375,
+      "phase_host_s": {
+        "prefill": 48.599961653351784,
+        "decode": 41.07184332702309
+      }
+    },
+    {
+      "worker": 4,
+      "sample_id": "a5",
+      "snapshot_formal_segments": 457,
+      "active": 0,
+      "allocated_mib": 3967.2236328125,
+      "reserved_mib": 5672.0,
+      "individual_peak_allocated_mib": 5080.45166015625,
+      "prefill_calls": 271,
+      "prefill_members": 457,
+      "decode_steps": 524,
+      "sender_pending": 0,
+      "kv_storage_mib": 0.0,
+      "phase_host_s": {
+        "prefill": 40.4226260362193,
+        "decode": 43.138252166099846
+      }
+    },
+    {
+      "worker": 5,
+      "sample_id": "a6",
+      "snapshot_formal_segments": 404,
+      "active": 16,
+      "allocated_mib": 4125.677734375,
+      "reserved_mib": 6216.0,
+      "individual_peak_allocated_mib": 5112.1513671875,
+      "prefill_calls": 283,
+      "prefill_members": 420,
+      "decode_steps": 687,
+      "sender_pending": 0,
+      "kv_storage_mib": 236.359375,
+      "phase_host_s": {
+        "prefill": 37.21782015636563,
+        "decode": 53.549005929380655
+      }
+    }
+  ],
+  "allocator_cached_allocated_mib": 24475.0537109375,
+  "allocator_cached_reserved_mib": 38422.0,
+  "driver_owned_observed": 6,
+  "driver_owned_sum_mib": 43566,
+  "a5_response": {
+    "segments": 431,
+    "text_characters": 12024,
+    "processing_status": "complete",
+    "warning_segments": 0
+  },
+  "shutdown": {
+    "passed": true,
+    "normal_exit0": true,
+    "forced": false,
+    "exit_code": 0,
+    "remaining_pids": [],
+    "remaining_cache_files": [],
+    "observe_s": 5,
+    "term_to_parent_exit_s": 59.273429119959474
+  },
+  "source_frozen": true,
+  "asset_changes": [],
+  "raw_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-formal",
+  "limits": [
+    "worker snapshots cached at individual safe boundaries, not simultaneous peak",
+    "input-duration divided by abort wall is not completed throughput; not reported",
+    "a5 output is a model result, no human accuracy ground truth",
+    "other five requests were cancelled, not observed336s failures"
+  ]
+}

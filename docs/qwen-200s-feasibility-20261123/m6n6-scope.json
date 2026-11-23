@@ -1,0 +1,26 @@
+{
+  "case": "m6n6-formal",
+  "selection": "original input manifest fixed first six a1-a6; not latency-selected",
+  "source_manifest": "/tmp/qwen200-20261123-j9r2czoi/assets/inputs-six.json",
+  "warmup_manifest": "/tmp/qwen200-20261123-j9r2czoi/assets/warmup-six.json",
+  "model_workers": 6,
+  "full_http_concurrency": 6,
+  "per_audio_segment_limit": 16,
+  "global_segment_limit": 96,
+  "per_worker_active": [
+    16,
+    16,
+    16,
+    16,
+    16,
+    16
+  ],
+  "token_budget": 60000,
+  "frame_budget": 86400,
+  "target_s": 200,
+  "hard_s": 336,
+  "min_free_hbm_mib": 8192,
+  "production_changes": false,
+  "performance_scope": "six complete sources only; not original eight acceptance",
+  "stage_input_note": "Discarded accidental inherited MN fusion_result run artifact in new stage by restoring its own HEAD bytes; old MN/root/stash untouched"
+}

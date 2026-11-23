@@ -1,5 +1,5 @@
 {
-  "status": "explicit_user_authorized_M8_full_completed_resource_stop",
+  "status": "explicit_M6N6_verification_finished_one_complete_resource_stop",
   "target_s": 200,
   "resource_free_hbm_mb": 8192,
   "hard_deadline_s": 336,
@@ -41,5 +41,28 @@
     "M6": "resource aborted 49.362232s/free7738MiB/0of8; not full latency",
     "M8": "not entered after M6 resource redline; capacity only"
   },
-  "scope_note": "original conditional matrix no-entry remains historical; latest user explicitly requested independent M8 full, covered in section7 and m8_full_followup"
+  "scope_note": "original conditional matrix no-entry remains historical; latest user explicitly requested independent M8 full, covered in section7 and m8_full_followup",
+  "m6n6_result": {
+    "source_ids": [
+      "a1",
+      "a2",
+      "a3",
+      "a4",
+      "a5",
+      "a6"
+    ],
+    "instances": 6,
+    "http_concurrency": 6,
+    "global_segments": 96,
+    "completed": 1,
+    "cancelled": 5,
+    "complete_a5_s": 117.65985373035073,
+    "formal_wall_s": 123.53315885923803,
+    "full_p50_p95": null,
+    "completed_subset_n": 1,
+    "resource_free_mib": 6387,
+    "resource_threshold_mib": 8192,
+    "normal_exit0": true,
+    "production_changes": false
+  }
 }

@@ -1,0 +1,49 @@
+{
+  "scope": "root independent closed M6N6 controller/one completion/censor/cleanup audit; not full-six performance pass",
+  "checks": {
+    "explicit_six": true,
+    "expected_six_summary": true,
+    "six_unique_requests": true,
+    "one_complete_five_cancelled": true,
+    "a5_elapsed_matches": true,
+    "full_p50_p95_unknown": true,
+    "n1_subset": true,
+    "warmup_six_separate": true,
+    "six_workers_visible": true,
+    "every_worker_real_forward": true,
+    "resource_card7": true,
+    "resource_threshold": true,
+    "source_complete_frozen": true,
+    "assets_frozen": true,
+    "normal_exit0": true,
+    "no_forced_cleanup": true,
+    "no_owned_remaining": true,
+    "port5s": true,
+    "pcm_empty": true
+  },
+  "passed": true,
+  "protocol_admission_compliant": true,
+  "normalized_trigger": {
+    "reason": "resource_hbm_free",
+    "card": 7,
+    "free_hbm_mib": 6387,
+    "threshold_mib": 8192
+  },
+  "formal_wall_s": 123.53315885923803,
+  "complete_http": 1,
+  "cancelled": 5,
+  "full_latency": null,
+  "completed_subset_n1": {
+    "n": 1,
+    "p50_s": 117.65985373035073,
+    "p95_s": 117.65985373035073,
+    "scope": "all processed completions including explicit warnings"
+  },
+  "normal_close_s": 59.273429119959474,
+  "source_file_sha256": {
+    "summary.json": "0ee8f488760f33a937acdd914d78191782eb31786d2cbf90ecdd6a93c7d3f55b",
+    "run.json": "a871fa7c0c27d193dcda0042b70f8c67843ecfd1943d80619712c7f15c35cfa7",
+    "shutdown.json": "2516a3651dcc9907fb14b9c1a81a3a00d7109df073755b4a8cc8ff2ce0cd95d6",
+    "diagnostic-status.json": "6e9994ee3c94c494829dc9a8fbbd7a280a5a1613ba60637c28e51973cbfb3046"
+  }
+}

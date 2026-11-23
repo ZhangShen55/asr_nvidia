@@ -1,0 +1,38 @@
+[
+  {
+    "sample_id": "a1",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lgqjog73lrabmnK/oi7Hor60t5aSa5Lq677yI5Lit6Iux77yJLndhdg==",
+    "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+    "audio_seconds": 3117.312
+  },
+  {
+    "sample_id": "a2",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lj43luLjnp6/liIbkuI7nuqfmlbDvvIjkuK3ms5XvvIkud2F2",
+    "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+    "audio_seconds": 3287.296
+  },
+  {
+    "sample_id": "a3",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lpJrmqKHmgIHmnLrlmajlrabkuaAx77yI5Lit6Iux77yJLndhdg==",
+    "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+    "audio_seconds": 3306.048
+  },
+  {
+    "sample_id": "a4",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lpJrmqKHmgIHmnLrlmajlrabkuaAyKOS4reiLsSkud2F2",
+    "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+    "audio_seconds": 3284.416
+  },
+  {
+    "sample_id": "a5",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lpJrmqKHmgIHmnLrlmajlrabkuaAz77yI5Lit6Iux77yJLndhdg==",
+    "sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+    "audio_seconds": 2981.12
+  },
+  {
+    "sample_id": "a6",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/nur/mgKfku6PmlbDkuI7op6PmnpDlh6DkvZXvvIjkuK3mlofvvIkud2F2",
+    "sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+    "audio_seconds": 3121.1306875
+  }
+]

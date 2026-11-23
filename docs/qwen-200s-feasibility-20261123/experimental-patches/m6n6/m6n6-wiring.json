@@ -1,0 +1,135 @@
+{
+  "experimental_only": true,
+  "root": "/tmp/qwen200-20261123-j9r2czoi/m6n6",
+  "base": "a1de07fb8cff9018d0b9082645b954e2fcc919be",
+  "activation_env": {
+    "QWEN200_EXPERIMENT_WORKERS": "6",
+    "QWEN200_EXPERIMENT_SOURCES": "6",
+    "QWEN200_ROUTING_MANIFEST": "/tmp/qwen200-20261123-j9r2czoi/assets/inputs-six.json",
+    "QWEN200_MODEL_THREADS": "1",
+    "QWEN200_STARTUP_STOP_FILE": "<controller owned TMPDIR>/qwen200-startup-stop.json"
+  },
+  "config": "/tmp/qwen200-20261123-j9r2czoi/m6n6/test/config.qwen200-m6n6.toml",
+  "global": {
+    "local_instance_count": 6,
+    "audio_concurrency": 6,
+    "segment_concurrency": 16,
+    "request_concurrency": 96,
+    "max_inference_batch_size": 96,
+    "max_batch_tokens": 60000,
+    "max_batch_audio_frames": 86400,
+    "pending_segment_limit": 256,
+    "pending_audio_bytes_limit": 268435456
+  },
+  "per_worker": [
+    {
+      "worker": 0,
+      "sample_id": "a1",
+      "sha_prefix": "16cdf4a725788a2d4659",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 1,
+      "sample_id": "a2",
+      "sha_prefix": "ce5a4529cd1ce7ac3780",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 2,
+      "sample_id": "a3",
+      "sha_prefix": "4e9afbb6c8855a180c95",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 3,
+      "sample_id": "a4",
+      "sha_prefix": "d937eba336cd8efaae80",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 4,
+      "sample_id": "a5",
+      "sha_prefix": "f393c3e6152a027e82eb",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 5,
+      "sample_id": "a6",
+      "sha_prefix": "d2485c6e64bba4285458",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    }
+  ],
+  "unchanged_other_config_sections": true,
+  "routing": "explicit six manifest source index modulo6; unknown/ambiguous rejected, no failed-owner migration; default remains8 source experiments",
+  "cpu_evidence": "/tmp/qwen200-20261123-j9r2czoi/assets/m6n6-cpu-1795427124281062510/result.json",
+  "cpu_result": "52 passed in5.69s",
+  "device_weight_guard_records": "",
+  "cache_mutation_intercepts": [],
+  "owned_cpu_identities": [
+    {
+      "pid": 4136784,
+      "birth": 1795427140.35
+    }
+  ],
+  "remaining_owned_cpu": [],
+  "guard_started_pids": [
+    4092178,
+    4136784
+  ],
+  "guard_started_pids_still_existing": [],
+  "source_changes": [],
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "final_tested_source_sha256": {
+    "core/qwen_asr_client.py": "6ce781cefe1a641c91b9fbec88b6c7911606d1f15ead314782032ef08211c7d6",
+    "core/config.py": "1d6fbb4221b4bf77fc10eaa90d31c6fb802ff66dc4936579274dc225d1621855",
+    "core/qwen_continuous_process.py": "23999110ce85be9d90d4afcf421dec3e3d869cc3b1eea0ca56d5fdf2ca5b3a9c",
+    "core/qwen_asr_process.py": "0d4ff4212dacb98d5c8959f9b415a09a9a3fef12c757992fb2ca9e3747432e7b",
+    "core/qwen_continuous_runtime.py": "732ad8f0ed7f7f06250c0b294d33486a2184cda14b3f062823e43a990998dba7",
+    "tests/test_qwen200_mn.py": "4b5831a4397351d3d901478bc7fb2e9ab637503d965d5a882d4da87020d724c0",
+    "test/config.qwen200-m6n6.toml": "a53214e76f92620bfcc28b932a0b76f9f6db56000938285347c810ed8efae856"
+  },
+  "owned_files_sha256": {
+    "core/qwen_asr_client.py": "6ce781cefe1a641c91b9fbec88b6c7911606d1f15ead314782032ef08211c7d6",
+    "core/config.py": "1d6fbb4221b4bf77fc10eaa90d31c6fb802ff66dc4936579274dc225d1621855",
+    "tests/test_qwen200_mn.py": "4b5831a4397351d3d901478bc7fb2e9ab637503d965d5a882d4da87020d724c0",
+    "test/config.qwen200-m6n6.toml": "a53214e76f92620bfcc28b932a0b76f9f6db56000938285347c810ed8efae856"
+  },
+  "patch_sha256": "0eb6bd75ee127f195ba97971800a2bcb5f0e78c8a9568ae7d74b84fe2dfbac8f",
+  "limits": [
+    "six complete sources a1-a6 are a separate workload, not an8source speedup denominator",
+    "14400 frame per owner can split16x901 longest members into15+1",
+    "VAD8 and original PCM256/256MiB remain unchanged",
+    "model torch threads6 total differs from old singlemodel4; no single-factor performance conclusion"
+  ],
+  "NPU_executed": false
+}

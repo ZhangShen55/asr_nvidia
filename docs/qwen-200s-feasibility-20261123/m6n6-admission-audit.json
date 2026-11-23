@@ -1,0 +1,151 @@
+{
+  "scope": "one read-only admission audit while root owns actual M6N6 NPU trial; no new CPU suite, HTTP, model loading or hardware query",
+  "utc": "2026-11-23T09:49:00.209494+00:00",
+  "source_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-formal",
+  "checks": {
+    "explicit_six_cli": true,
+    "six_instance_source_env": true,
+    "six_original_sources": true,
+    "six_warmup_filenames_match_sources": true,
+    "manifest_runtime_asset_sha": true,
+    "controller47_CPU_passed_and_unchanged": true,
+    "wiring52_CPU_passed_and_unchanged": true,
+    "run_runtime_sources_match_CPU_freezes": true,
+    "recorded_controller_SHA": true,
+    "recorded_config_SHA": true,
+    "config6_16_96": true,
+    "oneaudio_per_owner16": true,
+    "partitioned_budgets_not_replicated": true,
+    "original_generation_HF_BF16_npu7": true,
+    "formal200_336_ETA_report_only": true,
+    "startup_and_cleanup_limits_unchanged": true,
+    "single_HTTP_server_real_chain": true,
+    "old_M2_deviation_retained": true
+  },
+  "passed": true,
+  "authorization_scope": "latest user request for6instances,6full-original-audio concurrency,oneaudio/model and16/96; distinct from all prior8source workloads",
+  "controller_current_sha_matches": {
+    "scripts/benchmark_qwen200.py": true,
+    "core/qwen200_watchdog.py": true,
+    "tests/test_qwen200_controller.py": true,
+    "tests/test_qwen200_startup.py": true,
+    "tests/test_qwen200_six.py": true
+  },
+  "wiring_current_sha_matches": {
+    "core/qwen_asr_client.py": true,
+    "core/config.py": true,
+    "core/qwen_continuous_process.py": true,
+    "core/qwen_asr_process.py": true,
+    "core/qwen_continuous_runtime.py": true,
+    "tests/test_qwen200_mn.py": true,
+    "test/config.qwen200-m6n6.toml": true
+  },
+  "recorded_runtime_sha_matches": {
+    "core/qwen200_watchdog.py": true,
+    "core/qwen_asr_client.py": true,
+    "core/config.py": true,
+    "core/qwen_continuous_process.py": true,
+    "core/qwen_asr_process.py": true,
+    "core/qwen_continuous_runtime.py": true
+  },
+  "expected_requests": 6,
+  "expected_models": 6,
+  "expected_audio_ids": [
+    "a1",
+    "a2",
+    "a3",
+    "a4",
+    "a5",
+    "a6"
+  ],
+  "source_sha256_verified_in_runner": [
+    "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+    "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+    "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+    "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+    "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+    "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6"
+  ],
+  "controller_sha256": "2e4c8b9858baf4be0a053541d2c106d3d0fb6a199d115e8e4143b9d403b99e2b",
+  "config_sha256": "a53214e76f92620bfcc28b932a0b76f9f6db56000938285347c810ed8efae856",
+  "per_worker": [
+    {
+      "worker": 0,
+      "sample_id": "a1",
+      "sha_prefix": "16cdf4a725788a2d4659",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 1,
+      "sample_id": "a2",
+      "sha_prefix": "ce5a4529cd1ce7ac3780",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 2,
+      "sample_id": "a3",
+      "sha_prefix": "4e9afbb6c8855a180c95",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 3,
+      "sample_id": "a4",
+      "sha_prefix": "d937eba336cd8efaae80",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 4,
+      "sample_id": "a5",
+      "sha_prefix": "f393c3e6152a027e82eb",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    },
+    {
+      "worker": 5,
+      "sample_id": "a6",
+      "sha_prefix": "d2485c6e64bba4285458",
+      "audio_count": 1,
+      "max_active": 16,
+      "max_batch_size": 16,
+      "prefill_batch_size": 16,
+      "max_batch_tokens": 10000,
+      "max_batch_audio_frames": 14400
+    }
+  ],
+  "redline_free_hbm_mib": 8192,
+  "formal_target_s": 200,
+  "formal_hard_stop_s": 336,
+  "startup_observation_s": 600,
+  "capacity_observed_now": null,
+  "limits": [
+    "Runtime loaded worker/forward coverage remains to be verified from actual warmup/final status; this admission audit reads frozen artifacts, not live HTTP/hardware.",
+    "Original WAV bytes are not re-read during NPU pressure: runner load_samples verified complete SHA before launch, and this audit crosschecks immutable run identities with original six manifest entries.",
+    "Six-input16/96 is a separate workload, not an eight-input speedup denominator. Full quantiles require all6 complete; censored full latency/speedup must be null.",
+    "Eight CPU VAD workers and original256segments/256MiB PCM cap remain; model CPU threads6 total differs from old single-model4.",
+    "8GiB redline,200/336 time gates,CPU guard tests and owned cleanup safeguards are preserved; no positive performance or quality conclusion is made here."
+  ]
+}

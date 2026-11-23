@@ -1,0 +1,324 @@
+diff --git a/scripts/benchmark_qwen200.py b/scripts/benchmark_qwen200.py
+--- a/scripts/benchmark_qwen200.py
++++ b/scripts/benchmark_qwen200.py
+@@ -1,4 +1,4 @@
+-"""隔离验证：真实八完整音频、200秒目标、全轮336秒硬截止。"""
++"""隔离验证：明确6或8条完整音频、200秒目标、全轮336秒硬截止。"""
+ from __future__ import annotations
+ 
+ import argparse
+@@ -132,12 +132,14 @@
+     return invalid
+ 
+ 
+-def load_samples(path):
+-    """兼容资产审计清单和显式选定的八条samples；校验完整文件SHA。"""
++def load_samples(path, expected_requests=8):
++    """显式6/8条输入及完整SHA校验；默认八条，绝不自动挑选或截断。"""
+     manifest = json.loads(Path(path).read_text())
+     source = manifest["samples"] if isinstance(manifest, dict) else manifest
+-    if len(source) != 8:
+-        raise ValueError("必须显式提供八条完整音频，不自动挑选或截断清单")
++    if type(expected_requests) is not int or expected_requests not in (6, 8):
++        raise ValueError("expected_requests必须显式为6或8")
++    if len(source) != expected_requests:
++        raise ValueError(f"必须显式提供{expected_requests}条完整音频，不自动挑选或截断清单")
+     result, hashes, identifiers = [], set(), set()
+     for index, row in enumerate(source):
+         if row.get("path_bytes_b64"):
+@@ -151,7 +153,7 @@
+                 sha.update(chunk)
+         actual = sha.hexdigest()
+         if row.get("sha256") != actual or actual in hashes:
+-            raise ValueError("源SHA不匹配或不是八条独立音频")
++            raise ValueError("源SHA不匹配或不是相互独立的音频")
+         seconds = row.get("audio_seconds", row.get("duration_seconds", row.get("media", {}).get("duration_seconds")))
+         if not isinstance(seconds, (int, float)) or not 0 < seconds < float("inf"):
+             raise ValueError("每条需有效audio_seconds或media.duration_seconds")
+@@ -479,7 +481,7 @@
+         started, started_utc = time.monotonic(), utc_now()
+         watchdog = Qwen200Watchdog(started, hard_s=args.diagnostic_wall_timeout_s,
+             target_s=getattr(args, "target_s", 200), no_progress_s=args.no_progress_s,
+-            enable_eta_stop=getattr(args, "enable_eta_stop", False))
++            enable_eta_stop=getattr(args, "enable_eta_stop", False), expected_requests=len(samples))
+         async def status_call():
+             if status_fn:
+                 return await status_fn()
+@@ -602,7 +604,7 @@
+ 
+ 
+ async def warmup_one(args, output, *, request_fn=None, status_fn=None):
+-    """独立一次真实片段预热，严禁混入八完整文件的计时与分位数。"""
++    """独立一次真实片段预热，严禁混入正式完整文件的计时与分位数。"""
+     import httpx
+     source = Path(args.warmup_audio)
+     fields = fields_for("A" if args.mode == "A" else "B", 0)
+@@ -702,12 +704,13 @@
+ 
+ 
+ async def warmup(args, output, *, request_fn=None, status_fn=None):
+-    """所有候选同样八次真实短clip暖身；明确命中，不混入正式计时。"""
++    """所有候选按显式请求数做真实短clip暖身；明确命中，不混入正式计时。"""
+     manifest_path = getattr(args, 'warmup_manifest', None)
+     if manifest_path:
+         manifest = json.loads(Path(manifest_path).read_text())
+-        if not isinstance(manifest, list) or len(manifest) != 8:
+-            raise ValueError('warmup-manifest必须恰好八条path/upload_filename记录')
++        expected=getattr(args, 'expected_requests', 8)
++        if not isinstance(manifest, list) or len(manifest) != expected:
++            raise ValueError(f'warmup-manifest必须恰好{expected}条path/upload_filename记录')
+     else:
+         manifest = [dict(path=args.warmup_audio, upload_filename='warmup.wav')]
+     results=[]
+@@ -726,7 +729,8 @@
+         if not result['complete']: break
+     complete=len(results)==len(manifest) and all(r['complete'] for r in results)
+     final_status=results[-1].get('last_status',{}) if results else {}
+-    record=dict(kind='eight_real_http_warmup_clips' if manifest_path else 'one_real_http_warmup_clip',
++    record=dict(kind=('eight_real_http_warmup_clips' if getattr(args,'expected_requests',8)==8 else 'six_real_http_warmup_clips') if manifest_path else 'one_real_http_warmup_clip',
++                expected_requests=getattr(args,'expected_requests',8),
+                 complete=complete,status='completed' if complete else 'failed',records=results,
+                 last_status=final_status,elapsed_s=sum(r['elapsed_s'] for r in results))
+     if complete and getattr(args,'expected_qwen_workers',None) is not None:
+@@ -913,14 +917,16 @@
+     parser.add_argument("--manifest", required=True)
+     parser.add_argument("--output", required=True)
+     parser.add_argument("--url", default="http://127.0.0.1:18083")
+-    parser.add_argument("--concurrency", type=int, choices=(1, 2, 4, 8), required=True)
++    parser.add_argument("--concurrency", type=int, choices=(1, 2, 4, 6, 8), required=True)
++    parser.add_argument("--expected-requests",type=int,choices=(6,8),default=8,
++                        help="完整输入/并发/暖身的明确请求数，默认8；六路须显式指定6")
+     parser.add_argument("--mode", choices=("A", "B", "mixed", "mixed-swap"), required=True)
+     parser.add_argument("--launch-service", action="store_true")
+     parser.add_argument("--config")
+     parser.add_argument("--owned-request-drain-grace-s", type=int, default=30,
+                         help="owned测试HTTP请求drain秒数(1～180)；不改模型/业务超时或cleanup期限")
+-    parser.add_argument("--warmup-audio", help="独立真实短片路径；预热不计入八文件正式轮次")
+-    parser.add_argument("--warmup-manifest", help="八个真实短clip的path/upload_filename清单，单列于正式计时")
++    parser.add_argument("--warmup-audio", help="独立真实短片路径；预热不计入正式完整文件轮次")
++    parser.add_argument("--warmup-manifest", help="与expected-requests匹配的真实短clip path/upload_filename清单，单列于正式计时")
+     parser.add_argument("--warmup-only", action="store_true", help="仅真实HTTP准入检查，不产生性能结论")
+     parser.add_argument("--expected-qwen-workers", type=int, default=1)
+     parser.add_argument("--startup-resource-interval-s",type=float,default=2,
+@@ -941,14 +947,16 @@
+         parser.error("owned request drain grace必须是1～180秒整数")
+     if args.observe_s < 5 or args.diagnostic_wall_timeout_s > 336:
+         parser.error("不得放宽336秒门槛或缩短5秒端口观察")
+-    if args.mode != "A" or args.concurrency != 8:
+-        parser.error("本实验必须原八完整WAV、A模式、八HTTP并发")
++    if args.mode != "A" or args.concurrency != args.expected_requests:
++        parser.error("必须A模式且concurrency与expected-requests的6或8条完整WAV一致")
+     if not math.isfinite(args.target_s) or not 0 < args.target_s <= 200 or args.target_s >= args.diagnostic_wall_timeout_s:
+         parser.error("目标必须为有限正值且不得放宽200秒")
+     if not math.isfinite(args.startup_resource_interval_s) or args.startup_resource_interval_s < 2:
+         parser.error('startup资源采样间隔必须有限且至少2秒')
+     if args.expected_qwen_workers < 1 or args.expected_qwen_workers > 8:
+         parser.error("expected-qwen-workers须1～8")
++    if args.expected_qwen_workers > args.expected_requests:
++        parser.error("worker数不能超过明确输入数，否则暖身不能覆盖所有worker")
+     if args.warmup_only and not (args.warmup_manifest or args.warmup_audio):
+         parser.error("warmup-only需要真实短clip")
+     if args.launch_service and not args.config:
+@@ -977,7 +985,7 @@
+ 
+ def main():
+     args = parse_args()
+-    samples = load_samples(args.manifest)
++    samples = load_samples(args.manifest,args.expected_requests)
+     output = Path(args.output).resolve()
+     output.mkdir(parents=True, exist_ok=False)
+     identity=source_identity()
+@@ -985,7 +993,7 @@
+     write_json(output / "run.json", {"arguments": vars(args), "samples": samples, "utc": utc_now(),"source_identity":identity,
+         "experiment_asset_identity":asset_identity,
+         "controller_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
+-        "prediction_rule_version":RULE_VERSION, "validation_scope":"real eight HTTP, not component throughput",
++        "prediction_rule_version":RULE_VERSION, "validation_scope":f"real {args.expected_requests} full-audio HTTP, not component throughput",
+         "experiment_environment":{k:v for k,v in os.environ.items() if k.startswith("QWEN200_")}})
+     if args.config:
+         import shutil
+diff --git a/core/qwen200_watchdog.py b/core/qwen200_watchdog.py
+--- a/core/qwen200_watchdog.py
++++ b/core/qwen200_watchdog.py
+@@ -7,7 +7,7 @@
+ from core.performance_watchdog import DiagnosticTrigger, percentile
+ 
+ 
+-RULE_VERSION = 'qwen200-v1-report-only-20261123'
++RULE_VERSION = 'qwen200-v2-explicit-count-report-only-20261123'
+ 
+ 
+ def finite(value):
+@@ -39,6 +39,8 @@
+         self.no_progress_s, self.enable_eta_stop = no_progress_s, bool(enable_eta_stop)
+         self.min_hbm_free_mb = min_hbm_free_mb
+         self.min_host_available_bytes = min_host_available_bytes
++        if type(expected_requests) is not int or expected_requests not in (6,8):
++            raise ValueError('expected_requests必须为6或8，默认8不变')
+         self.expected_requests = expected_requests
+         self.trigger = None
+         self.last_progress = started
+@@ -101,13 +103,14 @@
+     def _prediction(self, now, progress, records, status):
+         elapsed = now-self.started
+         report = {'rule_version': RULE_VERSION, 'elapsed_s': elapsed, 'progress': progress,
++                  'expected_requests':self.expected_requests,
+                   'eta_total_s': None, 'per_request': {}, 'trusted': False, 'reasons': [],
+                   'rate_acceleration_allowance': 1.25, 'enabled_for_stop': self.enable_eta_stop,
+                   'scope': 'empirical optimistic projection, not observed completion time or hardware lower bound',
+                   'audio_duration_distribution': None, 'generated_token_distribution': None,
+                   'tail_acceleration_assumption': 'requires separate comparable distribution/shared-load/tail evidence'}
+         if elapsed < 90: report['reasons'].append('startup_or_short_elapsed')
+-        if len(progress) != self.expected_requests: report['reasons'].append('all_eight_live_progress_not_available')
++        if len(progress) != self.expected_requests: report['reasons'].append('all_expected_live_progress_not_available')
+         if len(self.history) < 2 or now-self.history[0][0] < 60:
+             report['reasons'].append('less_than_60s_progress')
+         for key, value in progress.items():
+@@ -183,6 +186,7 @@
+ def add_feasibility_summary(summary, target_s=200):
+     complete = bool(summary.get('complete')) and summary.get('processed_completed') == summary.get('expected')
+     summary['target_s'] = target_s
++    summary['expected_requests'] = summary.get('expected')
+     summary['hard_deadline_s'] = 336
+     summary['target_time_met_before_cleanup'] = complete and summary['batch_elapsed_s'] <= target_s
+     summary['target_passed'] = summary['target_time_met_before_cleanup']
+diff --git a/tests/test_qwen200_six.py b/tests/test_qwen200_six.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_qwen200_six.py
+@@ -0,0 +1,135 @@
++"""明确六输入的实验控制器契约；八输入仍为默认，替身不代表NPU性能。"""
++import argparse
++import asyncio
++import hashlib
++import importlib.util
++import json
++from pathlib import Path
++import pytest
++from core.qwen200_watchdog import Qwen200Watchdog
++
++ROOT=Path(__file__).resolve().parents[1]
++spec=importlib.util.spec_from_file_location('qwen200_six_controller',ROOT/'scripts/benchmark_qwen200.py')
++mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
++
++
++def cli(*extra):
++    return ['--manifest','unused','--output','unused','--mode','A','--concurrency','6',
++            '--expected-requests','6','--expected-qwen-workers','6',*extra]
++
++
++def records(state='running'):
++    return [dict(sample_id=str(i),status=state,audio_seconds=1) for i in range(6)]
++
++
++def samples():
++    return [dict(sample_id=str(i),sha256=str(i),audio_seconds=1,path='/not-read') for i in range(6)]
++
++
++def args(**override):
++    values=dict(url='http://127.0.0.1:18083',mode='A',concurrency=6,expected_requests=6,
++                diagnostic_wall_timeout_s=.1,target_s=.01,no_progress_s=120,
++                monitor_interval_s=.002,diagnostic_window_s=.005,enable_eta_stop=False)
++    values.update(override);return argparse.Namespace(**values)
++
++
++def test_explicit_six_cli_keeps_goal_resource_cleanup_and_startup_boundaries():
++    a=mod.parse_args(cli('--startup-timeout-s','600','--warmup-manifest','six.json'))
++    assert a.expected_requests==a.concurrency==a.expected_qwen_workers==6
++    assert a.target_s==200 and a.diagnostic_wall_timeout_s==336
++    assert a.owned_request_drain_grace_s==30 and a.shutdown_timeout_s==210 and a.observe_s==5
++    assert a.startup_resource_interval_s==2 and a.startup_timeout_s==600
++
++
++def test_default_eight_protocol_preserved():
++    a=mod.parse_args(['--manifest','x','--output','x','--mode','A','--concurrency','8'])
++    assert a.expected_requests==a.concurrency==8
++    w=Qwen200Watchdog(0,clock=lambda:0)
++    assert w.expected_requests==8 and w.min_hbm_free_mb==8192
++
++
++@pytest.mark.parametrize('extra',[
++    ['--concurrency','8'],['--mode','B'],['--expected-requests','7'],
++    ['--expected-qwen-workers','8'],['--diagnostic-wall-timeout-s','337'],['--target-s','201']])
++def test_six_cli_rejects_mismatches_or_weakened_rules(extra):
++    with pytest.raises(SystemExit):mod.parse_args(cli(*extra))
++
++
++def test_six_concurrency_is_not_silently_inferred_without_explicit_count():
++    with pytest.raises(SystemExit):
++        mod.parse_args(['--manifest','x','--output','x','--mode','A','--concurrency','6'])
++
++
++def manifest(tmp_path,count):
++    rows=[]
++    for i in range(count):
++        f=tmp_path/f'input-{i}.wav';f.write_bytes(('unique-cpu-fixture-'+str(i)).encode())
++        rows.append(dict(path=str(f),sample_id=str(i),sha256=hashlib.sha256(f.read_bytes()).hexdigest(),audio_seconds=1))
++    p=tmp_path/'manifest.json';p.write_text(json.dumps(rows));return p
++
++
++def test_input_sha_and_exact_count_six_without_truncation(tmp_path):
++    p=manifest(tmp_path,6)
++    assert len(mod.load_samples(p,expected_requests=6))==6
++    with pytest.raises(ValueError,match='8条'):mod.load_samples(p)
++    p=manifest(tmp_path,8)
++    with pytest.raises(ValueError,match='6条'):mod.load_samples(p,expected_requests=6)
++
++
++def test_six_manifest_rejects_changed_sha(tmp_path):
++    p=manifest(tmp_path,6);rows=json.loads(p.read_text())
++    Path(rows[0]['path']).write_bytes(b'changed')
++    with pytest.raises(ValueError,match='SHA'):mod.load_samples(p,expected_requests=6)
++
++
++def test_six_full_completion_quantile_n6_not_n8(tmp_path):
++    async def request(sample,fields):
++        await asyncio.sleep(.02);return {'segments':[{'segment_text':'六路'}],'text':'六路'}
++    async def status():return {}
++    result=asyncio.run(mod.run_round(args(),samples(),tmp_path,request_fn=request,status_fn=status))
++    assert result['complete'] and result['expected']==result['expected_requests']==6
++    assert result['processed_completed']==6 and result['all_request_latency']['n']==6
++    assert result['completion_subset_latency']['n']==6 and result['exact_end_to_end_speedup'] is None
++
++
++def test_six_censored_run_has_no_full_quantiles_and_all_six_started(tmp_path):
++    started=[]
++    async def request(sample,fields):started.append(sample['sample_id']);await asyncio.sleep(10)
++    async def status():return {}
++    result=asyncio.run(mod.run_round(args(diagnostic_wall_timeout_s=.04),samples(),tmp_path,request_fn=request,status_fn=status))
++    assert len(started)==6 and result['expected_requests']==6 and result['processed_completed']==0
++    assert result['all_request_latency'] is None and result['completion_subset_latency']['n']==0
++    assert result['diagnostic_trigger']['reason']=='batch_hard_deadline'
++
++
++def test_six_warmup_matches_explicit_manifest_and_reports_count(tmp_path):
++    p=tmp_path/'six.json';p.write_text(json.dumps([dict(path='/not-read',upload_filename=f'audio-{i}.wav') for i in range(6)]))
++    async def request(source,fields):return {'segments':[],'text':''}
++    async def status():return {}
++    result=asyncio.run(mod.warmup(args(warmup_manifest=str(p),expected_qwen_workers=None),tmp_path,
++                                 request_fn=request,status_fn=status))
++    assert result['complete'] and result['expected_requests']==6 and len(result['records'])==6
++    assert result['kind']=='six_real_http_warmup_clips'
++
++
++def test_six_warmup_rejects_old_eight_manifest_before_any_request(tmp_path):
++    p=tmp_path/'eight.json';p.write_text(json.dumps([dict(path='/not-read',upload_filename=f'audio-{i}.wav') for i in range(8)]))
++    async def request(*a):pytest.fail('invalid count submitted a request')
++    with pytest.raises(ValueError,match='6条'):
++        asyncio.run(mod.warmup(args(warmup_manifest=str(p),expected_qwen_workers=None),tmp_path,request_fn=request))
++
++
++def test_watchdog_six_progress_does_not_require_eight():
++    clock=[0];w=Qwen200Watchdog(0,clock=lambda:clock[0],expected_requests=6)
++    for t in range(0,121,10):
++        clock[0]=t
++        s={'resourceDiagnostics':{'requestTelemetry':{'active':{'requests':[
++            dict(request_id=str(i),stage='segments',progress={'segments_total':100,'qwen_done':t//10}) for i in range(6)]}}}}
++        assert w.sample(records(),s) is None
++    assert w.predictions[-1]['expected_requests']==6
++    assert 'all_expected_live_progress_not_available' not in w.predictions[-1]['reasons']
++
++
++@pytest.mark.parametrize('bad',[True,5,None])
++def test_watchdog_expected_count_is_strict(bad):
++    with pytest.raises(ValueError):Qwen200Watchdog(0,expected_requests=bad)
