@@ -1,0 +1,92 @@
+{
+  "experimental_only": true,
+  "root": "/tmp/qwen200-20261123-j9r2czoi/m2",
+  "base": "a1de07fb8cff9018d0b9082645b954e2fcc919be",
+  "activation_env": {
+    "QWEN200_EXPERIMENT_M2": "1",
+    "QWEN200_ROUTING_MANIFEST": "/tmp/qwen200-20261123-j9r2czoi/assets/inputs.json",
+    "QWEN200_MODEL_THREADS": "2"
+  },
+  "config": "/tmp/qwen200-20261123-j9r2czoi/m2/test/config.qwen200-m2.toml",
+  "per_worker": {
+    "max_active": 64,
+    "max_batch_size": 64,
+    "prefill_batch_size": 16,
+    "max_batch_tokens": 40000,
+    "max_batch_audio_frames": 57600
+  },
+  "global": {
+    "audio_concurrency": 8,
+    "segment_concurrency": 16,
+    "request_concurrency": 128,
+    "max_batch_tokens": 80000,
+    "max_batch_audio_frames": 115200,
+    "pending_segment_limit": 256,
+    "pending_audio_bytes_limit": 268435456
+  },
+  "mapping": [
+    {
+      "sample_id": "a1",
+      "source_sha_prefix": "16cdf4a725788a2d4659",
+      "worker": 0
+    },
+    {
+      "sample_id": "a2",
+      "source_sha_prefix": "ce5a4529cd1ce7ac3780",
+      "worker": 1
+    },
+    {
+      "sample_id": "a3",
+      "source_sha_prefix": "4e9afbb6c8855a180c95",
+      "worker": 0
+    },
+    {
+      "sample_id": "a4",
+      "source_sha_prefix": "d937eba336cd8efaae80",
+      "worker": 1
+    },
+    {
+      "sample_id": "a5",
+      "source_sha_prefix": "f393c3e6152a027e82eb",
+      "worker": 0
+    },
+    {
+      "sample_id": "a6",
+      "source_sha_prefix": "d2485c6e64bba4285458",
+      "worker": 1
+    },
+    {
+      "sample_id": "a7",
+      "source_sha_prefix": "99195ce63638c7a03c37",
+      "worker": 0
+    },
+    {
+      "sample_id": "a8",
+      "source_sha_prefix": "b3f93e7aa4c7c11ae335",
+      "worker": 1
+    }
+  ],
+  "routing_policy": "request_id must contain exactly one audio-SHA20.wav; unknown/ambiguous rejected; failed owner never migrated",
+  "preload": "all owners loaded sequentially before service ready, eight warmups use source SHA filenames",
+  "release": "only selected owner, preserves binding until backend terminal checks pass",
+  "status": "both cached workers and phase/allocator visible; index1 failure remains explicit; no status model load/RPC",
+  "cpu_evidence": "/tmp/qwen200-20261123-j9r2czoi/assets/m2-cpu-1795412858395075720/result.json",
+  "owned_file_sha256": {
+    "core/qwen_asr_client.py": "14df720e401959a7c8956e089e19b8a0e25ccca2ae51d4d22898fe437ac3a99b",
+    "core/config.py": "0a7d48f95ad43d72bf8f646f84f321a4c341fee0ad50fbabe2614cffc148c887",
+    "tests/test_qwen200_m2.py": "517ee297530eb7b69836781f8a7403158c8af0e3338182b5edafa6457cb03bcc",
+    "test/config.qwen200-m2.toml": "b92580c6564ee8ae49d31f93ab182c1d1ba413bd9ea27702eec54538dd89fc49"
+  },
+  "patch_sha256": "1bdc897a6024e8b67a3d55322f2fe006588f43578c286dc46527407f4162e678",
+  "NPU_executed": false,
+  "cpu_evidence_before_common_timing_patch": "/tmp/qwen200-20261123-j9r2czoi/assets/m2-cpu-1795412671954298590/result.json",
+  "final_tested_source_sha256": {
+    "core/qwen_asr_client.py": "14df720e401959a7c8956e089e19b8a0e25ccca2ae51d4d22898fe437ac3a99b",
+    "core/config.py": "0a7d48f95ad43d72bf8f646f84f321a4c341fee0ad50fbabe2614cffc148c887",
+    "tests/test_qwen200_m2.py": "517ee297530eb7b69836781f8a7403158c8af0e3338182b5edafa6457cb03bcc",
+    "core/qwen_continuous_process.py": "23999110ce85be9d90d4afcf421dec3e3d869cc3b1eea0ca56d5fdf2ca5b3a9c",
+    "core/qwen_asr_process.py": "0d4ff4212dacb98d5c8959f9b415a09a9a3fef12c757992fb2ca9e3747432e7b",
+    "core/qwen_continuous_runtime.py": "732ad8f0ed7f7f06250c0b294d33486a2184cda14b3f062823e43a990998dba7"
+  },
+  "common_timing_CPU_test_scope": "M2+continuous timeout+process shutdown+existing continuous RPC; 31 passed in5.32s; noNPU"
+}

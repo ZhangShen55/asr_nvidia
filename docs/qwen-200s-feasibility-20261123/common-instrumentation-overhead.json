@@ -1,0 +1,8 @@
+{
+  "calls": 200000,
+  "elapsed_s": 0.1750751007348299,
+  "host_helper_s_per_call": 8.753755036741495e-07,
+  "estimated_20000_helper_calls_s": 0.01750751007348299,
+  "scope": "helper-only CPU overhead; no device import or sync added; not NPU speed claim",
+  "existing_numerical_and_rpc_cpu_result": "/tmp/qwen200-cpu-common-hvsd66e_/result.json"
+}

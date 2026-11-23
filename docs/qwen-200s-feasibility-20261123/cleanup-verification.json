@@ -1,0 +1,32 @@
+{
+  "utc": "2026-11-23T06:13:19.886365+00:00",
+  "cases": [
+    "b0-preflight",
+    "m2-preflight",
+    "s1-preflight",
+    "b0-formal",
+    "m2-formal"
+  ],
+  "owned_birth_identities_checked": 222,
+  "remaining_owned": [],
+  "remaining_listeners": [],
+  "failed_shutdown_cases": [],
+  "shared": {
+    "pid": 1601397,
+    "birth": 1791963491.5,
+    "cmdline": [
+      "/usr/local/python3.10.17/bin/python",
+      "/usr/local/python3.10.17/bin/uvicorn",
+      "main:app",
+      "--host",
+      "127.0.0.1",
+      "--port",
+      "8007",
+      "--workers",
+      "1"
+    ]
+  },
+  "npu_smi_exit": 0,
+  "passed": true,
+  "scope": "all started tests closed; each run observed port free at least5s; not a performance pass"
+}

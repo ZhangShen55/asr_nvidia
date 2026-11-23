@@ -1,0 +1,1357 @@
+diff --git a/scripts/benchmark_qwen200.py b/scripts/benchmark_qwen200.py
+new file mode 100644
+--- /dev/null
++++ b/scripts/benchmark_qwen200.py
+@@ -0,0 +1,926 @@
++"""隔离验证：真实八完整音频、200秒目标、全轮336秒硬截止。"""
++from __future__ import annotations
++
++import argparse
++import asyncio
++import base64
++from dataclasses import asdict
++from datetime import datetime, timezone
++import hashlib
++import json
++import math
++import os
++from pathlib import Path
++import signal
++import socket
++import subprocess
++import sys
++import tempfile
++import time
++from urllib.parse import urlparse
++
++ROOT = Path(__file__).resolve().parents[1]
++if str(ROOT) not in sys.path:
++    sys.path.insert(0, str(ROOT))
++from core.performance_watchdog import PerformanceWatchdog, percentile
++from core.qwen200_watchdog import Qwen200Watchdog, add_feasibility_summary, RULE_VERSION
++
++
++def utc_now():
++    return datetime.now(timezone.utc).isoformat()
++
++
++def write_json(path, value):
++    path = Path(path)
++    temporary = path.with_suffix(path.suffix + ".tmp")
++    # 历史源文件名可能包含surrogateescape，JSON转义保留原字节往返能力。
++    temporary.write_text(json.dumps(value, ensure_ascii=True, indent=2) + "\n")
++    temporary.replace(path)
++
++
++def source_identity(root=ROOT, *, max_files=2048, max_bytes=512*1024*1024):
++    """仅散列运行时代码文件，不读正文入报告、不遍历权重/音频/构建C产物。"""
++    import importlib.machinery
++    root=Path(root).resolve()
++    files={};preferred={};errors=[];total=0
++    candidates=[]
++    for folder in ("core","api","utils","entity"):
++        base=root/folder
++        if base.is_dir():
++            candidates.extend(path for path in base.rglob("*") if path.suffix in (".py",".so")
++                              and not set(path.relative_to(base).parts[:-1]) & {"__pycache__","cache","caches",".git","model","test","tests"})
++    for module in ("main","model_status_runtime","telemetry_runtime"):
++        candidates.extend(path for path in root.glob(module+".*") if path.suffix in (".py",".so") and path.name.split(".")[0]==module)
++    for path in sorted(set(candidates)):
++        relative=str(path.relative_to(root))
++        if path.is_symlink():
++            errors.append({"path":relative,"reason":"symlink_source_not_hashed"});continue
++        if not path.is_file():
++            continue
++        try:
++            before=path.stat()
++            if len(files)>=max_files or total+before.st_size>max_bytes:
++                errors.append({"path":relative,"reason":"bounded_manifest_limit"});break
++            digest=hashlib.sha256()
++            with path.open("rb") as source:
++                for chunk in iter(lambda:source.read(1024*1024),b""):
++                    digest.update(chunk)
++            after=path.stat()
++            if (before.st_size,before.st_mtime_ns,before.st_ino)!=(after.st_size,after.st_mtime_ns,after.st_ino):
++                errors.append({"path":relative,"reason":"changed_while_hashing"})
++            files[relative]={"sha256":digest.hexdigest(),"bytes":after.st_size,"kind":path.suffix[1:]}
++            total+=after.st_size
++            module=str(Path(relative).parent/path.name.split(".")[0])
++            loadable_extension=any(path.name.endswith(suffix) for suffix in importlib.machinery.EXTENSION_SUFFIXES)
++            previous=preferred.get(module)
++            # 保护stage通常只剩.so；两者并存按扩展模块优先记录候选，绝不伪造缺失.py。
++            if previous is None or (loadable_extension and Path(previous).suffix!=".so"):
++                preferred[module]=relative
++        except OSError as exc:
++            errors.append({"path":relative,"reason":type(exc).__name__})
++    # 实际入口命令为python main.py，即便同目录存在main.so也不改写入口事实。
++    if "main.py" in files:
++        preferred["main"]="main.py"
++    head=None;head_reason="not_a_git_root"
++    try:
++        git=subprocess.run(["git","-C",str(root),"rev-parse","--show-toplevel","HEAD"],capture_output=True,text=True,timeout=5)
++        lines=git.stdout.strip().splitlines()
++        if git.returncode==0 and len(lines)==2 and Path(lines[0]).resolve()==root:
++            head=lines[1];head_reason=None
++    except (OSError,subprocess.TimeoutExpired) as exc:
++        head_reason=type(exc).__name__
++    return {"root":str(root),"git_head":head,"git_head_status":"known" if head else "unknown",
++            "git_head_reason":head_reason,"python_executable":sys.executable,"python_version":sys.version,
++            "files":files,"preferred_module_files":preferred,
++            "preferred_module_scope":"existing extension/source import candidates, not an in-memory import trace; main.py is the explicit entry",
++            "file_count":len(files),"hashed_bytes":total,"complete":bool(files) and not errors,"errors":errors}
++
++
++def source_differences(before,after):
++    changes=[]
++    original=before.get("files",{});current=after.get("files",{})
++    for path in sorted(set(original)|set(current)):
++        old=original.get(path,{}).get("sha256");new=current.get(path,{}).get("sha256")
++        if old!=new:
++            changes.append({"path":path,"before_sha256":old,"after_sha256":new,
++                            "change":"added" if old is None else "removed" if new is None else "modified"})
++    for key in ("root","python_executable","python_version"):
++        if before.get(key)!=after.get(key):
++            changes.append({"identity_field":key,"before":before.get(key),"after":after.get(key)})
++    return changes
++
++
++def finish_source_identity(output, before, *, collector=source_identity):
++    output=Path(output)
++    after=collector(Path(before["root"]))
++    changes=source_differences(before,after)
++    invalid=bool(changes) or not before.get("complete") or not after.get("complete")
++    path=output/"run.json"
++    record=json.loads(path.read_text())
++    fields={"source_identity_after":after,"source_changed_during_round":bool(changes),
++            "source_changes":changes,"source_identity_complete":before.get("complete") and after.get("complete"),
++            "git_head_changed_during_round":before.get("git_head")!=after.get("git_head")}
++    record.update(fields);write_json(path,record)
++    summary_path=output/"summary.json"
++    if summary_path.exists():
++        summary=json.loads(summary_path.read_text());summary.update(fields)
++        if invalid:
++            if summary.get("complete"):
++                summary["status"]="source_changed" if changes else "source_identity_incomplete"
++            summary["complete"]=False
++        write_json(summary_path,summary)
++    return invalid
++
++
++def load_samples(path):
++    """兼容资产审计清单和显式选定的八条samples；校验完整文件SHA。"""
++    manifest = json.loads(Path(path).read_text())
++    source = manifest["samples"] if isinstance(manifest, dict) else manifest
++    if len(source) != 8:
++        raise ValueError("必须显式提供八条完整音频，不自动挑选或截断清单")
++    result, hashes, identifiers = [], set(), set()
++    for index, row in enumerate(source):
++        if row.get("path_bytes_b64"):
++            filename = os.fsdecode(base64.b64decode(row["path_bytes_b64"], validate=True))
++        else:
++            filename = os.fsdecode(bytes.fromhex(row["path_hex"])) if row.get("path_hex") else row["path"]
++        filename = str(Path(filename).resolve())
++        with open(filename, "rb") as stream:
++            sha = hashlib.sha256()
++            for chunk in iter(lambda: stream.read(1024 * 1024), b""):
++                sha.update(chunk)
++        actual = sha.hexdigest()
++        if row.get("sha256") != actual or actual in hashes:
++            raise ValueError("源SHA不匹配或不是八条独立音频")
++        seconds = row.get("audio_seconds", row.get("duration_seconds", row.get("media", {}).get("duration_seconds")))
++        if not isinstance(seconds, (int, float)) or not 0 < seconds < float("inf"):
++            raise ValueError("每条需有效audio_seconds或media.duration_seconds")
++        sample_id = row.get("sample_id", row.get("id", f"audio-{index}"))
++        if sample_id in identifiers:
++            raise ValueError("sample_id必须唯一")
++        hashes.add(actual); identifiers.add(sample_id)
++        result.append(dict(row, path=filename, sha256=actual, audio_seconds=seconds, sample_id=sample_id))
++    return result
++
++
++def fields_for(mode, index):
++    enhanced = mode == "B" or (mode == "mixed" and index < 4) or (mode == "mixed-swap" and index >= 4)
++    return {"showSpk": str(enhanced).lower(), "showEmotion": str(enhanced).lower(), "showRoleIdentify": "false"}
++
++
++def listening(host, port):
++    with socket.socket() as connection:
++        connection.settimeout(.2)
++        return connection.connect_ex((host, port)) == 0
++
++
++def service_command(port, request_drain_grace_s=180):
++    # 只改变本轮owned测试HTTP请求drain窗口；main/core的缺省与模型收尾不变。
++    if type(request_drain_grace_s) is not int or not 1 <= request_drain_grace_s <= 180:
++        raise ValueError("owned request drain grace必须是1～180秒整数")
++    # main.py负责TERM重放及设备收尾，不能旁路为uvicorn模块入口。
++    return [sys.executable, "main.py", "--host", "127.0.0.1", "--port", str(port),
++            "--workers", "1", "--timeout-graceful-shutdown", str(request_drain_grace_s)]
++
++
++def owned_cache_files(cache_dir, *, max_entries=4096):
++    """只读独占音频cache；不扫描TMPDIR其它文件，不跟随符号链接。"""
++    root = Path(cache_dir)
++    remaining = []
++    try:
++        root.lstat()
++    except FileNotFoundError:
++        return remaining, None
++    except OSError as exc:
++        return remaining, f"{type(exc).__name__}: {exc}"
++    try:
++        if root.is_symlink() or not root.is_dir():
++            return remaining, "owned cache root is not a regular directory"
++    except OSError as exc:
++        return remaining, f"{type(exc).__name__}: {exc}"
++    pending, visited = [root], 0
++    try:
++        while pending:
++            with os.scandir(pending.pop()) as entries:
++                for entry in entries:
++                    visited += 1
++                    if visited > max_entries:
++                        return sorted(remaining), "owned cache scan exceeded bounded entry limit"
++                    if entry.is_dir(follow_symlinks=False):
++                        pending.append(Path(entry.path))
++                    else:
++                        remaining.append(str(Path(entry.path).relative_to(root)))
++    except OSError as exc:
++        return sorted(remaining), f"{type(exc).__name__}: {exc}"
++    return sorted(remaining), None
++
++
++class OwnedService:
++    """仅操作Popen确定归属、且PID创建时间仍匹配的资源。"""
++    def __init__(self, command, env, host, port, output, *, expected_exit_codes=(0,)):
++        import psutil
++        if host not in ("localhost", "127.0.0.1") or listening(host, port):
++            raise RuntimeError("owned启动仅支持空闲本机端口，不接管既有服务")
++        self.host, self.port, self.output = host, port, Path(output)
++        # 生产main.py正常TERM必须exit0；裸Python子进程测试可显式采用不同策略。
++        self.expected_exit_codes = tuple(expected_exit_codes)
++        # 每服务独占短临时根；不继承外部TMPDIR，不删除旧缓存，也不污染父环境。
++        self.temp_dir = tempfile.mkdtemp(prefix="asr-svc-", dir="/tmp")
++        self.cache_dir = str(Path(self.temp_dir) / "seacraft_asr")
++        child_env = dict(env, TMPDIR=self.temp_dir)
++        self.log = (self.output / "service.log").open("w")
++        try:
++            self.process = subprocess.Popen(command, cwd=ROOT, env=child_env, stdout=self.log,
++                                            stderr=subprocess.STDOUT, start_new_session=True)
++        except BaseException:
++            self.log.close()
++            raise
++        self.identities = {self.process.pid: psutil.Process(self.process.pid).create_time()}
++        self.register()
++
++    def register(self):
++        import psutil
++        parent = self.identities.get(self.process.pid)
++        try:
++            proc = psutil.Process(self.process.pid)
++            if proc.create_time() == parent:
++                for child in proc.children(recursive=True):
++                    self.identities[child.pid] = child.create_time()
++        except psutil.NoSuchProcess:
++            pass
++        # spawn worker可能在父进程已退出后才被采样。独立session是Popen创建，
++        # 同session/进程组且创建不早于父进程的成员必属该生命周期，再记录身份。
++        for member in psutil.process_iter(attrs=["pid", "create_time"]):
++            try:
++                if (member.info["create_time"] >= parent
++                        and os.getsid(member.pid) == self.process.pid
++                        and os.getpgid(member.pid) == self.process.pid):
++                    self.identities[member.pid] = member.info["create_time"]
++            except (psutil.NoSuchProcess, psutil.AccessDenied, ProcessLookupError, PermissionError):
++                continue
++        write_json(self.output / "ownership.json", {"pid": self.process.pid,
++                   "identities": self.identities, "host": self.host, "port": self.port,
++                   "temp_dir": self.temp_dir, "cache_dir": self.cache_dir,
++                   "temp_dir_scope": "owned service TMPDIR; retained after shutdown, no recursive deletion"})
++
++    def remaining(self):
++        import psutil
++        result = []
++        for pid, created in self.identities.items():
++            try:
++                proc = psutil.Process(pid)
++                if proc.create_time() == created and proc.status() != psutil.STATUS_ZOMBIE:
++                    result.append(proc)
++            except psutil.NoSuchProcess:
++                pass
++        return result
++
++    async def close(self, deadline_s=210, observe_s=5):
++        import psutil
++        term_sent = None
++        parent_exit_observed = None
++        def poll_exit():
++            nonlocal parent_exit_observed
++            code = self.process.poll()
++            if code is not None and parent_exit_observed is None:
++                parent_exit_observed = time.monotonic()
++            return code
++        self.register()
++        initial = list(self.identities.items())
++        forced = False
++        parent = next((p for p in self.remaining() if p.pid == self.process.pid), None)
++        orphan_cleanup = parent is None and bool(self.remaining())
++        if parent:
++            try:
++                parent.terminate()
++                term_sent = time.monotonic()
++            except psutil.NoSuchProcess:
++                pass
++        if orphan_cleanup:
++            for proc in self.remaining():
++                try:
++                    proc.terminate()
++                except psutil.NoSuchProcess:
++                    pass
++        deadline = time.monotonic() + deadline_s
++        while self.remaining() and time.monotonic() < deadline:
++            self.register()
++            poll_exit()
++            await asyncio.sleep(.1)
++        if self.remaining():
++            forced = True
++            for proc in self.remaining():
++                try:
++                    proc.kill()
++                except psutil.NoSuchProcess:
++                    pass
++            await asyncio.sleep(.2)
++        poll_exit()
++        # 连续观察而非只看一次无监听，避免接口短暂释放后又自动拉起。
++        observations = []
++        end = time.monotonic() + observe_s
++        while True:
++            observations.append(listening(self.host, self.port))
++            if time.monotonic() >= end:
++                break
++            await asyncio.sleep(min(.2, max(0, end-time.monotonic())))
++        remaining = [p.pid for p in self.remaining()]
++        exit_code = poll_exit()
++        exit_code_ok = exit_code in self.expected_exit_codes
++        cache_files, cache_error = owned_cache_files(self.cache_dir)
++        result = {"owned": True, "identities": initial, "forced": forced,
++                  "temp_dir": self.temp_dir, "cache_dir": self.cache_dir,
++                  "temp_dir_retained": Path(self.temp_dir).is_dir(),
++                  "remaining_cache_files": cache_files, "cache_scan_error": cache_error,
++                  "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
++                  "exit_code": exit_code, "expected_exit_codes": self.expected_exit_codes,
++                  "exit_code_ok": exit_code_ok, "remaining_pids": remaining,
++                  "port_observations": observations, "observe_s": observe_s,
++                  "orphan_cleanup": orphan_cleanup,
++                  "term_sent_monotonic": term_sent,
++                  "parent_exit_observed_monotonic": parent_exit_observed,
++                  "term_to_parent_exit_s": (parent_exit_observed-term_sent
++                                            if term_sent is not None and parent_exit_observed is not None else None),
++                  "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
++                  "passed": exit_code_ok and not forced and not orphan_cleanup and not remaining and not any(observations)
++                            and not cache_files and cache_error is None}
++        self.log.close()
++        write_json(self.output / "shutdown.json", result)
++        return result
++
++
++def progress_token(status):
++    """仅阶段完成计数，不使用动态时延/CPU/HBM，避免伪进展。"""
++    tokens = []
++    def visit(value, prefix=""):
++        if isinstance(value, dict):
++            for key, item in value.items():
++                if key in ("completed", "completed_segments", "completed_batches", "finished", "processed",
++                           "segments_done", "qwen_done", "spk_done", "emo_done", "cut_done") and type(item) in (int, float):
++                    tokens.append((prefix+key, item))
++                elif isinstance(item, (dict, list)):
++                    visit(item, prefix+key+".")
++        elif isinstance(value, list):
++            for index, item in enumerate(value):
++                visit(item, prefix+str(index)+".")
++    visit(status)
++    return tuple(tokens)
++
++
++class WarmupProgress:
++    """仅预热累计已验证加载完成；资源/出生/loaded抖动不重置无进展计时。"""
++    def __init__(self):
++        self._ready = set()
++        self._native_completed = {}
++
++    @staticmethod
++    def _birth(identity):
++        if not isinstance(identity, dict) or type(identity.get("pid")) is not int or identity["pid"] <= 0:
++            return None
++        created, ticks = identity.get("create_time"), identity.get("start_ticks")
++        if type(created) not in (int, float) or not math.isfinite(created) or created <= 0:
++            return None
++        if isinstance(ticks, bool) or not isinstance(ticks, (str, int)) or not str(ticks).isdigit() or int(ticks) <= 0:
++            return None
++        return identity["pid"], float(created), str(int(ticks))
++
++    def _native(self, name, count):
++        if type(count) is int and count > 0:
++            self._native_completed[name] = max(self._native_completed.get(name, 0), count)
++
++    def sample(self, status):
++        for name, model in status.get("localModels", {}).items():
++            if not isinstance(model, dict):
++                continue
++            if model.get("execution_mode", "thread") != "process":
++                self._native("local." + name, model.get("instances"))
++                continue
++            for worker in model.get("model_workers", []):
++                if not isinstance(worker, dict):
++                    continue
++                ready = worker.get("ready")
++                identity = worker.get("worker_identity")
++                birth = self._birth(identity)
++                if (birth is not None and isinstance(ready, dict) and ready.get("kind") == "READY"
++                        and ready.get("identity") == identity and isinstance(ready.get("launch"), str)
++                        and ready["launch"]):
++                    self._ready.add(("local." + name, ready["launch"], *birth))
++        self._native("vad", status.get("vadPool", {}).get("loaded_instances"))
++        qwen = status.get("qwenModel", {})
++        instances = qwen.get("instances", [])
++        if isinstance(instances, list):
++            if qwen.get("execution_mode", "thread") == "process":
++                for instance in instances:
++                    if not isinstance(instance, dict) or instance.get("loaded") is not True:
++                        continue
++                    worker = instance.get("model_worker", {})
++                    if not isinstance(worker, dict):
++                        continue
++                    birth = self._birth({"pid": worker.get("worker_pid"),
++                                         "create_time": worker.get("worker_create_time"),
++                                         "start_ticks": worker.get("worker_start_ticks")})
++                    if (birth is not None and worker.get("ready_verified") is True
++                            and isinstance(worker.get("launch_id"), str) and worker["launch_id"]):
++                        self._ready.add(("qwen", worker["launch_id"], *birth))
++            else:
++                self._native("qwen", sum(isinstance(row, dict) and row.get("loaded") is True
++                                         and not row.get("failure") for row in instances))
++        return (progress_token(status), tuple(sorted(self._ready)), tuple(sorted(self._native_completed.items())))
++
++
++def summarize(records, batch_start, batch_end, aborted):
++    succeeded = [r for r in records if r["status"] == "completed"]
++    values = [r["elapsed_s"] for r in succeeded]
++    complete = len(succeeded) == len(records) and not aborted
++    elapsed = batch_end - batch_start
++    strict = [r for r in succeeded if r.get("processing_status", "complete") == "complete"
++              and not r.get("warning_count", 0)]
++    strict_values = [r["elapsed_s"] for r in strict]
++    warned = [r for r in succeeded if r.get("processing_status") == "completed_with_warnings"]
++    return {"status": "diagnostic_aborted" if aborted else
++                     "completed_with_warnings" if complete and warned else "completed" if complete else "incomplete",
++            "expected": len(records), "successful": len(strict), "complete": complete,
++            "processed_completed": len(succeeded), "completed_with_warnings": len(warned),
++            "strict_success_rate": len(strict)/len(records) if records else None,
++            "processing_completion_rate": len(succeeded)/len(records) if records else None,
++            "requests_with_usable_text": sum(bool(r.get("has_usable_text")) for r in succeeded),
++            "warning_segments": sum(r.get("warning_count", 0) for r in succeeded),
++            "unrecoverable_segments": sum(r.get("unrecoverable_segment_count", 0) for r in succeeded),
++            "completion_subset_latency": {"n": len(values), "p50_s": percentile(values, .5),
++                "p95_s": percentile(values, .95), "scope": "all processed completions including explicit warnings"},
++            "batch_started_monotonic": batch_start, "batch_ended_monotonic": batch_end,
++            "batch_elapsed_s": elapsed, "success_subset_latency": {"n": len(strict_values),
++            "p50_s": percentile(strict_values, .5), "p95_s": percentile(strict_values, .95),
++            "method": "linear interpolation; incomplete rounds are censored and not acceptance"},
++            "source_audio_seconds": sum(r["audio_seconds"] for r in records),
++            "source_audio_seconds_per_wall_second": sum(r["audio_seconds"] for r in records)/elapsed if complete and elapsed else None,
++            "records": records}
++
++
++async def run_round(args, samples, output, owner=None, *, request_fn=None, status_fn=None):
++    """注入request/status便于无硬件测试；同时在途窗口，而非按波等待。"""
++    import httpx
++    output = Path(output)
++    records = [dict(sample_id=s["sample_id"], sha256=s["sha256"], audio_seconds=s["audio_seconds"],
++                    status="not_submitted", fields=fields_for(args.mode, i)) for i, s in enumerate(samples)]
++    active, active_start = {}, {}
++    started = started_utc = watchdog = None
++    trigger, failure = None, None
++    async with httpx.AsyncClient(base_url=args.url, timeout=None, trust_env=False) as client:
++        started, started_utc = time.monotonic(), utc_now()
++        watchdog = Qwen200Watchdog(started, hard_s=args.diagnostic_wall_timeout_s,
++            target_s=getattr(args, "target_s", 200), no_progress_s=args.no_progress_s,
++            enable_eta_stop=getattr(args, "enable_eta_stop", False))
++        async def status_call():
++            if status_fn:
++                return await status_fn()
++            response = await client.get("/get_status", timeout=5)
++            response.raise_for_status()
++            return response.json()
++
++        async def one(index):
++            row = records[index]
++            row.update(status="running", started_monotonic=time.monotonic(), started_utc=utc_now())
++            active_start[row["sample_id"]] = row["started_monotonic"]
++            try:
++                if request_fn:
++                    payload = await request_fn(samples[index], row["fields"])
++                    row["http_status"] = 200
++                else:
++                    with open(samples[index]["path"], "rb") as audio:
++                        response = await client.post("/v3/seacraft_asr", files={"audioFile": ("audio-"+row["sha256"][:20]+".wav", audio)}, data=row["fields"])
++                    row["http_status"] = response.status_code
++                    response.raise_for_status()
++                    payload = response.json()
++                row["code"] = payload.get("code")
++                row["status"] = "completed" if row["code"] in (None, 0) and isinstance(payload.get("segments"), list) else "failed"
++                if row["status"] == "completed":
++                    warnings = payload.get("segment_warnings", [])
++                    state = payload.get("processing_status", "complete")
++                    if state not in {"complete", "completed_with_warnings"} or not isinstance(warnings, list):
++                        raise ValueError("invalid processing completion metadata")
++                    if (state == "complete" and warnings) or (state == "completed_with_warnings" and not warnings):
++                        raise ValueError("inconsistent processing warning metadata")
++                    row.update(processing_status=state, warning_count=len(warnings),
++                        unrecoverable_segment_count=sum(w.get("action") in {"discard_unrecoverable", "unrecoverable"}
++                                                        for w in warnings if isinstance(w, dict)),
++                        has_usable_text=any(isinstance(x.get("segment_text"), str) and bool(x["segment_text"].strip())
++                                            for x in payload["segments"] if isinstance(x, dict)))
++                write_json(output / f"response-{index}.json", payload)
++            except asyncio.CancelledError:
++                row["status"] = "cancelled"
++                raise
++            except Exception as exc:
++                row.update(status="failed", error=f"{type(exc).__name__}: {exc}")
++            finally:
++                row.update(ended_monotonic=time.monotonic(), ended_utc=utc_now())
++                row["elapsed_s"] = row["ended_monotonic"] - row["started_monotonic"]
++                row["rtf"] = row["elapsed_s"] / row["audio_seconds"]
++                active_start.pop(row["sample_id"], None)
++                write_json(output / f"request-{index}.json", row)
++
++        pending = iter(range(len(samples)))
++        exhausted = False
++        latest_status = {}
++        status_task = None
++        try:
++            while True:
++                if owner:
++                    owner.register()
++                values = [r["elapsed_s"] for r in records if r["status"] == "completed"]
++                trigger = watchdog.sample(records, latest_status)
++                if owner and owner.process.poll() is not None and trigger is None:
++                    from core.performance_watchdog import DiagnosticTrigger
++                    trigger = DiagnosticTrigger("owned_service_exited", time.monotonic(), None, 1, 0)
++                write_json(output / "prediction.json", {"rule_version": RULE_VERSION,
++                    "enabled_for_stop": watchdog.enable_eta_stop, "predictions": watchdog.predictions,
++                    "latest_resource": watchdog.latest_resource})
++                if trigger:
++                    write_json(output / "diagnostic-trigger.json", {**asdict(trigger), "utc": utc_now(), "records": records})
++                    # 先停止追加，再有界取证；不等待完整请求自然结束才记录卡点。
++                    try:
++                        latest_status = await asyncio.wait_for(status_call(), args.diagnostic_window_s)
++                    except Exception as exc:
++                        latest_status = {"snapshot_error": repr(exc)}
++                    write_json(output / "diagnostic-status.json", latest_status)
++                    break
++                while len(active) < args.concurrency and not exhausted:
++                    index = next(pending, None)
++                    if index is None:
++                        exhausted = True
++                        break
++                    active[index] = asyncio.create_task(one(index))
++                if not active:
++                    break
++                remaining = max(0.001, args.diagnostic_wall_timeout_s-(time.monotonic()-started))
++                done, _ = await asyncio.wait(active.values(), timeout=min(args.monitor_interval_s, remaining),
++                                              return_when=asyncio.FIRST_COMPLETED)
++                for index, task in list(active.items()):
++                    if task in done:
++                        task.result()
++                        del active[index]
++                # 状态接口慢/失效不能阻塞一秒watchdog采样。
++                if status_task is not None and status_task.done():
++                    try:
++                        latest_status = status_task.result()
++                    except Exception as exc:
++                        latest_status = {"snapshot_error": repr(exc)}
++                    with (output / "status.jsonl").open("a") as stream:
++                        stream.write(json.dumps({"monotonic": time.monotonic(), "utc": utc_now(), "status": latest_status}, ensure_ascii=True)+"\n")
++                    status_task = None
++                if status_task is None:
++                    status_task = asyncio.create_task(status_call())
++        except BaseException as exc:
++            failure = f"{type(exc).__name__}: {exc}"
++            raise
++        finally:
++            if status_task is not None:
++                status_task.cancel()
++                await asyncio.gather(status_task, return_exceptions=True)
++            for task in active.values():
++                task.cancel()
++            await asyncio.gather(*active.values(), return_exceptions=True)
++            ended = (max(r['ended_monotonic'] for r in records)
++                     if trigger is None and all(r['status']=='completed' for r in records)
++                     else time.monotonic())
++            summary = add_feasibility_summary(summarize(records, started, ended, trigger is not None),
++                                              getattr(args, "target_s", 200))
++            summary.update(batch_started_utc=started_utc, batch_ended_utc=utc_now(), mode=args.mode,
++                           concurrency=args.concurrency, service_ownership="owned" if owner else "external_nonowned",
++                           failure=failure, diagnostic_trigger=asdict(trigger) if trigger else None)
++            write_json(output / "summary.json", summary)
++    return summary
++
++
++async def warmup_one(args, output, *, request_fn=None, status_fn=None):
++    """独立一次真实片段预热，严禁混入八完整文件的计时与分位数。"""
++    import httpx
++    source = Path(args.warmup_audio)
++    fields = fields_for("A" if args.mode == "A" else "B", 0)
++    record = {"kind": "warmup_clip_not_full_audio", "source_path_bytes_b64": base64.b64encode(os.fsencode(source)).decode(),
++              "mode": args.mode, "fields": fields, "started_monotonic": time.monotonic(),
++              "started_utc": utc_now(), "status": "running", "complete": False}
++    watchdog = PerformanceWatchdog(args.diagnostic_wall_timeout_s, args.no_progress_s)
++    warmup_progress = WarmupProgress()
++    request_task = status_task = None
++    latest = {}
++    async with httpx.AsyncClient(base_url=args.url, timeout=None, trust_env=False) as client:
++        async def request():
++            if request_fn:
++                return await request_fn(source, fields)
++            with source.open("rb") as audio:
++                response = await client.post("/v3/seacraft_asr", files={"audioFile": (getattr(args, "warmup_upload_filename", "warmup.wav"), audio)}, data=fields)
++            record["http_status"] = response.status_code
++            try:
++                record["response"] = response.json()
++                record["code"] = record["response"].get("code")
++            except (ValueError, AttributeError):
++                record["response_text"] = response.text
++            response.raise_for_status()
++            return response.json()
++        async def status():
++            if status_fn:
++                return await status_fn()
++            response = await client.get("/get_status", timeout=5)
++            response.raise_for_status()
++            return response.json()
++        try:
++            request_task = asyncio.create_task(request())
++            while not request_task.done():
++                trigger = watchdog.sample([], {"warmup": record["started_monotonic"]}, warmup_progress.sample(latest))
++                if trigger:
++                    record.update(status="diagnostic_aborted", diagnostic_trigger=asdict(trigger))
++                    try:
++                        latest = await asyncio.wait_for(status(), args.diagnostic_window_s)
++                    except Exception as exc:
++                        latest = {"snapshot_error": repr(exc)}
++                    record["diagnostic_status"] = latest
++                    break
++                if status_task is None:
++                    status_task = asyncio.create_task(status())
++                if status_task.done():
++                    try:
++                        latest = status_task.result()
++                    except Exception as exc:
++                        latest = {"snapshot_error": repr(exc)}
++                    status_task = None
++                await asyncio.wait({request_task}, timeout=args.monitor_interval_s)
++            if request_task.done() and record["status"] != "diagnostic_aborted":
++                payload = request_task.result()
++                record.update(response=payload, code=payload.get("code"))
++                elapsed = time.monotonic()-record["started_monotonic"]
++                trigger = watchdog.sample([elapsed], {})
++                if trigger:
++                    record.update(status="diagnostic_aborted", diagnostic_trigger=asdict(trigger), diagnostic_status=latest)
++                elif record["code"] in (None, 0) and isinstance(payload.get("segments"), list):
++                    try:
++                        latest = await asyncio.wait_for(status(), args.diagnostic_window_s)
++                    except Exception as exc:
++                        latest = {"snapshot_error": repr(exc)}
++                    record["final_status"] = latest
++                    expected = getattr(args, "expected_model_instances", None)
++                    if expected is not None:
++                        vad = latest.get("vadPool", {})
++                        if vad.get("loaded_instances") != expected or vad.get("failed_instances", 0):
++                            raise ValueError("预热后VAD健康容量不符合expected-model-instances")
++                        if args.mode != "A":
++                            models = latest.get("localModels", {})
++                            for name in ("speech_campplus", "emotion2vec"):
++                                model = models.get(name, {})
++                                if (model.get("configured_instances") != expected or model.get("instances") != expected
++                                        or model.get("failed_instances", 0)):
++                                    raise ValueError("预热后"+name+"健康容量不符合expected-model-instances")
++                    record.update(status="completed", complete=True)
++                else:
++                    record["status"] = "failed"
++        except asyncio.CancelledError:
++            record["status"] = "cancelled"
++            raise
++        except Exception as exc:
++            record.update(status="failed", error=f"{type(exc).__name__}: {exc}")
++        finally:
++            pending = [task for task in (request_task, status_task) if task is not None]
++            for task in pending:
++                if not task.done():
++                    task.cancel()
++            await asyncio.gather(*pending, return_exceptions=True)
++            record.update(ended_monotonic=time.monotonic(), ended_utc=utc_now())
++            record["elapsed_s"] = record["ended_monotonic"]-record["started_monotonic"]
++            save_status = latest if record["complete"] else record.get("diagnostic_status", latest)
++            record["last_status"] = save_status
++            write_json(Path(output)/"warmup.json", record)
++    return record
++
++
++async def warmup(args, output, *, request_fn=None, status_fn=None):
++    """所有候选同样八次真实短clip暖身；明确命中，不混入正式计时。"""
++    manifest_path = getattr(args, 'warmup_manifest', None)
++    if manifest_path:
++        manifest = json.loads(Path(manifest_path).read_text())
++        if not isinstance(manifest, list) or len(manifest) != 8:
++            raise ValueError('warmup-manifest必须恰好八条path/upload_filename记录')
++    else:
++        manifest = [dict(path=args.warmup_audio, upload_filename='warmup.wav')]
++    results=[]
++    for index, row in enumerate(manifest):
++        child = argparse.Namespace(**vars(args))
++        child.warmup_audio = row['path']
++        child.warmup_upload_filename = row['upload_filename']
++        child.expected_model_instances = None
++        folder=Path(output)/('warmup-'+str(index));folder.mkdir()
++        result=await warmup_one(child,folder,request_fn=request_fn,status_fn=status_fn)
++        result['upload_filename']=row['upload_filename']
++        results.append(result)
++        resources, red = Qwen200Watchdog(time.monotonic()).resource_sample(result.get('last_status',{}))
++        if red:
++            result.update(complete=False,status='resource_aborted',resource_trigger=red,resources=resources)
++        if not result['complete']: break
++    complete=len(results)==len(manifest) and all(r['complete'] for r in results)
++    final_status=results[-1].get('last_status',{}) if results else {}
++    record=dict(kind='eight_real_http_warmup_clips' if manifest_path else 'one_real_http_warmup_clip',
++                complete=complete,status='completed' if complete else 'failed',records=results,
++                last_status=final_status,elapsed_s=sum(r['elapsed_s'] for r in results))
++    if complete and getattr(args,'expected_qwen_workers',None) is not None:
++        qwen=final_status.get('qwenModel',{})
++        instances=qwen.get('instances',[])
++        if (qwen.get('configured_instances') != args.expected_qwen_workers
++                or len(instances) != args.expected_qwen_workers or qwen.get('failed_instances',0)
++                or any(not r.get('loaded') or r.get('failure')
++                       or r.get('continuous',{}).get('steps',{}).get('prefill',0)<1 for r in instances)):
++            record.update(complete=False,status='worker_coverage_failed')
++    write_json(Path(output)/'warmup.json',record)
++    write_json(Path(output)/'warmup-final-status.json',final_status)
++    return record
++
++
++async def execute(args, samples, output):
++    owner = None
++    summary = None
++    try:
++        if args.launch_service:
++            parsed = urlparse(args.url)
++            env = dict(os.environ, CONFIG_PATH=str(Path(args.config).resolve()),
++                       PYTHONPATH=str(ROOT)+os.pathsep+os.environ.get("PYTHONPATH", ""))
++            request_grace = getattr(args, "owned_request_drain_grace_s", 180)
++            command = service_command(parsed.port or 80, request_grace)
++            run_path = Path(output) / "run.json"
++            if run_path.is_file():
++                run_record = json.loads(run_path.read_text())
++                run_record["owned_service"] = {
++                    "command": command, "request_drain_grace_s": request_grace,
++                    "cleanup_deadline_s": args.shutdown_timeout_s, "port_observe_s": args.observe_s,
++                    "scope": "test-owned HTTP request drain only; model DONE/lifespan cleanup remains separate",
++                }
++                write_json(run_path, run_record)
++            owner = OwnedService(command, env, parsed.hostname, parsed.port or 80, output)
++            import httpx
++            deadline = time.monotonic()+args.startup_timeout_s
++            async with httpx.AsyncClient(base_url=args.url, trust_env=False, timeout=2) as client:
++                while True:
++                    owner.register()
++                    if owner.process.poll() is not None:
++                        raise RuntimeError("owned服务启动失败")
++                    try:
++                        response = await client.get("/get_status")
++                        if response.status_code == 200:
++                            write_json(output / "initial-status.json", response.json())
++                            break
++                    except httpx.HTTPError:
++                        pass
++                    if time.monotonic() > deadline:
++                        raise TimeoutError("服务启动超过有界期限")
++                    await asyncio.sleep(1)
++        warmup_record = None
++        if getattr(args, "warmup_audio", None) or getattr(args,"warmup_manifest",None):
++            warmup_record = await warmup(args, output)
++            if not warmup_record["complete"]:
++                summary = {"status": "warmup_"+warmup_record["status"], "complete": False,
++                           "expected": len(samples), "successful": 0, "records": [],
++                           "formal_round_started": False, "temperature": "warmup_failed",
++                           "warmup": warmup_record}
++                write_json(Path(output)/"summary.json", summary)
++                return summary
++        if getattr(args, "warmup_only", False):
++            summary={"status":"warmup_only_completed", "complete":True, "expected":len(samples),
++                "successful":0, "records":[], "formal_round_started":False, "warmup":warmup_record,
++                "target_passed":False, "performance_scope":"admission only, not performance evidence"}
++            write_json(Path(output)/"summary.json",summary)
++            return summary
++        summary = await run_round(args, samples, output, owner)
++        summary.update(temperature="warmup_completed" if warmup_record else "unknown/cold_possible",
++                       formal_round_started=True, warmup=warmup_record)
++        write_json(Path(output)/"summary.json", summary)
++        return summary
++    finally:
++        if owner:
++            # shield清理任务，重复中断也必须等owned资源收尾。
++            cleanup = asyncio.create_task(owner.close(args.shutdown_timeout_s, args.observe_s))
++            while not cleanup.done():
++                try:
++                    await asyncio.shield(cleanup)
++                except asyncio.CancelledError:
++                    continue
++            shutdown = cleanup.result()
++            if summary is not None:
++                summary["shutdown"] = shutdown
++                if not shutdown["passed"]:
++                    summary["complete"] = False
++                    summary["status"] = "cleanup_failed"
++                summary["target_passed"] = bool(summary.get("target_time_met_before_cleanup")) and bool(shutdown["passed"])
++                write_json(output / "summary.json", summary)
++
++
++def parse_args(argv=None):
++    parser = argparse.ArgumentParser(description=__doc__)
++    parser.add_argument("--manifest", required=True)
++    parser.add_argument("--output", required=True)
++    parser.add_argument("--url", default="http://127.0.0.1:18083")
++    parser.add_argument("--concurrency", type=int, choices=(1, 2, 4, 8), required=True)
++    parser.add_argument("--mode", choices=("A", "B", "mixed", "mixed-swap"), required=True)
++    parser.add_argument("--launch-service", action="store_true")
++    parser.add_argument("--config")
++    parser.add_argument("--owned-request-drain-grace-s", type=int, default=30,
++                        help="owned测试HTTP请求drain秒数(1～180)；不改模型/业务超时或cleanup期限")
++    parser.add_argument("--warmup-audio", help="独立真实短片路径；预热不计入八文件正式轮次")
++    parser.add_argument("--warmup-manifest", help="八个真实短clip的path/upload_filename清单，单列于正式计时")
++    parser.add_argument("--warmup-only", action="store_true", help="仅真实HTTP准入检查，不产生性能结论")
++    parser.add_argument("--expected-qwen-workers", type=int, default=1)
++    parser.add_argument("--target-s", type=float, default=200)
++    parser.add_argument("--enable-eta-stop", action="store_true", help="仅充分验证可信证据后启用；缺证据永不ETA早停")
++    parser.add_argument("--expected-model-instances", type=int, help="可选预热后健康容量校验；A只校验VAD，不要求增强加载")
++    for name, default in (("diagnostic-wall-timeout-s",336), ("monitor-interval-s",1),
++                          ("no-progress-s",120), ("diagnostic-window-s",5),
++                          ("shutdown-timeout-s",210), ("startup-timeout-s",300), ("observe-s",5)):
++        parser.add_argument("--"+name, type=float, default=default)
++    args = parser.parse_args(argv)
++    import math
++    for name in ("diagnostic_wall_timeout_s", "monitor_interval_s", "no_progress_s", "diagnostic_window_s", "shutdown_timeout_s", "startup_timeout_s", "observe_s"):
++        if not math.isfinite(getattr(args,name)) or getattr(args,name) <= 0:
++            parser.error(f"{name}必须为有限正值")
++    if not 1 <= args.owned_request_drain_grace_s <= 180:
++        parser.error("owned request drain grace必须是1～180秒整数")
++    if args.observe_s < 5 or args.diagnostic_wall_timeout_s > 336:
++        parser.error("不得放宽336秒门槛或缩短5秒端口观察")
++    if args.mode != "A" or args.concurrency != 8:
++        parser.error("本实验必须原八完整WAV、A模式、八HTTP并发")
++    if not math.isfinite(args.target_s) or not 0 < args.target_s <= 200 or args.target_s >= args.diagnostic_wall_timeout_s:
++        parser.error("目标必须为有限正值且不得放宽200秒")
++    if args.expected_qwen_workers < 1 or args.expected_qwen_workers > 8:
++        parser.error("expected-qwen-workers须1～8")
++    if args.warmup_only and not (args.warmup_manifest or args.warmup_audio):
++        parser.error("warmup-only需要真实短clip")
++    if args.launch_service and not args.config:
++        parser.error("owned服务启动必须指定--config")
++    if args.launch_service and args.shutdown_timeout_s < 210:
++        parser.error("owned关闭期限至少210秒以保留真实资源收尾余量，独立于HTTP request drain grace")
++    if args.expected_model_instances is not None and (args.expected_model_instances < 1 or not (args.warmup_audio or args.warmup_manifest)):
++        parser.error("expected-model-instances需正整数并同时指定warmup-audio")
++    return args
++
++
++def experiment_asset_identity(args, samples):
++    files={'controller':Path(__file__).resolve(), 'manifest':Path(args.manifest).resolve()}
++    for name in ('config','warmup_manifest','warmup_audio'):
++        value=getattr(args,name,None)
++        if value:files[name]=Path(value).resolve()
++    if getattr(args,'warmup_manifest',None):
++        for index,row in enumerate(json.loads(Path(args.warmup_manifest).read_text())):
++            files['warmup_clip_'+str(index)]=Path(row['path']).resolve()
++    result={name:{'path':str(path),'sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
++            for name,path in files.items()}
++    result['formal_source_stats']={row['sample_id']:{'path':row['path'],'sha256_verified_before_run':row['sha256'],
++        'stat':list((lambda st:(st.st_size,st.st_mtime_ns,st.st_ino))(Path(row['path']).stat()))} for row in samples}
++    return result
++
++
++def main():
++    args = parse_args()
++    samples = load_samples(args.manifest)
++    output = Path(args.output).resolve()
++    output.mkdir(parents=True, exist_ok=False)
++    identity=source_identity()
++    asset_identity=experiment_asset_identity(args,samples)
++    write_json(output / "run.json", {"arguments": vars(args), "samples": samples, "utc": utc_now(),"source_identity":identity,
++        "experiment_asset_identity":asset_identity,
++        "controller_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest(),
++        "prediction_rule_version":RULE_VERSION, "validation_scope":"real eight HTTP, not component throughput",
++        "experiment_environment":{k:v for k,v in os.environ.items() if k.startswith("QWEN200_")}})
++    if args.config:
++        import shutil
++        shutil.copy2(args.config, output / "config.toml")
++    async def run():
++        task = asyncio.current_task()
++        loop = asyncio.get_running_loop()
++        for sig in (signal.SIGINT, signal.SIGTERM):
++            loop.add_signal_handler(sig, task.cancel)
++        return await execute(args, samples, output)
++    exit_code=2
++    try:
++        if not identity["complete"]:
++            raise RuntimeError("实际运行时代码身份未完整记录，拒绝启动测试服务")
++        summary = asyncio.run(run())
++        exit_code=0 if summary["complete"] else 2
++    except BaseException as exc:
++        write_json(output / "runner-error.json", {"error": repr(exc), "utc": utc_now()})
++    finally:
++        if finish_source_identity(output,identity):
++            exit_code=2
++        try:
++            after_assets=experiment_asset_identity(args,samples)
++            asset_changes=[key for key in asset_identity if asset_identity[key]!=after_assets.get(key)]
++        except Exception as exc:
++            after_assets={'identity_error':repr(exc)};asset_changes=['identity_unavailable']
++        run_record=json.loads((output/'run.json').read_text())
++        run_record.update(experiment_asset_identity_after=after_assets,experiment_asset_changes=asset_changes)
++        write_json(output/'run.json',run_record)
++        if asset_changes:
++            exit_code=2
++            if (output/'summary.json').exists():
++                summary=json.loads((output/'summary.json').read_text())
++                summary.update(complete=False,target_passed=False,status='experiment_asset_changed',experiment_asset_changes=asset_changes)
++                write_json(output/'summary.json',summary)
++    return exit_code
++
++
++if __name__ == "__main__":
++    raise SystemExit(main())
+diff --git a/core/qwen200_watchdog.py b/core/qwen200_watchdog.py
+new file mode 100644
+--- /dev/null
++++ b/core/qwen200_watchdog.py
+@@ -0,0 +1,195 @@
++"""独立200秒验证的全轮闸门；预测是经验估计，不是硬件下界。"""
++from __future__ import annotations
++
++from dataclasses import asdict
++import math
++import time
++from core.performance_watchdog import DiagnosticTrigger, percentile
++
++
++RULE_VERSION = 'qwen200-v1-report-only-20261123'
++
++
++def finite(value):
++    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
++
++
++def extract_progress(status):
++    active = status.get('resourceDiagnostics', {}).get('requestTelemetry', {}).get('active', {})
++    result = {}
++    for row in active.get('requests', []):
++        progress = row.get('progress', {})
++        total, done = progress.get('segments_total'), progress.get('qwen_done', 0)
++        key = row.get('request_id')
++        if key and type(total) is int and total > 0 and type(done) is int and 0 <= done <= total:
++            result[str(key)] = {'total': total, 'done': done, 'inflight': None,
++                                'stage': row.get('stage')}
++    return result
++
++
++class Qwen200Watchdog:
++    def __init__(self, started, *, clock=time.monotonic, hard_s=336.0, target_s=200.0,
++                 no_progress_s=120.0, enable_eta_stop=False, min_hbm_free_mb=8192.0,
++                 min_host_available_bytes=16*1024**3, expected_requests=8):
++        if not all(finite(v) and v > 0 for v in (hard_s, target_s, no_progress_s, min_hbm_free_mb)):
++            raise ValueError('验证门槛必须为有限正数')
++        if hard_s > 336 or target_s > 200 or target_s >= hard_s:
++            raise ValueError('不得放宽200目标或336硬截止')
++        self.started, self.clock, self.hard_s, self.target_s = started, clock, hard_s, target_s
++        self.no_progress_s, self.enable_eta_stop = no_progress_s, bool(enable_eta_stop)
++        self.min_hbm_free_mb = min_hbm_free_mb
++        self.min_host_available_bytes = min_host_available_bytes
++        self.expected_requests = expected_requests
++        self.trigger = None
++        self.last_progress = started
++        self.last_token = None
++        self.history, self.fastest = [], {}
++        self.last_eval = -math.inf
++        self.previous_resource_stamp = None
++        self.swap_previous = None
++        self.swap_streak = 0
++        self.eta_streak = 0
++        self.predictions = []
++        self.latest_resource = {}
++
++    def _trigger(self, reason, now, observed, threshold):
++        self.trigger = DiagnosticTrigger(reason, now, None, observed, threshold)
++        return self.trigger
++
++    def resource_sample(self, status):
++        diag = status.get('resourceDiagnostics', {})
++        stamp = diag.get('timestamp')
++        age = diag.get('sampling', {}).get('age_s')
++        resources = {'driver_card': 7, 'hbm_free_mb': None, 'host_available_bytes': None,
++                     'resource_age_s': age, 'sample_timestamp': stamp, 'swap_streak': self.swap_streak}
++        # 其它卡的高占用与本轮无关；过旧快照只标未知，不拿来触发红线。
++        if finite(age) and age > 15:
++            resources['unknown_reason'] = 'stale_resource_snapshot'
++            return resources, None
++        for npu in diag.get('npu', {}).get('npus', []):
++            if npu.get('index') == 7 and npu.get('available'):
++                free = npu.get('hbm_free_mb')
++                if finite(free): resources['hbm_free_mb'] = free
++        host = diag.get('host', {})
++        if host.get('available') and finite(host.get('available_bytes')):
++            resources['host_available_bytes'] = host['available_bytes']
++        if resources['hbm_free_mb'] is not None and resources['hbm_free_mb'] < self.min_hbm_free_mb:
++            return resources, ('resource_hbm_free', resources['hbm_free_mb'], self.min_hbm_free_mb)
++        if resources['host_available_bytes'] is not None and resources['host_available_bytes'] < self.min_host_available_bytes:
++            return resources, ('resource_host_available', resources['host_available_bytes'], self.min_host_available_bytes)
++        vm = diag.get('vmstat', {})
++        if vm.get('available') and stamp is not None and stamp != self.previous_resource_stamp:
++            current = tuple(vm.get(k) for k in ('swap_in_bytes', 'swap_out_bytes'))
++            if all(finite(v) for v in current):
++                if self.swap_previous is not None and any(a > b for a, b in zip(current, self.swap_previous)):
++                    self.swap_streak += 1
++                else:
++                    self.swap_streak = 0
++                self.swap_previous = current
++            self.previous_resource_stamp = stamp
++        resources['swap_streak'] = self.swap_streak
++        if self.swap_streak >= 3:
++            return resources, ('resource_sustained_swap', self.swap_streak, 3)
++        qwen = status.get('qwenModel', {})
++        if qwen.get('failed_instances', 0) or qwen.get('execution_failures', 0):
++            return resources, ('resource_qwen_failure', 1, 0)
++        for worker in qwen.get('model_workers', []):
++            if worker.get('started') and worker.get('worker_alive') is False:
++                return resources, ('resource_owned_worker_dead', 1, 0)
++        return resources, None
++
++    def _prediction(self, now, progress, records, status):
++        elapsed = now-self.started
++        report = {'rule_version': RULE_VERSION, 'elapsed_s': elapsed, 'progress': progress,
++                  'eta_total_s': None, 'per_request': {}, 'trusted': False, 'reasons': [],
++                  'rate_acceleration_allowance': 1.25, 'enabled_for_stop': self.enable_eta_stop,
++                  'scope': 'empirical optimistic projection, not observed completion time or hardware lower bound',
++                  'audio_duration_distribution': None, 'generated_token_distribution': None,
++                  'tail_acceleration_assumption': 'requires separate comparable distribution/shared-load/tail evidence'}
++        if elapsed < 90: report['reasons'].append('startup_or_short_elapsed')
++        if len(progress) != self.expected_requests: report['reasons'].append('all_eight_live_progress_not_available')
++        if len(self.history) < 2 or now-self.history[0][0] < 60:
++            report['reasons'].append('less_than_60s_progress')
++        for key, value in progress.items():
++            rates = []
++            for window in (30, 60):
++                candidates = [(t, values[key]) for t, values in self.history
++                              if key in values and t <= now-window]
++                if not candidates:
++                    rates.append(None)
++                    continue
++                t, old = candidates[-1]
++                rate = (value['done']-old['done'])/(now-t)
++                if value['total'] != old['total'] or rate < 0:
++                    report['reasons'].append('non_monotonic_progress_or_changed_total')
++                    rate = None
++                rates.append(rate)
++            valid = [r for r in rates if r is not None and r > 0]
++            self.fastest[key] = max([self.fastest.get(key, 0), *valid])
++            optimistic_rate = self.fastest[key]*1.25
++            eta = elapsed+(value['total']-value['done'])/optimistic_rate if optimistic_rate else None
++            report['per_request'][key] = dict(value, rate30= rates[0], rate60=rates[1],
++                fastest_comparable_rate=self.fastest[key], optimistic_rate=optimistic_rate, eta_total_s=eta)
++            if eta is None: report['reasons'].append('zero_or_unknown_rate')
++        known = [row['eta_total_s'] for row in report['per_request'].values()]
++        if known and all(v is not None for v in known): report['eta_total_s'] = max(known)
++        # 单靠已完成段数不能证明后续自然段难度和尾部释放。默认只报告，不能早停。
++        evidence = status.get('qwen200_eta_evidence', {})
++        for field in ('distribution_comparable', 'shared_load_stable', 'tail_acceleration_modeled'):
++            if evidence.get(field) is not True: report['reasons'].append(field+'_not_verified')
++        report['reasons'] = sorted(set(report['reasons']))
++        report['trusted'] = not report['reasons']
++        return report
++
++    def sample(self, records, status):
++        if self.trigger: return self.trigger
++        now = self.clock()
++        elapsed = now-self.started
++        incomplete = any(row['status'] != 'completed' for row in records)
++        # 全轮共同起点，不能等每条请求自己的起点再多跑几秒。
++        if elapsed >= self.hard_s and incomplete:
++            return self._trigger('batch_hard_deadline', now, elapsed, self.hard_s)
++        if any(row['status'] == 'failed' for row in records):
++            return self._trigger('request_failed', now, 1, 0)
++        self.latest_resource, red = self.resource_sample(status)
++        if red: return self._trigger(red[0], now, red[1], red[2])
++        progress = extract_progress(status)
++        steps = []
++        for instance in status.get('qwenModel', {}).get('instances', []):
++            step = instance.get('continuous', {}).get('steps', {})
++            steps.append((step.get('prefill'), step.get('decode')))
++        token = (tuple(sorted((key, v['total'], v['done']) for key, v in progress.items())),
++                 tuple(row['status'] for row in records), tuple(steps))
++        if token != self.last_token:
++            self.last_token, self.last_progress = token, now
++        elif incomplete and now-self.last_progress >= self.no_progress_s:
++            return self._trigger('no_progress', now, now-self.last_progress, self.no_progress_s)
++        if progress and (not self.history or now > self.history[-1][0]):
++            self.history.append((now, progress))
++            self.history = self.history[-600:]
++        if elapsed >= 90 and now-self.last_eval >= 30:
++            self.last_eval = now
++            report = self._prediction(now, progress, records, status)
++            self.predictions.append(report)
++            if report['trusted'] and report['eta_total_s'] is not None and report['eta_total_s'] >= self.hard_s:
++                self.eta_streak += 1
++            else: self.eta_streak = 0
++            report['consecutive_insufficient_windows'] = self.eta_streak
++            if self.enable_eta_stop and self.eta_streak >= 2:
++                return self._trigger('optimistic_eta_insufficient', now, report['eta_total_s'], self.hard_s)
++        return None
++
++
++def add_feasibility_summary(summary, target_s=200):
++    complete = bool(summary.get('complete')) and summary.get('processed_completed') == summary.get('expected')
++    summary['target_s'] = target_s
++    summary['hard_deadline_s'] = 336
++    summary['target_time_met_before_cleanup'] = complete and summary['batch_elapsed_s'] <= target_s
++    summary['target_passed'] = summary['target_time_met_before_cleanup']
++    summary['all_request_latency'] = dict(summary['completion_subset_latency']) if complete else None
++    summary['exact_end_to_end_speedup'] = None
++    summary['speedup_scope'] = 'requires a complete paired reference; censored/ETA values are never speedup denominators'
++    summary['completed_subset_only'] = not complete
++    summary['classification'] = ('time_target_met_quality_unreviewed' if summary['target_time_met_before_cleanup']
++                                 else 'completed_above_target' if complete else 'stopped_or_incomplete')
++    return summary
+diff --git a/tests/test_qwen200_controller.py b/tests/test_qwen200_controller.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_qwen200_controller.py
+@@ -0,0 +1,221 @@
++import argparse
++import asyncio
++import importlib.util
++import json
++from pathlib import Path
++from types import SimpleNamespace
++import pytest
++from core.qwen200_watchdog import Qwen200Watchdog, add_feasibility_summary
++
++ROOT=Path(__file__).resolve().parents[1]
++spec=importlib.util.spec_from_file_location('qwen200_test_controller',ROOT/'scripts/benchmark_qwen200.py')
++mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
++
++
++def records(state='running'):
++    return [dict(sample_id=str(i),status=state,audio_seconds=1) for i in range(8)]
++
++
++def status(t,done=0,total=100,*,evidence=False):
++    value={'resourceDiagnostics':{'requestTelemetry':{'active':{'requests':[
++        dict(request_id=str(i),stage='segments',progress={'segments_total':total,'qwen_done':done}) for i in range(8)]}},
++        'sampling':{'age_s':0},'timestamp':str(t),'npu':{'npus':[{'index':0,'available':True,'hbm_free_mb':1},
++        {'index':7,'available':True,'hbm_free_mb':30000}]}}}
++    if evidence:value['qwen200_eta_evidence']={k:True for k in ['distribution_comparable','shared_load_stable','tail_acceleration_modeled']}
++    return value
++
++
++def test_hard336_uses_common_t0_not_individual_request_age():
++    w=Qwen200Watchdog(0,clock=lambda:336)
++    r=records();r[0]['started_monotonic']=335
++    trigger=w.sample(r,{})
++    assert trigger.reason=='batch_hard_deadline' and trigger.observed_s==336
++
++
++def test_other_cards_do_not_trigger_hbm_red():
++    w=Qwen200Watchdog(0,clock=lambda:1)
++    assert w.sample(records(),status(1)) is None
++    assert w.latest_resource['hbm_free_mb']==30000
++
++
++def test_exact_card7_red_threshold_and_stale_unknown():
++    w=Qwen200Watchdog(0,clock=lambda:1);s=status(1)
++    s['resourceDiagnostics']['npu']['npus'][1]['hbm_free_mb']=8191
++    assert w.sample(records(),s).reason=='resource_hbm_free'
++    w=Qwen200Watchdog(0,clock=lambda:1);s['resourceDiagnostics']['sampling']['age_s']=20
++    assert w.sample(records(),s) is None
++    assert w.latest_resource.get('unknown_reason')=='stale_resource_snapshot'
++
++
++def test_default_report_only_with_no_distribution_tail_evidence():
++    clock=[0];w=Qwen200Watchdog(0,clock=lambda:clock[0])
++    for t in range(0,151,10):
++        clock[0]=t;assert w.sample(records(),status(t,t//10)) is None
++    assert w.predictions and all(not r['trusted'] for r in w.predictions)
++    assert 'tail_acceleration_modeled_not_verified' in w.predictions[-1]['reasons']
++
++
++def test_two_trusted_windows_required_for_eta_trigger():
++    clock=[0];w=Qwen200Watchdog(0,clock=lambda:clock[0],enable_eta_stop=True)
++    trigger=None
++    for t in range(0,121,10):
++        clock[0]=t;trigger=w.sample(records(),status(t,t//10,evidence=True))
++        if t<120:assert trigger is None
++    assert trigger.reason=='optimistic_eta_insufficient'
++    assert w.predictions[-1]['consecutive_insufficient_windows']==2
++
++
++def test_acceleration_and_short_jitter_reset_eta_streak():
++    clock=[0];w=Qwen200Watchdog(0,clock=lambda:clock[0],enable_eta_stop=True)
++    for t in range(0,91,10):
++        clock[0]=t;assert w.sample(records(),status(t,t//10,evidence=True)) is None
++    assert w.eta_streak==1
++    clock[0]=120;assert w.sample(records(),status(120,80,evidence=True)) is None
++    assert w.eta_streak==0
++
++
++def test_missing_or_finished_live_audio_is_not_blind_tail_prediction():
++    clock=[0];w=Qwen200Watchdog(0,clock=lambda:clock[0],enable_eta_stop=True)
++    for t in range(0,121,10):
++        clock[0]=t;s=status(t,t//10,evidence=True)
++        if t>=90:s['resourceDiagnostics']['requestTelemetry']['active']['requests'].pop()
++        assert w.sample(records(),s) is None
++    assert not w.predictions[-1]['trusted']
++
++
++def test_three_distinct_swap_updates_stop_not_three_reads_of_same_snapshot():
++    clock=[0];w=Qwen200Watchdog(0,clock=lambda:clock[0]);s=status(0)
++    for t in range(4):
++        clock[0]=t;s=status(t);s['resourceDiagnostics']['vmstat']={'available':True,'swap_in_bytes':t,'swap_out_bytes':0}
++        trigger=w.sample(records(),s)
++        if t<3:assert trigger is None
++    assert trigger.reason=='resource_sustained_swap'
++
++
++def test_censored_summary_has_no_full_quantiles_or_speedup():
++    r=records();r[0].update(status='completed',elapsed_s=190,processing_status='complete')
++    summary=add_feasibility_summary(mod.summarize(r,0,336,True))
++    assert summary['all_request_latency'] is None and summary['exact_end_to_end_speedup'] is None
++    assert summary['completion_subset_latency']['n']==1 and not summary['target_passed']
++
++
++def args(**overrides):
++    values=dict(url='http://127.0.0.1:18083',mode='A',concurrency=8,diagnostic_wall_timeout_s=.05,
++                target_s=.02,no_progress_s=120,monitor_interval_s=.002,diagnostic_window_s=.005,
++                enable_eta_stop=False)
++    values.update(overrides);return argparse.Namespace(**values)
++
++
++def samples():
++    return [dict(sample_id=str(i),sha256=str(i),audio_seconds=1,path='/not-read') for i in range(8)]
++
++
++def test_real_round_shape_starts_eight_and_cancels_at_common_deadline(tmp_path):
++    started=[]
++    async def request(sample,fields):
++        started.append(sample['sample_id']);await asyncio.sleep(10)
++    async def status_fn():await asyncio.sleep(1);return {}
++    result=asyncio.run(mod.run_round(args(),samples(),tmp_path,request_fn=request,status_fn=status_fn))
++    assert len(started)==8 and result['processed_completed']==0
++    assert result['diagnostic_trigger']['reason']=='batch_hard_deadline'
++    assert .05<=result['batch_elapsed_s']<.3 and all(r['status']=='cancelled' for r in result['records'])
++
++
++def test_completed_eight_has_full_n8_but_above_target_not_pass(tmp_path):
++    async def request(sample,fields):
++        await asyncio.sleep(.025);return {'segments':[{'segment_text':'你好'}],'text':'你好'}
++    async def status_fn():return {}
++    result=asyncio.run(mod.run_round(args(diagnostic_wall_timeout_s=.2,target_s=.01),samples(),tmp_path,
++                                   request_fn=request,status_fn=status_fn))
++    assert result['complete'] and result['all_request_latency']['n']==8
++    assert result['classification']=='completed_above_target' and not result['target_passed']
++
++
++def test_cpu_manifest_warmup_keeps_eight_upload_names_separate(tmp_path):
++    clip=tmp_path/'clip.wav';clip.write_bytes(b'not-read-by-injected-request')
++    manifest=tmp_path/'warmup-manifest.json'
++    manifest.write_text(json.dumps([dict(path=str(clip),upload_filename=f'audio-{i}.wav') for i in range(8)]))
++    async def request(source,fields):return {'segments':[],'text':''}
++    async def status_fn():return {}
++    a=args(warmup_manifest=str(manifest),expected_qwen_workers=None)
++    result=asyncio.run(mod.warmup(a,tmp_path,request_fn=request,status_fn=status_fn))
++    assert result['complete'] and len(result['records'])==8
++    assert [r['upload_filename'] for r in result['records']]==[f'audio-{i}.wav' for i in range(8)]
++    assert (tmp_path/'warmup-final-status.json').exists()
++
++
++def test_partial_start_failure_still_closes_only_owned(monkeypatch,tmp_path):
++    state={}
++    class Owner:
++        def __init__(self,*a,**kw):self.process=SimpleNamespace(poll=lambda:2);state['owner']=self
++        def register(self):pass
++        async def close(self,*a):state['closed']=True;return {'passed':True}
++    monkeypatch.setattr(mod,'OwnedService',Owner)
++    a=args(launch_service=True,config='config.toml',owned_request_drain_grace_s=30,
++           shutdown_timeout_s=210,observe_s=5,startup_timeout_s=1)
++    with pytest.raises(RuntimeError,match='启动失败'):asyncio.run(mod.execute(a,samples(),tmp_path))
++    assert state['closed']
++
++
++def test_repeated_outer_cancel_cannot_abandon_owned_cleanup(monkeypatch,tmp_path):
++    state={}
++    class Owner:
++        def __init__(self,*a,**kw):self.process=SimpleNamespace(poll=lambda:None);state['owner']=self
++        def register(self):pass
++        async def close(self,*a):
++            state['closing']=True;await asyncio.sleep(.04);state['closed']=True;return {'passed':True}
++    class Client:
++        def __init__(self,*a,**kw):pass
++        async def __aenter__(self):return self
++        async def __aexit__(self,*a):pass
++        async def get(self,*a,**kw):return SimpleNamespace(status_code=200,json=lambda:{})
++    async def blocked(*a,**kw):await asyncio.sleep(10)
++    import httpx
++    monkeypatch.setattr(httpx,'AsyncClient',Client);monkeypatch.setattr(mod,'OwnedService',Owner)
++    monkeypatch.setattr(mod,'warmup',blocked)
++    a=args(launch_service=True,config='config.toml',owned_request_drain_grace_s=30,
++           shutdown_timeout_s=210,observe_s=5,startup_timeout_s=1,warmup_audio='fake')
++    async def run():
++        task=asyncio.create_task(mod.execute(a,samples(),tmp_path))
++        await asyncio.sleep(.01);task.cancel()
++        await asyncio.sleep(.01);task.cancel()
++        with pytest.raises(asyncio.CancelledError):await task
++    asyncio.run(run());assert state['closed']
++
++
++@pytest.mark.parametrize('extra',[['--concurrency','4'],['--mode','B'],['--diagnostic-wall-timeout-s','337'],['--target-s','201']])
++def test_cli_rejects_unrepresentative_or_weakened_run(extra):
++    with pytest.raises(SystemExit):mod.parse_args(['--manifest','x','--output','x','--concurrency','8','--mode','A',*extra])
++
++
++def test_existing_real_progress_replay_cannot_certify_eta(tmp_path):
++    import os
++    original=Path('/home/zhangs/asr_nvidia/logs/qwen-continuous-20261121-a8-drain3-clean')
++    summary=json.loads((original/'summary.json').read_text());t0=summary['batch_started_monotonic']
++    rows=[json.loads(line) for line in (original/'status.jsonl').read_text().splitlines()]
++    now=[t0];actual=Qwen200Watchdog(t0,clock=lambda:now[0]);eta_only=Qwen200Watchdog(t0,clock=lambda:now[0])
++    actual_first=None;eta_first=None;points=0
++    for point in rows:
++        if point['monotonic']<t0:continue
++        now[0]=point['monotonic'];points+=1
++        observed=point['status']
++        if actual_first is None:
++            tr=actual.sample(records(),observed)
++            if tr:actual_first={'reason':tr.reason,'elapsed_s':tr.observed_monotonic-t0,'observed':tr.observed_s,'threshold':tr.threshold_s}
++        if eta_first is None:
++            # 单独评估ETA能否自证可信；资源判定另用上面的未修改真实快照。
++            copied=json.loads(json.dumps(observed))
++            copied.get('resourceDiagnostics',{}).pop('npu',None)
++            tr=eta_only.sample(records(),copied)
++            if tr:eta_first={'reason':tr.reason,'elapsed_s':tr.observed_monotonic-t0}
++    report={'scope':'CPU replay of immutable real status; not a new NPU/performance run',
++            'source':str(original),'source_status_sha256':__import__('hashlib').sha256((original/'status.jsonl').read_bytes()).hexdigest(),
++            'snapshot_count':points,'actual_safety_first_stop':actual_first,
++            'eta_only_replay_scope':'resource NPU rows omitted only for ETA isolation; actual_safety_first_stop uses unmodified snapshots',
++            'eta_only_first_stop':eta_first,'predictions':eta_only.predictions,
++            'trusted_eta_windows':sum(r['trusted'] for r in eta_only.predictions),
++            'eta_enabled_for_new_runs':False,'reason':'status lacks per-audio comparable duration/token and tail acceleration evidence; only hard336/resource stops are certified',
++            'passed':bool(eta_only.predictions) and not any(r['trusted'] for r in eta_only.predictions)}
++    target=Path(os.environ.get('QWEN200_PREDICTION_VALIDATION',str(tmp_path/'prediction-validation.json')))
++    target.write_text(json.dumps(report,ensure_ascii=False,indent=2)+'\n')
++    assert report['passed'] and eta_first['reason']=='batch_hard_deadline'

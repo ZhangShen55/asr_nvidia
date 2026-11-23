@@ -1,0 +1,609 @@
+diff --git a/core/config.py b/core/config.py
+index 5570427..12159c4 100644
+--- a/core/config.py
++++ b/core/config.py
+@@ -537,8 +537,12 @@ class Settings:
+         _ = self.qwen_continuous_prefill_batch_size
+         _ = self.qwen_continuous_admission_drain_ms
+         if self.qwen_generation_mode == "continuous":
+-            if self.qwen_execution_mode != "process" or self.qwen_local_instance_count != 1:
+-                raise ValueError("continuous 仅支持 process 单Qwen实例")
++            # 仅本隔离副本的显式M2实验允许双实例，其他组合仍拒绝。
++            experimental_m2 = (os.environ.get('QWEN200_EXPERIMENT_M2') == '1'
++                               and self.qwen_local_instance_count == 2
++                               and bool(os.environ.get('QWEN200_ROUTING_MANIFEST')))
++            if self.qwen_execution_mode != "process" or (self.qwen_local_instance_count != 1 and not experimental_m2):
++                raise ValueError("continuous 仅支持 process 单Qwen实例（隔离M2实验例外）")
+             if self.qwen_request_concurrency > self.qwen_max_inference_batch_size:
+                 raise ValueError("continuous request_concurrency 不得超过 max_inference_batch_size")
+         _ = self.vad_device
+diff --git a/core/qwen_asr_client.py b/core/qwen_asr_client.py
+index 86b1a57..7116116 100644
+--- a/core/qwen_asr_client.py
++++ b/core/qwen_asr_client.py
+@@ -2,6 +2,9 @@
+ from __future__ import annotations
+ 
+ import asyncio
++import json
++import os
++import threading
+ from concurrent.futures import ThreadPoolExecutor
+ import logging
+ import time
+@@ -76,22 +79,49 @@ class QwenAsrClient:
+                                 if generation_mode is None else generation_mode)
+         if self.generation_mode not in {'legacy', 'continuous'}:
+             raise ValueError('generation_mode must be legacy or continuous')
+-        if self.generation_mode == 'continuous' and (self.execution_mode != 'process' or count != 1):
+-            raise ValueError('continuous generation requires one process model owner')
++        # 仅隔离实验副本允许双owner，正式源码的单实例约束保持不动。
++        experiment_m2 = os.environ.get('QWEN200_EXPERIMENT_M2') == '1'
++        if self.generation_mode == 'continuous' and (self.execution_mode != 'process'
++                or (count != 1 and not (experiment_m2 and count == 2))):
++            raise ValueError('continuous generation requires one process model owner (or isolated M2 experiment)')
++        self._continuous_routes = {}
++        self._continuous_route_lock = threading.RLock()
++        self._continuous_active_by_worker = [0] * count
++        self._continuous_source_routes = {}
++        if self.generation_mode == 'continuous' and count > 1:
++            # 路由按原八源身份冻结，不随到达顺序/暖身/失败副本改变。
++            manifest = json.loads(Path(os.environ['QWEN200_ROUTING_MANIFEST']).read_text())
++            rows = manifest['samples'] if isinstance(manifest, dict) else manifest
++            if len(rows) != 8:
++                raise ValueError('M2 routing requires exactly eight source identities')
++            for index, row in enumerate(rows):
++                prefix = row['sha256'][:20]
++                if len(prefix) != 20 or any(c not in '0123456789abcdef' for c in prefix) or prefix in self._continuous_source_routes:
++                    raise ValueError('invalid/duplicate M2 source SHA prefix')
++                self._continuous_source_routes[prefix] = index % count
++        global_active = int(getattr(settings, 'qwen_request_concurrency', 128))
++        global_tokens = int(max_batch_tokens if max_batch_tokens is not None else
++                            getattr(settings, 'qwen_max_batch_tokens', 80000))
++        global_frames = int(max_batch_audio_frames if max_batch_audio_frames is not None else
++                            getattr(settings, 'qwen_max_batch_audio_frames', 115200))
++        if self.generation_mode == 'continuous' and any(value % count for value in (global_active, global_tokens, global_frames)):
++            raise ValueError('experimental per-worker budgets must partition total budgets exactly')
++        worker_active = global_active // count
++        self._experiment_worker_active_limit = worker_active
++        worker_tokens = global_tokens // count
++        worker_frames = global_frames // count
+         if runtime_factory is not None:
+             factory = runtime_factory
+         elif self.generation_mode == 'continuous':
+             from core.qwen_continuous_process import LocalQwenContinuousProcessRuntime
+             factory = lambda *args: LocalQwenContinuousProcessRuntime(*args,
+-                max_active=int(getattr(settings, 'qwen_request_concurrency', 128)),
+-                max_batch_size=int(max_inference_batch_size if max_inference_batch_size is not None else
+-                                   getattr(settings, 'qwen_max_inference_batch_size', 128)),
++                max_active=worker_active,
++                max_batch_size=min(worker_active, int(max_inference_batch_size if max_inference_batch_size is not None else
++                                   getattr(settings, 'qwen_max_inference_batch_size', 128))),
+                 prefill_batch_size=int(getattr(settings, 'qwen_continuous_prefill_batch_size', 16)),
+                 continuous_admission_drain_ms=int(getattr(settings, 'qwen_continuous_admission_drain_ms', 0)),
+-                max_batch_tokens=int(max_batch_tokens if max_batch_tokens is not None else
+-                                     getattr(settings, 'qwen_max_batch_tokens', 80000)),
+-                max_batch_audio_frames=int(max_batch_audio_frames if max_batch_audio_frames is not None else
+-                                           getattr(settings, 'qwen_max_batch_audio_frames', 115200)),
++                max_batch_tokens=worker_tokens,
++                max_batch_audio_frames=worker_frames,
+                 online_repetition_enabled=bool(getattr(settings, 'qwen_online_repetition_enabled', False)),
+                 online_repetition_config=(__import__('dataclasses').asdict(settings.qwen_online_repetition_config)
+                     if hasattr(settings, 'qwen_online_repetition_config') else None))
+@@ -242,10 +272,20 @@ class QwenAsrClient:
+                     self._busy[index] = True
+                     if self._closing or self._runtimes[index].failure:
+                         raise QwenAsrUnavailableError()
+-                outcomes = await await_completion(asyncio.gather(
+-                    *(self._run_owned(self._runtimes[index].ensure_loaded) for index in acquired),
+-                    return_exceptions=True,
+-                ))
++                if self.generation_mode == 'continuous' and len(self._runtimes) > 1:
++                    # 暖身/加载不计入正式墙钟；顺序加载避免两个初始化峰同时叠加。
++                    outcomes = []
++                    for index in acquired:
++                        try:
++                            outcomes.append(await self._run_owned(self._runtimes[index].ensure_loaded))
++                        except Exception as exc:
++                            outcomes.append(exc)
++                            break
++                else:
++                    outcomes = await await_completion(asyncio.gather(
++                        *(self._run_owned(self._runtimes[index].ensure_loaded) for index in acquired),
++                        return_exceptions=True,
++                    ))
+                 if (self._closing or any(isinstance(value, BaseException) for value in outcomes)
+                         or not all(runtime.loaded and not runtime.failure for runtime in self._runtimes)):
+                     raise QwenAsrUnavailableError()
+@@ -309,10 +349,34 @@ class QwenAsrClient:
+                 raise error from exc
+             raise QwenAsrCallError() from exc
+ 
++    def _continuous_worker_index(self, request_id):
++        if len(self._runtimes) == 1:
++            return 0
++        request_id = str(request_id)
++        with self._continuous_route_lock:
++            if request_id not in self._continuous_routes:
++                matches = [index for prefix, index in self._continuous_source_routes.items()
++                           if ('audio-' + prefix + '.wav') in request_id]
++                if len(matches) != 1:
++                    raise ValueError('M2 request must identify exactly one frozen source SHA filename')
++                self._continuous_routes[request_id] = matches[0]
++            return self._continuous_routes[request_id]
++
+     async def _execute_sequence(self, member):
+-        # Discovery is serialized; after it completes there is no whole-model lease.
+-        # All member futures are routed by the single worker's device owner.
+-        runtime = self._runtimes[0]
++        index = self._continuous_worker_index(member.request_id)
++        runtime = self._runtimes[index]
++        if len(self._runtimes) == 1:
++            return await self._execute_owned_sequence(runtime, member)
++        with self._continuous_route_lock:
++            self._continuous_active_by_worker[index] += 1
++        try:
++            return await self._execute_owned_sequence(runtime, member)
++        finally:
++            with self._continuous_route_lock:
++                self._continuous_active_by_worker[index] -= 1
++
++    async def _execute_owned_sequence(self, runtime, member):
++        # 每段固定所属owner，失败也不迁移到其它副本重算。
+         try:
+             async with self._discovery_lock:
+                 if not runtime.loaded:
+@@ -473,7 +537,18 @@ class QwenAsrClient:
+     def release_request(self, request_id):
+         """Forget deduplication only after the parent's owned segments have drained."""
+         if self.generation_mode == 'continuous':
+-            self._runtimes[0].release_request(str(request_id))
++            request_id = str(request_id)
++            if len(self._runtimes) == 1:
++                self._runtimes[0].release_request(request_id)
++                return
++            with self._continuous_route_lock:
++                index = self._continuous_routes.get(request_id)
++            if index is None:
++                return
++            # 后端仍检查Future全终态；成功归还后才清本地绑定。
++            self._runtimes[index].release_request(request_id)
++            with self._continuous_route_lock:
++                self._continuous_routes.pop(request_id, None)
+ 
+     async def transcribe(self, audio_path: str, language: Optional[str] = None) -> str:
+         data = await asyncio.to_thread(Path(audio_path).read_bytes)
+@@ -484,8 +559,19 @@ class QwenAsrClient:
+         batch_snapshot = (self._batch_scheduler.snapshot() if recent_batch_limit is None else
+                           self._batch_scheduler.snapshot(recent_limit=recent_batch_limit))
+         if self.generation_mode == 'continuous':
+-            details[0]['busy'] = bool(batch_snapshot['running_members'])
++            if len(details) == 1:
++                details[0]['busy'] = bool(batch_snapshot['running_members'])
++            else:
++                with self._continuous_route_lock:
++                    for index, detail in enumerate(details):
++                        detail['busy'] = bool(self._continuous_active_by_worker[index])
++                        detail['experiment_running_members'] = self._continuous_active_by_worker[index]
+         return {
++            **({'feasibility_experiment': {'kind': 'M2', 'workers': len(details),
++                'routing': 'frozen_source_SHA20_index_mod_workers',
++                'source_count': len(self._continuous_source_routes),
++                'per_worker_active_limit': self._experiment_worker_active_limit}}
++                if len(details) > 1 and self.generation_mode == 'continuous' else {}),
+             **({"generation_mode": self.generation_mode} if self.generation_mode == "continuous" else {}),
+             "execution_mode": self.execution_mode,
+             "memory_process_scope": "model_worker" if self.execution_mode == "process" else "service_process",
+diff --git a/tests/test_qwen200_m2.py b/tests/test_qwen200_m2.py
+new file mode 100644
+index 0000000..6d7be08
+--- /dev/null
++++ b/tests/test_qwen200_m2.py
+@@ -0,0 +1,268 @@
++"""Isolated M2 wiring contract; every runtime is a CPU fake."""
++import asyncio
++from concurrent.futures import Future
++import json
++from types import SimpleNamespace
++
++import pytest
++
++from core import qwen_asr_client as mod
++from core.config import Settings
++
++
++@pytest.fixture
++def routing(monkeypatch, tmp_path):
++    from pathlib import Path
++    import tomli
++    # Unit tests use the actual candidate's 16/128 profile, not root legacy48/384.
++    cfg=Path(__file__).resolve().parents[1]/'test/config.qwen200-m2.toml'
++    monkeypatch.setattr(mod.settings,'_cfg',tomli.loads(cfg.read_text()))
++    rows = [{'sha256': ('%064x' % (i + 1))[-20:] + ('%044x' % (i + 1)), 'sample_id': 'a'+str(i+1)} for i in range(8)]
++    path = tmp_path/'inputs.json'
++    path.write_text(json.dumps(rows))
++    monkeypatch.setenv('QWEN200_EXPERIMENT_M2', '1')
++    monkeypatch.setenv('QWEN200_ROUTING_MANIFEST', str(path))
++    return rows
++
++
++def request(rows, index, suffix=''):
++    return 'uuid' + suffix + '_audio-' + rows[index]['sha256'][:20] + '.wav'
++
++
++class FakeRuntime:
++    def __init__(self, *args, **kwargs):
++        self.loaded = False
++        self.failure = None
++        self.calls = []
++        self.pending = {}
++        self.closed = False
++        self.begin = False
++    def ensure_loaded(self):
++        self.loaded = True
++    def submit(self, audio, language, *, request_id, segment_id):
++        self.calls.append(('submit', request_id, segment_id))
++        key = (request_id, str(segment_id))
++        if key not in self.pending:
++            self.pending[key] = Future()
++        return self.pending[key]
++    def cancel_segment(self, request_id, segment_id):
++        self.calls.append(('cancel', request_id, segment_id))
++        f = self.pending[(request_id, str(segment_id))]
++        if not f.done():
++            f.set_exception(RuntimeError('backend_cancelled'))
++    def release_request(self, request_id):
++        keys = [k for k in self.pending if k[0] == request_id]
++        if any(not self.pending[k].done() for k in keys):
++            raise RuntimeError('active')
++        self.calls.append(('release', request_id))
++        for key in keys:
++            self.pending.pop(key)
++    def begin_closing(self):
++        self.begin = True
++    def close(self):
++        self.closed = True
++    def snapshot(self):
++        return dict(loaded=self.loaded, loading=False, failure=self.failure,
++                    memory_allocated_mb=0, memory_reserved_mb=0,
++                    model_worker={'worker_pid':None})
++
++
++def client(factory=FakeRuntime, **kwargs):
++    return mod.QwenAsrClient(local_instance_count=2, generation_mode='continuous',
++        execution_mode='process', runtime_factory=factory, **kwargs)
++
++
++def member(rid, segment='0'):
++    return SimpleNamespace(request_id=rid, segment_index=segment, cancelled=False,
++                           audio=b'private-pcm', language=None)
++
++
++def test_m2_requires_explicit_experiment_flag(monkeypatch):
++    monkeypatch.delenv('QWEN200_EXPERIMENT_M2', raising=False)
++    with pytest.raises(ValueError, match='one process'):
++        client()
++
++
++def test_manifest_must_have_eight_distinct_prefixes(routing, monkeypatch, tmp_path):
++    p = tmp_path/'bad.json';p.write_text(json.dumps(routing[:2]))
++    monkeypatch.setenv('QWEN200_ROUTING_MANIFEST',str(p))
++    with pytest.raises(ValueError, match='eight'):
++        client()
++    p.write_text(json.dumps([routing[0]] * 8))
++    with pytest.raises(ValueError, match='duplicate'):
++        client()
++
++
++def test_frozen_mapping_is_independent_of_arrival_and_warmup(routing):
++    c = client()
++    for i in [7, 0, 4, 1, 6, 2, 5, 3]:
++        assert c._continuous_worker_index(request(routing,i,'warmup')) == i % 2
++    for i in range(8):
++        assert c._continuous_worker_index(request(routing,i,'formal')) == i % 2
++    assert len(c._continuous_routes) == 16
++    for rid in list(c._continuous_routes):
++        c.release_request(rid)
++    assert not c._continuous_routes
++
++
++def test_unknown_or_ambiguous_source_never_contacts_a_worker(routing):
++    c = client()
++    for rid in ['warmup.wav',request(routing,0)+request(routing,1)]:
++        with pytest.raises(ValueError, match='exactly one'):
++            asyncio.run(c._execute_sequence(member(rid)))
++    assert not c._continuous_routes
++    assert all(not r.calls for r in c._runtimes)
++    c.release_request('unknown')
++    assert all(not r.calls for r in c._runtimes)
++
++
++def test_budget_is_partitioned_not_copied(routing, monkeypatch):
++    from core import qwen_continuous_process as process
++    options=[]
++    def capture(*args,**kwargs):
++        options.append(kwargs)
++        return FakeRuntime()
++    monkeypatch.setattr(process,'LocalQwenContinuousProcessRuntime',capture)
++    monkeypatch.setattr(mod.settings,'_cfg', {'qwen_asr': {'request_concurrency':128,
++        'max_batch_tokens':80000,'max_batch_audio_frames':115200,
++        'continuous_prefill_batch_size':16, 'max_inference_batch_size':128}})
++    c=mod.QwenAsrClient(local_instance_count=2,generation_mode='continuous',execution_mode='process')
++    assert len(options)==2
++    for option in options:
++        assert option['max_active']==64
++        assert option['max_batch_size']==64
++        assert option['max_batch_tokens']==40000
++        assert option['max_batch_audio_frames']==57600
++        assert option['prefill_batch_size']==16
++    assert c._batch_scheduler.capacity==128
++
++
++def test_uneven_budget_rejected(routing, monkeypatch):
++    monkeypatch.setattr(mod.settings,'_cfg',{'qwen_asr':{'request_concurrency':127}})
++    with pytest.raises(ValueError, match='partition'):
++        client()
++
++
++def test_settings_exception_is_only_opt_in_two_workers(routing, monkeypatch):
++    from pathlib import Path
++    cfg=Path(__file__).resolve().parents[1]/'test/config.qwen200-m2.toml'
++    s=Settings(str(cfg));s.validate_model_backends()
++    monkeypatch.delenv('QWEN200_EXPERIMENT_M2')
++    with pytest.raises(ValueError, match='单Qwen'):
++        s.validate_model_backends()
++    monkeypatch.setenv('QWEN200_EXPERIMENT_M2','1')
++    s._cfg['qwen_asr']['local_instance_count']=3
++    with pytest.raises(ValueError, match='单Qwen'):
++        s.validate_model_backends()
++
++
++def test_preload_sequentially_covers_all_workers_and_close_all(routing):
++    async def scenario():
++        order=[]
++        class Runtime(FakeRuntime):
++            def ensure_loaded(self):
++                order.append(self)
++                self.loaded=True
++        c=client(Runtime)
++        assert await c.preload()
++        assert order==c._runtimes
++        await c.aclose()
++        assert all(r.begin and r.closed for r in c._runtimes)
++        assert c._shutdown_state['phase']=='closed'
++    asyncio.run(scenario())
++
++
++def test_partial_preload_failure_still_closes_every_owned_runtime(routing):
++    async def scenario():
++        created=[]
++        class Runtime(FakeRuntime):
++            def __init__(self,*args):
++                super().__init__();created.append(self)
++            def ensure_loaded(self):
++                if self is created[1]:
++                    self.failure='load failed'
++                    raise RuntimeError(self.failure)
++                self.loaded=True
++        c=client(Runtime)
++        with pytest.raises(mod.QwenAsrUnavailableError):
++            await c.preload()
++        await c.aclose()
++        assert all(r.closed for r in created)
++    asyncio.run(scenario())
++
++
++def test_route_does_not_fail_over_when_selected_worker_dies(routing):
++    async def scenario():
++        c=client();await c.preload()
++        c._runtimes[0].failure='worker died'
++        with pytest.raises(mod.QwenAsrUnavailableError):
++            await c._execute_sequence(member(request(routing,0)))
++        assert not c._runtimes[1].calls
++        assert c._continuous_routes[request(routing,0)]==0
++        await c.aclose()
++    asyncio.run(scenario())
++
++
++def test_normal_completion_and_release_remain_on_selected_owner(routing):
++    async def scenario():
++        c=client();await c.preload();rid=request(routing,1)
++        task=asyncio.create_task(c._execute_sequence(member(rid)))
++        for _ in range(100):
++            if c._runtimes[1].pending:break
++            await asyncio.sleep(.001)
++        c._runtimes[1].pending[(rid,'0')].set_result('language Chinese<asr_text>好。')
++        assert await task=='language Chinese<asr_text>好。'
++        assert c._continuous_active_by_worker==[0,0]
++        c.release_request(rid)
++        assert not c._continuous_routes
++        assert not c._runtimes[0].calls
++        assert c._runtimes[1].calls[-1]==('release',rid)
++        await c.aclose()
++    asyncio.run(scenario())
++
++
++def test_cancel_waits_for_selected_owner_and_cannot_release_active(routing):
++    async def scenario():
++        c=client();await c.preload();rid=request(routing,1)
++        task=asyncio.create_task(c._execute_sequence(member(rid)))
++        for _ in range(100):
++            if c._runtimes[1].pending:break
++            await asyncio.sleep(.001)
++        with pytest.raises(RuntimeError,match='active'):
++            c.release_request(rid)
++        assert rid in c._continuous_routes
++        task.cancel()
++        with pytest.raises(asyncio.CancelledError):
++            await task
++        assert c._runtimes[1].pending[(rid,'0')].done()
++        assert ('cancel',rid,'0') in c._runtimes[1].calls
++        c.release_request(rid)
++        assert not c._runtimes[0].calls
++        await c.aclose()
++    asyncio.run(scenario())
++
++
++def test_status_exposes_both_cached_workers_and_selected_failure(routing, monkeypatch):
++    c=client()
++    for i,runtime in enumerate(c._runtimes):
++        runtime.loaded=True
++        def snapshot(index=i):
++            return dict(loaded=True,loading=False,failure='dead' if index else None,
++                memory_allocated_mb=100+index,memory_reserved_mb=200+index,
++                continuous={'phase_wall_s':{'prefill':10+index,'decode':20+index}},
++                model_worker={'worker_pid':1000+index,'worker_alive':not bool(index),
++                    'worker_allocator':{'worker_pid':1000+index}})
++        runtime.snapshot=snapshot
++        runtime.ensure_loaded=lambda:pytest.fail('status loaded a worker')
++        runtime.submit=lambda *a,**k:pytest.fail('status sent busy RPC')
++    c._continuous_active_by_worker=[2,0]
++    monkeypatch.setattr(mod,'_client_instance',c)
++    result=mod.get_qwen_status()
++    assert result['configured_model_workers']==2
++    assert result['failed_instances']==1 and result['capacity']==1 and result['loaded']
++    assert [r['worker_pid'] for r in result['model_workers']]==[1000,1001]
++    assert result['instances'][1]['failure']=='dead'
++    assert result['instances'][0]['busy'] and not result['instances'][1]['busy']
++    assert result['instances'][1]['continuous']['phase_wall_s']['decode']==21
++    assert result['memory_allocated_mb']==201
++    assert result['feasibility_experiment']['per_worker_active_limit']==64
+diff --git a/test/config.qwen200-m2.toml b/test/config.qwen200-m2.toml
+new file mode 100644
+index 0000000..606bb42
+--- /dev/null
++++ b/test/config.qwen200-m2.toml
+@@ -0,0 +1,133 @@
++# 单Qwen预加载/16-128候选：仅测试，完整性能尚未验收；在项目根目录启动。
++# 128为全局语音段窗口和物理批上限，不是128个完整音频请求。
++instance_count = 1
++
++[log]
++log_path = "./asr_service.log"
++max_days = 7
++max_size_mb = 100
++
++[model_paths]
++vad_model_dir = "/home/zhangs/asr_nvidia/model/speech_fsmn_vad_zh-cn-16k-common-pytorch"
++spk_model_dir = "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced"
++emotion_model_dir = "/home/zhangs/asr_nvidia/model/emotion2vec_plus_large"
++
++[speech_rate]
++rate_factor = 0.4  # 语速修正系数（数值偏高时下调），最终语速 = 原始字/分钟 * rate_factor
++
++[itn]
++enabled = true
++enable_standalone_number = true
++enable_0_to_9 = false
++remove_interjections = true
++failure_mode = "passthrough"
++
++[qwen_asr]
++# 已收到新段后的IPC运输交接总上限0～5ms；不续期凑满，不影响空闲/无新段周期。
++continuous_admission_drain_ms = 3
++# 每轮prefill至多1～128段，完成后推进decode；仅continuous使用，16为待实测候选。
++continuous_prefill_batch_size = 16
++generation_mode = "continuous"
++online_repetition_enabled = true # 真实服务候选启用，另以关闭保护完成同源配对；未通过不推广
++# 生成中复读候选阈值：至少观察量 + 异常长度 + 尾部循环 + 持续确认共同生效；非实测最优值。
++# 仅在线停止使用，与下方生成后修复阈值独立；修改需重启。
++online_repetition_min_generated_tokens = 32 # 最少已生成token
++online_repetition_min_chars = 120 # 正文异常长度绝对下限（字符）
++online_repetition_max_chars_per_second = 40 # 异常长度还须超过音频秒数×此值
++online_repetition_min_repeats = 8 # 尾部连续循环次数，至少3
++online_repetition_min_repeat_chars = 64 # 循环覆盖字符总数，不得超过tail_chars
++online_repetition_max_unit_chars = 32 # 检测单元最大字符数，不得超过tail_chars
++online_repetition_tail_chars = 512 # 有界检测尾窗字符数
++online_repetition_confirmations = 2 # 不同正文增长观测连续确认次数，至少2
++# 强循环路径：至少96个规范字符、占正文95%，且重复次数达到音频秒数×4；与异常长度路径并列。
++# 来源为两个真实循环轨迹及正常记录回放，仅候选标定，不能代替人工准确率。
++online_repetition_strong_tail_min_chars = 96
++online_repetition_strong_tail_min_ratio = 95
++online_repetition_strong_tail_repeats_per_second = 4 # 强循环最少重复次数随音频时长增长
++preload_on_startup = true # 启动预加载权重，不是所有shape已推理暖身
++execution_mode = "process"
++process_shutdown_grace_s = 120
++batch_max_duration_ratio = 32.0
++enabled = true
++model = ""                              # 可选本地模型显示名称
++local_model_dir = "/home/model/Qwen3-ASR-1.7B-hf"
++# ASCEND_VISIBLE_DEVICES 指定宿主物理卡；容器内设备编号从0重新映射，单映射7时使用npu:0
++local_device = "npu:7"                  # 宿主指定物理卡7；容器仅映射卡7时按实际映射使用逻辑npu:0
++local_dtype = "bfloat16"
++local_instance_count = 2                # 每增加一个实例即复制一份权重
++max_new_tokens = 256
++segment_concurrency = 16
++request_concurrency = 128
++audio_concurrency = 8                   # A+B 同时处理的音频总数
++audio_spk_emo_concurrency = 4           # B 类音频上限（请求说话人、情绪或角色识别）
++queue_max_size = 64                     # A+B 共享等待队列容量
++queue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排队等待
++request_timeout_s = 120                 # 单次 Qwen 请求超时
++retry_count = 2                         # Qwen 请求失败重试次数
++speaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）
++
++max_inference_batch_size = 128
++batch_wait_timeout_ms = 100
++max_batch_audio_frames = 115200
++max_batch_tokens = 80000
++pending_segment_limit = 256
++pending_audio_bytes_limit = 268435456
++
++# 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入
++# 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出
++# 1863 字符的复读串）。这里按语速上限判定异常长度，再折叠重复部分。
++# 标定依据（68,018 段真实样本）：正常段 p99.9 = 20.3 字符/秒、峰值 26.2；
++# 复读段 282~313。取 40 留约 1.5 倍余量且远低于复读量级。
++# 复读保护由Qwen后处理读取；保持原有效缺省值。
++repetition_guard_enabled = true          # 是否启用复读检测与修复
++repetition_max_chars_per_second = 40     # 按段时长估算合理字符数的上限系数
++repetition_min_chars = 120               # 判定长度异常的绝对下限字符数
++repetition_min_unit = 4                  # 判定为循环的重复子串最小长度
++repetition_min_times = 3                 # 判定为循环的最小连续重复次数
++
++[vad]
++# 详见docs/npu-910b-migration-20261117/classroom-threshold-review.md。
++# 每个元素对应一个独立 FSMN-VAD worker；数组长度决定完整音频 VAD 并发上限
++vad_device = ["cpu","cpu","cpu","cpu","cpu","cpu","cpu","cpu"]
++# 小于该时长的候选段直接丢弃，单位：秒
++min_segment_duration_s = 0.3
++
++vad_snr_thres = 18.0 # 段级 SNR 过滤；18.0
++vad_snr_thres_filter_enabled = false
++
++# 独立服务段级log能量阈值，非dBFS；与模型内部FSMN全局选项独立
++vad_segment_decibel_thres = -40.0
++vad_decibel_frame_sample_ratio = 0.5 # 每秒采取帧率
++vad_decibel_low_frame_ratio_thres = 0.8 # 段级 decibel 过滤：抽取帧中低能量比例达到 0.8 时删除该段
++vad_decibel_thres_filter_enabled = false
++
++# 段级 RMS dBFS 过滤
++vad_low_volume_rms_dbfs_thres = -40.0
++vad_low_volume_filter_enabled = false
++
++# 段级过滤窗口，单位：分钟；0=整段都参与过滤，-1=该侧不限制
++# 3/3：只有落在开头 3 分钟、结尾 3 分钟内的段才做低音量/SNR/RMS 过滤；
++# 窗口外的中间段无条件保留，避免误删讲授主体。改动需重启生效。
++after_start = -1
++before_end = -1
++
++
++# 功能开关配置：v3 链路的说话人与情绪能力互相独立
++[features]
++open_v2_role = true      # CAM++ 说话人嵌入
++open_v2_emotion = true   # emotion2vec 情绪
++
++[model_device_pool]
++speech_campplus_execution_mode = "process"
++speech_campplus_process_startup_timeout_s = 60
++speech_campplus_process_shutdown_grace_s = 30
++speech_campplus_devices = ["npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7"]
++emotion2vec_devices = ["npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7","npu:7"]
++
++speech_campplus_prefetch_queue_depth = 0
++emotion2vec_prefetch_queue_depth = 0
++speech_campplus_batch_size = 1
++emotion2vec_batch_size = 1
++
++[status]
++resource_sample_interval_s = 1.0

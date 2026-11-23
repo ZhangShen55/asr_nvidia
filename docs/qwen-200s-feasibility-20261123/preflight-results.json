@@ -1,0 +1,732 @@
+{
+  "scope": "short real HTTP correctness/load/close only, not full-audio speed or accuracy",
+  "rows": [
+    {
+      "case": "b0",
+      "warmup_summary": "warmup_only_completed",
+      "worker_counts": [
+        {
+          "pid": 2894770,
+          "completed": 8,
+          "steps": {
+            "prefill": 8,
+            "decode": 312
+          },
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 2894770,
+            "worker_rss_mb": 2495.03125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.00927734375,
+            "memory_reserved_mb": 4390.0,
+            "max_memory_allocated_mb": 3945.14111328125,
+            "max_memory_reserved_mb": 4390.0
+          },
+          "model_threads": "4"
+        }
+      ],
+      "texts": [
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f"
+      ],
+      "shutdown": {
+        "owned": true,
+        "identities": [
+          [
+            2703195,
+            1795413086.89
+          ],
+          [
+            2766119,
+            1795413092.09
+          ],
+          [
+            2766121,
+            1795413092.09
+          ],
+          [
+            2766122,
+            1795413092.09
+          ],
+          [
+            2766123,
+            1795413092.1
+          ],
+          [
+            2766124,
+            1795413092.1
+          ],
+          [
+            2766125,
+            1795413092.1
+          ],
+          [
+            2766126,
+            1795413092.1
+          ],
+          [
+            2766127,
+            1795413092.11
+          ],
+          [
+            2766128,
+            1795413092.11
+          ],
+          [
+            2894770,
+            1795413102.37
+          ],
+          [
+            2996661,
+            1795413110.84
+          ],
+          [
+            3055108,
+            1795413115.71
+          ],
+          [
+            3055978,
+            1795413115.78
+          ],
+          [
+            3055979,
+            1795413115.78
+          ],
+          [
+            3055984,
+            1795413115.78
+          ],
+          [
+            3055997,
+            1795413115.78
+          ],
+          [
+            3056015,
+            1795413115.79
+          ],
+          [
+            3056047,
+            1795413115.79
+          ],
+          [
+            3056087,
+            1795413115.79
+          ],
+          [
+            3056145,
+            1795413115.79
+          ],
+          [
+            3056193,
+            1795413115.79
+          ],
+          [
+            3058407,
+            1795413116.04
+          ],
+          [
+            3058408,
+            1795413116.05
+          ],
+          [
+            3058409,
+            1795413116.05
+          ],
+          [
+            3058410,
+            1795413116.05
+          ],
+          [
+            3058411,
+            1795413116.05
+          ],
+          [
+            3058412,
+            1795413116.05
+          ],
+          [
+            3058413,
+            1795413116.05
+          ],
+          [
+            3058414,
+            1795413116.05
+          ]
+        ],
+        "forced": false,
+        "temp_dir": "/tmp/asr-svc-ctqpw8ji",
+        "cache_dir": "/tmp/asr-svc-ctqpw8ji/seacraft_asr",
+        "temp_dir_retained": true,
+        "remaining_cache_files": [],
+        "cache_scan_error": null,
+        "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+        "exit_code": 0,
+        "expected_exit_codes": [
+          0
+        ],
+        "exit_code_ok": true,
+        "remaining_pids": [],
+        "port_observations": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "observe_s": 5,
+        "orphan_cleanup": false,
+        "term_sent_monotonic": 7500821.79405809,
+        "parent_exit_observed_monotonic": 7500846.23865671,
+        "term_to_parent_exit_s": 24.444598619826138,
+        "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+        "passed": true
+      }
+    },
+    {
+      "case": "m2",
+      "warmup_summary": "warmup_only_completed",
+      "worker_counts": [
+        {
+          "pid": 3711798,
+          "completed": 4,
+          "steps": {
+            "prefill": 4,
+            "decode": 156
+          },
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 3711798,
+            "worker_rss_mb": 2498.640625,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3906.44677734375,
+            "memory_reserved_mb": 4390.0,
+            "max_memory_allocated_mb": 3945.14111328125,
+            "max_memory_reserved_mb": 4390.0
+          },
+          "model_threads": "2"
+        },
+        {
+          "pid": 3854387,
+          "completed": 4,
+          "steps": {
+            "prefill": 4,
+            "decode": 156
+          },
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 3854387,
+            "worker_rss_mb": 2497.984375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3904.47802734375,
+            "memory_reserved_mb": 4390.0,
+            "max_memory_allocated_mb": 3945.14111328125,
+            "max_memory_reserved_mb": 4390.0
+          },
+          "model_threads": "2"
+        }
+      ],
+      "texts": [
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f"
+      ],
+      "shutdown": {
+        "owned": true,
+        "identities": [
+          [
+            3594271,
+            1795413203.12
+          ],
+          [
+            3643376,
+            1795413208.43
+          ],
+          [
+            3643483,
+            1795413208.44
+          ],
+          [
+            3643546,
+            1795413208.44
+          ],
+          [
+            3643590,
+            1795413208.44
+          ],
+          [
+            3643605,
+            1795413208.44
+          ],
+          [
+            3643606,
+            1795413208.45
+          ],
+          [
+            3643607,
+            1795413208.45
+          ],
+          [
+            3643608,
+            1795413208.45
+          ],
+          [
+            3643609,
+            1795413208.45
+          ],
+          [
+            3711798,
+            1795413218.32
+          ],
+          [
+            3760249,
+            1795413227.03
+          ],
+          [
+            3785836,
+            1795413231.98
+          ],
+          [
+            3786441,
+            1795413232.04
+          ],
+          [
+            3786460,
+            1795413232.05
+          ],
+          [
+            3786461,
+            1795413232.05
+          ],
+          [
+            3786462,
+            1795413232.05
+          ],
+          [
+            3786463,
+            1795413232.05
+          ],
+          [
+            3786464,
+            1795413232.05
+          ],
+          [
+            3786465,
+            1795413232.06
+          ],
+          [
+            3786466,
+            1795413232.06
+          ],
+          [
+            3786467,
+            1795413232.06
+          ],
+          [
+            3787932,
+            1795413232.3
+          ],
+          [
+            3787933,
+            1795413232.3
+          ],
+          [
+            3787934,
+            1795413232.31
+          ],
+          [
+            3787945,
+            1795413232.31
+          ],
+          [
+            3787973,
+            1795413232.31
+          ],
+          [
+            3788000,
+            1795413232.31
+          ],
+          [
+            3788027,
+            1795413232.31
+          ],
+          [
+            3788031,
+            1795413232.31
+          ],
+          [
+            3854387,
+            1795413241.81
+          ],
+          [
+            3914703,
+            1795413250.26
+          ],
+          [
+            3964521,
+            1795413255.57
+          ],
+          [
+            3965020,
+            1795413255.63
+          ],
+          [
+            3965021,
+            1795413255.64
+          ],
+          [
+            3965022,
+            1795413255.64
+          ],
+          [
+            3965031,
+            1795413255.64
+          ],
+          [
+            3965057,
+            1795413255.64
+          ],
+          [
+            3965079,
+            1795413255.64
+          ],
+          [
+            3965105,
+            1795413255.64
+          ],
+          [
+            3965148,
+            1795413255.64
+          ],
+          [
+            3965180,
+            1795413255.64
+          ],
+          [
+            3967652,
+            1795413255.92
+          ],
+          [
+            3967683,
+            1795413255.92
+          ],
+          [
+            3967697,
+            1795413255.92
+          ],
+          [
+            3967698,
+            1795413255.92
+          ],
+          [
+            3967700,
+            1795413255.93
+          ],
+          [
+            3967705,
+            1795413255.93
+          ],
+          [
+            3967727,
+            1795413255.93
+          ],
+          [
+            3967748,
+            1795413255.93
+          ],
+          [
+            83119,
+            1795413288.71
+          ]
+        ],
+        "forced": false,
+        "temp_dir": "/tmp/asr-svc-ys3qmx3g",
+        "cache_dir": "/tmp/asr-svc-ys3qmx3g/seacraft_asr",
+        "temp_dir_retained": true,
+        "remaining_cache_files": [],
+        "cache_scan_error": null,
+        "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+        "exit_code": 0,
+        "expected_exit_codes": [
+          0
+        ],
+        "exit_code_ok": true,
+        "remaining_pids": [],
+        "port_observations": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "observe_s": 5,
+        "orphan_cleanup": false,
+        "term_sent_monotonic": 7500963.02694409,
+        "parent_exit_observed_monotonic": 7500989.46076489,
+        "term_to_parent_exit_s": 26.433820799924433,
+        "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+        "passed": true
+      }
+    },
+    {
+      "case": "s1",
+      "warmup_summary": "warmup_only_completed",
+      "worker_counts": [
+        {
+          "pid": 711613,
+          "completed": 8,
+          "steps": {
+            "prefill": 8,
+            "decode": 312
+          },
+          "allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 711613,
+            "worker_rss_mb": 2501.7734375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3905.02490234375,
+            "memory_reserved_mb": 4390.0,
+            "max_memory_allocated_mb": 3945.14111328125,
+            "max_memory_reserved_mb": 4390.0
+          },
+          "model_threads": "4"
+        }
+      ],
+      "texts": [
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f",
+        "\u4e09\u4e2a\u662f\u5229\u6c34\u7684\uff0c\u8bf4\u660e\u4ec0\u4e48\uff1f\u6c14\u865a\uff0c\u6c34\u6db2\u4ee3\u8c22\u5931\u8c03\u561b\uff0c\u662f\u4e00\u79cd\u75c5\u75c7\u3002\u5982\u679c\u6211\u7528\u9ec4\u82aa\uff0c\u9ec4\u82aa\u6709\u4ec0\u4e48\u4f5c\u7528\uff1f\u4f60\u4eec\u6709\u6ca1\u6709\u770b\uff1f"
+      ],
+      "shutdown": {
+        "owned": true,
+        "identities": [
+          [
+            616764,
+            1795413347.93
+          ],
+          [
+            654048,
+            1795413353.41
+          ],
+          [
+            654128,
+            1795413353.42
+          ],
+          [
+            654174,
+            1795413353.42
+          ],
+          [
+            654205,
+            1795413353.42
+          ],
+          [
+            654234,
+            1795413353.42
+          ],
+          [
+            654264,
+            1795413353.42
+          ],
+          [
+            654275,
+            1795413353.43
+          ],
+          [
+            654278,
+            1795413353.43
+          ],
+          [
+            654279,
+            1795413353.43
+          ],
+          [
+            711613,
+            1795413363.41
+          ],
+          [
+            757828,
+            1795413372.38
+          ],
+          [
+            783186,
+            1795413377.48
+          ],
+          [
+            783552,
+            1795413377.54
+          ],
+          [
+            783553,
+            1795413377.55
+          ],
+          [
+            783568,
+            1795413377.55
+          ],
+          [
+            783587,
+            1795413377.55
+          ],
+          [
+            783607,
+            1795413377.56
+          ],
+          [
+            783624,
+            1795413377.56
+          ],
+          [
+            783641,
+            1795413377.56
+          ],
+          [
+            783659,
+            1795413377.56
+          ],
+          [
+            783674,
+            1795413377.56
+          ],
+          [
+            784891,
+            1795413377.82
+          ],
+          [
+            784892,
+            1795413377.83
+          ],
+          [
+            784894,
+            1795413377.83
+          ],
+          [
+            784895,
+            1795413377.83
+          ],
+          [
+            784896,
+            1795413377.83
+          ],
+          [
+            784897,
+            1795413377.83
+          ],
+          [
+            784911,
+            1795413377.83
+          ],
+          [
+            784938,
+            1795413377.84
+          ]
+        ],
+        "forced": false,
+        "temp_dir": "/tmp/asr-svc-plqw8bg3",
+        "cache_dir": "/tmp/asr-svc-plqw8bg3/seacraft_asr",
+        "temp_dir_retained": true,
+        "remaining_cache_files": [],
+        "cache_scan_error": null,
+        "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+        "exit_code": 0,
+        "expected_exit_codes": [
+          0
+        ],
+        "exit_code_ok": true,
+        "remaining_pids": [],
+        "port_observations": [
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "observe_s": 5,
+        "orphan_cleanup": false,
+        "term_sent_monotonic": 7501084.2999322,
+        "parent_exit_observed_monotonic": 7501107.80921846,
+        "term_to_parent_exit_s": 23.509286259301007,
+        "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+        "passed": true
+      }
+    }
+  ]
+}

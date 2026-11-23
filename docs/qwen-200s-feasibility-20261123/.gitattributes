@@ -1,0 +1,2 @@
+# Unified diff的空白上下文行需要单个空格；保留原始补丁及SHA。
+*.patch -whitespace

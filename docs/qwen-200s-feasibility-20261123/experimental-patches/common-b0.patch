@@ -1,0 +1,152 @@
+diff --git a/core/qwen_asr_process.py b/core/qwen_asr_process.py
+index 2d86c63..8b8334b 100644
+--- a/core/qwen_asr_process.py
++++ b/core/qwen_asr_process.py
+@@ -129,6 +129,11 @@ def _worker(connection, runtime_args, factory_path, launch_id, launch_config):
+         factory = importlib.import_module(module_name)
+         for attribute in qualname.split('.'):
+             factory = getattr(factory, attribute)
++        # 隔离可行性实验固定总模型CPU线程预算，不影响VAD父进程预算。
++        experimental_threads = os.environ.get('QWEN200_MODEL_THREADS')
++        if experimental_threads:
++            import torch
++            torch.set_num_threads(int(experimental_threads))
+         runtime = factory(*runtime_args)
+         if launch_config.get('continuous_options') is not None:
+             runtime.ensure_loaded()
+@@ -142,6 +147,7 @@ def _worker(connection, runtime_args, factory_path, launch_id, launch_config):
+                            'launch_config':dict(ready_config,worker_entry_identity=_factory_identity(__name__+':_worker')),
+                            'worker_entry_module_file':__file__, 'state':_state(runtime),
+                            'preload_observation':{
++                               'experimental_model_threads':experimental_threads,
+                                'runtime_module_file':getattr(sys.modules.get(type(runtime).__module__), '__file__', None),
+                                'torch_imported':'torch' in sys.modules,
+                                'torch_npu_imported':'torch_npu' in sys.modules,
+diff --git a/core/qwen_continuous_runtime.py b/core/qwen_continuous_runtime.py
+index f6ea288..986135d 100644
+--- a/core/qwen_continuous_runtime.py
++++ b/core/qwen_continuous_runtime.py
+@@ -56,6 +56,8 @@ class ContinuousHFAdapter:
+         self.last_step = None
+         self._bundle = None
+         self.repacks = 0
++        self.experimental_wall_s = {}
++        self.generated_token_histogram = {}
+         self.cache_reuses = 0
+         self.end_reasons = {}
+         self.error_counts = {}
+@@ -71,6 +73,10 @@ class ContinuousHFAdapter:
+         self._memory_sample = {'kv_bytes':0, 'kv_storage_bytes':0}
+ 
+ 
++    def _record_wall(self, phase, started):
++        # 实验仅量已有安全边界的host包络，不增加同步，不称纯设备kernel时间。
++        self.experimental_wall_s[phase] = self.experimental_wall_s.get(phase, 0.0) + time.monotonic()-started
++
+     def event(self, key, kind, **values):
+         self.events.append(dict(request_id=key[0], segment_id=key[1], kind=kind,
+                                 monotonic=time.monotonic(), **values))
+@@ -82,18 +88,27 @@ class ContinuousHFAdapter:
+         from utils.incremental_repetition import IncrementalRepetitionGuard, RepetitionGuardConfig
+         rt = self.runtime
+         self.last_phase = 'prefill'
++        audio_started = time.monotonic()
+         audios = [decode_wav_bytes(item['audio']) for item in requests]
++        self._record_wall("prefill_audio_decode", audio_started)
+         start = time.monotonic()
++        prepare_started = start
+         inputs = prepare_independent_inputs(rt.processor, audios, [r.get('language') for r in requests])
++        self._record_wall("prefill_processor", prepare_started)
++        transfer_started = time.monotonic()
+         inputs = move_inputs(inputs, device=rt.device, dtype=rt.model.dtype)
+         lengths = inputs['attention_mask'].sum(-1).tolist()
+         positions = inputs['attention_mask'].long().cumsum(-1) - 1
+         positions.masked_fill_(inputs['attention_mask'] == 0, 1)
++        self._record_wall('prefill_transfer_positions_readback', transfer_started)
++        forward_started = time.monotonic()
+         with torch.inference_mode():
+             output = rt.model(**inputs, position_ids=positions, use_cache=True, logits_to_keep=1)
+             sampled = output.logits[:, -1].argmax(-1)
+             # Readback is a safe boundary for the forward producing these tokens.
+             ids = sampled.tolist()
++            self._record_wall("prefill_forward_readback", forward_started)
++            bookkeeping_started = time.monotonic()
+             group = dict(cache=output.past_key_values, mask=inputs['attention_mask'],
+                          keys=tuple((item['request_id'],item['segment_id']) for item in requests))
+             for i, item in enumerate(requests):
+@@ -110,8 +125,11 @@ class ContinuousHFAdapter:
+                 self.event(key, 'prefill', prompt_length=length, wall_s=time.monotonic()-start)
+                 seq.tokens.append(ids[i])
+                 self.event(key, 'first_token')
++            self._record_wall('prefill_sequence_bookkeeping', bookkeeping_started)
++        sync_started = time.monotonic()
+         if getattr(rt, 'api', None) is not None:
+             rt.api.synchronize(rt.device)
++        self._record_wall('prefill_explicit_sync', sync_started)
+         wall = time.monotonic()-start
+         phase = 'prefill'
+         self.phase_wall_s[phase] += wall
+@@ -190,13 +208,19 @@ class ContinuousHFAdapter:
+             mask=torch.cat((old_mask,old_mask.new_ones((len(sequences),1))),dim=-1)
+             cache=DynamicCache(ddp_cache_data=packed)
+             self.repacks += 1
++        self._record_wall('decode_kv_layout', start)
++        input_started = time.monotonic()
+         positions = torch.tensor(lengths, dtype=torch.long, device=rt.device).unsqueeze(1)
+         ids = torch.stack([seq.pending[0] for seq in sequences]).unsqueeze(1)
++        self._record_wall('decode_input_assembly', input_started)
++        forward_started = time.monotonic()
+         with torch.inference_mode():
+             output = rt.model(input_ids=ids, attention_mask=mask, position_ids=positions,
+                               past_key_values=cache, use_cache=True, logits_to_keep=1)
+             sampled = output.logits[:, -1].argmax(-1)
+             values = sampled.tolist()
++            self._record_wall("decode_forward_readback", forward_started)
++            bookkeeping_started = time.monotonic()
+             group=dict(cache=output.past_key_values, mask=mask, keys=keys)
+             self._bundle=group
+             for i, (seq, length) in enumerate(zip(sequences, lengths)):
+@@ -207,8 +231,11 @@ class ContinuousHFAdapter:
+                 seq.row = i
+                 seq.pending = sampled[i:i+1]
+                 seq.tokens.append(values[i])
++            self._record_wall("decode_sequence_bookkeeping", bookkeeping_started)
++        sync_started = time.monotonic()
+         if getattr(rt, 'api', None) is not None:
+             rt.api.synchronize(rt.device)
++        self._record_wall('decode_explicit_sync', sync_started)
+         wall = time.monotonic()-start
+         self.last_step = dict(batch_size=len(sequences), wall_s=wall, max_cache_length=width)
+         self.phase_wall_s['decode'] += wall
+@@ -217,6 +244,13 @@ class ContinuousHFAdapter:
+         return self._finish()
+ 
+     def _finish(self):
++        started = time.monotonic()
++        try:
++            return self._finish_impl()
++        finally:
++            self._record_wall('finish_detokenize_guard_recovery', started)
++
++    def _finish_impl(self):
+         rt = self.runtime
+         eos = rt.model.generation_config.eos_token_id
+         eos = set(eos if isinstance(eos, (tuple, list)) else [eos])
+@@ -264,6 +298,8 @@ class ContinuousHFAdapter:
+                         reason=reason,action=action,recovered=warning['recovered'],
+                         generated_tokens=len(seq.tokens),monotonic=time.monotonic()))
+                     del self.recent_warnings[:-32]
++                bucket = str(((len(seq.tokens)+15)//16)*16)
++                self.generated_token_histogram[bucket] = self.generated_token_histogram.get(bucket,0)+1
+                 self.end_reasons[reason] = self.end_reasons.get(reason, 0)+1
+                 self.event(key, reason, generated_tokens=len(seq.tokens))
+                 del self.active[key]
+@@ -341,4 +377,7 @@ class ContinuousHFAdapter:
+                     recent_warnings=list(self.recent_warnings),
+                     end_reasons=dict(self.end_reasons), phase_wall_s=dict(self.phase_wall_s),
+                     steps=dict(self.steps),peak_active=self.peak_active, peak_kv_bytes=self.peak_kv_bytes,
+-                    repacks=self.repacks, cache_reuses=self.cache_reuses)
++                    repacks=self.repacks, cache_reuses=self.cache_reuses,
++                    experimental_host_wall_s=dict(self.experimental_wall_s),
++                    experimental_generated_token_histogram=dict(self.generated_token_histogram),
++                    experimental_timing_scope="host envelopes at existing readback boundaries; not pure device kernel; phases are subintervals")

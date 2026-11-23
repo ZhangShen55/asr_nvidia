@@ -1,0 +1,1287 @@
+{
+  "scope": "CPU replay of immutable real status; not a new NPU/performance run",
+  "source": "/home/zhangs/asr_nvidia/logs/qwen-continuous-20261121-a8-drain3-clean",
+  "source_status_sha256": "96defb68810ffb5eb087bbc7dd9f9d8800c421dd48d3933354874ca2aa67eee9",
+  "snapshot_count": 348,
+  "actual_safety_first_stop": {
+    "reason": "resource_hbm_free",
+    "elapsed_s": 222.32590483967215,
+    "observed": 6944,
+    "threshold": 8192.0
+  },
+  "eta_only_replay_scope": "resource NPU rows omitted only for ETA isolation; actual_safety_first_stop uses unmodified snapshots",
+  "eta_only_first_stop": {
+    "reason": "batch_hard_deadline",
+    "elapsed_s": 336.5903147794306
+  },
+  "predictions": [
+    {
+      "rule_version": "qwen200-v1-report-only-20261123",
+      "elapsed_s": 90.4696203796193,
+      "progress": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 91,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 76,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 93,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 65,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 113,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 85,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 130,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 93,
+          "inflight": null,
+          "stage": "segments"
+        }
+      },
+      "eta_total_s": 452.55344764111163,
+      "per_request": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 91,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.069514656543462,
+          "rate60": 1.153613850118541,
+          "fastest_comparable_rate": 1.153613850118541,
+          "optimistic_rate": 1.4420173126481761,
+          "eta_total_s": 281.8681546268559
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 76,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9722860514031473,
+          "rate60": 1.1865742458362134,
+          "fastest_comparable_rate": 1.1865742458362134,
+          "optimistic_rate": 1.4832178072952669,
+          "eta_total_s": 306.89097024553143
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 93,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.0371051214966904,
+          "rate60": 1.384336620142249,
+          "fastest_comparable_rate": 1.384336620142249,
+          "optimistic_rate": 1.7304207751778111,
+          "eta_total_s": 300.8230819315339
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 65,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.8102383761692894,
+          "rate60": 1.0052920693890142,
+          "fastest_comparable_rate": 1.0052920693890142,
+          "optimistic_rate": 1.2566150867362678,
+          "eta_total_s": 452.55344764111163
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 113,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.523248147198264,
+          "rate60": 1.8622623580485016,
+          "fastest_comparable_rate": 1.8622623580485016,
+          "optimistic_rate": 2.327827947560627,
+          "eta_total_s": 365.40402894304754
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 85,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.3287909369176345,
+          "rate60": 1.4008168180010854,
+          "fastest_comparable_rate": 1.4008168180010854,
+          "optimistic_rate": 1.7510210225013567,
+          "eta_total_s": 393.15016686608465
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 130,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.7825244275724366,
+          "rate60": 2.142425721648719,
+          "fastest_comparable_rate": 2.142425721648719,
+          "optimistic_rate": 2.6780321520608985,
+          "eta_total_s": 305.5529230788551
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 93,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.3612004719644062,
+          "rate60": null,
+          "fastest_comparable_rate": 1.3612004719644062,
+          "optimistic_rate": 1.7015005899555078,
+          "eta_total_s": 447.80126257193757
+        }
+      },
+      "trusted": false,
+      "reasons": [
+        "distribution_comparable_not_verified",
+        "shared_load_stable_not_verified",
+        "tail_acceleration_modeled_not_verified"
+      ],
+      "rate_acceleration_allowance": 1.25,
+      "enabled_for_stop": false,
+      "scope": "empirical optimistic projection, not observed completion time or hardware lower bound",
+      "audio_duration_distribution": null,
+      "generated_token_distribution": null,
+      "tail_acceleration_assumption": "requires separate comparable distribution/shared-load/tail evidence",
+      "consecutive_insufficient_windows": 0
+    },
+    {
+      "rule_version": "qwen200-v1-report-only-20261123",
+      "elapsed_s": 121.39443447999656,
+      "progress": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 119,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 103,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 117,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 91,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 166,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 124,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 174,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 130,
+          "inflight": null,
+          "stage": "segments"
+        }
+      },
+      "eta_total_s": 462.7877573265465,
+      "per_request": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 119,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9054217725971203,
+          "rate60": 1.0066640008248333,
+          "fastest_comparable_rate": 1.153613850118541,
+          "optimistic_rate": 1.4420173126481761,
+          "eta_total_s": 293.37572612244105
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 103,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.8730852807186517,
+          "rate60": 0.9076478695961613,
+          "fastest_comparable_rate": 1.1865742458362134,
+          "optimistic_rate": 1.4832178072952669,
+          "eta_total_s": 319.6121194039161
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 117,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.7760758050832459,
+          "rate60": 0.9076478695961613,
+          "fastest_comparable_rate": 1.384336620142249,
+          "optimistic_rate": 1.7304207751778111,
+          "eta_total_s": 317.87843702848824
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 91,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.8407487888401831,
+          "rate60": 0.8251344269056011,
+          "fastest_comparable_rate": 1.0052920693890142,
+          "optimistic_rate": 1.2566150867362678,
+          "eta_total_s": 462.7877573265465
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 166,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.7138340695588348,
+          "rate60": 1.6337661652730902,
+          "fastest_comparable_rate": 1.8622623580485016,
+          "optimistic_rate": 2.327827947560627,
+          "eta_total_s": 373.5608373342659
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 124,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.2611231832602747,
+          "rate60": 1.2707070174346258,
+          "fastest_comparable_rate": 1.4008168180010854,
+          "optimistic_rate": 1.7510210225013567,
+          "eta_total_s": 401.8022615080239
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 174,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.4228056426526177,
+          "rate60": 1.6007607881968662,
+          "fastest_comparable_rate": 2.142425721648719,
+          "optimistic_rate": 2.6780321520608985,
+          "eta_total_s": 320.04776266748513
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 130,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.1964501995033374,
+          "rate60": 1.2707070174346258,
+          "fastest_comparable_rate": 1.3612004719644062,
+          "optimistic_rate": 1.7015005899555078,
+          "eta_total_s": 456.98056555205864
+        }
+      },
+      "trusted": false,
+      "reasons": [
+        "distribution_comparable_not_verified",
+        "shared_load_stable_not_verified",
+        "tail_acceleration_modeled_not_verified"
+      ],
+      "rate_acceleration_allowance": 1.25,
+      "enabled_for_stop": false,
+      "scope": "empirical optimistic projection, not observed completion time or hardware lower bound",
+      "audio_duration_distribution": null,
+      "generated_token_distribution": null,
+      "tail_acceleration_assumption": "requires separate comparable distribution/shared-load/tail evidence",
+      "consecutive_insufficient_windows": 0
+    },
+    {
+      "rule_version": "qwen200-v1-report-only-20261123",
+      "elapsed_s": 152.297968310304,
+      "progress": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 144,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 130,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 146,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 118,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 216,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 162,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 221,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 166,
+          "inflight": null,
+          "stage": "segments"
+        }
+      },
+      "eta_total_s": 472.20499811056754,
+      "per_request": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 144,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.8089689721983262,
+          "rate60": 0.824553904419337,
+          "fastest_comparable_rate": 1.153613850118541,
+          "optimistic_rate": 1.4420173126481761,
+          "eta_total_s": 306.94243619846975
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 130,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.8736864899741923,
+          "rate60": 0.8740271386844971,
+          "fastest_comparable_rate": 1.1865742458362134,
+          "optimistic_rate": 1.4832178072952669,
+          "eta_total_s": 332.3119882922309
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 146,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9384040077500584,
+          "rate60": 0.8740271386844971,
+          "fastest_comparable_rate": 1.384336620142249,
+          "optimistic_rate": 1.7304207751778111,
+          "eta_total_s": 332.0230412296596
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 118,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.8736864899741923,
+          "rate60": 0.8740271386844971,
+          "fastest_comparable_rate": 1.0052920693890142,
+          "optimistic_rate": 1.2566150867362678,
+          "eta_total_s": 472.20499811056754
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 216,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.6179379443966524,
+          "rate60": 1.6820899650154473,
+          "fastest_comparable_rate": 1.8622623580485016,
+          "optimistic_rate": 2.327827947560627,
+          "eta_total_s": 382.9851204955555
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 162,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.2296328377414558,
+          "rate60": 1.269813012805779,
+          "fastest_comparable_rate": 1.4008168180010854,
+          "optimistic_rate": 1.7510210225013567,
+          "eta_total_s": 411.0041712506225
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 221,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.5208616677328533,
+          "rate60": 1.4677059498664198,
+          "fastest_comparable_rate": 2.142425721648719,
+          "optimistic_rate": 2.6780321520608985,
+          "eta_total_s": 333.40109645115353
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 166,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.1649153199655897,
+          "rate60": 1.1708665442754584,
+          "fastest_comparable_rate": 1.3612004719644062,
+          "optimistic_rate": 1.7015005899555078,
+          "eta_total_s": 466.72630477887355
+        }
+      },
+      "trusted": false,
+      "reasons": [
+        "distribution_comparable_not_verified",
+        "shared_load_stable_not_verified",
+        "tail_acceleration_modeled_not_verified"
+      ],
+      "rate_acceleration_allowance": 1.25,
+      "enabled_for_stop": false,
+      "scope": "empirical optimistic projection, not observed completion time or hardware lower bound",
+      "audio_duration_distribution": null,
+      "generated_token_distribution": null,
+      "tail_acceleration_assumption": "requires separate comparable distribution/shared-load/tail evidence",
+      "consecutive_insufficient_windows": 0
+    },
+    {
+      "rule_version": "qwen200-v1-report-only-20261123",
+      "elapsed_s": 183.15845802985132,
+      "progress": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 172,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 166,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 175,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 151,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 260,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 209,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 261,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 211,
+          "inflight": null,
+          "stage": "segments"
+        }
+      },
+      "eta_total_s": 459.2195660665293,
+      "per_request": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 172,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9073089978304696,
+          "rate60": 0.8419270053972379,
+          "fastest_comparable_rate": 1.153613850118541,
+          "optimistic_rate": 1.4420173126481761,
+          "eta_total_s": 318.385683313225
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 166,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.1665401400677466,
+          "rate60": 1.0400274772554114,
+          "fastest_comparable_rate": 1.1865742458362134,
+          "optimistic_rate": 1.4832178072952669,
+          "eta_total_s": 338.9009247557881
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 175,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9397128906101293,
+          "rate60": 0.9574856139811725,
+          "fastest_comparable_rate": 1.384336620142249,
+          "optimistic_rate": 1.7304207751778111,
+          "eta_total_s": 346.1246013200709
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 151,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.0693284617287677,
+          "rate60": 0.9574856139811725,
+          "fastest_comparable_rate": 1.0693284617287677,
+          "optimistic_rate": 1.3366605771609597,
+          "eta_total_s": 459.2195660665293
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 260,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.4257712823050237,
+          "rate60": 1.4857535389363021,
+          "fastest_comparable_rate": 1.8622623580485016,
+          "optimistic_rate": 2.327827947560627,
+          "eta_total_s": 394.94386962636713
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 209,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.5229829606440026,
+          "rate60": 1.3867033030072153,
+          "fastest_comparable_rate": 1.5229829606440026,
+          "optimistic_rate": 1.9037287008050032,
+          "eta_total_s": 396.42414017685076
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 261,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.2961557111863853,
+          "rate60": 1.4362284209717588,
+          "fastest_comparable_rate": 2.142425721648719,
+          "optimistic_rate": 2.6780321520608985,
+          "eta_total_s": 349.32524570547616
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 211,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.4581751750846834,
+          "rate60": 1.3041614397329764,
+          "fastest_comparable_rate": 1.4581751750846834,
+          "optimistic_rate": 1.8227189688558543,
+          "eta_total_s": 451.9876129201303
+        }
+      },
+      "trusted": false,
+      "reasons": [
+        "distribution_comparable_not_verified",
+        "shared_load_stable_not_verified",
+        "tail_acceleration_modeled_not_verified"
+      ],
+      "rate_acceleration_allowance": 1.25,
+      "enabled_for_stop": false,
+      "scope": "empirical optimistic projection, not observed completion time or hardware lower bound",
+      "audio_duration_distribution": null,
+      "generated_token_distribution": null,
+      "tail_acceleration_assumption": "requires separate comparable distribution/shared-load/tail evidence",
+      "consecutive_insufficient_windows": 0
+    },
+    {
+      "rule_version": "qwen200-v1-report-only-20261123",
+      "elapsed_s": 214.01708692032844,
+      "progress": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 200,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 192,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 203,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 180,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 304,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 258,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 305,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 249,
+          "inflight": null,
+          "stage": "segments"
+        }
+      },
+      "eta_total_s": 468.38233551780945,
+      "per_request": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 200,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9073637101433472,
+          "rate60": 0.9087661542070333,
+          "fastest_comparable_rate": 1.153613850118541,
+          "optimistic_rate": 1.4420173126481761,
+          "eta_total_s": 329.82706959891
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 192,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.8425520165616794,
+          "rate60": 0.9418121961781982,
+          "fastest_comparable_rate": 1.1865742458362134,
+          "optimistic_rate": 1.4832178072952669,
+          "eta_total_s": 352.230098516939
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 203,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9073637101433472,
+          "rate60": 0.892243133221451,
+          "fastest_comparable_rate": 1.384336620142249,
+          "optimistic_rate": 1.7304207751778111,
+          "eta_total_s": 360.8021947065546
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 180,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.939769556934181,
+          "rate60": 0.9913812591349455,
+          "fastest_comparable_rate": 1.0693284617287677,
+          "optimistic_rate": 1.3366605771609597,
+          "eta_total_s": 468.38233551780945
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 304,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.4258572587966885,
+          "rate60": 1.4044567837745061,
+          "fastest_comparable_rate": 1.8622623580485016,
+          "optimistic_rate": 2.327827947560627,
+          "eta_total_s": 406.90075792810853
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 258,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.5878864927508576,
+          "rate60": 1.5366409516591655,
+          "fastest_comparable_rate": 1.5878864927508576,
+          "optimistic_rate": 1.984858115938572,
+          "eta_total_s": 393.8788095962522
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 305,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.4258572587966885,
+          "rate60": 1.3383646998321763,
+          "fastest_comparable_rate": 2.142425721648719,
+          "optimistic_rate": 2.6780321520608985,
+          "eta_total_s": 363.7539000842061
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 249,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.2314221780516854,
+          "rate60": 1.3383646998321763,
+          "fastest_comparable_rate": 1.4581751750846834,
+          "optimistic_rate": 1.8227189688558543,
+          "eta_total_s": 461.9982665334021
+        }
+      },
+      "trusted": false,
+      "reasons": [
+        "distribution_comparable_not_verified",
+        "shared_load_stable_not_verified",
+        "tail_acceleration_modeled_not_verified"
+      ],
+      "rate_acceleration_allowance": 1.25,
+      "enabled_for_stop": false,
+      "scope": "empirical optimistic projection, not observed completion time or hardware lower bound",
+      "audio_duration_distribution": null,
+      "generated_token_distribution": null,
+      "tail_acceleration_assumption": "requires separate comparable distribution/shared-load/tail evidence",
+      "consecutive_insufficient_windows": 0
+    },
+    {
+      "rule_version": "qwen200-v1-report-only-20261123",
+      "elapsed_s": 244.9265995202586,
+      "progress": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 230,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 220,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 252,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 210,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 351,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 296,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 344,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 293,
+          "inflight": null,
+          "stage": "segments"
+        }
+      },
+      "eta_total_s": 476.84785559443253,
+      "per_request": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 230,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9705749937987627,
+          "rate60": 0.9243314480651516,
+          "fastest_comparable_rate": 1.153613850118541,
+          "optimistic_rate": 1.4420173126481761,
+          "eta_total_s": 339.93239369370576
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 220,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9058699942121785,
+          "rate60": 0.8748136919188042,
+          "fastest_comparable_rate": 1.1865742458362134,
+          "optimistic_rate": 1.4832178072952669,
+          "eta_total_s": 364.2617363622102
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 252,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.5852724898713124,
+          "rate60": 1.2709557410895833,
+          "fastest_comparable_rate": 1.5852724898713124,
+          "optimistic_rate": 1.9815906123391405,
+          "eta_total_s": 348.37884577308614
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 210,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9705749937987627,
+          "rate60": 0.973849204211499,
+          "fastest_comparable_rate": 1.0693284617287677,
+          "optimistic_rate": 1.3366605771609597,
+          "eta_total_s": 476.84785559443253
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 351,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.5205674902847282,
+          "rate60": 1.4855326843904222,
+          "fastest_comparable_rate": 1.8622623580485016,
+          "optimistic_rate": 2.327827947560627,
+          "eta_total_s": 417.61977489916194
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 296,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.2293949921450995,
+          "rate60": 1.3699912533822782,
+          "fastest_comparable_rate": 1.5878864927508576,
+          "optimistic_rate": 1.984858115938572,
+          "eta_total_s": 405.64337692535577
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 344,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.2617474919383915,
+          "rate60": 1.33697941595138,
+          "fastest_comparable_rate": 2.142425721648719,
+          "optimistic_rate": 2.6780321520608985,
+          "eta_total_s": 380.1004807305422
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 293,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.423509990904852,
+          "rate60": 1.3534853346668292,
+          "fastest_comparable_rate": 1.4581751750846834,
+          "optimistic_rate": 1.8227189688558543,
+          "eta_total_s": 468.76801828604187
+        }
+      },
+      "trusted": false,
+      "reasons": [
+        "distribution_comparable_not_verified",
+        "shared_load_stable_not_verified",
+        "tail_acceleration_modeled_not_verified"
+      ],
+      "rate_acceleration_allowance": 1.25,
+      "enabled_for_stop": false,
+      "scope": "empirical optimistic projection, not observed completion time or hardware lower bound",
+      "audio_duration_distribution": null,
+      "generated_token_distribution": null,
+      "tail_acceleration_assumption": "requires separate comparable distribution/shared-load/tail evidence",
+      "consecutive_insufficient_windows": 0
+    },
+    {
+      "rule_version": "qwen200-v1-report-only-20261123",
+      "elapsed_s": 275.87681979034096,
+      "progress": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 253,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 246,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 291,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 238,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 403,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 337,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 381,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 329,
+          "inflight": null,
+          "stage": "segments"
+        }
+      },
+      "eta_total_s": 486.85034950942816,
+      "per_request": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 253,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.7431287984154563,
+          "rate60": 0.8735277670756435,
+          "fastest_comparable_rate": 1.153613850118541,
+          "optimistic_rate": 1.4420173126481761,
+          "eta_total_s": 354.9327361098517
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 246,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.8400586416870376,
+          "rate60": 0.8735277670756435,
+          "fastest_comparable_rate": 1.1865742458362134,
+          "optimistic_rate": 1.4832178072952669,
+          "eta_total_s": 377.68250150296626
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 291,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.2600879625305563,
+          "rate60": 1.43390407048266,
+          "fastest_comparable_rate": 1.5852724898713124,
+          "optimistic_rate": 1.9815906123391405,
+          "eta_total_s": 359.6479069999476
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 238,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9046785372014251,
+          "rate60": 0.9229727350233214,
+          "fastest_comparable_rate": 1.0693284617287677,
+          "optimistic_rate": 1.3366605771609597,
+          "eta_total_s": 486.85034950942816
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 403,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.6801172833740752,
+          "rate60": 1.598720630308253,
+          "fastest_comparable_rate": 1.8622623580485016,
+          "optimistic_rate": 2.327827947560627,
+          "eta_total_s": 426.2315744734658
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 337,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.3247078580449438,
+          "rate60": 1.2855691666396263,
+          "fastest_comparable_rate": 1.5878864927508576,
+          "optimistic_rate": 1.984858115938572,
+          "eta_total_s": 415.9372088769146
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 381,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.1954680670161688,
+          "rate60": 1.2361241986919482,
+          "fastest_comparable_rate": 2.142425721648719,
+          "optimistic_rate": 2.6780321520608985,
+          "eta_total_s": 397.2345860702917
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 329,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.163158119258975,
+          "rate60": 1.269087510657067,
+          "fastest_comparable_rate": 1.4581751750846834,
+          "optimistic_rate": 1.8227189688558543,
+          "eta_total_s": 479.967525135614
+        }
+      },
+      "trusted": false,
+      "reasons": [
+        "distribution_comparable_not_verified",
+        "shared_load_stable_not_verified",
+        "tail_acceleration_modeled_not_verified"
+      ],
+      "rate_acceleration_allowance": 1.25,
+      "enabled_for_stop": false,
+      "scope": "empirical optimistic projection, not observed completion time or hardware lower bound",
+      "audio_duration_distribution": null,
+      "generated_token_distribution": null,
+      "tail_acceleration_assumption": "requires separate comparable distribution/shared-load/tail evidence",
+      "consecutive_insufficient_windows": 0
+    },
+    {
+      "rule_version": "qwen200-v1-report-only-20261123",
+      "elapsed_s": 306.8137011099607,
+      "progress": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 281,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 276,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 327,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 268,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 459,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 379,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 428,
+          "inflight": null,
+          "stage": "segments"
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 381,
+          "inflight": null,
+          "stage": "segments"
+        }
+      },
+      "eta_total_s": 495.3432383057408,
+      "per_request": {
+        "4917d862-b553-44fb-bf3b-4098c753b8f4": {
+          "total": 367,
+          "done": 281,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9050686043858859,
+          "rate60": 0.8237257844382428,
+          "fastest_comparable_rate": 1.153613850118541,
+          "optimistic_rate": 1.4420173126481761,
+          "eta_total_s": 366.45237482467934
+        },
+        "b974cd7a-03ac-4797-9a13-0d7879293393": {
+          "total": 397,
+          "done": 276,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9697163618420206,
+          "rate60": 0.9060983628820671,
+          "fastest_comparable_rate": 1.1865742458362134,
+          "optimistic_rate": 1.4832178072952669,
+          "eta_total_s": 388.3930884425942
+        },
+        "8b275447-0ea8-4c8c-b6a0-8ad61623a86a": {
+          "total": 457,
+          "done": 327,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.1636596342104248,
+          "rate60": 1.1861651295910696,
+          "fastest_comparable_rate": 1.5852724898713124,
+          "optimistic_rate": 1.9815906123391405,
+          "eta_total_s": 372.4175645873635
+        },
+        "990aad56-c226-4903-b685-690dece5e678": {
+          "total": 520,
+          "done": 268,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 0.9697163618420206,
+          "rate60": 0.9555219099483617,
+          "fastest_comparable_rate": 1.0693284617287677,
+          "optimistic_rate": 1.3366605771609597,
+          "eta_total_s": 495.3432383057408
+        },
+        "1b57e8b7-1a7c-4f45-bab5-ce8b3edf3fc9": {
+          "total": 753,
+          "done": 459,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.8101372087717718,
+          "rate60": 1.7462986630090749,
+          "fastest_comparable_rate": 1.8622623580485016,
+          "optimistic_rate": 2.327827947560627,
+          "eta_total_s": 433.1116950437855
+        },
+        "a39d08d9-96a9-40ed-977a-e5228a5114d4": {
+          "total": 615,
+          "done": 379,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.3576029065788289,
+          "rate60": 1.3344357707899535,
+          "fastest_comparable_rate": 1.5878864927508576,
+          "optimistic_rate": 1.984858115938572,
+          "eta_total_s": 425.7138875287786
+        },
+        "5550692c-b18c-44bd-9b6e-d51b0c5761c5": {
+          "total": 706,
+          "done": 428,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.5192223002191656,
+          "rate60": 1.3509102864787181,
+          "fastest_comparable_rate": 2.142425721648719,
+          "optimistic_rate": 2.6780321520608985,
+          "eta_total_s": 410.6212673432724
+        },
+        "8c514e96-102b-48ac-b60e-f01fe0710796": {
+          "total": 701,
+          "done": 381,
+          "inflight": null,
+          "stage": "segments",
+          "rate30": 1.6808416938595023,
+          "rate60": 1.4332828649225424,
+          "fastest_comparable_rate": 1.6808416938595023,
+          "optimistic_rate": 2.101052117324378,
+          "eta_total_s": 459.11834760655006
+        }
+      },
+      "trusted": false,
+      "reasons": [
+        "distribution_comparable_not_verified",
+        "shared_load_stable_not_verified",
+        "tail_acceleration_modeled_not_verified"
+      ],
+      "rate_acceleration_allowance": 1.25,
+      "enabled_for_stop": false,
+      "scope": "empirical optimistic projection, not observed completion time or hardware lower bound",
+      "audio_duration_distribution": null,
+      "generated_token_distribution": null,
+      "tail_acceleration_assumption": "requires separate comparable distribution/shared-load/tail evidence",
+      "consecutive_insufficient_windows": 0
+    }
+  ],
+  "trusted_eta_windows": 0,
+  "eta_enabled_for_new_runs": false,
+  "reason": "status lacks per-audio comparable duration/token and tail acceleration evidence; only hard336/resource stops are certified",
+  "passed": true
+}

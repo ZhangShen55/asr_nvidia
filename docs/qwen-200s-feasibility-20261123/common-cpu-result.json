@@ -1,0 +1,30 @@
+{
+  "returncode": 0,
+  "elapsed_s": 13.890808929689229,
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/tmp/qwen200-20261123-j9r2czoi/b0/tests/test_qwen_continuous_adapter.py",
+    "/tmp/qwen200-20261123-j9r2czoi/b0/tests/test_qwen_continuous_rpc.py"
+  ],
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "guard_records": "",
+  "isolation": {
+    "TMPDIR": "/tmp/asr-cpu-gmnw44sl",
+    "cache_dir": "/tmp/asr-cpu-gmnw44sl/seacraft_asr",
+    "creator_pid": 1428736,
+    "creator_create_time": 1795412429.27,
+    "r4_guard": "/tmp/asr-cam-full-v9-cpu-guard-v4-cicpsxhw/sitecustomize.py",
+    "r4_guard_sha256": "8cbc95bd47e620c25fcb92735038084361c1c57b63404cc2e3b3ff1655c08863",
+    "guard_path": "/tmp/asr-cpu-gmnw44sl/guard",
+    "guard_sha256": "5f112116ccb993275a8c940239d5f699c87da00d17ae7e4b78e96e3fa2b5b121",
+    "plugin_path": "/tmp/asr-cpu-gmnw44sl/plugin",
+    "plugin_sha256": "9de93ba600d9d2b9dd21a1cc283aef46cc658da7a8779d5ac5eedceb62201543",
+    "mode": "source",
+    "source_root": "/tmp/qwen200-20261123-j9r2czoi/b0",
+    "protected_root": "/tmp/qwen-continuous-protected-20261121-tx99hzp0",
+    "scope": "private short TMPDIR before tested Python imports; shared production cache mutation prohibited; metadata reads allowed"
+  }
+}

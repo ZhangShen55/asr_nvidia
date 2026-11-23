@@ -1,0 +1,33 @@
+{
+  "stage": "/tmp/qwen200-20261123-j9r2czoi/s1",
+  "owned_files_sha256": {
+    "core/qwen_continuous_process.py": "7a1f5c65467328d942747e084739123f845e6d95328d2ea191c6fa52e91c966f",
+    "api/routes/asr_qwen_common.py": "b80a2b8ad637e76a7d4fa8401c5155db3b8ae984ddf155a2bfe316efb10df163",
+    "core/qwen200_supply.py": "c218e7169596aa329850680708f99a682fc9653d58e8830f87ac84e84ff8cdc6",
+    "tests/test_qwen200_s1_supply.py": "c629d3488662e5e87f12a6a5904ef6889b871d745df122a7dbd5ce7d66d9caeb",
+    "tests/qwen200_s1_test_cleanup.py": "e114d0dd1e679445639fbd110aad23a01673e7235e66f14f510a5bd29fd78896"
+  },
+  "full_patch": "/tmp/qwen200-20261123-j9r2czoi/assets/s1-supply-full.patch",
+  "full_patch_sha256": "489ecf65f839f11f9537d67f7e9648765da4e34978dda51218ee238e7d5d7139",
+  "patch_scope": "S1 process/API/helper/tests from a1de07f, includes process common timing; apply shared runtime.py/asr_process.py separately; do not apply common process timing twice",
+  "common_process_timing_patch": "/tmp/qwen200-20261123-j9r2czoi/assets/process-submit-timing.patch",
+  "common_process_timing_patch_sha256": "66e1d191306ffa5c86efa419057ad3a9a44c100292c06c32d2f047b92dfd02a1",
+  "reverse_patch_check_passed": true,
+  "cpu_evidence": "/tmp/qwen200-20261123-j9r2czoi/s1-cpu-frozen/result.json",
+  "cpu_passed": 33,
+  "cpu_test_elapsed_s": 5.02,
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "device_weight_execution_records": 0,
+  "cache_intercepts": 0,
+  "source_changes": [],
+  "remaining_owned": [],
+  "frozen": true,
+  "cpu_stopped": true,
+  "npu_test_performed": false,
+  "experiment_settings": {
+    "QWEN200_CUT_THREADS": 4,
+    "QWEN200_CUT_CAPACITY": 128,
+    "sender_data_slots": 128,
+    "sender_command_slots": 400
+  }
+}

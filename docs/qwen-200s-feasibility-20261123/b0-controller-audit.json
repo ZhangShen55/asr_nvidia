@@ -1,0 +1,84 @@
+{
+  "scope": "lightweight read-only controller result audit; not a new CPU suite or NPU run",
+  "utc": "2026-11-23T06:06:02.254260+00:00",
+  "source_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/b0-formal",
+  "inputs_sha256": {
+    "summary.json": "c62153450471fcdf07e6bd6ba61d3833e8b99d7e077462bf5cbb90f2b2b75816",
+    "diagnostic-trigger.json": "58a995e6445a7200c0ff5e40949bb73d506c9901c15c018e3a450a3b8fa2b675",
+    "shutdown.json": "2720ad41bb586ddd08b0e1291c780e0794574ad1d63b3dd2b2e52ad4e981487d",
+    "run.json": "d466b1c12a4d53a7bf5b32d9773f27c382a729040644ee4d9fa1fd998ccc76ec",
+    "prediction.json": "2b1b4de3a95630bce7ff549fef3bb3a779821bd498c1e7c30e4f3c554840525c"
+  },
+  "checks": {
+    "source_identity_complete": true,
+    "source_unchanged": true,
+    "experiment_assets_unchanged": true,
+    "git_head_unchanged": true,
+    "original_eight_requests_submitted": true,
+    "duration_from_common_t0": true,
+    "resource_stop_before_336": true,
+    "resource7_correct_value": true,
+    "all_eight_censored_not_success": true,
+    "full_quantiles_null": true,
+    "speedup_null": true,
+    "time_goal_not_claimed": true,
+    "eta_report_only": true,
+    "warmup_separate": true,
+    "normal_owned_cleanup": true,
+    "port_free5s": true,
+    "private_pcm_empty": true
+  },
+  "passed": true,
+  "normalized_trigger": {
+    "reason": "resource_hbm_free",
+    "trigger_elapsed_s": 91.90237510949373,
+    "formal_observation_wall_s": 91.95411111973226,
+    "observed": 5714,
+    "threshold": 8192.0,
+    "unit": "MiB of driver-reported free HBM",
+    "card": 7,
+    "legacy_field_warning": "DiagnosticTrigger observed_s/threshold_s names retained, but resource_hbm_free values are MiB, NOT seconds"
+  },
+  "classification": {
+    "result": "resource_aborted; performance and quality not established",
+    "completed": 0,
+    "expected": 8,
+    "censored": 8,
+    "full_latency": null,
+    "precise_speedup": null,
+    "strict_success_rate_observed_at_stop": 0.0,
+    "warning_scope": "summary warning_segments=0 reflects zero returned complete responses; not evidence that all in-flight/unfinished segments had no warning",
+    "worker_snapshot_warning_counts": [
+      {
+        "repetition_stop": 1
+      }
+    ],
+    "worker_snapshot_end_reasons": [
+      {
+        "eos": 800,
+        "repetition_stop": 1
+      }
+    ]
+  },
+  "timing": {
+    "batch_t0": 7501200.01380226,
+    "submit_offsets_s": [
+      0.18755181971937418,
+      0.1891278801485896,
+      0.1903590802103281,
+      0.19153914973139763,
+      0.1927201896905899,
+      0.1939199399203062,
+      0.19518268946558237,
+      0.19657417945563793
+    ],
+    "last_client_terminal_after_trigger_s": 0.05173601023852825,
+    "term_to_parent_exit_s": 56.206326169893146,
+    "cleanup_included_in_formal_wall": false
+  },
+  "limits": [
+    "Actual process birth/port evidence is taken from the immutable shutdown record; no live scan during M2 was performed.",
+    "A resource-aborted run at91.954s cannot be called an observed336s or420s performance failure, nor proof200s impossible.",
+    "No completed HTTP result means per-audio full transcript quality cannot be compared from this run."
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "scope": "identical across all variants; envelopes no new device sync; experimental per-model CPU budget",
+  "sha256": {
+    "core/qwen_continuous_runtime.py": "732ad8f0ed7f7f06250c0b294d33486a2184cda14b3f062823e43a990998dba7",
+    "core/qwen_asr_process.py": "0d4ff4212dacb98d5c8959f9b415a09a9a3fef12c757992fb2ca9e3747432e7b"
+  }
+}

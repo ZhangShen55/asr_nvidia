@@ -1,0 +1,90 @@
+{
+  "scope": "lightweight read-only M2 controller result audit; not a new CPU suite or NPU run",
+  "utc": "2026-11-23T06:10:58.469166+00:00",
+  "source_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m2-formal",
+  "inputs_sha256": {
+    "summary.json": "93a709a1b95954c751208b1983c46fbd5398e82ff27005c1dce864339831eb40",
+    "diagnostic-trigger.json": "0f799f7d6b9b2c6372e18450092175cd5a74621d2174262224b4e7f43d4ec94f",
+    "shutdown.json": "ba3633db783f59ba33123456a84c289d59478d162887e5a5bb3b26bf898fda12",
+    "run.json": "dcd2638af262a98f2b715fedb1eea8ed6bc2f254048832813e466a084eae3387",
+    "prediction.json": "a1b16f50fb33d2e6460fda20377530a50c53190ffe822ccf5859a16c8d89ee33"
+  },
+  "checks": {
+    "source_identity_complete": true,
+    "source_unchanged": true,
+    "experiment_assets_unchanged": true,
+    "git_head_unchanged": true,
+    "original_eight_requests_submitted": true,
+    "duration_from_common_t0": true,
+    "resource_stop_before_336": true,
+    "resource7_correct_value": true,
+    "all_eight_censored_not_success": true,
+    "full_quantiles_null": true,
+    "speedup_null": true,
+    "time_goal_not_claimed": true,
+    "eta_report_only": true,
+    "warmup_separate": true,
+    "normal_owned_cleanup": true,
+    "port_free5s": true,
+    "private_pcm_empty": true,
+    "two_model_workers_observed": true
+  },
+  "controller_consistency_passed": true,
+  "protocol_admission_compliant": false,
+  "protocol_admission_reason": "Original design requires stopping the entire batch after a resource red gate. B0 triggered resource_hbm_free, yet M2 was subsequently run. Root has acknowledged this admission deviation and paused subsequent pressure. M2 is preserved only as observational evidence, not an original-matrix-compliant positive result.",
+  "passed": false,
+  "normalized_trigger": {
+    "reason": "resource_hbm_free",
+    "trigger_elapsed_s": 66.50434849970043,
+    "formal_observation_wall_s": 66.58233137987554,
+    "observed": 7135,
+    "threshold": 8192.0,
+    "unit": "MiB of driver-reported free HBM",
+    "card": 7,
+    "legacy_field_warning": "DiagnosticTrigger observed_s/threshold_s names retained, but resource_hbm_free values are MiB, NOT seconds"
+  },
+  "classification": {
+    "result": "resource_aborted; protocol admission deviation; performance and quality not established",
+    "completed": 0,
+    "expected": 8,
+    "censored": 8,
+    "full_latency": null,
+    "precise_speedup": null,
+    "strict_success_rate_observed_at_stop": 0.0,
+    "warning_scope": "summary warning_segments=0 reflects zero returned complete responses; not evidence that all in-flight/unfinished segments had no warning",
+    "worker_snapshot_warning_counts": [
+      {},
+      {}
+    ],
+    "worker_snapshot_end_reasons": [
+      {
+        "eos": 489
+      },
+      {
+        "eos": 405
+      }
+    ]
+  },
+  "timing": {
+    "batch_t0": 7501641.19237787,
+    "submit_offsets_s": [
+      0.20640156045556068,
+      0.20855232048779726,
+      0.20979681983590126,
+      0.21096806041896343,
+      0.21219231002032757,
+      0.21338021010160446,
+      0.21456998959183693,
+      0.2160417903214693
+    ],
+    "last_client_terminal_after_trigger_s": 0.07798288017511368,
+    "term_to_parent_exit_s": 56.863497759215534,
+    "cleanup_included_in_formal_wall": false
+  },
+  "limits": [
+    "Actual process birth/port evidence is taken from the immutable shutdown record; this audit performs no live process scan.",
+    "The shorter time-to-resource-stop cannot be called faster inference or a measured200/336/420s full-audio completion result.",
+    "No completed HTTP result means per-audio full transcript quality cannot be compared from this run.",
+    "controller_consistency_passed=True only checks data/cleanup bookkeeping; passed=False and protocol_admission_compliant=False block an original-protocol positive recommendation."
+  ]
+}

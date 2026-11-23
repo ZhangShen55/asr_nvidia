@@ -1,0 +1,226 @@
+[
+  {
+    "case": "b0-preflight",
+    "status": "warmup_only_completed",
+    "complete": true,
+    "processed_completed": null,
+    "expected": 8,
+    "batch_elapsed_s": null,
+    "target_passed": false,
+    "full_batch_latency": null,
+    "completion_subset_latency": null,
+    "trigger": null,
+    "source_changed": false,
+    "source_identity_complete": true,
+    "asset_changes": [],
+    "shutdown": {
+      "passed": true,
+      "forced": false,
+      "exit_code": 0,
+      "remaining_pids": [],
+      "remaining_cache_files": [],
+      "observe_s": 5,
+      "term_to_parent_exit_s": 24.444598619826138
+    },
+    "raw_path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/b0-preflight",
+    "protocol_admission_compliant": true
+  },
+  {
+    "case": "m2-preflight",
+    "status": "warmup_only_completed",
+    "complete": true,
+    "processed_completed": null,
+    "expected": 8,
+    "batch_elapsed_s": null,
+    "target_passed": false,
+    "full_batch_latency": null,
+    "completion_subset_latency": null,
+    "trigger": null,
+    "source_changed": false,
+    "source_identity_complete": true,
+    "asset_changes": [],
+    "shutdown": {
+      "passed": true,
+      "forced": false,
+      "exit_code": 0,
+      "remaining_pids": [],
+      "remaining_cache_files": [],
+      "observe_s": 5,
+      "term_to_parent_exit_s": 26.433820799924433
+    },
+    "raw_path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m2-preflight",
+    "protocol_admission_compliant": true
+  },
+  {
+    "case": "s1-preflight",
+    "status": "warmup_only_completed",
+    "complete": true,
+    "processed_completed": null,
+    "expected": 8,
+    "batch_elapsed_s": null,
+    "target_passed": false,
+    "full_batch_latency": null,
+    "completion_subset_latency": null,
+    "trigger": null,
+    "source_changed": false,
+    "source_identity_complete": true,
+    "asset_changes": [],
+    "shutdown": {
+      "passed": true,
+      "forced": false,
+      "exit_code": 0,
+      "remaining_pids": [],
+      "remaining_cache_files": [],
+      "observe_s": 5,
+      "term_to_parent_exit_s": 23.509286259301007
+    },
+    "raw_path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/s1-preflight",
+    "protocol_admission_compliant": true
+  },
+  {
+    "case": "b0-formal",
+    "status": "diagnostic_aborted",
+    "complete": false,
+    "processed_completed": 0,
+    "expected": 8,
+    "batch_elapsed_s": 91.95411111973226,
+    "target_passed": false,
+    "full_batch_latency": null,
+    "completion_subset_latency": {
+      "n": 0,
+      "p50_s": null,
+      "p95_s": null,
+      "scope": "all processed completions including explicit warnings"
+    },
+    "trigger": {
+      "reason": "resource_hbm_free",
+      "observed_monotonic": 7501291.91617737,
+      "request_id": null,
+      "observed_s": 5714,
+      "threshold_s": 8192.0
+    },
+    "source_changed": false,
+    "source_identity_complete": true,
+    "asset_changes": [],
+    "shutdown": {
+      "passed": true,
+      "forced": false,
+      "exit_code": 0,
+      "remaining_pids": [],
+      "remaining_cache_files": [],
+      "observe_s": 5,
+      "term_to_parent_exit_s": 56.206326169893146
+    },
+    "raw_path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/b0-formal",
+    "workers": [
+      {
+        "pid": 1312088,
+        "formal_completed": 793,
+        "formal_phase_wall_s": {
+          "prefill": 36.843736675567925,
+          "decode": 26.276410287246108
+        },
+        "allocator_last_cached": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 1312088,
+          "worker_rss_mb": 2593.078125,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 5942.60498046875,
+          "memory_reserved_mb": 42558.0,
+          "max_memory_allocated_mb": 14624.35205078125,
+          "max_memory_reserved_mb": 42558.0
+        },
+        "kv_bytes": 963723264,
+        "kv_storage_bytes": 2152923136,
+        "warnings": {
+          "repetition_stop": 1
+        },
+        "error_counts": {}
+      }
+    ],
+    "protocol_admission_compliant": true
+  },
+  {
+    "case": "m2-formal",
+    "status": "diagnostic_aborted",
+    "complete": false,
+    "processed_completed": 0,
+    "expected": 8,
+    "batch_elapsed_s": 66.58233137987554,
+    "target_passed": false,
+    "full_batch_latency": null,
+    "completion_subset_latency": {
+      "n": 0,
+      "p50_s": null,
+      "p95_s": null,
+      "scope": "all processed completions including explicit warnings"
+    },
+    "trigger": {
+      "reason": "resource_hbm_free",
+      "observed_monotonic": 7501707.69672637,
+      "request_id": null,
+      "observed_s": 7135,
+      "threshold_s": 8192.0
+    },
+    "source_changed": false,
+    "source_identity_complete": true,
+    "asset_changes": [],
+    "shutdown": {
+      "passed": true,
+      "forced": false,
+      "exit_code": 0,
+      "remaining_pids": [],
+      "remaining_cache_files": [],
+      "observe_s": 5,
+      "term_to_parent_exit_s": 56.863497759215534
+    },
+    "raw_path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m2-formal",
+    "workers": [
+      {
+        "pid": 780456,
+        "formal_completed": 485,
+        "formal_phase_wall_s": {
+          "prefill": 23.583158019930124,
+          "decode": 16.028814668767154
+        },
+        "allocator_last_cached": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 780456,
+          "worker_rss_mb": 2581.30078125,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 4803.71240234375,
+          "memory_reserved_mb": 12058.0,
+          "max_memory_allocated_mb": 8464.6962890625,
+          "max_memory_reserved_mb": 12058.0
+        },
+        "kv_bytes": 647184384,
+        "kv_storage_bytes": 958791680,
+        "warnings": {},
+        "error_counts": {}
+      },
+      {
+        "pid": 890119,
+        "formal_completed": 401,
+        "formal_phase_wall_s": {
+          "prefill": 22.175583538599312,
+          "decode": 18.8153415909037
+        },
+        "allocator_last_cached": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 890119,
+          "worker_rss_mb": 2572.28125,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 5599.3916015625,
+          "memory_reserved_mb": 30422.0,
+          "max_memory_allocated_mb": 11086.0712890625,
+          "max_memory_reserved_mb": 30422.0
+        },
+        "kv_bytes": 916930560,
+        "kv_storage_bytes": 1790967808,
+        "warnings": {},
+        "error_counts": {}
+      }
+    ],
+    "protocol_admission_compliant": false
+  }
+]

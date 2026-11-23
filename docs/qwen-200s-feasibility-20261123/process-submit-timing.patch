@@ -1,0 +1,50 @@
+--- a/core/qwen_continuous_process.py
++++ b/core/qwen_continuous_process.py
+@@ -205,6 +205,9 @@
+         self._pending_send_started = {}
+         self._transport_send_s = 0.0
+         self._transport_send_max_s = 0.0
++        self._transport_lock_wait_s = 0.0
++        self._transport_write_s = 0.0
++        self._transport_write_count = 0
+         self._send_lock = threading.Lock()
+         self._reader = None
+         self._close_ack = threading.Event()
+@@ -305,11 +308,15 @@
+             self._pending_send_started[key] = time.monotonic()
+         # Never hold the result-routing lock across potentially blocking Pipe IO.
+         # The reader must drain worker results even when the command pipe is full.
++        lock_wait_started = time.monotonic()
+         try:
+             with self._send_lock:
++                with self._continuous_lock:
++                    self._transport_lock_wait_s += time.monotonic()-lock_wait_started
+                 if self._explicit_closing:
+                     future.set_exception(QwenWorkerUnavailableError('continuous runtime closing'))
+                     return future
++                write_started = time.monotonic()
+                 try:
+                     _send(self._connection, dict(operation='submit', launch_id=self._launch_id,
+                         key=key, attempt_id=attempt_id, audio=audio, language=language))
+@@ -321,6 +328,10 @@
+                         if not future.done():
+                             future.set_exception(QwenWorkerUnavailableError(self.failure))
+                     raise
++                finally:
++                    with self._continuous_lock:
++                        self._transport_write_s += time.monotonic()-write_started
++                        self._transport_write_count += 1
+         finally:
+             with self._continuous_lock:
+                 queued = self._pending_send_started.pop(key,None)
+@@ -336,7 +347,9 @@
+             now=time.monotonic()
+             snapshot['transport_sender'] = dict(pending_send_count=len(self._pending_send_started),
+                 oldest_pending_s=max((now-value for value in self._pending_send_started.values()),default=0.0),
+-                cumulative_submit_send_s=self._transport_send_s,max_submit_send_s=self._transport_send_max_s)
++                cumulative_submit_send_s=self._transport_send_s,max_submit_send_s=self._transport_send_max_s,
++                submit_lock_wait_s=self._transport_lock_wait_s,submit_write_wall_s=self._transport_write_s,
++                submit_write_count=self._transport_write_count)
+         return snapshot
+ 
+     def release_request(self, request_id):

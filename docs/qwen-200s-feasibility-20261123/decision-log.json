@@ -1,0 +1,18 @@
+{
+  "status": "paused_pending_user_direction",
+  "target_s": 200,
+  "resource_free_hbm_mb": 8192,
+  "hard_deadline_s": 336,
+  "baseline_result": "resource_stop_not_full_latency",
+  "m2_result": "resource_stop_observation_with_protocol_admission_deviation",
+  "protocol_deviation": {
+    "description": "B0 resource red line should stop whole batch; root interpreted as per-round, launched M2 after recovery; acknowledged and stopped subsequent pressure",
+    "positive_conclusions_allowed": false
+  },
+  "s1_full": "not_run_due_resource_gate_pause",
+  "m4_m8_combination": "not_entered_no_qualified_prior_stage",
+  "three_round_revalidation": "not_entered_no_qualified_candidate",
+  "pending_question": "end with current evidence or explicitly allow S1 as a new independent batch with same8GiB red line",
+  "hardware_absolute_infeasibility_proven": false,
+  "production_changes": false
+}

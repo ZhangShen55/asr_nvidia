@@ -1,0 +1,33 @@
+{
+  "returncode": 0,
+  "elapsed_s": 7.082202500663698,
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/tmp/qwen200-20261123-j9r2czoi/m2/tests/test_qwen200_m2.py",
+    "/tmp/qwen200-20261123-j9r2czoi/m2/tests/test_qwen_continuous_timeout_ownership.py",
+    "/tmp/qwen200-20261123-j9r2czoi/m2/tests/test_qwen_process_shutdown.py",
+    "/tmp/qwen200-20261123-j9r2czoi/m2/tests/test_qwen_continuous_rpc.py"
+  ],
+  "owner": {
+    "pid": 1030157,
+    "birth": 1795412880.77
+  },
+  "source_changes": [],
+  "source_sha256": {
+    "core/qwen_asr_client.py": "14df720e401959a7c8956e089e19b8a0e25ccca2ae51d4d22898fe437ac3a99b",
+    "core/config.py": "0a7d48f95ad43d72bf8f646f84f321a4c341fee0ad50fbabe2614cffc148c887",
+    "tests/test_qwen200_m2.py": "517ee297530eb7b69836781f8a7403158c8af0e3338182b5edafa6457cb03bcc",
+    "core/qwen_continuous_process.py": "23999110ce85be9d90d4afcf421dec3e3d869cc3b1eea0ca56d5fdf2ca5b3a9c",
+    "core/qwen_asr_process.py": "0d4ff4212dacb98d5c8959f9b415a09a9a3fef12c757992fb2ca9e3747432e7b",
+    "core/qwen_continuous_runtime.py": "732ad8f0ed7f7f06250c0b294d33486a2184cda14b3f062823e43a990998dba7"
+  },
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "guard_startup": "{\"pid\": 991040, \"guard_sha256\": \"b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164\", \"kind\": \"COMPOSED_GUARD_READY\"}\n{\"pid\": 1030157, \"guard_sha256\": \"b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164\", \"kind\": \"COMPOSED_GUARD_READY\"}\n",
+  "device_weight_guard_records": "",
+  "cache_mutation_intercepts": [],
+  "passed": true,
+  "scope": "targeted M2 CPU under composed r4/candidate device-weight guard and private stats/cache/TMPDIR; no NPU"
+}
