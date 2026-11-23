@@ -1,5 +1,5 @@
 {
-  "status": "paused_pending_user_direction",
+  "status": "user_authorized_M6_M8_verification_completed",
   "target_s": 200,
   "resource_free_hbm_mb": 8192,
   "hard_deadline_s": 336,
@@ -9,10 +9,21 @@
     "description": "B0 resource red line should stop whole batch; root interpreted as per-round, launched M2 after recovery; acknowledged and stopped subsequent pressure",
     "positive_conclusions_allowed": false
   },
-  "s1_full": "not_run_due_resource_gate_pause",
+  "s1_full": "not resumed in this user-authorized independent batch",
   "m4_m8_combination": "not_entered_no_qualified_prior_stage",
-  "three_round_revalidation": "not_entered_no_qualified_candidate",
-  "pending_question": "end with current evidence or explicitly allow S1 as a new independent batch with same8GiB red line",
+  "three_round_revalidation": "not entered; no full candidate completed within200s",
+  "pending_question": null,
   "hardware_absolute_infeasibility_proven": false,
-  "production_changes": false
+  "production_changes": false,
+  "previous_status": "paused_pending_user_direction",
+  "mn_user_authorization": "2026-11-23 用户：那么就是测试 6-8 个模型实例",
+  "mn_capacity": {
+    "M6": "loaded and six real v3 forward covered, normal close",
+    "M8": "loaded and eight real v3 forward covered, normal close"
+  },
+  "mn_full": {
+    "M6": "resource aborted 49.362232s/free7738MiB/0of8; not full latency",
+    "M8": "not entered after M6 resource redline; capacity only"
+  },
+  "positive_200s_feasibility_proven": false
 }

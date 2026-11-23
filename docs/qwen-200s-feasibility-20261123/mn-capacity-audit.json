@@ -1,0 +1,302 @@
+{
+  "scope": "read-only startup and short real-v3 forward capacity audit; no new tests, NPU or live scans",
+  "utc": "2026-11-23T08:55:40.119921+00:00",
+  "cases": {
+    "m6-capacity": {
+      "source_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6-capacity",
+      "evidence_sha256": {
+        "summary.json": "b2e38432f6dc62641cd1e36fbf508ee4f8807acecb0c0cd1f6bd310d95894149",
+        "run.json": "3350a49bd2500523e530bc146491d112358d462b5b7ed95e697e8cd330793b4f",
+        "shutdown.json": "4dfda00c4e1c7e94cd4e6ada3b5ec8669ecec3ecb153656300add7338ad39f6e",
+        "warmup-final-status.json": "5affd35766001c2ec986b0a8beda2aac7d404d3568ea783ac7ddb474ff645080",
+        "startup-resource.jsonl": "77896fc3f24dab054793205b9ea9e2099c89253a34141f939aee6b7daa4adf06"
+      },
+      "checks": {
+        "expected_models_observed": true,
+        "all_models_real_forward": true,
+        "eight_warmup_http_completed": true,
+        "warmup_not_formal_performance": true,
+        "startup_card7_observable": true,
+        "startup_above_red_margin": true,
+        "warmup_last_card7_above_red_margin": true,
+        "no_startup_abort": true,
+        "frozen_business_source": true,
+        "frozen_experiment_assets": true,
+        "normal_shutdown": true,
+        "port_free5s": true,
+        "private_pcm_empty": true
+      },
+      "startup_and_short_forward_admission_passed": true,
+      "full_128_concurrent_vad_capacity_proven": false,
+      "eight_full_audio_200s_feasibility_proven": false,
+      "actual_forward": [
+        {
+          "index": 0,
+          "worker_pid": 2384224,
+          "loaded": true,
+          "failure": null,
+          "prefill": 2,
+          "decode": 78,
+          "completed": 2,
+          "end_reasons": {
+            "eos": 2
+          }
+        },
+        {
+          "index": 1,
+          "worker_pid": 2548802,
+          "loaded": true,
+          "failure": null,
+          "prefill": 2,
+          "decode": 78,
+          "completed": 2,
+          "end_reasons": {
+            "eos": 2
+          }
+        },
+        {
+          "index": 2,
+          "worker_pid": 2680635,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 3,
+          "worker_pid": 2851783,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 4,
+          "worker_pid": 3064134,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 5,
+          "worker_pid": 3274463,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        }
+      ],
+      "startup_resource": {
+        "probe_samples": 67,
+        "min_free_hbm_mib": 23481,
+        "startup_elapsed_last_probe_s": 156.90394884999841,
+        "scope": "sequential model preload, prior to short clip warmup"
+      },
+      "warmup_last_driver": {
+        "sample_timestamp": "2026-11-23T07:43:33.450+00:00",
+        "device_total_mib": 65536,
+        "device_used_mib": 43508,
+        "device_free_mib": 22028,
+        "owned_process_count_observed": 6,
+        "owned_process_count_expected": 6,
+        "owned_driver_birth_matches": true,
+        "owned_process_hbm_observed_subtotal_mib": 27906,
+        "owned_process_hbm_complete_total_mib": 27906,
+        "missing_owned_pids": [],
+        "scope": "single cached driver snapshot; observed subprocess memory subtotal excludes missing process, device/runtime overhead and existing service; not simultaneous stress peak"
+      },
+      "shutdown": {
+        "normal_exit0": true,
+        "term_to_parent_exit_s": 25.48401161003858,
+        "forced": false,
+        "remaining_pids": [],
+        "port_observe_s": 5,
+        "private_pcm_files": []
+      },
+      "limitations": [
+        "Eight short clips were requested sequentially; each worker had real prefill/decode but this does not validate 16 active VAD per audio or128 active global.",
+        "No full-audio formal round was run in these capacity cases; target_passed remains false.",
+        "Process-birth disappearance and port evidence are taken from immutable shutdown records, not a new live inspection."
+      ]
+    },
+    "m8-capacity": {
+      "source_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m8-capacity",
+      "evidence_sha256": {
+        "summary.json": "19b56aeb4fbb2c2ef924e261ae00e624cb731e81c1e2b5936a6ff30f5a0db3e1",
+        "run.json": "fb9e7b752fe174d7ee7dc1a777bcbf83c8834e884c1094c258d0e391b20d1d09",
+        "shutdown.json": "f3b0c52a7d3dc4aa67e2b1c151c40a75d92bc4fd602dc0c29b6ba8c44e459976",
+        "warmup-final-status.json": "1a0b3a1ae2ab9bde3ba77708de980f1712b77a87e9bd178526b7f83fbd49d8a6",
+        "startup-resource.jsonl": "4a066bce1721d8293a2eaa7084dff184d4ad949b0c9f509c485686e712673c3a"
+      },
+      "checks": {
+        "expected_models_observed": true,
+        "all_models_real_forward": true,
+        "eight_warmup_http_completed": true,
+        "warmup_not_formal_performance": true,
+        "startup_card7_observable": true,
+        "startup_above_red_margin": true,
+        "warmup_last_card7_above_red_margin": true,
+        "no_startup_abort": true,
+        "frozen_business_source": true,
+        "frozen_experiment_assets": true,
+        "normal_shutdown": true,
+        "port_free5s": true,
+        "private_pcm_empty": true
+      },
+      "startup_and_short_forward_admission_passed": true,
+      "full_128_concurrent_vad_capacity_proven": false,
+      "eight_full_audio_200s_feasibility_proven": false,
+      "actual_forward": [
+        {
+          "index": 0,
+          "worker_pid": 1627831,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 1,
+          "worker_pid": 1777567,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 2,
+          "worker_pid": 1965027,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 3,
+          "worker_pid": 2106736,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 4,
+          "worker_pid": 2248466,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 5,
+          "worker_pid": 2417636,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 6,
+          "worker_pid": 2619367,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        },
+        {
+          "index": 7,
+          "worker_pid": 2853890,
+          "loaded": true,
+          "failure": null,
+          "prefill": 1,
+          "decode": 39,
+          "completed": 1,
+          "end_reasons": {
+            "eos": 1
+          }
+        }
+      ],
+      "startup_resource": {
+        "probe_samples": 85,
+        "min_free_hbm_mib": 14765,
+        "startup_elapsed_last_probe_s": 202.42807332985103,
+        "scope": "sequential model preload, prior to short clip warmup"
+      },
+      "warmup_last_driver": {
+        "sample_timestamp": "2026-11-23T07:51:37.956+00:00",
+        "device_total_mib": 65536,
+        "device_used_mib": 52517,
+        "device_free_mib": 13019,
+        "owned_process_count_observed": 7,
+        "owned_process_count_expected": 8,
+        "owned_driver_birth_matches": true,
+        "owned_process_hbm_observed_subtotal_mib": 32368,
+        "owned_process_hbm_complete_total_mib": null,
+        "missing_owned_pids": [
+          1777567
+        ],
+        "scope": "single cached driver snapshot; observed subprocess memory subtotal excludes missing process, device/runtime overhead and existing service; not simultaneous stress peak"
+      },
+      "shutdown": {
+        "normal_exit0": true,
+        "term_to_parent_exit_s": 26.343760889954865,
+        "forced": false,
+        "remaining_pids": [],
+        "port_observe_s": 5,
+        "private_pcm_files": []
+      },
+      "limitations": [
+        "Eight short clips were requested sequentially; each worker had real prefill/decode but this does not validate 16 active VAD per audio or128 active global.",
+        "No full-audio formal round was run in these capacity cases; target_passed remains false.",
+        "Process-birth disappearance and port evidence are taken from immutable shutdown records, not a new live inspection.",
+        "Driver compute_apps is missing an owned PID in all saved warmup snapshots; full owned driver total remains unknown rather than filled from allocator or another worker."
+      ]
+    }
+  },
+  "startup_short_forward_admission_passed": true
+}

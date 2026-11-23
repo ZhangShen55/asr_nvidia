@@ -1,0 +1,11 @@
+{
+  "mn_files_current_sha256": {
+    "scripts/benchmark_qwen200.py": "1f32ebbd8963fda2c567900a25c417e8c681108a8e4ea0e6a68fb1efe1fca479",
+    "tests/test_qwen200_controller.py": "f17915ad1c81486692016410a064f9f3e2240d3ae5767d88e08442a218334d89",
+    "tests/test_qwen200_startup.py": "5521ee79767dc41226261b88dfea0bff692437ecf81246aef79036e7ae200548"
+  },
+  "cpu_audit": "/tmp/qwen200-20261123-j9r2czoi/assets/controller-startup-cpu-v1/result.json",
+  "guard_passed": true,
+  "owned_cpu_gone": true,
+  "old_controller_cases_untouched": true
+}

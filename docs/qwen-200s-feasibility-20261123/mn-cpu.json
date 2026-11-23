@@ -1,0 +1,35 @@
+{
+  "returncode": 0,
+  "elapsed_s": 7.582035180181265,
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/tmp/qwen200-20261123-j9r2czoi/mn/tests/test_qwen200_mn.py",
+    "/tmp/qwen200-20261123-j9r2czoi/mn/tests/test_qwen_continuous_timeout_ownership.py",
+    "/tmp/qwen200-20261123-j9r2czoi/mn/tests/test_qwen_process_shutdown.py",
+    "/tmp/qwen200-20261123-j9r2czoi/mn/tests/test_qwen_continuous_rpc.py"
+  ],
+  "owner": {
+    "pid": 509982,
+    "birth": 1795419426.02
+  },
+  "source_changes": [],
+  "source_sha256": {
+    "core/qwen_asr_client.py": "1deeb4ed4c6892d852222b934ead8cd1316744de24e127f5979a43624fbffc1e",
+    "core/config.py": "d231a1379499388309ba16ccfd8c262ecd7ed39757d5796e67aae1d3c85655bf",
+    "core/qwen_continuous_process.py": "23999110ce85be9d90d4afcf421dec3e3d869cc3b1eea0ca56d5fdf2ca5b3a9c",
+    "core/qwen_asr_process.py": "0d4ff4212dacb98d5c8959f9b415a09a9a3fef12c757992fb2ca9e3747432e7b",
+    "core/qwen_continuous_runtime.py": "732ad8f0ed7f7f06250c0b294d33486a2184cda14b3f062823e43a990998dba7",
+    "tests/test_qwen200_mn.py": "8051bc0a254d876acf11bf83ca77c072c588a63f967e7d773a14cd6a8bbf9336",
+    "test/config.qwen200-m6.toml": "187703c97fa7aa31850593118338250afe5e840be26acc799e6278b3c39c1aae",
+    "test/config.qwen200-m8.toml": "42650a8053d8a2315187a0477049d3bcabb57fda7318dda09f7adaa1038a7d5f"
+  },
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "guard_startup": "{\"pid\": 497233, \"guard_sha256\": \"b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164\", \"kind\": \"COMPOSED_GUARD_READY\"}\n{\"pid\": 509982, \"guard_sha256\": \"b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164\", \"kind\": \"COMPOSED_GUARD_READY\"}\n",
+  "device_weight_guard_records": "",
+  "cache_mutation_intercepts": [],
+  "passed": true,
+  "scope": "six/eight capacity wiring targeted CPU under composed r4+candidate device-weight guard + private cache/stats/TMPDIR; no NPU"
+}

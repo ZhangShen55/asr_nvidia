@@ -1,0 +1,110 @@
+{
+  "scope": "lightweight read-only M6 controller result audit after normal shutdown; not a new CPU suite, HTTP request or NPU run",
+  "utc": "2026-11-23T08:59:36.850632+00:00",
+  "source_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6-formal",
+  "inputs_sha256": {
+    "summary.json": "1f3aa5e95c5d135901cb59b38fa3ba70d6b7943045854c8fd0ec226a943467e6",
+    "diagnostic-trigger.json": "a53886a37c36afdf262ff810596e9cf45cd88558be76671139bff6fdf1e87b0f",
+    "shutdown.json": "9c6736da2d318720b916a506f9b2abbc699132ba9731776a00eaf8165f208ea6",
+    "run.json": "5d50b127d15024848a102b92766e5c4356342ea0f58820abf745da1b0ae9f904",
+    "prediction.json": "3231079525567a17083153efa7c29d70c9874b01f28999de519260383e7f703d"
+  },
+  "checks": {
+    "source_identity_complete": true,
+    "source_unchanged": true,
+    "experiment_assets_unchanged": true,
+    "git_head_unchanged": true,
+    "original_eight_requests_submitted": true,
+    "duration_from_common_t0": true,
+    "resource_stop_before_336": true,
+    "resource7_correct_value": true,
+    "all_eight_censored_not_success": true,
+    "full_quantiles_null": true,
+    "speedup_null": true,
+    "time_goal_not_claimed": true,
+    "eta_report_only": true,
+    "warmup_separate": true,
+    "six_model_workers_observed": true,
+    "normal_owned_cleanup": true,
+    "summary_cleanup_consistent": true,
+    "port_free5s": true,
+    "private_pcm_empty": true,
+    "m8_formal_not_started": true,
+    "prior_m2_admission_deviation_preserved": true
+  },
+  "controller_consistency_passed": true,
+  "protocol_admission_compliant": true,
+  "protocol_admission_scope": "M6 belongs to the separately user-authorized6/8 capacity batch, after successful M6 short-clip admission; after this resource stop no M8 formal is admitted. This does not erase the prior M2 admission deviation.",
+  "passed": true,
+  "passed_scope": "controller bookkeeping, source freeze, stop/cleanup and this batch admission audit only; NOT a200s performance/quality pass",
+  "normalized_trigger": {
+    "reason": "resource_hbm_free",
+    "trigger_elapsed_s": 49.20732906088233,
+    "formal_observation_wall_s": 49.36223238054663,
+    "observed": 7738,
+    "threshold": 8192.0,
+    "unit": "MiB of driver-reported free HBM",
+    "card": 7,
+    "legacy_field_warning": "DiagnosticTrigger observed_s/threshold_s names retained, but resource_hbm_free values are MiB, NOT seconds"
+  },
+  "classification": {
+    "result": "M6 resource-aborted, full-audio performance and quality not established",
+    "completed": 0,
+    "expected": 8,
+    "censored": 8,
+    "full_latency": null,
+    "precise_speedup": null,
+    "strict_success_rate_observed_at_stop": 0.0,
+    "warning_scope": "summary warning_segments=0 reflects zero returned complete responses, not proof all unfinished segments were warning-free",
+    "worker_snapshot_warning_counts": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ],
+    "worker_snapshot_end_reasons": [
+      {
+        "eos": 183
+      },
+      {
+        "eos": 173
+      },
+      {
+        "eos": 172
+      },
+      {
+        "eos": 122
+      },
+      {
+        "eos": 109
+      },
+      {
+        "eos": 80
+      }
+    ]
+  },
+  "timing": {
+    "batch_t0": 7511894.4134092,
+    "submit_offsets_s": [
+      0.3075778605416417,
+      0.3091051708906889,
+      0.31032345071434975,
+      0.3115327600389719,
+      0.31272284034639597,
+      0.31391747016459703,
+      0.3153140302747488,
+      0.316519420593977
+    ],
+    "last_client_terminal_after_trigger_s": 0.1549033196642995,
+    "term_to_parent_exit_s": 56.672355010174215,
+    "cleanup_included_in_formal_wall": false
+  },
+  "limits": [
+    "Process birth/port evidence is taken from immutable shutdown records; this audit does not perform live scans.",
+    "49.362s is time to resource stop, not observed full-audio completion time or proof200s impossible.",
+    "M8 startup/short forward success does not authorize its full formal run after M6 resource red.",
+    "No completed HTTP transcript means per-audio quality differences from this formal run remain unavailable."
+  ]
+}

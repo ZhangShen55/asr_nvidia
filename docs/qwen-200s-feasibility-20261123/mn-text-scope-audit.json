@@ -1,0 +1,540 @@
+{
+  "utc": "2026-11-23T08:55:43.870345+00:00",
+  "audit_scope": "lightweight read-only; no CPU tests,NPU,HTTP calls,source changes; no status.jsonl scans",
+  "authority": {
+    "root": "/home/zhangs/asr_nvidia",
+    "head": "b74236284a69118191d4ad009a8d742d7d5d1d1e",
+    "base": "a1de07fb8cff9018d0b9082645b954e2fcc919be",
+    "runtime_paths_checked": [
+      "core",
+      "api",
+      "utils",
+      "entity",
+      "main.py",
+      "config.toml",
+      "docker/config.toml",
+      "model_status_runtime.py",
+      "telemetry_runtime.py",
+      "requirements.txt"
+    ],
+    "tracked_runtime_drift": [],
+    "untracked_runtime_files": [],
+    "runtime_unchanged": true,
+    "root_config_sha256": "750b1c9083a829e3b418d3af3f5247d5359b67012912084dcb79b68b9521284d"
+  },
+  "mn_frozen_source": {
+    "root": "/tmp/qwen200-20261123-j9r2czoi/mn",
+    "cpu_proof": "/tmp/qwen200-20261123-j9r2czoi/assets/mn-cpu-1795419402582643110/result.json",
+    "drift_since_tested_freeze": []
+  },
+  "m6_formal_preflight_only": {
+    "scope": "source/config snapshot while root-owned formal run active; no outcome/throughput inference",
+    "source_identity_complete": true,
+    "launch_runtime_file_count": 49,
+    "drift_since_launch": [],
+    "config_sha256": "187703c97fa7aa31850593118338250afe5e840be26acc799e6278b3c39c1aae",
+    "configured_workers": 6,
+    "per_audio_window": 16,
+    "global_window": 128,
+    "global_tokens": 80000,
+    "global_frames": 115200
+  },
+  "b0_short_clip_quality_reference_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b",
+  "capacity_cases": {
+    "m6-capacity": {
+      "scope": "capacity and eight same short-clip HTTP requests only; not full8 audio throughput or128 active long segments",
+      "source_files_sha256": {
+        "warmup.json": "1b77698d5f8af08dd0eb298cb55ae0c07af66d0528a1a817b84d296c77edea0b",
+        "warmup-final-status.json": "5affd35766001c2ec986b0a8beda2aac7d404d3568ea783ac7ddb474ff645080",
+        "summary.json": "b2e38432f6dc62641cd1e36fbf508ee4f8807acecb0c0cd1f6bd310d95894149",
+        "shutdown.json": "4dfda00c4e1c7e94cd4e6ada3b5ec8669ecec3ecb153656300add7338ad39f6e",
+        "config.toml": "187703c97fa7aa31850593118338250afe5e840be26acc799e6278b3c39c1aae"
+      },
+      "configured_workers": 6,
+      "observed_workers": 6,
+      "actual_worker_pids": [
+        2384224,
+        2548802,
+        2680635,
+        2851783,
+        3064134,
+        3274463
+      ],
+      "worker_loaded": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "worker_completed_clips": [
+        2,
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "expected_source_counts": [
+        2,
+        2,
+        1,
+        1,
+        1,
+        1
+      ],
+      "expected_budgets": [
+        {
+          "audio_count": 2,
+          "max_active": 32,
+          "max_batch_tokens": 20000,
+          "max_batch_audio_frames": 28800
+        },
+        {
+          "audio_count": 2,
+          "max_active": 32,
+          "max_batch_tokens": 20000,
+          "max_batch_audio_frames": 28800
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        }
+      ],
+      "observed_budgets": [
+        {
+          "audio_count": 2,
+          "max_active": 32,
+          "max_batch_tokens": 20000,
+          "max_batch_audio_frames": 28800
+        },
+        {
+          "audio_count": 2,
+          "max_active": 32,
+          "max_batch_tokens": 20000,
+          "max_batch_audio_frames": 28800
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        }
+      ],
+      "per_worker_launch_options_match": true,
+      "budgets_match": true,
+      "audio_admission": {
+        "configured_total": 8,
+        "active_total": 0,
+        "waiting_total": 0
+      },
+      "per_audio_window": 16,
+      "global_window": 128,
+      "global_physical_upper": 128,
+      "global_tokens": 80000,
+      "global_frames": 115200,
+      "sum_owner_active_limit": 128,
+      "sum_owner_token_limit": 80000,
+      "sum_owner_frame_limit": 115200,
+      "formal_round_started": false,
+      "warmup_complete": true,
+      "clip_comparison": [
+        {
+          "source_index": 0,
+          "expected_worker": 0,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 1,
+          "expected_worker": 1,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 2,
+          "expected_worker": 2,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 3,
+          "expected_worker": 3,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 4,
+          "expected_worker": 4,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 5,
+          "expected_worker": 5,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 6,
+          "expected_worker": 0,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 7,
+          "expected_worker": 1,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        }
+      ],
+      "all_eight_quality_payloads_equal_to_b0": true,
+      "shutdown": {
+        "exit_code": 0,
+        "forced": false,
+        "remaining_pids": [],
+        "remaining_cache_files": [],
+        "observe_s": 5,
+        "passed": true
+      }
+    },
+    "m8-capacity": {
+      "scope": "capacity and eight same short-clip HTTP requests only; not full8 audio throughput or128 active long segments",
+      "source_files_sha256": {
+        "warmup.json": "7f97e9ee514a2fe00d9cc8fedee9edeb190f750f06629cbf379516304abd0b38",
+        "warmup-final-status.json": "1a0b3a1ae2ab9bde3ba77708de980f1712b77a87e9bd178526b7f83fbd49d8a6",
+        "summary.json": "19b56aeb4fbb2c2ef924e261ae00e624cb731e81c1e2b5936a6ff30f5a0db3e1",
+        "shutdown.json": "f3b0c52a7d3dc4aa67e2b1c151c40a75d92bc4fd602dc0c29b6ba8c44e459976",
+        "config.toml": "42650a8053d8a2315187a0477049d3bcabb57fda7318dda09f7adaa1038a7d5f"
+      },
+      "configured_workers": 8,
+      "observed_workers": 8,
+      "actual_worker_pids": [
+        1627831,
+        1777567,
+        1965027,
+        2106736,
+        2248466,
+        2417636,
+        2619367,
+        2853890
+      ],
+      "worker_loaded": [
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true,
+        true
+      ],
+      "worker_completed_clips": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "expected_source_counts": [
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1
+      ],
+      "expected_budgets": [
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        }
+      ],
+      "observed_budgets": [
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        }
+      ],
+      "per_worker_launch_options_match": true,
+      "budgets_match": true,
+      "audio_admission": {
+        "configured_total": 8,
+        "active_total": 0,
+        "waiting_total": 0
+      },
+      "per_audio_window": 16,
+      "global_window": 128,
+      "global_physical_upper": 128,
+      "global_tokens": 80000,
+      "global_frames": 115200,
+      "sum_owner_active_limit": 128,
+      "sum_owner_token_limit": 80000,
+      "sum_owner_frame_limit": 115200,
+      "formal_round_started": false,
+      "warmup_complete": true,
+      "clip_comparison": [
+        {
+          "source_index": 0,
+          "expected_worker": 0,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 1,
+          "expected_worker": 1,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 2,
+          "expected_worker": 2,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 3,
+          "expected_worker": 3,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 4,
+          "expected_worker": 4,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 5,
+          "expected_worker": 5,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 6,
+          "expected_worker": 6,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        },
+        {
+          "source_index": 7,
+          "expected_worker": 7,
+          "http_status": 200,
+          "complete": true,
+          "same_full_payload_as_b0_clip_except_timing": true,
+          "same_text_as_b0_clip": true,
+          "same_segments_as_b0_clip": true,
+          "quality_payload_sha256": "4cf81341d0bd77386365fb36d07632b7cf2179756c74f1c184f95146ca29568b"
+        }
+      ],
+      "all_eight_quality_payloads_equal_to_b0": true,
+      "shutdown": {
+        "exit_code": 0,
+        "forced": false,
+        "remaining_pids": [],
+        "remaining_cache_files": [],
+        "observe_s": 5,
+        "passed": true
+      }
+    }
+  },
+  "limits": [
+    "Shortclip equality is not full-audio quality,recall or throughput evidence.",
+    "Capacity clips are serial, owner warmup counts2/2/1/1/1/1 or1each do not prove128 simultaneous long VAD capacity.",
+    "14400 frames per single-audio owner can force a16x901-frame prefill to split15+1.",
+    "ModelCPUthreads6/8 versus original4 make this a capacity batch,not a single-factor throughput claim."
+  ],
+  "scope_checks_passed": true
+}

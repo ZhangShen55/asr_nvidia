@@ -1,0 +1,22 @@
+{
+  "returncode": 0,
+  "elapsed_s": 8.835642329417169,
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "TMPDIR": "/tmp/asr-cpu-6fhp3kim",
+  "device_weight_guard_records": "",
+  "cache_mutation_intercepts": [],
+  "passed": true,
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/tmp/qwen200-20261123-j9r2czoi/mn/tests/test_qwen200_controller.py",
+    "/tmp/qwen200-20261123-j9r2czoi/mn/tests/test_qwen200_startup.py"
+  ],
+  "source_sha256": {
+    "scripts/benchmark_qwen200.py": "1f32ebbd8963fda2c567900a25c417e8c681108a8e4ea0e6a68fb1efe1fca479",
+    "core/qwen200_watchdog.py": "c43da53cc30f60ee83b5f2f1af1d775cc79d01f43af84f08028834eae780bd00",
+    "tests/test_qwen200_controller.py": "f17915ad1c81486692016410a064f9f3e2240d3ae5767d88e08442a218334d89"
+  }
+}

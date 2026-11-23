@@ -1,0 +1,239 @@
+{
+  "experimental_only": true,
+  "root": "/tmp/qwen200-20261123-j9r2czoi/mn",
+  "base": "a1de07fb8cff9018d0b9082645b954e2fcc919be",
+  "cases": {
+    "M6": {
+      "env": {
+        "QWEN200_EXPERIMENT_WORKERS": "6",
+        "QWEN200_ROUTING_MANIFEST": "/tmp/qwen200-20261123-j9r2czoi/assets/inputs.json",
+        "QWEN200_MODEL_THREADS": "1",
+        "QWEN200_STARTUP_STOP_FILE": "<owned controller TMPDIR>/startup-stop"
+      },
+      "config": "/tmp/qwen200-20261123-j9r2czoi/mn/test/config.qwen200-m6.toml",
+      "per_worker_budgets": [
+        {
+          "index": 0,
+          "audio_ids": [
+            "a1",
+            "a7"
+          ],
+          "audio_count": 2,
+          "max_active": 32,
+          "max_batch_size": 32,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 20000,
+          "max_batch_audio_frames": 28800
+        },
+        {
+          "index": 1,
+          "audio_ids": [
+            "a2",
+            "a8"
+          ],
+          "audio_count": 2,
+          "max_active": 32,
+          "max_batch_size": 32,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 20000,
+          "max_batch_audio_frames": 28800
+        },
+        {
+          "index": 2,
+          "audio_ids": [
+            "a3"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 3,
+          "audio_ids": [
+            "a4"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 4,
+          "audio_ids": [
+            "a5"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 5,
+          "audio_ids": [
+            "a6"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        }
+      ],
+      "aggregate_model_cpu_threads": 6
+    },
+    "M8": {
+      "env": {
+        "QWEN200_EXPERIMENT_WORKERS": "8",
+        "QWEN200_ROUTING_MANIFEST": "/tmp/qwen200-20261123-j9r2czoi/assets/inputs.json",
+        "QWEN200_MODEL_THREADS": "1",
+        "QWEN200_STARTUP_STOP_FILE": "<owned controller TMPDIR>/startup-stop"
+      },
+      "config": "/tmp/qwen200-20261123-j9r2czoi/mn/test/config.qwen200-m8.toml",
+      "per_worker_budgets": [
+        {
+          "index": 0,
+          "audio_ids": [
+            "a1"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 1,
+          "audio_ids": [
+            "a2"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 2,
+          "audio_ids": [
+            "a3"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 3,
+          "audio_ids": [
+            "a4"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 4,
+          "audio_ids": [
+            "a5"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 5,
+          "audio_ids": [
+            "a6"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 6,
+          "audio_ids": [
+            "a7"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        },
+        {
+          "index": 7,
+          "audio_ids": [
+            "a8"
+          ],
+          "audio_count": 1,
+          "max_active": 16,
+          "max_batch_size": 16,
+          "prefill_batch_size": 16,
+          "max_batch_tokens": 10000,
+          "max_batch_audio_frames": 14400
+        }
+      ],
+      "aggregate_model_cpu_threads": 8
+    }
+  },
+  "global": {
+    "audio_concurrency": 8,
+    "per_audio_active": 16,
+    "request_concurrency": 128,
+    "max_batch_tokens": 80000,
+    "max_batch_audio_frames": 115200,
+    "pending_segment_limit": 256,
+    "pending_audio_bytes_limit": 268435456
+  },
+  "routing": "one unique audio-SHA20.wav in request_id; original 8 manifest indices modulo N; unknown/ambiguous rejected; failed owner never migrated",
+  "startup_stop": "QWEN200_STARTUP_STOP_FILE existence checked preload entry/exit and before/after every safe ensure_loaded; close all constructed runtimes via existing lifespan; running load is never declared complete early",
+  "capacity_caveats": [
+    "6/8 model CPU torch threads aggregate6/8 versus original total4, not a single-factor throughput comparison",
+    "14400 frame per one-audio owner is less than16*901=14416; a prefill of sixteen longest estimated901-frame members will split at15 without changing audio boundaries or dropping segments",
+    "8GiB free HBM redline unchanged; external controller must observe startup as well as HTTP phases"
+  ],
+  "cpu_evidence": "/tmp/qwen200-20261123-j9r2czoi/assets/mn-cpu-1795419402582643110/result.json",
+  "CPU_result": "42 passed in5.52s",
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "owned_file_sha256": {
+    "core/qwen_asr_client.py": "1deeb4ed4c6892d852222b934ead8cd1316744de24e127f5979a43624fbffc1e",
+    "core/config.py": "d231a1379499388309ba16ccfd8c262ecd7ed39757d5796e67aae1d3c85655bf",
+    "tests/test_qwen200_mn.py": "8051bc0a254d876acf11bf83ca77c072c588a63f967e7d773a14cd6a8bbf9336",
+    "test/config.qwen200-m6.toml": "187703c97fa7aa31850593118338250afe5e840be26acc799e6278b3c39c1aae",
+    "test/config.qwen200-m8.toml": "42650a8053d8a2315187a0477049d3bcabb57fda7318dda09f7adaa1038a7d5f"
+  },
+  "final_tested_source_sha256": {
+    "core/qwen_asr_client.py": "1deeb4ed4c6892d852222b934ead8cd1316744de24e127f5979a43624fbffc1e",
+    "core/config.py": "d231a1379499388309ba16ccfd8c262ecd7ed39757d5796e67aae1d3c85655bf",
+    "core/qwen_continuous_process.py": "23999110ce85be9d90d4afcf421dec3e3d869cc3b1eea0ca56d5fdf2ca5b3a9c",
+    "core/qwen_asr_process.py": "0d4ff4212dacb98d5c8959f9b415a09a9a3fef12c757992fb2ca9e3747432e7b",
+    "core/qwen_continuous_runtime.py": "732ad8f0ed7f7f06250c0b294d33486a2184cda14b3f062823e43a990998dba7",
+    "tests/test_qwen200_mn.py": "8051bc0a254d876acf11bf83ca77c072c588a63f967e7d773a14cd6a8bbf9336",
+    "test/config.qwen200-m6.toml": "187703c97fa7aa31850593118338250afe5e840be26acc799e6278b3c39c1aae",
+    "test/config.qwen200-m8.toml": "42650a8053d8a2315187a0477049d3bcabb57fda7318dda09f7adaa1038a7d5f"
+  },
+  "patch_sha256": "95c820af722e0c0e71fbee3048af6d3ecaa4db0624be217ec19bd06aa50fd2fb",
+  "NPU_executed": false
+}

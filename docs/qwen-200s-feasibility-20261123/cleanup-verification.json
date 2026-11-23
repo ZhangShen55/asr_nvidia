@@ -1,16 +1,20 @@
 {
-  "utc": "2026-11-23T06:13:19.886365+00:00",
+  "utc": "2026-11-23T08:59:29.412686+00:00",
   "cases": [
-    "b0-preflight",
-    "m2-preflight",
-    "s1-preflight",
     "b0-formal",
-    "m2-formal"
+    "b0-preflight",
+    "m2-formal",
+    "m2-preflight",
+    "m6-capacity",
+    "m6-formal",
+    "m8-capacity",
+    "s1-preflight"
   ],
-  "owned_birth_identities_checked": 222,
+  "owned_birth_identities_checked": 665,
   "remaining_owned": [],
   "remaining_listeners": [],
   "failed_shutdown_cases": [],
+  "port_observe_s": 5,
   "shared": {
     "pid": 1601397,
     "birth": 1791963491.5,
@@ -26,7 +30,6 @@
       "1"
     ]
   },
-  "npu_smi_exit": 0,
   "passed": true,
-  "scope": "all started tests closed; each run observed port free at least5s; not a performance pass"
+  "scope": "all eight started service cases; retained source/log/stage; capacity is not performance acceptance"
 }

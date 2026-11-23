@@ -1,0 +1,336 @@
+diff --git a/scripts/benchmark_qwen200.py b/scripts/benchmark_qwen200.py
+--- a/scripts/benchmark_qwen200.py
++++ b/scripts/benchmark_qwen200.py
+@@ -227,7 +227,9 @@
+         # 每服务独占短临时根；不继承外部TMPDIR，不删除旧缓存，也不污染父环境。
+         self.temp_dir = tempfile.mkdtemp(prefix="asr-svc-", dir="/tmp")
+         self.cache_dir = str(Path(self.temp_dir) / "seacraft_asr")
+-        child_env = dict(env, TMPDIR=self.temp_dir)
++        self.startup_stop_path = str(Path(self.temp_dir)/'qwen200-startup-stop.json')
++        child_env = dict(env, TMPDIR=self.temp_dir,
++                         QWEN200_STARTUP_STOP_FILE=self.startup_stop_path)
+         self.log = (self.output / "service.log").open("w")
+         try:
+             self.process = subprocess.Popen(command, cwd=ROOT, env=child_env, stdout=self.log,
+@@ -285,6 +287,7 @@
+             if code is not None and parent_exit_observed is None:
+                 parent_exit_observed = time.monotonic()
+             return code
++        request_startup_stop(self, self.output, 'owned_close')
+         self.register()
+         initial = list(self.identities.items())
+         forced = False
+@@ -344,6 +347,12 @@
+                   "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+                   "passed": exit_code_ok and not forced and not orphan_cleanup and not remaining and not any(observations)
+                             and not cache_files and cache_error is None}
++        result.update(expected_startup_abort=bool(getattr(self,'expected_startup_abort',False)),
++            startup_abort_reason=getattr(self,'startup_abort_reason',None),
++            normal_exit0=exit_code==0 and not forced and not orphan_cleanup,
++            startup_stop_path=self.startup_stop_path,
++            passed_scope=('owned resource reaping after expected startup abort; not normal inference shutdown'
++                          if getattr(self,'expected_startup_abort',False) else 'normal owned service shutdown'))
+         self.log.close()
+         write_json(self.output / "shutdown.json", result)
+         return result
+@@ -733,6 +742,103 @@
+     return record
+ 
+ 
++class StartupResourceAbort(RuntimeError):
++    def __init__(self, trigger):
++        self.trigger=trigger
++        super().__init__('startup capacity stopped: '+str(trigger))
++
++
++def request_startup_stop(owner, output, reason):
++    """只写Popen私有目录的合作停止标志，加载中的worker先完成安全边界。"""
++    marker=Path(getattr(owner,'startup_stop_path',Path(output)/'startup-stop.request.json'))
++    if not marker.exists():
++        write_json(marker,dict(reason=reason,utc=utc_now(),monotonic=time.monotonic()))
++    return str(marker)
++
++
++def readonly_card7_probe():
++    # resource_diagnostics是标准库只读模块；不导入torch、不触发NPU初始化。
++    from core.resource_diagnostics import npu_snapshot
++    snapshot=npu_snapshot()
++    card=next((row for row in snapshot.get('npus',[]) if row.get('index')==7),None)
++    return dict(available=bool(snapshot.get('available') and card and card.get('available')),
++                card=7,free_hbm_mb=card.get('hbm_free_mb') if card else None,
++                reason=snapshot.get('reason'),source='OS npu-smi info driver aggregate, no torch/NPU initialization')
++
++
++async def wait_for_startup(args, owner, output, *, probe_fn=None, status_fn=None):
++    """HTTP未ready期间也监控单卡HBM；任何异常均先请求合作停止再由execute finally回收。"""
++    from core.async_utils import await_completion
++    import httpx
++    output=Path(output);probe_fn=probe_fn or readonly_card7_probe
++    interval=getattr(args,'startup_resource_interval_s',2.0)
++    begin=time.monotonic();deadline=begin+args.startup_timeout_s
++    probe_task=status_task=None;probe_started=None;latest_probe=None;ready_status=None;ready_at=None
++    next_probe=begin;next_status=begin
++    async with httpx.AsyncClient(base_url=args.url,trust_env=False,timeout=.5) as client:
++        async def get_status():
++            if status_fn:return await status_fn()
++            try:
++                response=await client.get('/get_status',timeout=.5)
++                return response.json() if response.status_code==200 else None
++            except httpx.HTTPError:return None
++        async def probe():
++            return await await_completion(asyncio.to_thread(probe_fn))
++        try:
++            while True:
++                now=time.monotonic();owner.register()
++                if owner.process.poll() is not None:raise RuntimeError('owned服务启动失败')
++                if probe_task is not None and probe_task.done():
++                    try:row=probe_task.result()
++                    except Exception as exc:row=dict(available=False,card=7,reason=repr(exc))
++                    row=dict(row,monotonic=time.monotonic(),probe_started_monotonic=probe_started,
++                             startup_elapsed_s=time.monotonic()-begin,utc=utc_now(),threshold_hbm_free_mb=8192,
++                             unit='MiB of driver-reported free HBM')
++                    with(output/'startup-resource.jsonl').open('a')as stream:
++                        stream.write(json.dumps(row,ensure_ascii=True)+'\n')
++                    latest_probe=row;probe_task=None;next_probe=probe_started+interval
++                    free=row.get('free_hbm_mb')
++                    if (row.get('available') is not True or row.get('card')!=7 or
++                            not isinstance(free,(int,float)) or not math.isfinite(free)):
++                        trigger=dict(reason='startup_resource_unobservable',observation=row)
++                        write_json(output/'startup-trigger.json',trigger)
++                        raise StartupResourceAbort(trigger)
++                    if free<8192:
++                        trigger=dict(reason='startup_resource_hbm_free',observation=row,
++                                     observed=free,threshold=8192,unit='MiB',card=7)
++                        write_json(output/'startup-trigger.json',trigger)
++                        # 仅明确资源中止可将uvicorn startup exit3归为预期资源回收。
++                        owner.expected_startup_abort=True
++                        owner.startup_abort_reason=trigger['reason']
++                        owner.expected_exit_codes=(0,3)
++                        raise StartupResourceAbort(trigger)
++                if status_task is not None and status_task.done():
++                    value=status_task.result();status_task=None;next_status=now+.5
++                    if value is not None:
++                        ready_status=value;ready_at=time.monotonic()
++                if ready_status is not None and latest_probe is not None and latest_probe['probe_started_monotonic']>=ready_at:
++                    write_json(output/'initial-status.json',ready_status)
++                    return ready_status
++                if now>=deadline:
++                    trigger=dict(reason='startup_timeout',startup_elapsed_s=now-begin,threshold_s=args.startup_timeout_s)
++                    write_json(output/'startup-trigger.json',trigger)
++                    raise StartupResourceAbort(trigger)
++                if probe_task is None and (now>=next_probe or ready_status is not None):
++                    probe_started=time.monotonic();probe_task=asyncio.create_task(probe())
++                if status_task is None and ready_status is None and now>=next_status:
++                    status_task=asyncio.create_task(get_status())
++                await asyncio.sleep(min(.1,max(.001,deadline-time.monotonic())))
++        except BaseException as exc:
++            request_startup_stop(owner,output,getattr(exc,'trigger',{}).get('reason',type(exc).__name__))
++            raise
++        finally:
++            pending=[task for task in (probe_task,status_task) if task is not None]
++            for task in pending:
++                if not task.done():task.cancel()
++            # 只读probe也等有界subprocess/线程退出，重复取消不能遗弃。
++            if pending:await await_completion(asyncio.gather(*pending,return_exceptions=True))
++
++
+ async def execute(args, samples, output):
+     owner = None
+     summary = None
+@@ -753,23 +859,15 @@
+                 }
+                 write_json(run_path, run_record)
+             owner = OwnedService(command, env, parsed.hostname, parsed.port or 80, output)
+-            import httpx
+-            deadline = time.monotonic()+args.startup_timeout_s
+-            async with httpx.AsyncClient(base_url=args.url, trust_env=False, timeout=2) as client:
+-                while True:
+-                    owner.register()
+-                    if owner.process.poll() is not None:
+-                        raise RuntimeError("owned服务启动失败")
+-                    try:
+-                        response = await client.get("/get_status")
+-                        if response.status_code == 200:
+-                            write_json(output / "initial-status.json", response.json())
+-                            break
+-                    except httpx.HTTPError:
+-                        pass
+-                    if time.monotonic() > deadline:
+-                        raise TimeoutError("服务启动超过有界期限")
+-                    await asyncio.sleep(1)
++            try:
++                await wait_for_startup(args,owner,output)
++            except StartupResourceAbort as exc:
++                summary=dict(status='startup_aborted',complete=False,expected=len(samples),successful=0,
++                    processed_completed=0,records=[],formal_round_started=False,target_passed=False,
++                    startup_trigger=exc.trigger,performance_scope='capacity startup only; no formal audio timing',
++                    expected_startup_abort=bool(getattr(owner,'expected_startup_abort',False)))
++                write_json(Path(output)/'summary.json',summary)
++                return summary
+         warmup_record = None
+         if getattr(args, "warmup_audio", None) or getattr(args,"warmup_manifest",None):
+             warmup_record = await warmup(args, output)
+@@ -825,6 +923,8 @@
+     parser.add_argument("--warmup-manifest", help="八个真实短clip的path/upload_filename清单，单列于正式计时")
+     parser.add_argument("--warmup-only", action="store_true", help="仅真实HTTP准入检查，不产生性能结论")
+     parser.add_argument("--expected-qwen-workers", type=int, default=1)
++    parser.add_argument("--startup-resource-interval-s",type=float,default=2,
++                        help="启动未ready时只读卡7 driver采样间隔，缺省2秒")
+     parser.add_argument("--target-s", type=float, default=200)
+     parser.add_argument("--enable-eta-stop", action="store_true", help="仅充分验证可信证据后启用；缺证据永不ETA早停")
+     parser.add_argument("--expected-model-instances", type=int, help="可选预热后健康容量校验；A只校验VAD，不要求增强加载")
+@@ -845,6 +945,8 @@
+         parser.error("本实验必须原八完整WAV、A模式、八HTTP并发")
+     if not math.isfinite(args.target_s) or not 0 < args.target_s <= 200 or args.target_s >= args.diagnostic_wall_timeout_s:
+         parser.error("目标必须为有限正值且不得放宽200秒")
++    if not math.isfinite(args.startup_resource_interval_s) or args.startup_resource_interval_s < 2:
++        parser.error('startup资源采样间隔必须有限且至少2秒')
+     if args.expected_qwen_workers < 1 or args.expected_qwen_workers > 8:
+         parser.error("expected-qwen-workers须1～8")
+     if args.warmup_only and not (args.warmup_manifest or args.warmup_audio):
+diff --git a/tests/test_qwen200_controller.py b/tests/test_qwen200_controller.py
+--- a/tests/test_qwen200_controller.py
++++ b/tests/test_qwen200_controller.py
+@@ -10,6 +10,11 @@
+ ROOT=Path(__file__).resolve().parents[1]
+ spec=importlib.util.spec_from_file_location('qwen200_test_controller',ROOT/'scripts/benchmark_qwen200.py')
+ mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
++
++
++@pytest.fixture(autouse=True)
++def no_real_startup_probe(monkeypatch):
++    monkeypatch.setattr(mod, "readonly_card7_probe", lambda:dict(available=True,card=7,free_hbm_mb=30000))
+ 
+ 
+ def records(state='running'):
+diff --git a/tests/test_qwen200_startup.py b/tests/test_qwen200_startup.py
+new file mode 100644
+--- /dev/null
++++ b/tests/test_qwen200_startup.py
+@@ -0,0 +1,126 @@
++"""启动未ready期间的只读资源闸门及合作中止，不启动任何NPU。"""
++import argparse
++import asyncio
++import importlib.util
++import json
++import os
++from pathlib import Path
++import sys
++import time
++from types import SimpleNamespace
++import pytest
++
++ROOT=Path(__file__).resolve().parents[1]
++spec=importlib.util.spec_from_file_location('qwen200_startup_controller',ROOT/'scripts/benchmark_qwen200.py')
++mod=importlib.util.module_from_spec(spec);spec.loader.exec_module(mod)
++
++
++def args(**changes):
++    data=dict(url='http://127.0.0.1:18083',startup_timeout_s=1,startup_resource_interval_s=.01)
++    data.update(changes);return argparse.Namespace(**data)
++
++
++class Owner:
++    def __init__(self,path,code=None):
++        self.startup_stop_path=str(path/'stop.json');self.process=SimpleNamespace(poll=lambda:code)
++        self.expected_exit_codes=(0,);self.registrations=0
++    def register(self):self.registrations+=1
++
++
++async def not_ready():return None
++
++
++def test_startup_low_hbm_triggers_before_http_ready_and_requests_cooperative_stop(tmp_path):
++    owner=Owner(tmp_path)
++    with pytest.raises(mod.StartupResourceAbort) as caught:
++        asyncio.run(mod.wait_for_startup(args(),owner,tmp_path,probe_fn=lambda:dict(available=True,card=7,free_hbm_mb=7000),status_fn=not_ready))
++    assert caught.value.trigger['reason']=='startup_resource_hbm_free'
++    assert owner.expected_startup_abort and owner.expected_exit_codes==(0,3)
++    assert json.loads(Path(owner.startup_stop_path).read_text())['reason']=='startup_resource_hbm_free'
++    row=json.loads((tmp_path/'startup-resource.jsonl').read_text().splitlines()[0])
++    assert row['unit'].startswith('MiB') and row['card']==7
++
++
++def test_partial_sequential_preload_is_monitored_between_samples(tmp_path):
++    owner=Owner(tmp_path);values=iter([40000,7100])
++    def probe():return dict(available=True,card=7,free_hbm_mb=next(values))
++    with pytest.raises(mod.StartupResourceAbort):
++        asyncio.run(mod.wait_for_startup(args(),owner,tmp_path,probe_fn=probe,status_fn=not_ready))
++    rows=[json.loads(v) for v in (tmp_path/'startup-resource.jsonl').read_text().splitlines()]
++    assert len(rows)==2 and rows[0]['free_hbm_mb']==40000 and rows[1]['free_hbm_mb']==7100
++    assert owner.registrations>=3
++
++
++def test_http_ready_still_requires_a_final_fresh_probe(tmp_path):
++    owner=Owner(tmp_path);values=iter([40000,7000])
++    async def ready():return {'ready':True}
++    with pytest.raises(mod.StartupResourceAbort):
++        asyncio.run(mod.wait_for_startup(args(),owner,tmp_path,probe_fn=lambda:dict(available=True,card=7,free_hbm_mb=next(values)),status_fn=ready))
++    assert not (tmp_path/'initial-status.json').exists()
++
++
++def test_startup_unobservable_fails_closed_without_accepting_exit3(tmp_path):
++    owner=Owner(tmp_path)
++    with pytest.raises(mod.StartupResourceAbort) as caught:
++        asyncio.run(mod.wait_for_startup(args(),owner,tmp_path,probe_fn=lambda:dict(available=False,card=7,reason='probe failed'),status_fn=not_ready))
++    assert caught.value.trigger['reason']=='startup_resource_unobservable'
++    assert owner.expected_exit_codes==(0,) and not getattr(owner,'expected_startup_abort',False)
++
++
++def test_unexpected_startup_process_error_not_laundered_as_expected_abort(tmp_path):
++    owner=Owner(tmp_path,code=3)
++    with pytest.raises(RuntimeError,match='启动失败'):
++        asyncio.run(mod.wait_for_startup(args(),owner,tmp_path,probe_fn=lambda:dict(available=True,card=7,free_hbm_mb=30000),status_fn=not_ready))
++    assert Path(owner.startup_stop_path).exists() and owner.expected_exit_codes==(0,)
++
++
++def test_probe_only_card7_parser_does_not_import_torch_or_initialize_device(monkeypatch):
++    import core.resource_diagnostics as diagnostics
++    monkeypatch.setattr(diagnostics,'npu_snapshot',lambda:dict(available=True,npus=[
++        dict(index=0,available=True,hbm_free_mb=1),dict(index=7,available=True,hbm_free_mb=30000)]))
++    before=set(sys.modules)
++    result=mod.readonly_card7_probe()
++    assert result['available'] and result['free_hbm_mb']==30000
++    assert not ({'torch','torch_npu'} & (set(sys.modules)-before))
++
++
++def test_startup_red_execute_finally_reaps_even_without_formal_requests(monkeypatch,tmp_path):
++    state={}
++    class ChildOwner(Owner):
++        def __init__(self,*a,**kw):super().__init__(tmp_path);state['owner']=self
++        async def close(self,*a):
++            state['closed']=True
++            return dict(passed=True,exit_code=3,expected_startup_abort=True,normal_exit0=False)
++    monkeypatch.setattr(mod,'OwnedService',ChildOwner)
++    monkeypatch.setattr(mod,'readonly_card7_probe',lambda:dict(available=True,card=7,free_hbm_mb=7000))
++    a=args(launch_service=True,config='config.toml',owned_request_drain_grace_s=30,shutdown_timeout_s=210,observe_s=5)
++    result=asyncio.run(mod.execute(a,[{}]*8,tmp_path))
++    assert state['closed'] and result['status']=='startup_aborted'
++    assert not result['formal_round_started'] and not result['target_passed']
++    assert result['expected_startup_abort'] and result['shutdown']['normal_exit0'] is False
++
++
++def test_owned_close_stopfile_preserves_pid_birth_and_records_normal_exit0(monkeypatch,tmp_path):
++    # 真CPU子进程模拟已加载部分worker的owner；故意放入错误出生身份，不能杀调用方。
++    import psutil
++    monkeypatch.setattr(mod,'listening',lambda *a:False)
++    ready=tmp_path/'child-ready'
++    code="import signal,time,sys;from pathlib import Path;signal.signal(signal.SIGTERM,lambda *_:sys.exit(0));Path(sys.argv[1]).write_text('ready');time.sleep(30)"
++    owner=mod.OwnedService([sys.executable,'-c',code,str(ready)],dict(os.environ),'127.0.0.1',18083,tmp_path)
++    result=None
++    try:
++        deadline=time.monotonic()+5
++        while not ready.exists() and time.monotonic()<deadline:time.sleep(.01)
++        assert ready.exists()
++        own=psutil.Process();owner.identities[own.pid]=own.create_time()-1
++        result=asyncio.run(owner.close(deadline_s=5,observe_s=.02))
++        assert result['passed'] and result['normal_exit0'] and not result['forced']
++        assert Path(owner.startup_stop_path).exists() and psutil.pid_exists(own.pid)
++        assert not result['expected_startup_abort']
++    finally:
++        if owner.remaining():asyncio.run(owner.close(deadline_s=5,observe_s=.02))
++
++
++def test_startup_deadline600_does_not_relax_formal_goal_or_gate():
++    a=mod.parse_args(['--manifest','x','--output','x','--mode','A','--concurrency','8','--startup-timeout-s','600','--expected-qwen-workers','8'])
++    assert a.startup_timeout_s==600 and a.target_s==200 and a.diagnostic_wall_timeout_s==336
