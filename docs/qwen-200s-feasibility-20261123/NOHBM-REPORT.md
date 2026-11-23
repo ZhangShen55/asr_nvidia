@@ -46,3 +46,8 @@
 本轮normalexit0，无forced，TERM至父退出26.044365秒，PCM空、18083空闲至少5秒。全部十一轮1164个登记出生身份已复核消失，共享1601397保留，卡7恢复约24%占用。权威业务配置无漂移，原fusion删除stash保留；只提交验证资产及报告，主工作区保持干净，旧矩阵不自动续跑或归档。
 
 原始证据logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal；摘要nohbm-run-summary.json；controller68 CPU、业务基线/实际准入/终态审计及analysis见同目录nohbm-*。实验增量补丁experimental-patches/nohbm只改验证控制逻辑，不自动合入生产业务。
+
+
+## 同轮后续只读阻塞分析
+
+已按六条正式请求拆解VAD/分段/ITN与worker子阶段，确认同步文本后处理阻塞主事件循环，并给出供给、prefill调度、KV整理的验证顺序。见[BOTTLENECKS.md](BOTTLENECKS.md)。本次没有实施优化或重跑，原成绩不变。

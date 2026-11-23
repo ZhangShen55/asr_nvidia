@@ -1,0 +1,1210 @@
+{
+  "kind": "readonly_existing_artifact_request_bottleneck_analysis",
+  "scope": "M6N6 six complete-audio requests, six isolated model processes on card7; HBM-free-stop explicitly disabled; no new tests, HTTP or hardware probes",
+  "run_path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal",
+  "stage_path": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm",
+  "n_formal": 6,
+  "n_warmup_excluded": 6,
+  "formal_task_matching": "frozen source SHA20 + full task UUID + phase segment_count>1 + common formal t0",
+  "formal_t0_monotonic": 7520366.68243627,
+  "wall_s": 194.80893781036139,
+  "all_request_latency": {
+    "n": 6,
+    "p50_s": 169.545595404692,
+    "p95_s": 193.3360070628114,
+    "scope": "all processed completions including explicit warnings"
+  },
+  "quality": {
+    "processed_completed": 6,
+    "strict_successful": 3,
+    "completed_with_warnings": 3,
+    "warning_segments": 16,
+    "unrecoverable_segments": 13
+  },
+  "requests": [
+    {
+      "sample_id": "a1",
+      "source": "/home/zhangs/asr_nvidia/test/test_audio/课程/储能学术英语-多人（中英）.wav",
+      "source_sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+      "source_audio_seconds": 3117.312,
+      "worker_index": 0,
+      "request_id": "f0383a76-3183-4d95-88c3-4d5ce7b3750d",
+      "task_id": "fb510fdf-9053-4b6a-87f5-90e237c1611f_audio-16cdf4a725788a2d4659.wav",
+      "http_elapsed_s": 157.57430147007108,
+      "http_started_monotonic": 7520366.95750482,
+      "http_ended_monotonic": 7520524.53180629,
+      "load_read_preprocess_s": 0.10729999999999999,
+      "gpu_time_field_pipeline_s": 154.52132999999998,
+      "outside_gpu_field_s": 3.0529714700710997,
+      "http_before_handler_s": 2.364701669663191,
+      "handler_to_vad_stage_update_s": 0.5528187099844217,
+      "prepare_after_read_preprocess_including_admission_s": 0.4455187099844217,
+      "audio_admission_wait_s": null,
+      "audio_admission_wait_upper_bound_from_handler_to_decode_update_s": 0.0013484004884958267,
+      "vad_wait_s": null,
+      "vad_worker_s": null,
+      "pending_pcm_wait_s": null,
+      "cut_internal_work_sum_s": null,
+      "cut_dispatch_wait_sum_s": null,
+      "source_phase_log": {
+        "vad_segments": 753,
+        "pipeline_total_ms_rounded": 154521,
+        "vad_ms_rounded": 22759,
+        "cut_sum_ms_rounded": 6839,
+        "cut_span_ms_rounded": 125380,
+        "segment_wall_ms_rounded": 127983,
+        "qwen_window_wait_sum_ms_rounded": 25397578,
+        "qwen_call_residency_sum_ms_rounded": 2022395,
+        "qwen_calls": 753,
+        "cluster_ms_rounded": 0,
+        "itn_phase_ms_rounded": 3762,
+        "low_volume_dropped": 0,
+        "task_id": "fb510fdf-9053-4b6a-87f5-90e237c1611f_audio-16cdf4a725788a2d4659.wav",
+        "line": 1193,
+        "log_end_monotonic_approx": 7520524.395885944,
+        "log_end_local": "2026-11-23T19:20:51.046+08:00"
+      },
+      "phase_s": {
+        "vad": 22.759,
+        "segment_wall": 127.983,
+        "itn_postprocessing": 3.762,
+        "cluster": 0.0,
+        "other_inside_gpu_field": 0.017329999999986967
+      },
+      "parallel_sums_not_additive": {
+        "cut_including_pending_and_dispatch_s": 6.839,
+        "qwen_window_wait_s": 25397.578,
+        "qwen_call_residency_s": 2022.395,
+        "submit_sender_delta": {
+          "cumulative_submit_send_s": 33.03890764247626,
+          "submit_lock_wait_s": 11.446652210317552,
+          "submit_write_wall_s": 21.583103386685252,
+          "submit_write_count": 753
+        }
+      },
+      "derived": {
+        "mean_qwen_call_residency_s": 2.6857835325365205,
+        "mean_in_qwen_calls": 15.802059648547072,
+        "mean_cut_plus_qwen_credit_residency": 15.855496433120022,
+        "credit_16_occupancy_lower_bound_s": 126.827125,
+        "segment_share_of_gpu_pipeline": 0.8282545846583124
+      },
+      "model_events": {
+        "counts": {
+          "prefill": 753,
+          "first_token": 753,
+          "eos": 753,
+          "resource_reusable": 753
+        },
+        "first_prefill_monotonic": 7520392.80510489,
+        "last_prefill_monotonic": 7520518.68397145,
+        "last_resource_reusable": {
+          "request_id": "fb510fdf-9053-4b6a-87f5-90e237c1611f_audio-16cdf4a725788a2d4659.wav",
+          "segment_id": "747",
+          "kind": "resource_reusable",
+          "monotonic": 7520520.60406479,
+          "worker_index": 0
+        },
+        "last_resource_reusable_local": "2026-11-23T19:20:47.254+08:00",
+        "final_segment_progress": {
+          "line": 1179,
+          "monotonic_approx": 7520520.6058859825,
+          "local": "2026-11-23T19:20:47.256+08:00",
+          "failures": 0
+        },
+        "model_final_reusable_to_progress_s": 0.0018211929127573967
+      },
+      "output_segments": 728,
+      "processing_status": "complete",
+      "warning_segments": 0,
+      "active_stage_history": {
+        "decode": {
+          "observations": 1,
+          "first_observed_monotonic": 7520370.51920578,
+          "last_observed_monotonic": 7520370.51920578,
+          "first_updated_monotonic": 7520369.32355489,
+          "last_updated_monotonic": 7520369.32355489
+        },
+        "vad": {
+          "observations": 18,
+          "first_observed_monotonic": 7520371.80869295,
+          "last_observed_monotonic": 7520393.49325683,
+          "first_updated_monotonic": 7520369.8750252,
+          "last_updated_monotonic": 7520369.8750252
+        },
+        "segments": {
+          "observations": 97,
+          "first_observed_monotonic": 7520394.7646412,
+          "last_observed_monotonic": 7520521.52628026,
+          "first_updated_monotonic": 7520393.73594035,
+          "last_updated_monotonic": 7520519.96185399
+        },
+        "cleanup": {
+          "observations": 1,
+          "first_observed_monotonic": 7520524.53358289,
+          "last_observed_monotonic": 7520524.53358289,
+          "first_updated_monotonic": 7520524.39831,
+          "last_updated_monotonic": 7520524.39831
+        }
+      }
+    },
+    {
+      "sample_id": "a2",
+      "source": "/home/zhangs/asr_nvidia/test/test_audio/课程/反常积分与级数（中法）.wav",
+      "source_sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+      "source_audio_seconds": 3287.296,
+      "worker_index": 1,
+      "request_id": "526e6264-6f3b-4a4b-85f0-042301df81d7",
+      "task_id": "3a5b8917-923f-49e9-bd1d-d899739ec0a6_audio-ce5a4529cd1ce7ac3780.wav",
+      "http_elapsed_s": 174.3772658696398,
+      "http_started_monotonic": 7520366.95897253,
+      "http_ended_monotonic": 7520541.3362384,
+      "load_read_preprocess_s": 0.11423,
+      "gpu_time_field_pipeline_s": 171.14426999999998,
+      "outside_gpu_field_s": 3.2329958696398364,
+      "http_before_handler_s": 2.547530699521303,
+      "handler_to_vad_stage_update_s": 0.6122622899711132,
+      "prepare_after_read_preprocess_including_admission_s": 0.4980322899711132,
+      "audio_admission_wait_s": null,
+      "audio_admission_wait_upper_bound_from_handler_to_decode_update_s": 0.0005192495882511139,
+      "vad_wait_s": null,
+      "vad_worker_s": null,
+      "pending_pcm_wait_s": null,
+      "cut_internal_work_sum_s": null,
+      "cut_dispatch_wait_sum_s": null,
+      "source_phase_log": {
+        "vad_segments": 615,
+        "pipeline_total_ms_rounded": 171144,
+        "vad_ms_rounded": 24291,
+        "cut_sum_ms_rounded": 112534,
+        "cut_span_ms_rounded": 143736,
+        "segment_wall_ms_rounded": 146801,
+        "qwen_window_wait_sum_ms_rounded": 25518074,
+        "qwen_call_residency_sum_ms_rounded": 2210916,
+        "qwen_calls": 615,
+        "cluster_ms_rounded": 0,
+        "itn_phase_ms_rounded": 40,
+        "low_volume_dropped": 0,
+        "task_id": "3a5b8917-923f-49e9-bd1d-d899739ec0a6_audio-ce5a4529cd1ce7ac3780.wav",
+        "line": 1213,
+        "log_end_monotonic_approx": 7520541.262886047,
+        "log_end_local": "2026-11-23T19:21:07.913+08:00"
+      },
+      "phase_s": {
+        "vad": 24.291,
+        "segment_wall": 146.801,
+        "itn_postprocessing": 0.04,
+        "cluster": 0.0,
+        "other_inside_gpu_field": 0.01226999999997247
+      },
+      "parallel_sums_not_additive": {
+        "cut_including_pending_and_dispatch_s": 112.534,
+        "qwen_window_wait_s": 25518.074,
+        "qwen_call_residency_s": 2210.916,
+        "submit_sender_delta": {
+          "cumulative_submit_send_s": 47.45171105489135,
+          "submit_lock_wait_s": 17.180332528427243,
+          "submit_write_wall_s": 30.263335823081434,
+          "submit_write_count": 615
+        }
+      },
+      "derived": {
+        "mean_qwen_call_residency_s": 3.594985365853659,
+        "mean_in_qwen_calls": 15.060633101954348,
+        "mean_cut_plus_qwen_credit_residency": 15.827208261524108,
+        "credit_16_occupancy_lower_bound_s": 145.21562500000002,
+        "segment_share_of_gpu_pipeline": 0.8577617001141785
+      },
+      "model_events": {
+        "counts": {
+          "prefill": 615,
+          "first_token": 615,
+          "eos": 611,
+          "resource_reusable": 615,
+          "repetition_stop": 3,
+          "length_limit": 1
+        },
+        "first_prefill_monotonic": 7520394.78858615,
+        "last_prefill_monotonic": 7520538.72980322,
+        "last_resource_reusable": {
+          "request_id": "3a5b8917-923f-49e9-bd1d-d899739ec0a6_audio-ce5a4529cd1ce7ac3780.wav",
+          "segment_id": "613",
+          "kind": "resource_reusable",
+          "monotonic": 7520541.19915236,
+          "worker_index": 1
+        },
+        "last_resource_reusable_local": "2026-11-23T19:21:07.849+08:00",
+        "final_segment_progress": {
+          "line": 1212,
+          "monotonic_approx": 7520541.201885939,
+          "local": "2026-11-23T19:21:07.852+08:00",
+          "failures": 0
+        },
+        "model_final_reusable_to_progress_s": 0.0027335789054632187
+      },
+      "output_segments": 569,
+      "processing_status": "completed_with_warnings",
+      "warning_segments": 4,
+      "active_stage_history": {
+        "decode": {
+          "observations": 1,
+          "first_observed_monotonic": 7520370.51920578,
+          "last_observed_monotonic": 7520370.51920578,
+          "first_updated_monotonic": 7520369.50702248,
+          "last_updated_monotonic": 7520369.50702248
+        },
+        "vad": {
+          "observations": 19,
+          "first_observed_monotonic": 7520371.80869295,
+          "last_observed_monotonic": 7520394.7646412,
+          "first_updated_monotonic": 7520370.11876552,
+          "last_updated_monotonic": 7520370.11876552
+        },
+        "segments": {
+          "observations": 106,
+          "first_observed_monotonic": 7520396.04070517,
+          "last_observed_monotonic": 7520541.33783139,
+          "first_updated_monotonic": 7520394.63822417,
+          "last_updated_monotonic": 7520540.80844087
+        }
+      }
+    },
+    {
+      "sample_id": "a3",
+      "source": "/home/zhangs/asr_nvidia/test/test_audio/课程/多模态机器学习1（中英）.wav",
+      "source_sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+      "source_audio_seconds": 3306.048,
+      "worker_index": 2,
+      "request_id": "2d31ebea-251e-44d2-b00e-36631befefb6",
+      "task_id": "9337e2d9-3185-4b99-9841-bc1e4e3b1755_audio-4e9afbb6c8855a180c95.wav",
+      "http_elapsed_s": 194.53118695039302,
+      "http_started_monotonic": 7520366.96018713,
+      "http_ended_monotonic": 7520561.49137408,
+      "load_read_preprocess_s": 0.1669,
+      "gpu_time_field_pipeline_s": 191.19932999999997,
+      "outside_gpu_field_s": 3.331856950393046,
+      "http_before_handler_s": 2.5484326807782054,
+      "handler_to_vad_stage_update_s": 0.6681397696956992,
+      "prepare_after_read_preprocess_including_admission_s": 0.5012397696956992,
+      "audio_admission_wait_s": null,
+      "audio_admission_wait_upper_bound_from_handler_to_decode_update_s": 0.0008217692375183105,
+      "vad_wait_s": null,
+      "vad_worker_s": null,
+      "pending_pcm_wait_s": null,
+      "cut_internal_work_sum_s": null,
+      "cut_dispatch_wait_sum_s": null,
+      "source_phase_log": {
+        "vad_segments": 706,
+        "pipeline_total_ms_rounded": 191199,
+        "vad_ms_rounded": 24786,
+        "cut_sum_ms_rounded": 119305,
+        "cut_span_ms_rounded": 151726,
+        "segment_wall_ms_rounded": 161750,
+        "qwen_window_wait_sum_ms_rounded": 28234569,
+        "qwen_call_residency_sum_ms_rounded": 2342158,
+        "qwen_calls": 706,
+        "cluster_ms_rounded": 0,
+        "itn_phase_ms_rounded": 4642,
+        "low_volume_dropped": 0,
+        "task_id": "9337e2d9-3185-4b99-9841-bc1e4e3b1755_audio-4e9afbb6c8855a180c95.wav",
+        "line": 1238,
+        "log_end_monotonic_approx": 7520561.375885963,
+        "log_end_local": "2026-11-23T19:21:28.026+08:00"
+      },
+      "phase_s": {
+        "vad": 24.786,
+        "segment_wall": 161.75,
+        "itn_postprocessing": 4.642,
+        "cluster": 0.0,
+        "other_inside_gpu_field": 0.021329999999977645
+      },
+      "parallel_sums_not_additive": {
+        "cut_including_pending_and_dispatch_s": 119.305,
+        "qwen_window_wait_s": 28234.569,
+        "qwen_call_residency_s": 2342.158,
+        "submit_sender_delta": {
+          "cumulative_submit_send_s": 61.82793693989515,
+          "submit_lock_wait_s": 24.19053563196212,
+          "submit_write_wall_s": 37.628466380760074,
+          "submit_write_count": 706
+        }
+      },
+      "derived": {
+        "mean_qwen_call_residency_s": 3.3175042492917846,
+        "mean_in_qwen_calls": 14.480111282843895,
+        "mean_cut_plus_qwen_credit_residency": 15.217700154559504,
+        "credit_16_occupancy_lower_bound_s": 153.84143749999998,
+        "segment_share_of_gpu_pipeline": 0.8459757678021154
+      },
+      "model_events": {
+        "counts": {
+          "prefill": 706,
+          "first_token": 706,
+          "eos": 705,
+          "resource_reusable": 706,
+          "repetition_stop": 1
+        },
+        "first_prefill_monotonic": 7520395.16465238,
+        "last_prefill_monotonic": 7520546.90259428,
+        "last_resource_reusable": {
+          "request_id": "9337e2d9-3185-4b99-9841-bc1e4e3b1755_audio-4e9afbb6c8855a180c95.wav",
+          "segment_id": "699",
+          "kind": "resource_reusable",
+          "monotonic": 7520556.06089631,
+          "worker_index": 2
+        },
+        "last_resource_reusable_local": "2026-11-23T19:21:22.711+08:00",
+        "final_segment_progress": {
+          "line": 1236,
+          "monotonic_approx": 7520556.698885918,
+          "local": "2026-11-23T19:21:23.349+08:00",
+          "failures": 0
+        },
+        "model_final_reusable_to_progress_s": 0.6379896076396108
+      },
+      "output_segments": 659,
+      "processing_status": "completed_with_warnings",
+      "warning_segments": 1,
+      "active_stage_history": {
+        "decode": {
+          "observations": 1,
+          "first_observed_monotonic": 7520370.51920578,
+          "last_observed_monotonic": 7520370.51920578,
+          "first_updated_monotonic": 7520369.50944158,
+          "last_updated_monotonic": 7520369.50944158
+        },
+        "vad": {
+          "observations": 19,
+          "first_observed_monotonic": 7520371.80869295,
+          "last_observed_monotonic": 7520394.7646412,
+          "first_updated_monotonic": 7520370.17675958,
+          "last_updated_monotonic": 7520370.17675958
+        },
+        "segments": {
+          "observations": 117,
+          "first_observed_monotonic": 7520396.04070517,
+          "last_observed_monotonic": 7520556.71352254,
+          "first_updated_monotonic": 7520395.00383916,
+          "last_updated_monotonic": 7520550.91688097
+        },
+        "cleanup": {
+          "observations": 1,
+          "first_observed_monotonic": 7520561.49312584,
+          "last_observed_monotonic": 7520561.49312584,
+          "first_updated_monotonic": 7520561.37762325,
+          "last_updated_monotonic": 7520561.37762325
+        }
+      }
+    },
+    {
+      "sample_id": "a4",
+      "source": "/home/zhangs/asr_nvidia/test/test_audio/课程/多模态机器学习2(中英).wav",
+      "source_sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+      "source_audio_seconds": 3284.416,
+      "worker_index": 3,
+      "request_id": "1cca92c1-09ae-4840-82e9-752eb20daf24",
+      "task_id": "ade8cc7c-ae71-4358-b5d4-e13b9e03068b_audio-d937eba336cd8efaae80.wav",
+      "http_elapsed_s": 189.75046740006655,
+      "http_started_monotonic": 7520366.96137397,
+      "http_ended_monotonic": 7520556.71184137,
+      "load_read_preprocess_s": 0.061340000000000006,
+      "gpu_time_field_pipeline_s": 186.51933,
+      "outside_gpu_field_s": 3.231137400066558,
+      "http_before_handler_s": 2.5417749704793096,
+      "handler_to_vad_stage_update_s": 0.5799314193427563,
+      "prepare_after_read_preprocess_including_admission_s": 0.5185914193427563,
+      "audio_admission_wait_s": null,
+      "audio_admission_wait_upper_bound_from_handler_to_decode_update_s": 0.0007878299802541733,
+      "vad_wait_s": null,
+      "vad_worker_s": null,
+      "pending_pcm_wait_s": null,
+      "cut_internal_work_sum_s": null,
+      "cut_dispatch_wait_sum_s": null,
+      "source_phase_log": {
+        "vad_segments": 701,
+        "pipeline_total_ms_rounded": 186519,
+        "vad_ms_rounded": 23306,
+        "cut_sum_ms_rounded": 84681,
+        "cut_span_ms_rounded": 145855,
+        "segment_wall_ms_rounded": 159969,
+        "qwen_window_wait_sum_ms_rounded": 26670719,
+        "qwen_call_residency_sum_ms_rounded": 2287577,
+        "qwen_calls": 701,
+        "cluster_ms_rounded": 0,
+        "itn_phase_ms_rounded": 3227,
+        "low_volume_dropped": 0,
+        "task_id": "ade8cc7c-ae71-4358-b5d4-e13b9e03068b_audio-d937eba336cd8efaae80.wav",
+        "line": 1232,
+        "log_end_monotonic_approx": 7520556.601886034,
+        "log_end_local": "2026-11-23T19:21:23.252+08:00"
+      },
+      "phase_s": {
+        "vad": 23.306,
+        "segment_wall": 159.969,
+        "itn_postprocessing": 3.227,
+        "cluster": 0.0,
+        "other_inside_gpu_field": 0.017329999999986967
+      },
+      "parallel_sums_not_additive": {
+        "cut_including_pending_and_dispatch_s": 84.681,
+        "qwen_window_wait_s": 26670.719,
+        "qwen_call_residency_s": 2287.577,
+        "submit_sender_delta": {
+          "cumulative_submit_send_s": 55.13810980319977,
+          "submit_lock_wait_s": 21.009088481776416,
+          "submit_write_wall_s": 34.12003385927528,
+          "submit_write_count": 701
+        }
+      },
+      "derived": {
+        "mean_qwen_call_residency_s": 3.2633052781740375,
+        "mean_in_qwen_calls": 14.300126899586797,
+        "mean_cut_plus_qwen_credit_residency": 14.829485712856869,
+        "credit_16_occupancy_lower_bound_s": 148.26612500000002,
+        "segment_share_of_gpu_pipeline": 0.8576537348702679
+      },
+      "model_events": {
+        "counts": {
+          "prefill": 701,
+          "first_token": 701,
+          "eos": 690,
+          "resource_reusable": 701,
+          "repetition_stop": 11
+        },
+        "first_prefill_monotonic": 7520393.59480832,
+        "last_prefill_monotonic": 7520539.60873185,
+        "last_resource_reusable": {
+          "request_id": "ade8cc7c-ae71-4358-b5d4-e13b9e03068b_audio-d937eba336cd8efaae80.wav",
+          "segment_id": "667",
+          "kind": "resource_reusable",
+          "monotonic": 7520553.34390253,
+          "worker_index": 3
+        },
+        "last_resource_reusable_local": "2026-11-23T19:21:19.994+08:00",
+        "final_segment_progress": {
+          "line": 1226,
+          "monotonic_approx": 7520553.345885992,
+          "local": "2026-11-23T19:21:19.996+08:00",
+          "failures": 0
+        },
+        "model_final_reusable_to_progress_s": 0.0019834619015455246
+      },
+      "output_segments": 614,
+      "processing_status": "completed_with_warnings",
+      "warning_segments": 11,
+      "active_stage_history": {
+        "decode": {
+          "observations": 1,
+          "first_observed_monotonic": 7520370.51920578,
+          "last_observed_monotonic": 7520370.51920578,
+          "first_updated_monotonic": 7520369.50393677,
+          "last_updated_monotonic": 7520369.50393677
+        },
+        "vad": {
+          "observations": 18,
+          "first_observed_monotonic": 7520371.80869295,
+          "last_observed_monotonic": 7520393.49325683,
+          "first_updated_monotonic": 7520370.08308036,
+          "last_updated_monotonic": 7520370.08308036
+        },
+        "segments": {
+          "observations": 117,
+          "first_observed_monotonic": 7520394.7646412,
+          "last_observed_monotonic": 7520554.24131801,
+          "first_updated_monotonic": 7520393.45976899,
+          "last_updated_monotonic": 7520545.86156072
+        },
+        "cleanup": {
+          "observations": 1,
+          "first_observed_monotonic": 7520556.71352254,
+          "last_observed_monotonic": 7520556.71352254,
+          "first_updated_monotonic": 7520556.60464838,
+          "last_updated_monotonic": 7520556.60464838
+        }
+      }
+    },
+    {
+      "sample_id": "a5",
+      "source": "/home/zhangs/asr_nvidia/test/test_audio/课程/多模态机器学习3（中英）.wav",
+      "source_sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+      "source_audio_seconds": 2981.12,
+      "worker_index": 4,
+      "request_id": "3b6e9d67-001d-4ffe-9b14-f65fd0b04c12",
+      "task_id": "16e1142e-2cab-4d5c-ba52-b93437da7dee_audio-f393c3e6152a027e82eb.wav",
+      "http_elapsed_s": 115.83592669013888,
+      "http_started_monotonic": 7520366.96253645,
+      "http_ended_monotonic": 7520482.79846314,
+      "load_read_preprocess_s": 0.06364,
+      "gpu_time_field_pipeline_s": 112.95708,
+      "outside_gpu_field_s": 2.8788466901388716,
+      "http_before_handler_s": 2.203815740533173,
+      "handler_to_vad_stage_update_s": 0.5649560298770666,
+      "prepare_after_read_preprocess_including_admission_s": 0.5013160298770666,
+      "audio_admission_wait_s": null,
+      "audio_admission_wait_upper_bound_from_handler_to_decode_update_s": 0.001609249971807003,
+      "vad_wait_s": null,
+      "vad_worker_s": null,
+      "pending_pcm_wait_s": null,
+      "cut_internal_work_sum_s": null,
+      "cut_dispatch_wait_sum_s": null,
+      "source_phase_log": {
+        "vad_segments": 457,
+        "pipeline_total_ms_rounded": 112957,
+        "vad_ms_rounded": 21835,
+        "cut_sum_ms_rounded": 2977,
+        "cut_span_ms_rounded": 84225,
+        "segment_wall_ms_rounded": 86451,
+        "qwen_window_wait_sum_ms_rounded": 15267209,
+        "qwen_call_residency_sum_ms_rounded": 1358441,
+        "qwen_calls": 457,
+        "cluster_ms_rounded": 0,
+        "itn_phase_ms_rounded": 4664,
+        "low_volume_dropped": 0,
+        "task_id": "16e1142e-2cab-4d5c-ba52-b93437da7dee_audio-f393c3e6152a027e82eb.wav",
+        "line": 1145,
+        "log_end_monotonic_approx": 7520482.687886,
+        "log_end_local": "2026-11-23T19:20:09.338+08:00"
+      },
+      "phase_s": {
+        "vad": 21.835,
+        "segment_wall": 86.451,
+        "itn_postprocessing": 4.664,
+        "cluster": 0.0,
+        "other_inside_gpu_field": 0.007080000000001974
+      },
+      "parallel_sums_not_additive": {
+        "cut_including_pending_and_dispatch_s": 2.977,
+        "qwen_window_wait_s": 15267.209,
+        "qwen_call_residency_s": 1358.441,
+        "submit_sender_delta": {
+          "cumulative_submit_send_s": 27.462972632609308,
+          "submit_lock_wait_s": 6.0477783950045705,
+          "submit_write_wall_s": 21.409508004784584,
+          "submit_write_count": 457
+        }
+      },
+      "derived": {
+        "mean_qwen_call_residency_s": 2.9725185995623633,
+        "mean_in_qwen_calls": 15.71342147574927,
+        "mean_cut_plus_qwen_credit_residency": 15.747857167644101,
+        "credit_16_occupancy_lower_bound_s": 85.08862500000001,
+        "segment_share_of_gpu_pipeline": 0.7653437925272146
+      },
+      "model_events": {
+        "counts": {
+          "prefill": 457,
+          "first_token": 457,
+          "eos": 457,
+          "resource_reusable": 457
+        },
+        "first_prefill_monotonic": 7520391.96034562,
+        "last_prefill_monotonic": 7520476.06555237,
+        "last_resource_reusable": {
+          "request_id": "16e1142e-2cab-4d5c-ba52-b93437da7dee_audio-f393c3e6152a027e82eb.wav",
+          "segment_id": "449",
+          "kind": "resource_reusable",
+          "monotonic": 7520478.00287587,
+          "worker_index": 4
+        },
+        "last_resource_reusable_local": "2026-11-23T19:20:04.652+08:00",
+        "final_segment_progress": {
+          "line": 1143,
+          "monotonic_approx": 7520478.00888586,
+          "local": "2026-11-23T19:20:04.659+08:00",
+          "failures": 0
+        },
+        "model_final_reusable_to_progress_s": 0.006009990349411964
+      },
+      "output_segments": 431,
+      "processing_status": "complete",
+      "warning_segments": 0,
+      "active_stage_history": {
+        "decode": {
+          "observations": 1,
+          "first_observed_monotonic": 7520370.51920578,
+          "last_observed_monotonic": 7520370.51920578,
+          "first_updated_monotonic": 7520369.16796144,
+          "last_updated_monotonic": 7520369.16796144
+        },
+        "vad": {
+          "observations": 17,
+          "first_observed_monotonic": 7520371.80869295,
+          "last_observed_monotonic": 7520392.22052843,
+          "first_updated_monotonic": 7520369.73130822,
+          "last_updated_monotonic": 7520369.73130822
+        },
+        "segments": {
+          "observations": 67,
+          "first_observed_monotonic": 7520393.49325683,
+          "last_observed_monotonic": 7520478.45226885,
+          "first_updated_monotonic": 7520391.60269378,
+          "last_updated_monotonic": 7520476.9992324
+        },
+        "cleanup": {
+          "observations": 1,
+          "first_observed_monotonic": 7520482.8000452,
+          "last_observed_monotonic": 7520482.8000452,
+          "first_updated_monotonic": 7520482.69084695,
+          "last_updated_monotonic": 7520482.69084695
+        }
+      }
+    },
+    {
+      "sample_id": "a6",
+      "source": "/home/zhangs/asr_nvidia/test/test_audio/课程/线性代数与解析几何（中文）.wav",
+      "source_sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+      "source_audio_seconds": 3121.1306875,
+      "worker_index": 5,
+      "request_id": "ffc3c91a-2573-4079-9d20-3613291d6125",
+      "task_id": "d19b298e-149c-4dd0-930c-81eaad64832b_audio-d2485c6e64bba4285458.wav",
+      "http_elapsed_s": 164.71392493974417,
+      "http_started_monotonic": 7520366.96371168,
+      "http_ended_monotonic": 7520531.67763662,
+      "load_read_preprocess_s": 0.06304,
+      "gpu_time_field_pipeline_s": 161.63132000000002,
+      "outside_gpu_field_s": 3.082604939744158,
+      "http_before_handler_s": 2.352442909963429,
+      "handler_to_vad_stage_update_s": 0.5711197601631284,
+      "prepare_after_read_preprocess_including_admission_s": 0.5080797601631284,
+      "audio_admission_wait_s": null,
+      "audio_admission_wait_upper_bound_from_handler_to_decode_update_s": 0.0008981199935078621,
+      "vad_wait_s": null,
+      "vad_worker_s": null,
+      "pending_pcm_wait_s": null,
+      "cut_internal_work_sum_s": null,
+      "cut_dispatch_wait_sum_s": null,
+      "source_phase_log": {
+        "vad_segments": 520,
+        "pipeline_total_ms_rounded": 161631,
+        "vad_ms_rounded": 23523,
+        "cut_sum_ms_rounded": 5259,
+        "cut_span_ms_rounded": 123331,
+        "segment_wall_ms_rounded": 131157,
+        "qwen_window_wait_sum_ms_rounded": 22257706,
+        "qwen_call_residency_sum_ms_rounded": 2003062,
+        "qwen_calls": 520,
+        "cluster_ms_rounded": 0,
+        "itn_phase_ms_rounded": 6942,
+        "low_volume_dropped": 0,
+        "task_id": "d19b298e-149c-4dd0-930c-81eaad64832b_audio-d2485c6e64bba4285458.wav",
+        "line": 1199,
+        "log_end_monotonic_approx": 7520531.517885923,
+        "log_end_local": "2026-11-23T19:20:58.168+08:00"
+      },
+      "phase_s": {
+        "vad": 23.523,
+        "segment_wall": 131.157,
+        "itn_postprocessing": 6.942,
+        "cluster": 0.0,
+        "other_inside_gpu_field": 0.009320000000002437
+      },
+      "parallel_sums_not_additive": {
+        "cut_including_pending_and_dispatch_s": 5.259,
+        "qwen_window_wait_s": 22257.706,
+        "qwen_call_residency_s": 2003.062,
+        "submit_sender_delta": {
+          "cumulative_submit_send_s": 43.37491038348526,
+          "submit_lock_wait_s": 13.471332165412605,
+          "submit_write_wall_s": 29.897035903297365,
+          "submit_write_count": 520
+        }
+      },
+      "derived": {
+        "mean_qwen_call_residency_s": 3.8520423076923076,
+        "mean_in_qwen_calls": 15.272246239239992,
+        "mean_cut_plus_qwen_credit_residency": 15.312343222245094,
+        "credit_16_occupancy_lower_bound_s": 125.5200625,
+        "segment_share_of_gpu_pipeline": 0.8114578288415883
+      },
+      "model_events": {
+        "counts": {
+          "prefill": 520,
+          "first_token": 520,
+          "eos": 520,
+          "resource_reusable": 520
+        },
+        "first_prefill_monotonic": 7520393.57204248,
+        "last_prefill_monotonic": 7520517.25352761,
+        "last_resource_reusable": {
+          "request_id": "d19b298e-149c-4dd0-930c-81eaad64832b_audio-d2485c6e64bba4285458.wav",
+          "segment_id": "513",
+          "kind": "resource_reusable",
+          "monotonic": 7520521.31903269,
+          "worker_index": 5
+        },
+        "last_resource_reusable_local": "2026-11-23T19:20:47.969+08:00",
+        "final_segment_progress": {
+          "line": 1197,
+          "monotonic_approx": 7520524.525886059,
+          "local": "2026-11-23T19:20:51.176+08:00",
+          "failures": 0
+        },
+        "model_final_reusable_to_progress_s": 3.2068533692508936
+      },
+      "output_segments": 512,
+      "processing_status": "complete",
+      "warning_segments": 0,
+      "active_stage_history": {
+        "decode": {
+          "observations": 1,
+          "first_observed_monotonic": 7520370.51920578,
+          "last_observed_monotonic": 7520370.51920578,
+          "first_updated_monotonic": 7520369.31705271,
+          "last_updated_monotonic": 7520369.31705271
+        },
+        "vad": {
+          "observations": 18,
+          "first_observed_monotonic": 7520371.80869295,
+          "last_observed_monotonic": 7520393.49325683,
+          "first_updated_monotonic": 7520369.88727435,
+          "last_updated_monotonic": 7520369.88727435
+        },
+        "segments": {
+          "observations": 98,
+          "first_observed_monotonic": 7520394.7646412,
+          "last_observed_monotonic": 7520524.53358289,
+          "first_updated_monotonic": 7520393.47602603,
+          "last_updated_monotonic": 7520520.03312538
+        },
+        "cleanup": {
+          "observations": 1,
+          "first_observed_monotonic": 7520531.67830688,
+          "last_observed_monotonic": 7520531.67830688,
+          "first_updated_monotonic": 7520531.52117078,
+          "last_updated_monotonic": 7520531.52117078
+        }
+      }
+    }
+  ],
+  "telemetry_limitations": {
+    "last_status_events": 11,
+    "warmup_completed_events": 6,
+    "formal_completed_events_retained": 5,
+    "last_formal_a3_stage": "cleanup",
+    "raw_recent_event_records_persisted": false,
+    "aggregate_phase_quantiles_mix": "six warmup + first five complete-audio events; a3 not yet recorded. Aggregate P50/P95 are NOT formal request quantiles.",
+    "unrecoverable_per_request_subphases": [
+      "exact audio_wait",
+      "VAD pool wait and worker compute",
+      "pending PCM wait",
+      "internal cut work",
+      "cut dispatch wait",
+      "route cleanup",
+      "unlogged gather/merge breakdown"
+    ],
+    "per_request_unknowns_are_null": true
+  },
+  "aggregate_evidence_including_warmup": {
+    "phases_ms": {
+      "audio_wait_ms": {
+        "p50_ms": 0.688,
+        "p95_ms": 1.246,
+        "max_ms": 1.337
+      },
+      "vad_ms": {
+        "p50_ms": 94.391,
+        "p95_ms": 23906.771,
+        "max_ms": 24291.011
+      },
+      "cut_sum_ms": {
+        "p50_ms": 11.984,
+        "p95_ms": 98607.417,
+        "max_ms": 112534.125
+      },
+      "cut_wall_ms": {
+        "p50_ms": 11.908,
+        "p95_ms": 144795.492,
+        "max_ms": 145854.879
+      },
+      "segment_ms": {
+        "p50_ms": 4287.126,
+        "p95_ms": 153384.957,
+        "max_ms": 159969.254
+      },
+      "qwen_wait_ms": {
+        "p50_ms": 0.03,
+        "p95_ms": 26094396.596,
+        "max_ms": 26670719.335
+      },
+      "qwen_ms": {
+        "p50_ms": 4279.71,
+        "p95_ms": 2249246.206,
+        "max_ms": 2287576.775
+      },
+      "spk_wait_ms": {
+        "p50_ms": 0.0,
+        "p95_ms": 0.0,
+        "max_ms": 0.0
+      },
+      "spk_ms": {
+        "p50_ms": 0.0,
+        "p95_ms": 0.0,
+        "max_ms": 0.0
+      },
+      "emo_wait_ms": {
+        "p50_ms": 0.0,
+        "p95_ms": 0.0,
+        "max_ms": 0.0
+      },
+      "emo_ms": {
+        "p50_ms": 0.0,
+        "p95_ms": 0.0,
+        "max_ms": 0.0
+      },
+      "cluster_ms": {
+        "p50_ms": 0.0,
+        "p95_ms": 0.0,
+        "max_ms": 0.0
+      },
+      "itn_ms": {
+        "p50_ms": 40.482,
+        "p95_ms": 5802.729,
+        "max_ms": 6941.922
+      },
+      "cleanup_ms": {
+        "p50_ms": 1.117,
+        "p95_ms": 17.889,
+        "max_ms": 17.995
+      },
+      "cut_cpu_ms": {
+        "p50_ms": 10.97,
+        "p95_ms": 4151.517,
+        "max_ms": 4289.108
+      },
+      "cut_dispatch_wait_ms": {
+        "p50_ms": 1.014,
+        "p95_ms": 94431.635,
+        "max_ms": 108222.131
+      },
+      "pending_wait_ms": {
+        "p50_ms": 0.066,
+        "p95_ms": 26.114,
+        "max_ms": 26.268
+      },
+      "vad_wait_ms": {
+        "p50_ms": 1.707,
+        "p95_ms": 2.747,
+        "max_ms": 3.62
+      },
+      "vad_worker_ms": {
+        "p50_ms": 92.361,
+        "p95_ms": 23900.8,
+        "max_ms": 24286.534
+      },
+      "low_volume_filter_ms": {
+        "p50_ms": 0.036,
+        "p95_ms": 0.04,
+        "max_ms": 0.043
+      }
+    },
+    "duration_ms": {
+      "p50_ms": 4396.548,
+      "p95_ms": 179470.329,
+      "max_ms": 187160.461
+    },
+    "admission": {
+      "window": "retained_events",
+      "by_class": {
+        "A": 11,
+        "B": 0
+      },
+      "rejections_by_reason": {
+        "total_full": 0,
+        "spk_emo_full": 0,
+        "waiting_full": 0,
+        "wait_timeout": 0,
+        "role_disabled": 0,
+        "emotion_disabled": 0,
+        "both_disabled": 0,
+        "cancelled": 0,
+        "qwen_disabled": 0
+      }
+    }
+  },
+  "sampled_pool_peaks": {
+    "vad_busy": 6,
+    "vad_waiting": 0,
+    "audio_admission_waiting": 0,
+    "pcm_waiting": 0,
+    "pcm_active_sampled_max": 96,
+    "pcm_peak_counter": 160,
+    "pcm_peak_bytes_counter": 60045248
+  },
+  "synchronous_itn_correlation": [
+    {
+      "sample_id": "a5",
+      "log_line": 1144,
+      "normalize_duration_s": 4.63532,
+      "start_monotonic_approx": 7520478.024565883,
+      "end_monotonic_approx": 7520482.659885883,
+      "start_local_approx": "2026-11-23T19:20:04.674+08:00",
+      "end_local": "2026-11-23T19:20:09.310+08:00",
+      "start_inference": "utils.itn completion wall-clock timestamp minus measured perf_counter duration; approximate not an independently logged start",
+      "other_owner_backend_events": {
+        "a1": {
+          "prefill": 2,
+          "first_token": 2,
+          "eos": 16,
+          "resource_reusable": 16
+        },
+        "a2": {
+          "eos": 16,
+          "resource_reusable": 16,
+          "prefill": 1,
+          "first_token": 1
+        },
+        "a3": {
+          "eos": 16,
+          "resource_reusable": 16
+        },
+        "a4": {
+          "prefill": 3,
+          "first_token": 3,
+          "eos": 9,
+          "resource_reusable": 9
+        },
+        "a6": {
+          "eos": 15,
+          "resource_reusable": 15
+        }
+      },
+      "overlapping_status_gaps": [
+        {
+          "duration_s": 1.2910156501457095,
+          "before_local": "2026-11-23T19:20:03.811+08:00",
+          "after_local": "2026-11-23T19:20:05.102+08:00",
+          "after_snapshot_error": null
+        },
+        {
+          "duration_s": 4.347776349633932,
+          "before_local": "2026-11-23T19:20:05.102+08:00",
+          "after_local": "2026-11-23T19:20:09.450+08:00",
+          "after_snapshot_error": null
+        }
+      ]
+    },
+    {
+      "sample_id": "a1",
+      "log_line": 1192,
+      "normalize_duration_s": 3.71262,
+      "start_monotonic_approx": 7520520.633265992,
+      "end_monotonic_approx": 7520524.345885992,
+      "start_local_approx": "2026-11-23T19:20:47.283+08:00",
+      "end_local": "2026-11-23T19:20:50.996+08:00",
+      "start_inference": "utils.itn completion wall-clock timestamp minus measured perf_counter duration; approximate not an independently logged start",
+      "other_owner_backend_events": {
+        "a2": {
+          "prefill": 2,
+          "first_token": 2,
+          "eos": 12,
+          "resource_reusable": 12
+        },
+        "a3": {
+          "eos": 16,
+          "resource_reusable": 16
+        },
+        "a4": {
+          "prefill": 3,
+          "first_token": 3,
+          "eos": 9,
+          "resource_reusable": 11,
+          "repetition_stop": 2
+        },
+        "a5": {},
+        "a6": {
+          "eos": 2,
+          "resource_reusable": 2
+        }
+      },
+      "overlapping_status_gaps": [
+        {
+          "duration_s": 1.2929470194503665,
+          "before_local": "2026-11-23T19:20:46.883+08:00",
+          "after_local": "2026-11-23T19:20:48.176+08:00",
+          "after_snapshot_error": null
+        },
+        {
+          "duration_s": 3.0073026306927204,
+          "before_local": "2026-11-23T19:20:48.176+08:00",
+          "after_local": "2026-11-23T19:20:51.183+08:00",
+          "after_snapshot_error": null
+        }
+      ]
+    },
+    {
+      "sample_id": "a6",
+      "log_line": 1198,
+      "normalize_duration_s": 6.9111199999999995,
+      "start_monotonic_approx": 7520524.575766024,
+      "end_monotonic_approx": 7520531.4868860245,
+      "start_local_approx": "2026-11-23T19:20:51.225+08:00",
+      "end_local": "2026-11-23T19:20:58.137+08:00",
+      "start_inference": "utils.itn completion wall-clock timestamp minus measured perf_counter duration; approximate not an independently logged start",
+      "other_owner_backend_events": {
+        "a1": {},
+        "a2": {
+          "repetition_stop": 1,
+          "resource_reusable": 1
+        },
+        "a3": {},
+        "a4": {
+          "repetition_stop": 1,
+          "resource_reusable": 1
+        },
+        "a5": {}
+      },
+      "overlapping_status_gaps": [
+        {
+          "duration_s": 6.408474819734693,
+          "before_local": "2026-11-23T19:20:51.183+08:00",
+          "after_local": "2026-11-23T19:20:57.592+08:00",
+          "after_snapshot_error": "ReadTimeout('')"
+        },
+        {
+          "duration_s": 0.7362491702660918,
+          "before_local": "2026-11-23T19:20:57.592+08:00",
+          "after_local": "2026-11-23T19:20:58.328+08:00",
+          "after_snapshot_error": null
+        }
+      ]
+    },
+    {
+      "sample_id": "a4",
+      "log_line": 1231,
+      "normalize_duration_s": 3.1785,
+      "start_monotonic_approx": 7520553.374386009,
+      "end_monotonic_approx": 7520556.552886009,
+      "start_local_approx": "2026-11-23T19:21:20.024+08:00",
+      "end_local": "2026-11-23T19:21:23.203+08:00",
+      "start_inference": "utils.itn completion wall-clock timestamp minus measured perf_counter duration; approximate not an independently logged start",
+      "other_owner_backend_events": {
+        "a1": {},
+        "a2": {},
+        "a3": {
+          "repetition_stop": 1,
+          "resource_reusable": 1
+        },
+        "a5": {},
+        "a6": {}
+      },
+      "overlapping_status_gaps": [
+        {
+          "duration_s": 1.2914894996210933,
+          "before_local": "2026-11-23T19:21:19.599+08:00",
+          "after_local": "2026-11-23T19:21:20.891+08:00",
+          "after_snapshot_error": null
+        },
+        {
+          "duration_s": 2.4722045306116343,
+          "before_local": "2026-11-23T19:21:20.891+08:00",
+          "after_local": "2026-11-23T19:21:23.363+08:00",
+          "after_snapshot_error": null
+        }
+      ]
+    },
+    {
+      "sample_id": "a3",
+      "log_line": 1237,
+      "normalize_duration_s": 4.5824300000000004,
+      "start_monotonic_approx": 7520556.73345602,
+      "end_monotonic_approx": 7520561.315886021,
+      "start_local_approx": "2026-11-23T19:21:23.383+08:00",
+      "end_local": "2026-11-23T19:21:27.966+08:00",
+      "start_inference": "utils.itn completion wall-clock timestamp minus measured perf_counter duration; approximate not an independently logged start",
+      "other_owner_backend_events": {
+        "a1": {},
+        "a2": {},
+        "a4": {},
+        "a5": {},
+        "a6": {}
+      },
+      "overlapping_status_gaps": [
+        {
+          "duration_s": 4.779603299684823,
+          "before_local": "2026-11-23T19:21:23.363+08:00",
+          "after_local": "2026-11-23T19:21:28.143+08:00",
+          "after_snapshot_error": null
+        }
+      ]
+    }
+  ],
+  "event_coverage": {
+    "formal_prefill_members": 3752,
+    "formal_resource_reusable": 3752,
+    "deduplicated_events": 15008,
+    "warmup_counter_baseline": "warmup-final-status.json; initial-status.json is before warmup and must not be subtracted as warmup"
+  },
+  "timing_semantics": {
+    "gpu_time_ms": "Whole run_qwen_asr wall duration from before model-ready/VAD through segment pipeline and ITN/output processing; not pure device compute. Excludes prepare_asr_context, route cleanup, serialization and transport.",
+    "load_audio_time_ms": "Only await audioFile.read plus preprocess_audio; later temporary WAV write and load_audio_tensor are excluded.",
+    "qwen_ms": "Per-segment caller residence accumulated while awaiting client scheduler, submit/send, model result and event-loop callback/credit release; parallel sum, not pure NPU time.",
+    "qwen_wait_ms": "Per-segment wait for per-audio/global Qwen credit before cut; many bounded tasks wait simultaneously, so cumulative seconds cannot be compared to request wall or interpreted as device-only queue.",
+    "cut_sum_ms": "Per-segment pending PCM + await cut accumulated across concurrent segments; includes dispatch/callback delay.",
+    "cut_wall_ms": "Span first cut start to final cut completion, with intervening slot waits and Qwen execution; nested inside segment wall, not cut CPU execution.",
+    "segment_ms": "Wall for bounded segment pipeline plus owned-drain/release_request. Includes cut/Qwen/postprocessing/gather; no per-component additive wall split available.",
+    "itn_ms": "Synchronous normalize_segments + sanitize + rate/speed/language-ratio/output processing in the single event loop; normalization utility log covers subset of this phase.",
+    "submit_sender_delta": "Cumulative per-segment sender wall/lock/write after subtracting six warmups; nested in qwen_ms, overlap across owners/segments; cannot add to request wall."
+  },
+  "source_semantics": {
+    "api/routes/asr_qwen_common.py": {
+      "path": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm/api/routes/asr_qwen_common.py",
+      "sha256": "4be388d03cf4c546f0b3119caa9451e95c91676110199e98f1becfd1e366db3e",
+      "lines": "started563,VAD586-606,cut623-642/687-714,segment811-816,ITN882-910"
+    },
+    "api/routes/asr_common.py": {
+      "path": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm/api/routes/asr_common.py",
+      "sha256": "c0f753a105107daec0070e80b684dca25c2af3cb3306260ea3a4b46a586c10b9",
+      "lines": "read+preprocess124-140; temp-write+load_tensor151-156 outside load field"
+    },
+    "api/routes/asr_v3.py": {
+      "path": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm/api/routes/asr_v3.py",
+      "sha256": "786d13733d413c71b2f8bb93f57f5fcb276d762420fc74a9cde740775442d1a6",
+      "lines": "handlerstart29; admission57-79; cleanup96-107; record127-151"
+    },
+    "core/qwen_asr_client.py": {
+      "path": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm/core/qwen_asr_client.py",
+      "sha256": "6ce781cefe1a641c91b9fbec88b6c7911606d1f15ead314782032ef08211c7d6",
+      "lines": "submit425-446 via asyncio.to_thread; await sequence458+"
+    },
+    "core/async_utils.py": {
+      "path": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm/core/async_utils.py",
+      "sha256": "bbf61919dc7a5b986450c9b00ffed7df0980c99e94c5f16c4f2dca1f35abe5c6",
+      "lines": "run_in_thread30-32 via asyncio.to_thread"
+    },
+    "utils/itn.py": {
+      "path": "/tmp/qwen200-20261123-j9r2czoi/m6n6-nohbm/utils/itn.py",
+      "sha256": "5005178357003f716d819739b85f81b4dbe67e4d2764c9a3133244470fa3d0c0",
+      "lines": "synchronous normalize_segments163-275"
+    }
+  },
+  "artifact_provenance": {
+    "run.json": {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal/run.json",
+      "sha256": "f2b000a78812ba36489cf66c88b88bbbef2293e06b305f9a8c57a5ca03a467c7"
+    },
+    "summary.json": {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal/summary.json",
+      "sha256": "34dc84b82b677ef351ba743753f690a8960627d79260ae862a39aa4c06e16a46"
+    },
+    "service.log": {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal/service.log",
+      "sha256": "2e2e65b214edfd3056c147731925ed76cc9a381f7dd694f7911d38bf1ec4b11d"
+    },
+    "status.jsonl": {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal/status.jsonl",
+      "sha256": "c10198dc75183574ba494e1d54f6af832db269558d907eefc90f9901b314befe"
+    },
+    "warmup-final-status.json": {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal/warmup-final-status.json",
+      "sha256": "0bb28a2bca4e7b24d2e21229152b27c299ae29ea113611d3d6cfe37c395f41ea"
+    }
+  },
+  "notes": [
+    "Service log phase values are rounded to nearest millisecond; response gpu field rounded to two decimal milliseconds.",
+    "Observation cadence is irregular and one status request timed out; zero sampled queues is evidence against sustained pool queueing, not proof of zero wait between samples.",
+    "The 160 PCM peak counter is not model active concurrency; sampled active PCM max96 and global Qwen window96 have separate lifetimes.",
+    "ITN-start estimates use end minus measured duration; causal event-loop blocking is also established by synchronous source code and delayed formal completion after backend resource_reusable.",
+    "No sum of six ITN durations is claimed as recoverable end-to-end wall; model workers continue already submitted decode while the event loop is blocked.",
+    "No exact end-to-end speedup or quality correctness claim; this is one six-audio round."
+  ]
+}

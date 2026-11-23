@@ -1,0 +1,1021 @@
+{
+  "scope": "stored data from m6n6-nohbm-formal only; subtract warmup1/member/owner; no CPU,NPU,HTTP or source changes",
+  "source": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m6n6-nohbm-formal",
+  "status_rows_streamed_once": 140,
+  "workers": [
+    {
+      "owner": 0,
+      "sample_id": "a1",
+      "formal_completed": 753,
+      "http_latency_s": 157.57430147007108,
+      "http_start_since_formal_start_s": 0.2750685503706336,
+      "http_end_since_formal_start_s": 157.8493700204417,
+      "phase_wall_s": {
+        "prefill": 69.33679655380547,
+        "decode": 52.007705714553595
+      },
+      "host_subphase_wall_s": {
+        "prefill_audio_decode": 0.1334119737148285,
+        "prefill_processor": 5.321755258366466,
+        "prefill_transfer_positions_readback": 0.5681352782994509,
+        "prefill_forward_readback": 62.942496961914,
+        "prefill_sequence_bookkeeping": 0.4059134991839528,
+        "prefill_explicit_sync": 0.088144869543612,
+        "finish_detokenize_guard_recovery": 0.14407071936875582,
+        "decode_kv_layout": 9.677335775457323,
+        "decode_input_assembly": 0.3316052295267582,
+        "decode_forward_readback": 38.252949117682874,
+        "decode_sequence_bookkeeping": 3.6482675280421972,
+        "decode_explicit_sync": 0.08187160640954971
+      },
+      "prefill_phase_subtimers_sum_s": 69.32644586730748,
+      "decode_phase_subtimers_sum_s": 51.9920292571187,
+      "prefill_phase_uninstrumented_small_remainder_s": 0.010350686497986317,
+      "decode_phase_uninstrumented_small_remainder_s": 0.015676457434892654,
+      "within_owner_disjoint_timed_wall_s": 121.62198496144265,
+      "http_minus_disjoint_timed_wall_s": 35.95231650862843,
+      "forward_readback_envelope_total_s": 101.19544607959688,
+      "forward_readback_fraction_of_disjoint_timed_wall": 0.8320489598297419,
+      "steps": {
+        "prefill": 363,
+        "decode": 558
+      },
+      "prefill_calls": 363,
+      "prefill_members": 753,
+      "prefill_mean_members": 2.074380165289256,
+      "mean_prefill_phase_ms": 191.01045882591038,
+      "mean_decode_phase_ms": 93.20377368199568,
+      "repacks": 495,
+      "direct_layout_reuses": 63,
+      "direct_layout_reuse_fraction": 0.11290322580645161,
+      "token_histogram_16rounded": {
+        "48": 3,
+        "16": 624,
+        "32": 126
+      },
+      "token_count_lower_bound": 2865,
+      "token_count_upper_bound": 14160,
+      "first_observed_formal_prefill_event": {
+        "request_id": "fb510fdf-9053-4b6a-87f5-90e237c1611f_audio-16cdf4a725788a2d4659.wav",
+        "segment_id": "1",
+        "kind": "prefill",
+        "monotonic": 7520392.80510489,
+        "prompt_length": 23,
+        "wall_s": 0.1435698801651597
+      },
+      "first_prefill_event_seen_in_sample_t_s": 28.082204930484295,
+      "estimated_first_prefill_phase_start_since_formal_start_s": 25.979098740033805,
+      "first_prefill_readback_since_formal_start_s": 26.122668620198965,
+      "http_to_first_prefill_phase_start_s": 25.70403018966317,
+      "last_observed_resource_reusable_event": {
+        "request_id": "fb510fdf-9053-4b6a-87f5-90e237c1611f_audio-16cdf4a725788a2d4659.wav",
+        "segment_id": "747",
+        "kind": "resource_reusable",
+        "monotonic": 7520520.60406479
+      },
+      "last_safe_since_formal_start_s": 153.9216285198927,
+      "last_safe_to_http_end_s": 3.9277415005490184,
+      "first_prefill_phase_start_to_last_safe_s": 127.94252977985889,
+      "observed_warning_terminal_events": [],
+      "end_reasons": {
+        "eos": 753
+      },
+      "unknowns": [
+        "refresh_memory has no dedicated timer and runs after phase timer update",
+        "HTTP-minus-timed remainder includes upload/VAD/pre-model waiting/IPC/refresh/status and postprocessing; not all removable idle",
+        "First event is first observed retained safeevent; rollingevent truncation can hide earlier events; source segment0 present is recorded but not sufficient to prove all timestamps covered",
+        "Forward/readback includes NPU queue contention, kernel execution, hostlaunch and synchronization/readback; not pure device compute"
+      ]
+    },
+    {
+      "owner": 1,
+      "sample_id": "a2",
+      "formal_completed": 615,
+      "http_latency_s": 174.3772658696398,
+      "http_start_since_formal_start_s": 0.27653626073151827,
+      "http_end_since_formal_start_s": 174.65380213037133,
+      "phase_wall_s": {
+        "prefill": 65.70165302790701,
+        "decode": 73.26339930202812
+      },
+      "host_subphase_wall_s": {
+        "prefill_audio_decode": 0.13629421684890985,
+        "prefill_processor": 5.351014179177582,
+        "prefill_transfer_positions_readback": 0.5588949397206306,
+        "prefill_forward_readback": 59.364311426877975,
+        "prefill_sequence_bookkeeping": 0.33427367080003023,
+        "prefill_explicit_sync": 0.08272297214716673,
+        "finish_detokenize_guard_recovery": 0.215059463866055,
+        "decode_kv_layout": 11.355143895372748,
+        "decode_input_assembly": 0.4345195973291993,
+        "decode_forward_readback": 56.70163817331195,
+        "decode_sequence_bookkeeping": 4.640023395419121,
+        "decode_explicit_sync": 0.11124511621892452
+      },
+      "prefill_phase_subtimers_sum_s": 65.69121718872339,
+      "decode_phase_subtimers_sum_s": 73.24257017765194,
+      "prefill_phase_uninstrumented_small_remainder_s": 0.010435839183628559,
+      "decode_phase_uninstrumented_small_remainder_s": 0.020829124376177788,
+      "within_owner_disjoint_timed_wall_s": 139.3164060106501,
+      "http_minus_disjoint_timed_wall_s": 35.060859858989716,
+      "forward_readback_envelope_total_s": 116.06594960018992,
+      "forward_readback_fraction_of_disjoint_timed_wall": 0.8331104205438462,
+      "steps": {
+        "prefill": 359,
+        "decode": 754
+      },
+      "prefill_calls": 359,
+      "prefill_members": 615,
+      "prefill_mean_members": 1.713091922005571,
+      "mean_prefill_phase_ms": 183.01296108052094,
+      "mean_decode_phase_ms": 97.16631207165533,
+      "repacks": 548,
+      "direct_layout_reuses": 206,
+      "direct_layout_reuse_fraction": 0.27320954907161804,
+      "token_histogram_16rounded": {
+        "48": 43,
+        "16": 383,
+        "32": 184,
+        "160": 1,
+        "64": 1,
+        "256": 1,
+        "112": 1,
+        "128": 1
+      },
+      "token_count_lower_bound": 5575,
+      "token_count_upper_bound": 14800,
+      "first_observed_formal_prefill_event": {
+        "request_id": "3a5b8917-923f-49e9-bd1d-d899739ec0a6_audio-ce5a4529cd1ce7ac3780.wav",
+        "segment_id": "2",
+        "kind": "prefill",
+        "monotonic": 7520394.78858615,
+        "prompt_length": 120,
+        "wall_s": 0.1551723200827837
+      },
+      "first_prefill_event_seen_in_sample_t_s": 29.358268899843097,
+      "estimated_first_prefill_phase_start_since_formal_start_s": 27.950977560132742,
+      "first_prefill_readback_since_formal_start_s": 28.106149880215526,
+      "http_to_first_prefill_phase_start_s": 27.674441299401224,
+      "last_observed_resource_reusable_event": {
+        "request_id": "3a5b8917-923f-49e9-bd1d-d899739ec0a6_audio-ce5a4529cd1ce7ac3780.wav",
+        "segment_id": "613",
+        "kind": "resource_reusable",
+        "monotonic": 7520541.19915236
+      },
+      "last_safe_since_formal_start_s": 174.51671609003097,
+      "last_safe_to_http_end_s": 0.13708604034036398,
+      "first_prefill_phase_start_to_last_safe_s": 146.56573852989823,
+      "observed_warning_terminal_events": [
+        {
+          "kind": "repetition_stop",
+          "segment_id": "8",
+          "generated_tokens": 156,
+          "t_since_formal_start_s": 52.69383300002664
+        },
+        {
+          "kind": "length_limit",
+          "segment_id": "5",
+          "generated_tokens": 256,
+          "t_since_formal_start_s": 73.87412186060101
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "445",
+          "generated_tokens": 112,
+          "t_since_formal_start_s": 145.34837102051824
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "544",
+          "generated_tokens": 128,
+          "t_since_formal_start_s": 162.90356129035354
+        }
+      ],
+      "end_reasons": {
+        "eos": 611,
+        "repetition_stop": 3,
+        "length_limit": 1
+      },
+      "unknowns": [
+        "refresh_memory has no dedicated timer and runs after phase timer update",
+        "HTTP-minus-timed remainder includes upload/VAD/pre-model waiting/IPC/refresh/status and postprocessing; not all removable idle",
+        "First event is first observed retained safeevent; rollingevent truncation can hide earlier events; source segment0 present is recorded but not sufficient to prove all timestamps covered",
+        "Forward/readback includes NPU queue contention, kernel execution, hostlaunch and synchronization/readback; not pure device compute"
+      ]
+    },
+    {
+      "owner": 2,
+      "sample_id": "a3",
+      "formal_completed": 706,
+      "http_latency_s": 194.53118695039302,
+      "http_start_since_formal_start_s": 0.27775085996836424,
+      "http_end_since_formal_start_s": 194.80893781036139,
+      "phase_wall_s": {
+        "prefill": 73.13901654444635,
+        "decode": 72.25796703994274
+      },
+      "host_subphase_wall_s": {
+        "prefill_audio_decode": 0.14426359627395868,
+        "prefill_processor": 5.919654841534793,
+        "prefill_transfer_positions_readback": 0.5800624862313271,
+        "prefill_forward_readback": 66.16094893217087,
+        "prefill_sequence_bookkeeping": 0.3810677332803607,
+        "prefill_explicit_sync": 0.0864779306575656,
+        "finish_detokenize_guard_recovery": 0.14956069365143776,
+        "decode_kv_layout": 11.322090473026037,
+        "decode_input_assembly": 0.437232063151896,
+        "decode_forward_readback": 55.7917104260996,
+        "decode_sequence_bookkeeping": 4.580971949733794,
+        "decode_explicit_sync": 0.10507512744516134
+      },
+      "prefill_phase_subtimers_sum_s": 73.12821192387491,
+      "decode_phase_subtimers_sum_s": 72.23708003945649,
+      "prefill_phase_uninstrumented_small_remainder_s": 0.010804620571434498,
+      "decode_phase_uninstrumented_small_remainder_s": 0.020887000486254692,
+      "within_owner_disjoint_timed_wall_s": 145.6908078743145,
+      "http_minus_disjoint_timed_wall_s": 48.840379076078534,
+      "forward_readback_envelope_total_s": 121.95265935827047,
+      "forward_readback_fraction_of_disjoint_timed_wall": 0.8370648851331609,
+      "steps": {
+        "prefill": 380,
+        "decode": 744
+      },
+      "prefill_calls": 380,
+      "prefill_members": 706,
+      "prefill_mean_members": 1.8578947368421053,
+      "mean_prefill_phase_ms": 192.47109616959565,
+      "mean_decode_phase_ms": 97.12092344078326,
+      "repacks": 546,
+      "direct_layout_reuses": 198,
+      "direct_layout_reuse_fraction": 0.2661290322580645,
+      "token_histogram_16rounded": {
+        "48": 8,
+        "16": 456,
+        "32": 241,
+        "112": 1
+      },
+      "token_count_lower_bound": 4914,
+      "token_count_upper_bound": 15504,
+      "first_observed_formal_prefill_event": {
+        "request_id": "9337e2d9-3185-4b99-9841-bc1e4e3b1755_audio-4e9afbb6c8855a180c95.wav",
+        "segment_id": "1",
+        "kind": "prefill",
+        "monotonic": 7520395.16465238,
+        "prompt_length": 24,
+        "wall_s": 0.16248598042875528
+      },
+      "first_prefill_event_seen_in_sample_t_s": 30.642351490445435,
+      "estimated_first_prefill_phase_start_since_formal_start_s": 28.319730130024254,
+      "first_prefill_readback_since_formal_start_s": 28.48221611045301,
+      "http_to_first_prefill_phase_start_s": 28.04197927005589,
+      "last_observed_resource_reusable_event": {
+        "request_id": "9337e2d9-3185-4b99-9841-bc1e4e3b1755_audio-4e9afbb6c8855a180c95.wav",
+        "segment_id": "699",
+        "kind": "resource_reusable",
+        "monotonic": 7520556.06089631
+      },
+      "last_safe_since_formal_start_s": 189.37846004031599,
+      "last_safe_to_http_end_s": 5.4304777700454,
+      "first_prefill_phase_start_to_last_safe_s": 161.05872991029173,
+      "observed_warning_terminal_events": [
+        {
+          "kind": "repetition_stop",
+          "segment_id": "699",
+          "generated_tokens": 108,
+          "t_since_formal_start_s": 189.3784524705261
+        }
+      ],
+      "end_reasons": {
+        "eos": 705,
+        "repetition_stop": 1
+      },
+      "unknowns": [
+        "refresh_memory has no dedicated timer and runs after phase timer update",
+        "HTTP-minus-timed remainder includes upload/VAD/pre-model waiting/IPC/refresh/status and postprocessing; not all removable idle",
+        "First event is first observed retained safeevent; rollingevent truncation can hide earlier events; source segment0 present is recorded but not sufficient to prove all timestamps covered",
+        "Forward/readback includes NPU queue contention, kernel execution, hostlaunch and synchronization/readback; not pure device compute"
+      ]
+    },
+    {
+      "owner": 3,
+      "sample_id": "a4",
+      "formal_completed": 701,
+      "http_latency_s": 189.75046740006655,
+      "http_start_since_formal_start_s": 0.2789377002045512,
+      "http_end_since_formal_start_s": 190.0294051002711,
+      "phase_wall_s": {
+        "prefill": 69.80907620117068,
+        "decode": 80.97686605527997
+      },
+      "host_subphase_wall_s": {
+        "prefill_audio_decode": 0.15469913091510534,
+        "prefill_processor": 6.196797653101385,
+        "prefill_transfer_positions_readback": 0.5777852674946189,
+        "prefill_forward_readback": 62.56035674922168,
+        "prefill_sequence_bookkeeping": 0.3723210897296667,
+        "prefill_explicit_sync": 0.09071793407201767,
+        "finish_detokenize_guard_recovery": 0.27274538669735193,
+        "decode_kv_layout": 10.057409197092056,
+        "decode_input_assembly": 0.44396491441875696,
+        "decode_forward_readback": 65.5576849495992,
+        "decode_sequence_bookkeeping": 4.7715143682435155,
+        "decode_explicit_sync": 0.1224542735144496
+      },
+      "prefill_phase_subtimers_sum_s": 69.79797869361937,
+      "decode_phase_subtimers_sum_s": 80.95302770286798,
+      "prefill_phase_uninstrumented_small_remainder_s": 0.011097507551312447,
+      "decode_phase_uninstrumented_small_remainder_s": 0.023838352411985397,
+      "within_owner_disjoint_timed_wall_s": 151.2133867740631,
+      "http_minus_disjoint_timed_wall_s": 38.537080626003444,
+      "forward_readback_envelope_total_s": 128.1180416988209,
+      "forward_readback_fraction_of_disjoint_timed_wall": 0.8472665313042003,
+      "steps": {
+        "prefill": 393,
+        "decode": 866
+      },
+      "prefill_calls": 393,
+      "prefill_members": 701,
+      "prefill_mean_members": 1.7837150127226462,
+      "mean_prefill_phase_ms": 177.63123715310604,
+      "mean_decode_phase_ms": 93.50677373588911,
+      "repacks": 567,
+      "direct_layout_reuses": 299,
+      "direct_layout_reuse_fraction": 0.34526558891454967,
+      "token_histogram_16rounded": {
+        "48": 4,
+        "16": 488,
+        "32": 198,
+        "144": 1,
+        "80": 2,
+        "112": 2,
+        "176": 1,
+        "208": 4,
+        "160": 1
+      },
+      "token_count_lower_bound": 5517,
+      "token_count_upper_bound": 16032,
+      "first_observed_formal_prefill_event": {
+        "request_id": "ade8cc7c-ae71-4358-b5d4-e13b9e03068b_audio-d937eba336cd8efaae80.wav",
+        "segment_id": "6",
+        "kind": "prefill",
+        "monotonic": 7520393.59480832,
+        "prompt_length": 35,
+        "wall_s": 0.13689344935119152
+      },
+      "first_prefill_event_seen_in_sample_t_s": 28.082204930484295,
+      "estimated_first_prefill_phase_start_since_formal_start_s": 26.775478600524366,
+      "first_prefill_readback_since_formal_start_s": 26.912372049875557,
+      "http_to_first_prefill_phase_start_s": 26.496540900319815,
+      "last_observed_resource_reusable_event": {
+        "request_id": "ade8cc7c-ae71-4358-b5d4-e13b9e03068b_audio-d937eba336cd8efaae80.wav",
+        "segment_id": "667",
+        "kind": "resource_reusable",
+        "monotonic": 7520553.34390253
+      },
+      "last_safe_since_formal_start_s": 186.66146626044065,
+      "last_safe_to_http_end_s": 3.367938839830458,
+      "first_prefill_phase_start_to_last_safe_s": 159.88598765991628,
+      "observed_warning_terminal_events": [
+        {
+          "kind": "repetition_stop",
+          "segment_id": "29",
+          "generated_tokens": 136,
+          "t_since_formal_start_s": 52.82103667035699
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "268",
+          "generated_tokens": 72,
+          "t_since_formal_start_s": 86.82297276053578
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "262",
+          "generated_tokens": 76,
+          "t_since_formal_start_s": 86.92128717992455
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "573",
+          "generated_tokens": 104,
+          "t_since_formal_start_s": 155.3860609503463
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "581",
+          "generated_tokens": 108,
+          "t_since_formal_start_s": 157.47919776011258
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "560",
+          "generated_tokens": 172,
+          "t_since_formal_start_s": 164.3362404005602
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "547",
+          "generated_tokens": 200,
+          "t_since_formal_start_s": 168.76963640004396
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "545",
+          "generated_tokens": 204,
+          "t_since_formal_start_s": 169.47655496001244
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "620",
+          "generated_tokens": 160,
+          "t_since_formal_start_s": 175.9445028603077
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "622",
+          "generated_tokens": 200,
+          "t_since_formal_start_s": 179.17429599072784
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "667",
+          "generated_tokens": 200,
+          "t_since_formal_start_s": 186.6614562906325
+        }
+      ],
+      "end_reasons": {
+        "eos": 690,
+        "repetition_stop": 11
+      },
+      "unknowns": [
+        "refresh_memory has no dedicated timer and runs after phase timer update",
+        "HTTP-minus-timed remainder includes upload/VAD/pre-model waiting/IPC/refresh/status and postprocessing; not all removable idle",
+        "First event is first observed retained safeevent; rollingevent truncation can hide earlier events; source segment0 present is recorded but not sufficient to prove all timestamps covered",
+        "Forward/readback includes NPU queue contention, kernel execution, hostlaunch and synchronization/readback; not pure device compute"
+      ]
+    },
+    {
+      "owner": 4,
+      "sample_id": "a5",
+      "formal_completed": 457,
+      "http_latency_s": 115.83592669013888,
+      "http_start_since_formal_start_s": 0.280100179836154,
+      "http_end_since_formal_start_s": 116.11602686997503,
+      "phase_wall_s": {
+        "prefill": 39.71956919040531,
+        "decode": 42.58813413698226
+      },
+      "host_subphase_wall_s": {
+        "prefill_audio_decode": 0.10678908973932266,
+        "prefill_processor": 4.225704510696232,
+        "prefill_transfer_positions_readback": 0.41393776424229145,
+        "prefill_forward_readback": 34.757505922578275,
+        "prefill_sequence_bookkeeping": 0.25193207152187824,
+        "prefill_explicit_sync": 0.06207330618053675,
+        "finish_detokenize_guard_recovery": 0.13154775369912386,
+        "decode_kv_layout": 5.124199979938567,
+        "decode_input_assembly": 0.31551691982895136,
+        "decode_forward_readback": 33.33352689445019,
+        "decode_sequence_bookkeeping": 3.7238603215664625,
+        "decode_explicit_sync": 0.07543314807116985
+      },
+      "prefill_phase_subtimers_sum_s": 39.711153575219214,
+      "decode_phase_subtimers_sum_s": 42.57253726385534,
+      "prefill_phase_uninstrumented_small_remainder_s": 0.008415615186095238,
+      "decode_phase_uninstrumented_small_remainder_s": 0.015596873126924038,
+      "within_owner_disjoint_timed_wall_s": 82.54604017082602,
+      "http_minus_disjoint_timed_wall_s": 33.28988651931286,
+      "forward_readback_envelope_total_s": 68.09103281702846,
+      "forward_readback_fraction_of_disjoint_timed_wall": 0.8248855145094368,
+      "steps": {
+        "prefill": 279,
+        "decode": 523
+      },
+      "prefill_calls": 279,
+      "prefill_members": 457,
+      "prefill_mean_members": 1.6379928315412187,
+      "mean_prefill_phase_ms": 142.36404727743837,
+      "mean_decode_phase_ms": 81.43046680111331,
+      "repacks": 402,
+      "direct_layout_reuses": 121,
+      "direct_layout_reuse_fraction": 0.23135755258126195,
+      "token_histogram_16rounded": {
+        "48": 72,
+        "16": 260,
+        "32": 125
+      },
+      "token_count_lower_bound": 4761,
+      "token_count_upper_bound": 11616,
+      "first_observed_formal_prefill_event": {
+        "request_id": "16e1142e-2cab-4d5c-ba52-b93437da7dee_audio-f393c3e6152a027e82eb.wav",
+        "segment_id": "0",
+        "kind": "prefill",
+        "monotonic": 7520391.96034562,
+        "prompt_length": 30,
+        "wall_s": 0.3438624395057559
+      },
+      "first_prefill_event_seen_in_sample_t_s": 26.810820559971035,
+      "estimated_first_prefill_phase_start_since_formal_start_s": 24.93404691107571,
+      "first_prefill_readback_since_formal_start_s": 25.277909350581467,
+      "http_to_first_prefill_phase_start_s": 24.653946731239557,
+      "last_observed_resource_reusable_event": {
+        "request_id": "16e1142e-2cab-4d5c-ba52-b93437da7dee_audio-f393c3e6152a027e82eb.wav",
+        "segment_id": "449",
+        "kind": "resource_reusable",
+        "monotonic": 7520478.00287587
+      },
+      "last_safe_since_formal_start_s": 111.32043960038573,
+      "last_safe_to_http_end_s": 4.795587269589305,
+      "first_prefill_phase_start_to_last_safe_s": 86.38639268931001,
+      "observed_warning_terminal_events": [],
+      "end_reasons": {
+        "eos": 457
+      },
+      "unknowns": [
+        "refresh_memory has no dedicated timer and runs after phase timer update",
+        "HTTP-minus-timed remainder includes upload/VAD/pre-model waiting/IPC/refresh/status and postprocessing; not all removable idle",
+        "First event is first observed retained safeevent; rollingevent truncation can hide earlier events; source segment0 present is recorded but not sufficient to prove all timestamps covered",
+        "Forward/readback includes NPU queue contention, kernel execution, hostlaunch and synchronization/readback; not pure device compute"
+      ]
+    },
+    {
+      "owner": 5,
+      "sample_id": "a6",
+      "formal_completed": 520,
+      "http_latency_s": 164.71392493974417,
+      "http_start_since_formal_start_s": 0.2812754102051258,
+      "http_end_since_formal_start_s": 164.9952003499493,
+      "phase_wall_s": {
+        "prefill": 50.510606170631945,
+        "decode": 69.94327946100384
+      },
+      "host_subphase_wall_s": {
+        "prefill_audio_decode": 0.14205361437052488,
+        "prefill_processor": 5.692881677299738,
+        "prefill_transfer_positions_readback": 0.604829715564847,
+        "prefill_forward_readback": 43.83928688429296,
+        "prefill_sequence_bookkeeping": 0.2780229626223445,
+        "prefill_explicit_sync": 0.0839515095576644,
+        "finish_detokenize_guard_recovery": 0.2278559561818838,
+        "decode_kv_layout": 7.079794764518738,
+        "decode_input_assembly": 0.4695053705945611,
+        "decode_forward_readback": 56.32368163112551,
+        "decode_sequence_bookkeeping": 5.9076046058908105,
+        "decode_explicit_sync": 0.13556384667754173
+      },
+      "prefill_phase_subtimers_sum_s": 50.498972749337554,
+      "decode_phase_subtimers_sum_s": 69.91615021880716,
+      "prefill_phase_uninstrumented_small_remainder_s": 0.011633421294391155,
+      "decode_phase_uninstrumented_small_remainder_s": 0.027129242196679115,
+      "within_owner_disjoint_timed_wall_s": 120.8237952021882,
+      "http_minus_disjoint_timed_wall_s": 43.89012973755598,
+      "forward_readback_envelope_total_s": 100.16296851541847,
+      "forward_readback_fraction_of_disjoint_timed_wall": 0.8290003500370469,
+      "steps": {
+        "prefill": 364,
+        "decode": 852
+      },
+      "prefill_calls": 364,
+      "prefill_members": 520,
+      "prefill_mean_members": 1.4285714285714286,
+      "mean_prefill_phase_ms": 138.76540156767018,
+      "mean_decode_phase_ms": 82.09305101056789,
+      "repacks": 593,
+      "direct_layout_reuses": 259,
+      "direct_layout_reuse_fraction": 0.3039906103286385,
+      "token_histogram_16rounded": {
+        "48": 181,
+        "16": 156,
+        "32": 180,
+        "64": 3
+      },
+      "token_count_lower_bound": 9336,
+      "token_count_upper_bound": 17136,
+      "first_observed_formal_prefill_event": {
+        "request_id": "d19b298e-149c-4dd0-930c-81eaad64832b_audio-d2485c6e64bba4285458.wav",
+        "segment_id": "2",
+        "kind": "prefill",
+        "monotonic": 7520393.57204248,
+        "prompt_length": 23,
+        "wall_s": 0.10936093982309103
+      },
+      "first_prefill_event_seen_in_sample_t_s": 28.082204930484295,
+      "estimated_first_prefill_phase_start_since_formal_start_s": 26.780245270580053,
+      "first_prefill_readback_since_formal_start_s": 26.889606210403144,
+      "http_to_first_prefill_phase_start_s": 26.498969860374928,
+      "last_observed_resource_reusable_event": {
+        "request_id": "d19b298e-149c-4dd0-930c-81eaad64832b_audio-d2485c6e64bba4285458.wav",
+        "segment_id": "513",
+        "kind": "resource_reusable",
+        "monotonic": 7520521.31903269
+      },
+      "last_safe_since_formal_start_s": 154.6365964198485,
+      "last_safe_to_http_end_s": 10.358603930100799,
+      "first_prefill_phase_start_to_last_safe_s": 127.85635114926845,
+      "observed_warning_terminal_events": [],
+      "end_reasons": {
+        "eos": 520
+      },
+      "unknowns": [
+        "refresh_memory has no dedicated timer and runs after phase timer update",
+        "HTTP-minus-timed remainder includes upload/VAD/pre-model waiting/IPC/refresh/status and postprocessing; not all removable idle",
+        "First event is first observed retained safeevent; rollingevent truncation can hide earlier events; source segment0 present is recorded but not sufficient to prove all timestamps covered",
+        "Forward/readback includes NPU queue contention, kernel execution, hostlaunch and synchronization/readback; not pure device compute"
+      ]
+    }
+  ],
+  "totals": {
+    "completed": 3752,
+    "prefill_calls": 2138,
+    "prefill_members": 3752,
+    "decode_steps": 4297,
+    "repacks": 3151,
+    "direct_layout_reuses": 1146,
+    "phase_wall_s_overlapping_sums": {
+      "prefill": 368.21671768836677,
+      "decode": 391.0373517097905
+    },
+    "host_subphase_overlapping_sums_s": {
+      "prefill_audio_decode": 0.8175116218626499,
+      "prefill_processor": 32.707808120176196,
+      "prefill_transfer_positions_readback": 3.303645451553166,
+      "prefill_forward_readback": 329.62490687705576,
+      "prefill_sequence_bookkeeping": 2.023531027138233,
+      "prefill_explicit_sync": 0.49408852215856314,
+      "finish_detokenize_guard_recovery": 1.1408399734646082,
+      "decode_kv_layout": 54.61597408540547,
+      "decode_input_assembly": 2.432344094850123,
+      "decode_forward_readback": 305.9611911922693,
+      "decode_sequence_bookkeeping": 27.2722421688959,
+      "decode_explicit_sync": 0.6316431183367968
+    },
+    "prefill_mean_members": 1.754911131898971,
+    "direct_layout_reuse_fraction": 0.2666976960670235
+  },
+  "critical_tail": {
+    "last_http_sample": "a3",
+    "second_last_http_sample": "a4",
+    "a3": {
+      "owner": 2,
+      "sample_id": "a3",
+      "formal_completed": 706,
+      "http_latency_s": 194.53118695039302,
+      "http_start_since_formal_start_s": 0.27775085996836424,
+      "http_end_since_formal_start_s": 194.80893781036139,
+      "phase_wall_s": {
+        "prefill": 73.13901654444635,
+        "decode": 72.25796703994274
+      },
+      "host_subphase_wall_s": {
+        "prefill_audio_decode": 0.14426359627395868,
+        "prefill_processor": 5.919654841534793,
+        "prefill_transfer_positions_readback": 0.5800624862313271,
+        "prefill_forward_readback": 66.16094893217087,
+        "prefill_sequence_bookkeeping": 0.3810677332803607,
+        "prefill_explicit_sync": 0.0864779306575656,
+        "finish_detokenize_guard_recovery": 0.14956069365143776,
+        "decode_kv_layout": 11.322090473026037,
+        "decode_input_assembly": 0.437232063151896,
+        "decode_forward_readback": 55.7917104260996,
+        "decode_sequence_bookkeeping": 4.580971949733794,
+        "decode_explicit_sync": 0.10507512744516134
+      },
+      "prefill_phase_subtimers_sum_s": 73.12821192387491,
+      "decode_phase_subtimers_sum_s": 72.23708003945649,
+      "prefill_phase_uninstrumented_small_remainder_s": 0.010804620571434498,
+      "decode_phase_uninstrumented_small_remainder_s": 0.020887000486254692,
+      "within_owner_disjoint_timed_wall_s": 145.6908078743145,
+      "http_minus_disjoint_timed_wall_s": 48.840379076078534,
+      "forward_readback_envelope_total_s": 121.95265935827047,
+      "forward_readback_fraction_of_disjoint_timed_wall": 0.8370648851331609,
+      "steps": {
+        "prefill": 380,
+        "decode": 744
+      },
+      "prefill_calls": 380,
+      "prefill_members": 706,
+      "prefill_mean_members": 1.8578947368421053,
+      "mean_prefill_phase_ms": 192.47109616959565,
+      "mean_decode_phase_ms": 97.12092344078326,
+      "repacks": 546,
+      "direct_layout_reuses": 198,
+      "direct_layout_reuse_fraction": 0.2661290322580645,
+      "token_histogram_16rounded": {
+        "48": 8,
+        "16": 456,
+        "32": 241,
+        "112": 1
+      },
+      "token_count_lower_bound": 4914,
+      "token_count_upper_bound": 15504,
+      "first_observed_formal_prefill_event": {
+        "request_id": "9337e2d9-3185-4b99-9841-bc1e4e3b1755_audio-4e9afbb6c8855a180c95.wav",
+        "segment_id": "1",
+        "kind": "prefill",
+        "monotonic": 7520395.16465238,
+        "prompt_length": 24,
+        "wall_s": 0.16248598042875528
+      },
+      "first_prefill_event_seen_in_sample_t_s": 30.642351490445435,
+      "estimated_first_prefill_phase_start_since_formal_start_s": 28.319730130024254,
+      "first_prefill_readback_since_formal_start_s": 28.48221611045301,
+      "http_to_first_prefill_phase_start_s": 28.04197927005589,
+      "last_observed_resource_reusable_event": {
+        "request_id": "9337e2d9-3185-4b99-9841-bc1e4e3b1755_audio-4e9afbb6c8855a180c95.wav",
+        "segment_id": "699",
+        "kind": "resource_reusable",
+        "monotonic": 7520556.06089631
+      },
+      "last_safe_since_formal_start_s": 189.37846004031599,
+      "last_safe_to_http_end_s": 5.4304777700454,
+      "first_prefill_phase_start_to_last_safe_s": 161.05872991029173,
+      "observed_warning_terminal_events": [
+        {
+          "kind": "repetition_stop",
+          "segment_id": "699",
+          "generated_tokens": 108,
+          "t_since_formal_start_s": 189.3784524705261
+        }
+      ],
+      "end_reasons": {
+        "eos": 705,
+        "repetition_stop": 1
+      },
+      "unknowns": [
+        "refresh_memory has no dedicated timer and runs after phase timer update",
+        "HTTP-minus-timed remainder includes upload/VAD/pre-model waiting/IPC/refresh/status and postprocessing; not all removable idle",
+        "First event is first observed retained safeevent; rollingevent truncation can hide earlier events; source segment0 present is recorded but not sufficient to prove all timestamps covered",
+        "Forward/readback includes NPU queue contention, kernel execution, hostlaunch and synchronization/readback; not pure device compute"
+      ]
+    },
+    "a4": {
+      "owner": 3,
+      "sample_id": "a4",
+      "formal_completed": 701,
+      "http_latency_s": 189.75046740006655,
+      "http_start_since_formal_start_s": 0.2789377002045512,
+      "http_end_since_formal_start_s": 190.0294051002711,
+      "phase_wall_s": {
+        "prefill": 69.80907620117068,
+        "decode": 80.97686605527997
+      },
+      "host_subphase_wall_s": {
+        "prefill_audio_decode": 0.15469913091510534,
+        "prefill_processor": 6.196797653101385,
+        "prefill_transfer_positions_readback": 0.5777852674946189,
+        "prefill_forward_readback": 62.56035674922168,
+        "prefill_sequence_bookkeeping": 0.3723210897296667,
+        "prefill_explicit_sync": 0.09071793407201767,
+        "finish_detokenize_guard_recovery": 0.27274538669735193,
+        "decode_kv_layout": 10.057409197092056,
+        "decode_input_assembly": 0.44396491441875696,
+        "decode_forward_readback": 65.5576849495992,
+        "decode_sequence_bookkeeping": 4.7715143682435155,
+        "decode_explicit_sync": 0.1224542735144496
+      },
+      "prefill_phase_subtimers_sum_s": 69.79797869361937,
+      "decode_phase_subtimers_sum_s": 80.95302770286798,
+      "prefill_phase_uninstrumented_small_remainder_s": 0.011097507551312447,
+      "decode_phase_uninstrumented_small_remainder_s": 0.023838352411985397,
+      "within_owner_disjoint_timed_wall_s": 151.2133867740631,
+      "http_minus_disjoint_timed_wall_s": 38.537080626003444,
+      "forward_readback_envelope_total_s": 128.1180416988209,
+      "forward_readback_fraction_of_disjoint_timed_wall": 0.8472665313042003,
+      "steps": {
+        "prefill": 393,
+        "decode": 866
+      },
+      "prefill_calls": 393,
+      "prefill_members": 701,
+      "prefill_mean_members": 1.7837150127226462,
+      "mean_prefill_phase_ms": 177.63123715310604,
+      "mean_decode_phase_ms": 93.50677373588911,
+      "repacks": 567,
+      "direct_layout_reuses": 299,
+      "direct_layout_reuse_fraction": 0.34526558891454967,
+      "token_histogram_16rounded": {
+        "48": 4,
+        "16": 488,
+        "32": 198,
+        "144": 1,
+        "80": 2,
+        "112": 2,
+        "176": 1,
+        "208": 4,
+        "160": 1
+      },
+      "token_count_lower_bound": 5517,
+      "token_count_upper_bound": 16032,
+      "first_observed_formal_prefill_event": {
+        "request_id": "ade8cc7c-ae71-4358-b5d4-e13b9e03068b_audio-d937eba336cd8efaae80.wav",
+        "segment_id": "6",
+        "kind": "prefill",
+        "monotonic": 7520393.59480832,
+        "prompt_length": 35,
+        "wall_s": 0.13689344935119152
+      },
+      "first_prefill_event_seen_in_sample_t_s": 28.082204930484295,
+      "estimated_first_prefill_phase_start_since_formal_start_s": 26.775478600524366,
+      "first_prefill_readback_since_formal_start_s": 26.912372049875557,
+      "http_to_first_prefill_phase_start_s": 26.496540900319815,
+      "last_observed_resource_reusable_event": {
+        "request_id": "ade8cc7c-ae71-4358-b5d4-e13b9e03068b_audio-d937eba336cd8efaae80.wav",
+        "segment_id": "667",
+        "kind": "resource_reusable",
+        "monotonic": 7520553.34390253
+      },
+      "last_safe_since_formal_start_s": 186.66146626044065,
+      "last_safe_to_http_end_s": 3.367938839830458,
+      "first_prefill_phase_start_to_last_safe_s": 159.88598765991628,
+      "observed_warning_terminal_events": [
+        {
+          "kind": "repetition_stop",
+          "segment_id": "29",
+          "generated_tokens": 136,
+          "t_since_formal_start_s": 52.82103667035699
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "268",
+          "generated_tokens": 72,
+          "t_since_formal_start_s": 86.82297276053578
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "262",
+          "generated_tokens": 76,
+          "t_since_formal_start_s": 86.92128717992455
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "573",
+          "generated_tokens": 104,
+          "t_since_formal_start_s": 155.3860609503463
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "581",
+          "generated_tokens": 108,
+          "t_since_formal_start_s": 157.47919776011258
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "560",
+          "generated_tokens": 172,
+          "t_since_formal_start_s": 164.3362404005602
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "547",
+          "generated_tokens": 200,
+          "t_since_formal_start_s": 168.76963640004396
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "545",
+          "generated_tokens": 204,
+          "t_since_formal_start_s": 169.47655496001244
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "620",
+          "generated_tokens": 160,
+          "t_since_formal_start_s": 175.9445028603077
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "622",
+          "generated_tokens": 200,
+          "t_since_formal_start_s": 179.17429599072784
+        },
+        {
+          "kind": "repetition_stop",
+          "segment_id": "667",
+          "generated_tokens": 200,
+          "t_since_formal_start_s": 186.6614562906325
+        }
+      ],
+      "end_reasons": {
+        "eos": 690,
+        "repetition_stop": 11
+      },
+      "unknowns": [
+        "refresh_memory has no dedicated timer and runs after phase timer update",
+        "HTTP-minus-timed remainder includes upload/VAD/pre-model waiting/IPC/refresh/status and postprocessing; not all removable idle",
+        "First event is first observed retained safeevent; rollingevent truncation can hide earlier events; source segment0 present is recorded but not sufficient to prove all timestamps covered",
+        "Forward/readback includes NPU queue contention, kernel execution, hostlaunch and synchronization/readback; not pure device compute"
+      ]
+    }
+  },
+  "instrumentation_contract": {
+    "within_one_owner_serial": "prefillphase + decodephase + prefill_audio_decode + finish_detokenize_guard_recovery are disjoint outer intervals in sequentialworker; may add within same owner",
+    "host_subphases": "processor/forward/layout/bookkeeping are insidephase; do not add these again to phase",
+    "cross_owner": "all6workers overlap and contend sameNPU, CPU and transport; crossowner sums are workenvelope, never194.809wall decomposed",
+    "refresh_memory": "runtime137/243 after phase_wall_s updates135/241, before_finish; absent from hostsubphases. Full perstep refresh cost unknown, not equal to HTTP remainder",
+    "KV_reuse": "cache_reuses counts unchanged memberlayout directreuse across decode steps; no semantic prefixreuse between independent audio/VAD segments",
+    "safe_event": "prefill event125 after forward argmax.tolist readback109; resource_reusable308 after terminalresult construction and active removal, before future delivery/HTTP postprocessing; both monotonic process clocks sharedhost",
+    "first_event_scope": "first observed retained formalprefill over140 cached snapshots; no assertion of complete runtime eventstream"
+  },
+  "evidence_rank": [
+    {
+      "rank": 1,
+      "finding": "forward+readback dominates measured perowner serial runtime envelopes",
+      "evidence": [
+        {
+          "sample_id": "a1",
+          "forward_readback_s": 101.19544607959688,
+          "fraction_of_measured_serial": 0.8320489598297419
+        },
+        {
+          "sample_id": "a2",
+          "forward_readback_s": 116.06594960018992,
+          "fraction_of_measured_serial": 0.8331104205438462
+        },
+        {
+          "sample_id": "a3",
+          "forward_readback_s": 121.95265935827047,
+          "fraction_of_measured_serial": 0.8370648851331609
+        },
+        {
+          "sample_id": "a4",
+          "forward_readback_s": 128.1180416988209,
+          "fraction_of_measured_serial": 0.8472665313042003
+        },
+        {
+          "sample_id": "a5",
+          "forward_readback_s": 68.09103281702846,
+          "fraction_of_measured_serial": 0.8248855145094368
+        },
+        {
+          "sample_id": "a6",
+          "forward_readback_s": 100.16296851541847,
+          "fraction_of_measured_serial": 0.8290003500370469
+        }
+      ],
+      "optimization_hypothesis": "reduce tinyforward invocation count and sharedNPU launch/queue overhead, or improve inference backend; purekernel/queue split unknown",
+      "quantifiable": "current envelope measured; achievable savings unknown"
+    },
+    {
+      "rank": 2,
+      "finding": "prefill underfills configured16 frequently, total mean below2",
+      "evidence": {
+        "calls": 2138,
+        "members": 3752,
+        "mean": 1.754911131898971
+      },
+      "optimization_hypothesis": "short boundedprefill coalescing and prefills/decode balance may amortize processor/forward; latency/starvation and16slots tradeoff requires later realvalidation",
+      "quantifiable": "perowner processor and callcount known; batching speedup unknown"
+    },
+    {
+      "rank": 3,
+      "finding": "KVlayout and decodebookkeeping are visible measured overhead; directlayout reuse varies byowner",
+      "evidence": {
+        "KVlayout_overlapping_sum_s": 54.61597408540547,
+        "bookkeeping_overlapping_sum_s": 27.2722421688959,
+        "repacks": 3151,
+        "direct_layout_reuses": 1146,
+        "reuse_fraction": 0.2666976960670235
+      },
+      "optimization_hypothesis": "reduce denseKV pack/select/pad/cat and perstep scans; allKV operations include host/device wait, no claim of recoverable wholeenvelope",
+      "quantifiable": "layout/bookkeepingtimed, refreshmemory unmeasured"
+    },
+    {
+      "rank": 4,
+      "finding": "prefillprocessor measured fewseconds perowner and finish/recovery small",
+      "evidence": {
+        "processor_by_owner_s": [
+          5.321755258366466,
+          5.351014179177582,
+          5.919654841534793,
+          6.196797653101385,
+          4.225704510696232,
+          5.692881677299738
+        ],
+        "finish_by_owner_s": [
+          0.14407071936875582,
+          0.215059463866055,
+          0.14956069365143776,
+          0.27274538669735193,
+          0.13154775369912386,
+          0.2278559561818838
+        ]
+      },
+      "optimization_hypothesis": "processor coalescing/caching and textguard CPU work are secondary among measured intervals; warning longgeneration adds decodingwork independent of small recoveryfunctioncost",
+      "quantifiable": "timer excludes modelgeneration consumed before warningtermination"
+    },
+    {
+      "rank": 5,
+      "finding": "refresh/transport supply/backendqueue division remains unknown",
+      "evidence": "refresh outsidephase; sender andpipeline handled byroot companion analysis; six CPUthreads/NPUworkers overlap",
+      "optimization_hypothesis": "later targeted instrumentation separates refresh, submit-lock, NPU enqueue/wait before codechanges",
+      "quantifiable": "do not label HTTP remainder all queueing/waste"
+    }
+  ],
+  "limits": [
+    "One complete6audio run only; cannot predict8audio wall, exact speedup or hardwarepeak.",
+    "Perowner phase sums can be added only todisjoint ownerruntime, crossowner phase/host sums overlap.",
+    "No pureNPU kernel timers or profiler; forwardreadback is mixed host/device envelope.",
+    "Coarse tokenhist permits bounds only; warning events exacttokencount only for retainedobserved anomalies.",
+    "No new experiments; optimization payoffs not measured."
+  ]
+}
