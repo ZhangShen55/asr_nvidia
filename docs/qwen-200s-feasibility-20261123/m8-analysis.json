@@ -1,0 +1,1488 @@
+{
+  "scope": "read-only snapshots and five unique byte-position sampled status records; no CPU tests,NPU,HTTP or source changes; no duration/speedup extrapolation",
+  "source": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m8-formal",
+  "source_files_sha256": {
+    "summary.json": "1fabedc6a2967facce53a93e9fd00185199b640e971e38c708ab3b845d3834df",
+    "diagnostic-status.json": "7693439385054a01e0d74c98e71c428311c32b1b102286ba0d96950bd11a5315",
+    "warmup-final-status.json": "d5a189deaba825f05b506baef4514672bfed9f3d98bd4275a02ab92f938950c2"
+  },
+  "http": {
+    "batch_elapsed_s": 33.288572610355914,
+    "processed_completed": 0,
+    "successful": 0,
+    "target_passed": false,
+    "diagnostic_trigger": {
+      "reason": "resource_hbm_free",
+      "observed_monotonic": 7513664.57883426,
+      "request_id": null,
+      "observed_s": 7334,
+      "threshold_s": 8192.0
+    },
+    "all_request_latency": null,
+    "exact_end_to_end_speedup": null,
+    "source_changed_during_round": false
+  },
+  "workers": [
+    {
+      "index": 0,
+      "pid": 1742661,
+      "warmup_completed": 1,
+      "formal_completed": 24,
+      "end_reasons_delta": {
+        "eos": 24
+      },
+      "prefill_calls_delta": 13,
+      "prefill_members_delta": 40,
+      "prefill_mean_members": 3.076923076923077,
+      "steps_delta": {
+        "prefill": 13,
+        "decode": 16
+      },
+      "host_phase_wall_s_delta": {
+        "prefill": 1.896441102027893,
+        "decode": 1.287400720641017
+      },
+      "host_subphase_wall_s_delta": {
+        "prefill_audio_decode": 0.006526208482682705,
+        "prefill_processor": 0.24942965153604746,
+        "prefill_transfer_positions_readback": 0.024219481274485588,
+        "prefill_forward_readback": 1.5984130585566163,
+        "prefill_sequence_bookkeeping": 0.020634389482438564,
+        "prefill_explicit_sync": 0.0033711297437548637,
+        "finish_detokenize_guard_recovery": 0.0038344599306583405,
+        "decode_kv_layout": 0.17269247025251389,
+        "decode_input_assembly": 0.02183573879301548,
+        "decode_forward_readback": 0.993819635361433,
+        "decode_sequence_bookkeeping": 0.09626165963709354,
+        "decode_explicit_sync": 0.0023381290957331657
+      },
+      "repacks_delta": 14,
+      "direct_layout_reuse_delta": 2,
+      "active_sequences": 16,
+      "sampled_monotonic": 7513664.61136802,
+      "kv_logical_mib": 103.140625,
+      "kv_storage_mib": 218.421875,
+      "allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 1742661,
+        "worker_rss_mb": 2494.078125,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 4154.228515625,
+        "memory_reserved_mb": 5462.0,
+        "max_memory_allocated_mb": 4781.80029296875,
+        "max_memory_reserved_mb": 5462.0
+      },
+      "warmup_allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 1742661,
+        "worker_rss_mb": 2472.1953125,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 3906.22802734375,
+        "memory_reserved_mb": 4390.0,
+        "max_memory_allocated_mb": 3945.14111328125,
+        "max_memory_reserved_mb": 4390.0
+      },
+      "sender_pending": 0,
+      "sender_oldest_pending_s": 0.0,
+      "sender_max_submit_s": 0.48657352942973375,
+      "sender_cumulative_formal_delta": {
+        "cumulative_submit_send_s": 4.044079412706196,
+        "submit_lock_wait_s": 2.840790878981352,
+        "submit_write_wall_s": 1.2026758082211018,
+        "submit_write_count": 40
+      }
+    },
+    {
+      "index": 1,
+      "pid": 1898742,
+      "warmup_completed": 1,
+      "formal_completed": 4,
+      "end_reasons_delta": {
+        "eos": 4
+      },
+      "prefill_calls_delta": 5,
+      "prefill_members_delta": 19,
+      "prefill_mean_members": 3.8,
+      "steps_delta": {
+        "prefill": 5,
+        "decode": 17
+      },
+      "host_phase_wall_s_delta": {
+        "prefill": 0.9930041702464223,
+        "decode": 1.2277146680280566
+      },
+      "host_subphase_wall_s_delta": {
+        "prefill_audio_decode": 0.009989171288907528,
+        "prefill_processor": 0.26323418971151114,
+        "prefill_transfer_positions_readback": 0.011561829596757889,
+        "prefill_forward_readback": 0.7060328898951411,
+        "prefill_sequence_bookkeeping": 0.00985924992710352,
+        "prefill_explicit_sync": 0.0021840790286660194,
+        "finish_detokenize_guard_recovery": 0.001785588450729847,
+        "decode_kv_layout": 0.07637623883783817,
+        "decode_input_assembly": 0.023115869611501694,
+        "decode_forward_readback": 1.00487504247576,
+        "decode_sequence_bookkeeping": 0.12028133124113083,
+        "decode_explicit_sync": 0.002606482245028019
+      },
+      "repacks_delta": 7,
+      "direct_layout_reuse_delta": 10,
+      "active_sequences": 15,
+      "sampled_monotonic": 7513663.65273897,
+      "kv_logical_mib": 234.9375,
+      "kv_storage_mib": 239.75,
+      "allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 1898742,
+        "worker_rss_mb": 2504.0,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 4129.04052734375,
+        "memory_reserved_mb": 5238.0,
+        "max_memory_allocated_mb": 4864.0673828125,
+        "max_memory_reserved_mb": 5238.0
+      },
+      "warmup_allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 1898742,
+        "worker_rss_mb": 2475.99609375,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 3906.11865234375,
+        "memory_reserved_mb": 4390.0,
+        "max_memory_allocated_mb": 3945.14111328125,
+        "max_memory_reserved_mb": 4390.0
+      },
+      "sender_pending": 0,
+      "sender_oldest_pending_s": 0.0,
+      "sender_max_submit_s": 0.31139964051544666,
+      "sender_cumulative_formal_delta": {
+        "cumulative_submit_send_s": 4.113349161110818,
+        "submit_lock_wait_s": 3.11380057875067,
+        "submit_write_wall_s": 0.9991120817139745,
+        "submit_write_count": 23
+      }
+    },
+    {
+      "index": 2,
+      "pid": 2057920,
+      "warmup_completed": 1,
+      "formal_completed": 26,
+      "end_reasons_delta": {
+        "eos": 26
+      },
+      "prefill_calls_delta": 13,
+      "prefill_members_delta": 39,
+      "prefill_mean_members": 3.0,
+      "steps_delta": {
+        "prefill": 13,
+        "decode": 16
+      },
+      "host_phase_wall_s_delta": {
+        "prefill": 1.8305549016222358,
+        "decode": 1.3081998089328408
+      },
+      "host_subphase_wall_s_delta": {
+        "prefill_audio_decode": 0.006938899867236614,
+        "prefill_processor": 0.2317446218803525,
+        "prefill_transfer_positions_readback": 0.022835440933704376,
+        "prefill_forward_readback": 1.5516125205904245,
+        "prefill_sequence_bookkeeping": 0.020242350175976753,
+        "prefill_explicit_sync": 0.0037423204630613327,
+        "finish_detokenize_guard_recovery": 0.004414491355419159,
+        "decode_kv_layout": 0.2040737671777606,
+        "decode_input_assembly": 0.011902903206646442,
+        "decode_forward_readback": 0.9900902397930622,
+        "decode_sequence_bookkeeping": 0.09911844041198492,
+        "decode_explicit_sync": 0.0025702696293592453
+      },
+      "repacks_delta": 15,
+      "direct_layout_reuse_delta": 1,
+      "active_sequences": 13,
+      "sampled_monotonic": 7513664.56968565,
+      "kv_logical_mib": 72.40625,
+      "kv_storage_mib": 151.59375,
+      "allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 2057920,
+        "worker_rss_mb": 2498.11328125,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 4040.90625,
+        "memory_reserved_mb": 5068.0,
+        "max_memory_allocated_mb": 4505.78759765625,
+        "max_memory_reserved_mb": 5068.0
+      },
+      "warmup_allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 2057920,
+        "worker_rss_mb": 2482.29296875,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 3906.00927734375,
+        "memory_reserved_mb": 4390.0,
+        "max_memory_allocated_mb": 3945.14111328125,
+        "max_memory_reserved_mb": 4390.0
+      },
+      "sender_pending": 0,
+      "sender_oldest_pending_s": 0.0,
+      "sender_max_submit_s": 0.48640925996005535,
+      "sender_cumulative_formal_delta": {
+        "cumulative_submit_send_s": 1.8249508319422603,
+        "submit_lock_wait_s": 1.0789140816777945,
+        "submit_write_wall_s": 0.7454708097502589,
+        "submit_write_count": 42
+      }
+    },
+    {
+      "index": 3,
+      "pid": 2254801,
+      "warmup_completed": 1,
+      "formal_completed": 12,
+      "end_reasons_delta": {
+        "eos": 12
+      },
+      "prefill_calls_delta": 8,
+      "prefill_members_delta": 28,
+      "prefill_mean_members": 3.5,
+      "steps_delta": {
+        "prefill": 8,
+        "decode": 12
+      },
+      "host_phase_wall_s_delta": {
+        "prefill": 1.4040600415319204,
+        "decode": 0.9917179690673947
+      },
+      "host_subphase_wall_s_delta": {
+        "prefill_audio_decode": 0.007952920161187649,
+        "prefill_processor": 0.2856938112527132,
+        "prefill_transfer_positions_readback": 0.019067727960646152,
+        "prefill_forward_readback": 1.081175778992474,
+        "prefill_sequence_bookkeeping": 0.014267128892242908,
+        "prefill_explicit_sync": 0.003621368668973446,
+        "finish_detokenize_guard_recovery": 0.004213920794427395,
+        "decode_kv_layout": 0.12191263772547245,
+        "decode_input_assembly": 0.014255628921091557,
+        "decode_forward_readback": 0.7701996378600597,
+        "decode_sequence_bookkeeping": 0.08256802149116993,
+        "decode_explicit_sync": 0.0024242857471108437
+      },
+      "repacks_delta": 10,
+      "direct_layout_reuse_delta": 2,
+      "active_sequences": 16,
+      "sampled_monotonic": 7513663.96922489,
+      "kv_logical_mib": 167.78125,
+      "kv_storage_mib": 228.375,
+      "allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 2254801,
+        "worker_rss_mb": 2495.24609375,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 4117.6923828125,
+        "memory_reserved_mb": 5156.0,
+        "max_memory_allocated_mb": 4880.62841796875,
+        "max_memory_reserved_mb": 5156.0
+      },
+      "warmup_allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 2254801,
+        "worker_rss_mb": 2472.4140625,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 3906.00927734375,
+        "memory_reserved_mb": 4390.0,
+        "max_memory_allocated_mb": 3945.14111328125,
+        "max_memory_reserved_mb": 4390.0
+      },
+      "sender_pending": 0,
+      "sender_oldest_pending_s": 0.0,
+      "sender_max_submit_s": 0.4052211996167898,
+      "sender_cumulative_formal_delta": {
+        "cumulative_submit_send_s": 3.0898929005488753,
+        "submit_lock_wait_s": 2.1171433348208666,
+        "submit_write_wall_s": 0.9723142832517624,
+        "submit_write_count": 32
+      }
+    },
+    {
+      "index": 4,
+      "pid": 2474498,
+      "warmup_completed": 1,
+      "formal_completed": 31,
+      "end_reasons_delta": {
+        "eos": 31
+      },
+      "prefill_calls_delta": 18,
+      "prefill_members_delta": 47,
+      "prefill_mean_members": 2.611111111111111,
+      "steps_delta": {
+        "prefill": 18,
+        "decode": 30
+      },
+      "host_phase_wall_s_delta": {
+        "prefill": 2.6556250881403685,
+        "decode": 2.440082622691989
+      },
+      "host_subphase_wall_s_delta": {
+        "prefill_audio_decode": 0.012308058328926563,
+        "prefill_processor": 0.45741948671638966,
+        "prefill_transfer_positions_readback": 0.03714667819440365,
+        "prefill_forward_readback": 2.128788458183408,
+        "prefill_sequence_bookkeeping": 0.025779499672353268,
+        "prefill_explicit_sync": 0.005940788425505161,
+        "finish_detokenize_guard_recovery": 0.006201012060046196,
+        "decode_kv_layout": 0.33824583049863577,
+        "decode_input_assembly": 0.052940858528018,
+        "decode_forward_readback": 1.8314792895689607,
+        "decode_sequence_bookkeeping": 0.2119911378249526,
+        "decode_explicit_sync": 0.004617110826075077
+      },
+      "repacks_delta": 24,
+      "direct_layout_reuse_delta": 6,
+      "active_sequences": 16,
+      "sampled_monotonic": 7513663.68442069,
+      "kv_logical_mib": 209.671875,
+      "kv_storage_mib": 239.75,
+      "allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 2474498,
+        "worker_rss_mb": 2517.57421875,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 4129.63525390625,
+        "memory_reserved_mb": 5502.0,
+        "max_memory_allocated_mb": 4936.171875,
+        "max_memory_reserved_mb": 5502.0
+      },
+      "warmup_allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 2474498,
+        "worker_rss_mb": 2482.1015625,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 3906.11865234375,
+        "memory_reserved_mb": 4390.0,
+        "max_memory_allocated_mb": 3945.14111328125,
+        "max_memory_reserved_mb": 4390.0
+      },
+      "sender_pending": 0,
+      "sender_oldest_pending_s": 0.0,
+      "sender_max_submit_s": 0.4827356496825814,
+      "sender_cumulative_formal_delta": {
+        "cumulative_submit_send_s": 6.2122921189293265,
+        "submit_lock_wait_s": 3.7003879845142365,
+        "submit_write_wall_s": 2.5112233171239495,
+        "submit_write_count": 50
+      }
+    },
+    {
+      "index": 5,
+      "pid": 2731973,
+      "warmup_completed": 1,
+      "formal_completed": 14,
+      "end_reasons_delta": {
+        "eos": 14
+      },
+      "prefill_calls_delta": 12,
+      "prefill_members_delta": 30,
+      "prefill_mean_members": 2.5,
+      "steps_delta": {
+        "prefill": 12,
+        "decode": 32
+      },
+      "host_phase_wall_s_delta": {
+        "prefill": 1.798832619562745,
+        "decode": 2.448466286994517
+      },
+      "host_subphase_wall_s_delta": {
+        "prefill_audio_decode": 0.008800391107797623,
+        "prefill_processor": 0.3401047708466649,
+        "prefill_transfer_positions_readback": 0.023971518501639366,
+        "prefill_forward_readback": 1.4148777900263667,
+        "prefill_sequence_bookkeeping": 0.01598886027932167,
+        "prefill_explicit_sync": 0.0035415906459093094,
+        "finish_detokenize_guard_recovery": 0.004567981697618961,
+        "decode_kv_layout": 0.18509946763515472,
+        "decode_input_assembly": 0.02846367098391056,
+        "decode_forward_readback": 1.997062780894339,
+        "decode_sequence_bookkeeping": 0.2319946326315403,
+        "decode_explicit_sync": 0.004880702123045921
+      },
+      "repacks_delta": 17,
+      "direct_layout_reuse_delta": 15,
+      "active_sequences": 16,
+      "sampled_monotonic": 7513664.16128056,
+      "kv_logical_mib": 248.171875,
+      "kv_storage_mib": 260.859375,
+      "allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 2731973,
+        "worker_rss_mb": 2488.90625,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 4150.17919921875,
+        "memory_reserved_mb": 5502.0,
+        "max_memory_allocated_mb": 4916.59814453125,
+        "max_memory_reserved_mb": 5502.0
+      },
+      "warmup_allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 2731973,
+        "worker_rss_mb": 2464.90625,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 3906.00927734375,
+        "memory_reserved_mb": 4390.0,
+        "max_memory_allocated_mb": 3945.14111328125,
+        "max_memory_reserved_mb": 4390.0
+      },
+      "sender_pending": 0,
+      "sender_oldest_pending_s": 0.0,
+      "sender_max_submit_s": 0.5724828904494643,
+      "sender_cumulative_formal_delta": {
+        "cumulative_submit_send_s": 4.84772917535156,
+        "submit_lock_wait_s": 2.970071635209024,
+        "submit_write_wall_s": 1.8771269600838423,
+        "submit_write_count": 31
+      }
+    },
+    {
+      "index": 6,
+      "pid": 3002449,
+      "warmup_completed": 1,
+      "formal_completed": 35,
+      "end_reasons_delta": {
+        "eos": 35
+      },
+      "prefill_calls_delta": 23,
+      "prefill_members_delta": 51,
+      "prefill_mean_members": 2.217391304347826,
+      "steps_delta": {
+        "prefill": 23,
+        "decode": 70
+      },
+      "host_phase_wall_s_delta": {
+        "prefill": 3.568951342254877,
+        "decode": 5.641225039027631
+      },
+      "host_subphase_wall_s_delta": {
+        "prefill_audio_decode": 0.019327430054545403,
+        "prefill_processor": 0.6883152304217219,
+        "prefill_transfer_positions_readback": 0.04351047798991203,
+        "prefill_forward_readback": 2.798907441087067,
+        "prefill_sequence_bookkeeping": 0.030373417772352695,
+        "prefill_explicit_sync": 0.00714076217263937,
+        "finish_detokenize_guard_recovery": 0.014359112828969955,
+        "decode_kv_layout": 0.45777125749737024,
+        "decode_input_assembly": 0.06390990037471056,
+        "decode_forward_readback": 4.573873657733202,
+        "decode_sequence_bookkeeping": 0.5328523963689804,
+        "decode_explicit_sync": 0.010730717331171036
+      },
+      "repacks_delta": 36,
+      "direct_layout_reuse_delta": 34,
+      "active_sequences": 16,
+      "sampled_monotonic": 7513663.95635361,
+      "kv_logical_mib": 217.875,
+      "kv_storage_mib": 267.75,
+      "allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 3002449,
+        "worker_rss_mb": 2515.3125,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 4164.02685546875,
+        "memory_reserved_mb": 5584.0,
+        "max_memory_allocated_mb": 5003.7333984375,
+        "max_memory_reserved_mb": 5584.0
+      },
+      "warmup_allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 3002449,
+        "worker_rss_mb": 2476.9296875,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 3905.89990234375,
+        "memory_reserved_mb": 4390.0,
+        "max_memory_allocated_mb": 3945.14111328125,
+        "max_memory_reserved_mb": 4390.0
+      },
+      "sender_pending": 0,
+      "sender_oldest_pending_s": 0.0,
+      "sender_max_submit_s": 0.42684605065733194,
+      "sender_cumulative_formal_delta": {
+        "cumulative_submit_send_s": 5.830076112411916,
+        "submit_lock_wait_s": 3.502549975179136,
+        "submit_write_wall_s": 2.3266694713383913,
+        "submit_write_count": 54
+      }
+    },
+    {
+      "index": 7,
+      "pid": 3256974,
+      "warmup_completed": 1,
+      "formal_completed": 42,
+      "end_reasons_delta": {
+        "eos": 42
+      },
+      "prefill_calls_delta": 37,
+      "prefill_members_delta": 56,
+      "prefill_mean_members": 1.5135135135135136,
+      "steps_delta": {
+        "prefill": 37,
+        "decode": 80
+      },
+      "host_phase_wall_s_delta": {
+        "prefill": 4.811453866772354,
+        "decode": 6.388200060464442
+      },
+      "host_subphase_wall_s_delta": {
+        "prefill_audio_decode": 0.020593419671058655,
+        "prefill_processor": 0.7114208303391933,
+        "prefill_transfer_positions_readback": 0.060181369073688984,
+        "prefill_forward_readback": 4.000978677533567,
+        "prefill_sequence_bookkeeping": 0.029062808491289616,
+        "prefill_explicit_sync": 0.008736630901694298,
+        "finish_detokenize_guard_recovery": 0.019063261337578297,
+        "decode_kv_layout": 0.6951169511303306,
+        "decode_input_assembly": 0.07271628640592098,
+        "decode_forward_readback": 5.038873258978128,
+        "decode_sequence_bookkeeping": 0.5639783749356866,
+        "decode_explicit_sync": 0.01498020812869072
+      },
+      "repacks_delta": 56,
+      "direct_layout_reuse_delta": 24,
+      "active_sequences": 14,
+      "sampled_monotonic": 7513664.15374586,
+      "kv_logical_mib": 191.40625,
+      "kv_storage_mib": 237.34375,
+      "allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 3256974,
+        "worker_rss_mb": 2520.46875,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 4126.6337890625,
+        "memory_reserved_mb": 5536.0,
+        "max_memory_allocated_mb": 5006.84228515625,
+        "max_memory_reserved_mb": 5536.0
+      },
+      "warmup_allocator": {
+        "source": "worker_torch_npu_allocator",
+        "worker_pid": 3256974,
+        "worker_rss_mb": 2483.4921875,
+        "peak_scope": "not_reset_unknown_or_includes_load",
+        "memory_allocated_mb": 3906.00927734375,
+        "memory_reserved_mb": 4390.0,
+        "max_memory_allocated_mb": 3945.14111328125,
+        "max_memory_reserved_mb": 4390.0
+      },
+      "sender_pending": 1,
+      "sender_oldest_pending_s": 0.08725616056472063,
+      "sender_max_submit_s": 0.3329680599272251,
+      "sender_cumulative_formal_delta": {
+        "cumulative_submit_send_s": 7.225184849463403,
+        "submit_lock_wait_s": 2.8799330992624164,
+        "submit_write_wall_s": 4.344370725564659,
+        "submit_write_count": 59
+      }
+    }
+  ],
+  "formal_totals": {
+    "completed_minus_warmup8": 188,
+    "prefill_calls": 129,
+    "prefill_members": 310,
+    "prefill_mean_members": 2.4031007751937983,
+    "decode_steps": 273,
+    "host_subphase_sums_overlapping": {
+      "decode_explicit_sync": 0.04514790512621403,
+      "decode_forward_readback": 17.200273542664945,
+      "decode_input_assembly": 0.2891408568248153,
+      "decode_kv_layout": 2.2512886207550764,
+      "decode_sequence_bookkeeping": 1.9390459945425391,
+      "finish_detokenize_guard_recovery": 0.05843982845544815,
+      "prefill_audio_decode": 0.09243649896234274,
+      "prefill_explicit_sync": 0.0382786700502038,
+      "prefill_forward_readback": 15.280786614865065,
+      "prefill_processor": 3.227362592704594,
+      "prefill_sequence_bookkeeping": 0.166207704693079,
+      "prefill_transfer_positions_readback": 0.24249452352523804
+    },
+    "active_sequence_sum_at_diagnostic": 122,
+    "sender_pending_sum_at_diagnostic": 1,
+    "sender_lock_wait_s_sum": 22.203591568395495,
+    "sender_write_wall_s_sum": 14.97896345704794
+  },
+  "memory": {
+    "allocator_worker_count": 8,
+    "cached_allocated_mib_sum": 33012.3427734375,
+    "cached_reserved_mib_sum": 43048.0,
+    "cached_warmup_allocated_mib_sum": 31248.40234375,
+    "cached_warmup_reserved_mib_sum": 35120.0,
+    "cached_allocated_formal_delta_mib": 1763.9404296875,
+    "cached_reserved_formal_delta_mib": 7928.0,
+    "kv_logical_mib_sum": 1445.390625,
+    "kv_storage_mib_sum": 1843.84375,
+    "driver_card7": {
+      "index": 7,
+      "name": "910B3",
+      "health": "OK",
+      "chip": 0,
+      "bus_id": "0000:42:00.0",
+      "available": true,
+      "hbm_used_mb": 58202,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 7334,
+      "utilization_aicore": 23
+    },
+    "warmup_driver_card7": {
+      "index": 7,
+      "name": "910B3",
+      "health": "OK",
+      "chip": 0,
+      "bus_id": "0000:42:00.0",
+      "available": true,
+      "hbm_used_mb": 52518,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 13018,
+      "utilization_aicore": 0
+    },
+    "driver_diagnostic_observation": {
+      "expected_owned_pids": [
+        1742661,
+        1898742,
+        2057920,
+        2254801,
+        2474498,
+        2731973,
+        3002449,
+        3256974
+      ],
+      "observed_owned_pids": [
+        1742661,
+        1898742,
+        2057920,
+        2254801,
+        2474498,
+        2731973,
+        3002449
+      ],
+      "missing_owned_pids": [
+        3256974
+      ],
+      "parsed_card_process_rows": [
+        {
+          "index": 7,
+          "pid": 2057920,
+          "memory_mb": 4651
+        },
+        {
+          "index": 7,
+          "pid": 3002449,
+          "memory_mb": 6191
+        },
+        {
+          "index": 7,
+          "pid": 2254801,
+          "memory_mb": 4651
+        },
+        {
+          "index": 7,
+          "pid": 2474498,
+          "memory_mb": 5887
+        },
+        {
+          "index": 7,
+          "pid": 2731973,
+          "memory_mb": 5713
+        },
+        {
+          "index": 7,
+          "pid": 1742661,
+          "memory_mb": 4651
+        },
+        {
+          "index": 7,
+          "pid": 1601397,
+          "memory_mb": 12417
+        },
+        {
+          "index": 7,
+          "pid": 1898742,
+          "memory_mb": 4651
+        }
+      ],
+      "observed_owned_rows": [
+        {
+          "index": 7,
+          "pid": 2057920,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 3002449,
+          "memory_mb": 6191,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 2254801,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 2474498,
+          "memory_mb": 5887,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 2731973,
+          "memory_mb": 5713,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 1742661,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 1898742,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        }
+      ],
+      "observed_owned_count": 7,
+      "observed_seven_owned_memory_mib_sum": 36395,
+      "all_eight_owned_memory_mib_sum": null,
+      "complete": false,
+      "unverified_card_processes": []
+    },
+    "driver_warmup_observation": {
+      "expected_owned_pids": [
+        1742661,
+        1898742,
+        2057920,
+        2254801,
+        2474498,
+        2731973,
+        3002449,
+        3256974
+      ],
+      "observed_owned_pids": [
+        1742661,
+        1898742,
+        2057920,
+        2254801,
+        2474498,
+        2731973,
+        3002449
+      ],
+      "missing_owned_pids": [
+        3256974
+      ],
+      "parsed_card_process_rows": [
+        {
+          "index": 7,
+          "pid": 2057920,
+          "memory_mb": 4651
+        },
+        {
+          "index": 7,
+          "pid": 3002449,
+          "memory_mb": 4651
+        },
+        {
+          "index": 7,
+          "pid": 2254801,
+          "memory_mb": 4651
+        },
+        {
+          "index": 7,
+          "pid": 2474498,
+          "memory_mb": 4651
+        },
+        {
+          "index": 7,
+          "pid": 2731973,
+          "memory_mb": 4651
+        },
+        {
+          "index": 7,
+          "pid": 1742661,
+          "memory_mb": 4651
+        },
+        {
+          "index": 7,
+          "pid": 1601397,
+          "memory_mb": 12417
+        },
+        {
+          "index": 7,
+          "pid": 1898742,
+          "memory_mb": 4651
+        }
+      ],
+      "observed_owned_rows": [
+        {
+          "index": 7,
+          "pid": 2057920,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 3002449,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 2254801,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 2474498,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 2731973,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 1742661,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        },
+        {
+          "index": 7,
+          "pid": 1898742,
+          "memory_mb": 4651,
+          "ownership_identity_verified": true
+        }
+      ],
+      "observed_owned_count": 7,
+      "observed_seven_owned_memory_mib_sum": 32557,
+      "all_eight_owned_memory_mib_sum": null,
+      "complete": false,
+      "unverified_card_processes": []
+    },
+    "simultaneous_peak_allocated_mib": null,
+    "scope": "8 perworker allocator caches visible; peaks occur at independent times and may include warmup; only7 driver owned rows so full owned driver sum unknown"
+  },
+  "pipeline": {
+    "limit": 256,
+    "byte_limit": 268435456,
+    "active": 128,
+    "audio_bytes": 76377728,
+    "waiting": 0,
+    "peak": 133,
+    "peak_audio_bytes": 77629120
+  },
+  "http_active_progress": [
+    {
+      "sample_id": "a8",
+      "stage": "segments",
+      "segments_total": 367,
+      "cut_done": 60,
+      "qwen_done": 44,
+      "segments_done": 44
+    },
+    {
+      "sample_id": "a7",
+      "stage": "segments",
+      "segments_total": 397,
+      "cut_done": 54,
+      "qwen_done": 38,
+      "segments_done": 38
+    },
+    {
+      "sample_id": "a5",
+      "stage": "segments",
+      "segments_total": 457,
+      "cut_done": 50,
+      "qwen_done": 34,
+      "segments_done": 34
+    },
+    {
+      "sample_id": "a2",
+      "stage": "segments",
+      "segments_total": 615,
+      "cut_done": 23,
+      "qwen_done": 7,
+      "segments_done": 7
+    },
+    {
+      "sample_id": "a3",
+      "stage": "segments",
+      "segments_total": 706,
+      "cut_done": 42,
+      "qwen_done": 26,
+      "segments_done": 26
+    },
+    {
+      "sample_id": "a6",
+      "stage": "segments",
+      "segments_total": 520,
+      "cut_done": 31,
+      "qwen_done": 15,
+      "segments_done": 15
+    },
+    {
+      "sample_id": "a1",
+      "stage": "segments",
+      "segments_total": 753,
+      "cut_done": 40,
+      "qwen_done": 24,
+      "segments_done": 24
+    },
+    {
+      "sample_id": "a4",
+      "stage": "segments",
+      "segments_total": 701,
+      "cut_done": 32,
+      "qwen_done": 16,
+      "segments_done": 16
+    }
+  ],
+  "formal_cut_dispatch_wait_ms": null,
+  "cut_metric_limit": "all requestTelemetry completed/phases summaries still describe8 warmups; no full formal request means no full formal cut-wait distribution. pipeline waiting0 only shows that instant not blocked on PCM budget.",
+  "timing_samples": [
+    {
+      "t_since_formal_start_s": 2.6152977403253317,
+      "read_near_byte_offset": 0,
+      "request_active_count": 0,
+      "active_stages": [],
+      "active_vad_totals_known": 0,
+      "worker_completed_minus_warmup8": 0,
+      "worker_active_sequences": 0,
+      "pipeline": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 0,
+        "audio_bytes": 0,
+        "waiting": 0,
+        "peak": 1,
+        "peak_audio_bytes": 771136
+      },
+      "parent_sender_pending_sum": 0,
+      "cached_allocator_allocated_sum_mib": 31248.40234375,
+      "cached_allocator_reserved_sum_mib": 35120.0,
+      "driver_card7": {
+        "index": 7,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:42:00.0",
+        "available": true,
+        "hbm_used_mb": 52518,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 13018,
+        "utilization_aicore": 0
+      },
+      "active_progress": [],
+      "resource_sampling_age_s": 3.607912859879434
+    },
+    {
+      "t_since_formal_start_s": 11.814405499957502,
+      "read_near_byte_offset": 1037230,
+      "request_active_count": 8,
+      "active_stages": [
+        "vad",
+        "vad",
+        "vad",
+        "vad",
+        "vad",
+        "vad",
+        "vad",
+        "vad"
+      ],
+      "active_vad_totals_known": 0,
+      "worker_completed_minus_warmup8": 0,
+      "worker_active_sequences": 0,
+      "pipeline": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 0,
+        "audio_bytes": 0,
+        "waiting": 0,
+        "peak": 1,
+        "peak_audio_bytes": 771136
+      },
+      "parent_sender_pending_sum": 0,
+      "cached_allocator_allocated_sum_mib": 31248.40234375,
+      "cached_allocator_reserved_sum_mib": 35120.0,
+      "driver_card7": {
+        "index": 7,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:42:00.0",
+        "available": true,
+        "hbm_used_mb": 52708,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 12828,
+        "utilization_aicore": 0
+      },
+      "active_progress": [
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        }
+      ],
+      "resource_sampling_age_s": 3.5841945903375745
+    },
+    {
+      "t_since_formal_start_s": 20.96348517946899,
+      "read_near_byte_offset": 2074461,
+      "request_active_count": 8,
+      "active_stages": [
+        "vad",
+        "vad",
+        "vad",
+        "vad",
+        "vad",
+        "vad",
+        "vad",
+        "vad"
+      ],
+      "active_vad_totals_known": 0,
+      "worker_completed_minus_warmup8": 0,
+      "worker_active_sequences": 0,
+      "pipeline": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 0,
+        "audio_bytes": 0,
+        "waiting": 0,
+        "peak": 1,
+        "peak_audio_bytes": 771136
+      },
+      "parent_sender_pending_sum": 0,
+      "cached_allocator_allocated_sum_mib": 31248.40234375,
+      "cached_allocator_reserved_sum_mib": 35120.0,
+      "driver_card7": {
+        "index": 7,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:42:00.0",
+        "available": true,
+        "hbm_used_mb": 52708,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 12828,
+        "utilization_aicore": 0
+      },
+      "active_progress": [
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        }
+      ],
+      "resource_sampling_age_s": 2.3222605800256133
+    },
+    {
+      "t_since_formal_start_s": 28.89460983965546,
+      "read_near_byte_offset": 3111692,
+      "request_active_count": 8,
+      "active_stages": [
+        "segments",
+        "segments",
+        "segments",
+        "vad",
+        "vad",
+        "vad",
+        "vad",
+        "vad"
+      ],
+      "active_vad_totals_known": 3,
+      "worker_completed_minus_warmup8": 32,
+      "worker_active_sequences": 33,
+      "pipeline": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 48,
+        "audio_bytes": 27255168,
+        "waiting": 0,
+        "peak": 51,
+        "peak_audio_bytes": 28760256
+      },
+      "parent_sender_pending_sum": 2,
+      "cached_allocator_allocated_sum_mib": 31761.88134765625,
+      "cached_allocator_reserved_sum_mib": 37454.0,
+      "driver_card7": {
+        "index": 7,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:42:00.0",
+        "available": true,
+        "hbm_used_mb": 55634,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 9902,
+        "utilization_aicore": 7
+      },
+      "active_progress": [
+        {
+          "sample_id": "a8",
+          "stage": "segments",
+          "segments_total": 367,
+          "cut_done": 40,
+          "qwen_done": 24,
+          "segments_done": 24
+        },
+        {
+          "sample_id": "a7",
+          "stage": "segments",
+          "segments_total": 397,
+          "cut_done": 33,
+          "qwen_done": 17,
+          "segments_done": 17
+        },
+        {
+          "sample_id": "a5",
+          "stage": "segments",
+          "segments_total": 457,
+          "cut_done": 16
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        },
+        {
+          "sample_id": null,
+          "stage": "vad"
+        }
+      ],
+      "resource_sampling_age_s": 1.0272134905681014
+    },
+    {
+      "t_since_formal_start_s": 32.8541357498616,
+      "read_near_byte_offset": 3734030,
+      "request_active_count": 8,
+      "active_stages": [
+        "segments",
+        "segments",
+        "segments",
+        "segments",
+        "segments",
+        "segments",
+        "segments",
+        "segments"
+      ],
+      "active_vad_totals_known": 8,
+      "worker_completed_minus_warmup8": 122,
+      "worker_active_sequences": 119,
+      "pipeline": {
+        "limit": 256,
+        "byte_limit": 268435456,
+        "active": 128,
+        "audio_bytes": 72526208,
+        "waiting": 0,
+        "peak": 131,
+        "peak_audio_bytes": 73207104
+      },
+      "parent_sender_pending_sum": 2,
+      "cached_allocator_allocated_sum_mib": 32817.42919921875,
+      "cached_allocator_reserved_sum_mib": 41756.0,
+      "driver_card7": {
+        "index": 7,
+        "name": "910B3",
+        "health": "OK",
+        "chip": 0,
+        "bus_id": "0000:42:00.0",
+        "available": true,
+        "hbm_used_mb": 58202,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 7334,
+        "utilization_aicore": 23
+      },
+      "active_progress": [
+        {
+          "sample_id": "a8",
+          "stage": "segments",
+          "segments_total": 367,
+          "cut_done": 54,
+          "qwen_done": 38,
+          "segments_done": 38
+        },
+        {
+          "sample_id": "a7",
+          "stage": "segments",
+          "segments_total": 397,
+          "cut_done": 47,
+          "qwen_done": 31,
+          "segments_done": 31
+        },
+        {
+          "sample_id": "a5",
+          "stage": "segments",
+          "segments_total": 457,
+          "cut_done": 47,
+          "qwen_done": 31,
+          "segments_done": 31
+        },
+        {
+          "sample_id": "a2",
+          "stage": "segments",
+          "segments_total": 615,
+          "cut_done": 19,
+          "qwen_done": 3,
+          "segments_done": 3
+        },
+        {
+          "sample_id": "a3",
+          "stage": "segments",
+          "segments_total": 706,
+          "cut_done": 29,
+          "qwen_done": 13,
+          "segments_done": 13
+        },
+        {
+          "sample_id": "a6",
+          "stage": "segments",
+          "segments_total": 520,
+          "cut_done": 29,
+          "qwen_done": 13,
+          "segments_done": 13
+        },
+        {
+          "sample_id": "a1",
+          "stage": "segments",
+          "segments_total": 753,
+          "cut_done": 28,
+          "qwen_done": 12,
+          "segments_done": 12
+        },
+        {
+          "sample_id": "a4",
+          "stage": "segments",
+          "segments_total": 701,
+          "cut_done": 25,
+          "qwen_done": 9,
+          "segments_done": 9
+        }
+      ],
+      "resource_sampling_age_s": 0.6319680903106928
+    }
+  ],
+  "sampling_scope": {
+    "status_file_size_bytes": 4148923,
+    "bytes_read_including_discard": 1619242,
+    "samples": 5,
+    "method": "firstline, four byte-position next-lines, final complete line from max256KiB tail; not a fullscan or regular-time sampling"
+  },
+  "driver_parser_review": {
+    "source": "/tmp/qwen200-20261123-j9r2czoi/mn/core/resource_diagnostics.py",
+    "lines": "246-291,328-333",
+    "active_limit_found": false,
+    "finding": "parser iterates every stdout line and appends every matching process row; no explicit8-app slice/limit. Missing worker7 PID3256974 is already absent from parsed compute_apps, not removed by ownership classification. Exactly8 card rows include existing1601397+7owned, consistent with possible CLI table visibility limit but raw stdout unavailable so not confirmed."
+  },
+  "static_path_correspondence": [
+    {
+      "path": "perowner weights/runtime/cache duplication",
+      "evidence": "8 allocator caches and warmup allocated/reserved near8model copies; current reserved grows7928MiB over warmup",
+      "status": "observed memory cost, not a leak or absolute capacity bound"
+    },
+    {
+      "path": "tiny prefills before decode",
+      "evidence": "129prefill calls/310members mean2.403; independent owner stages are observed",
+      "status": "observed small batches; causal cost not proven by batch size alone"
+    },
+    {
+      "path": "dense KV repack and pertoken DynamicCache cat",
+      "evidence": "KV-layout host-envelope sum2.251s over8owners; allocator growth observed",
+      "status": "code confirmed; host envelope includes launch/wait and overlaps; cannot attribute all reserved to KV"
+    },
+    {
+      "path": "default executor + Pipe lock supply",
+      "evidence": "diagnostic sender pending sum1 rather than baseline snapshot32, lock/write counters retained perowner",
+      "status": "no evidence of persistent large send backlog at final snapshot; sample sequence needed; not proof supply is costfree"
+    },
+    {
+      "path": "every-step memory scanning outside phase timers",
+      "evidence": "source review only; current run has no dedicated timer for_refresh_memory",
+      "status": "unmeasured hypothesis, cannot label measured bottleneck"
+    },
+    {
+      "path": "prefill16 vs14400frame budget",
+      "evidence": "source condition confirmed; current observed batch mean below16",
+      "status": "possible15+1 path is not established as dominant from mean alone"
+    }
+  ],
+  "shutdown": {
+    "file_present": true,
+    "exit_code": 0,
+    "forced": false,
+    "remaining_pids": [],
+    "remaining_cache_files": [],
+    "observe_s": 5,
+    "term_to_parent_exit_s": 58.72862371057272,
+    "passed": true
+  },
+  "limits": [
+    "0/8 full audio responses: no full-audio quality or latency/speedup conclusion.",
+    "Resource gate7334MiB differs from200target/336timegate.",
+    "Host phase/lock/write sums overlap across8workers and parentthreads; not additive critical-path wall or pure kernel time.",
+    "M8 model CPUthreads8 versus original4 and prefix/readiness imbalance preclude single-factor throughput extrapolation.",
+    "Perowner completion differences partly reflect differing realVAD readiness and natural content; sampled times do not establish exact transition instants.",
+    "No allocator trace or full cleanup-baseline experiment, so no fragmentation/leak mechanism diagnosis."
+  ],
+  "first_formal_prefill_observation": [
+    {
+      "index": 0,
+      "formal_prefill_event_members_retained": 40,
+      "formal_prefill_members_counter": 40,
+      "event_prefix_complete_to_snapshot": true,
+      "first_prefill_output_event_t": 30.00625084992498,
+      "first_prefill_input_host_start_derived_t": 29.87024118937552,
+      "owner_snapshot_t": 33.2010372299701,
+      "exact_vad_finished_t": null,
+      "scope": "prefill event emitted after forward/readback; subtract event wall_s estimates input-stage host start, not exact VAD end"
+    },
+    {
+      "index": 1,
+      "formal_prefill_event_members_retained": 19,
+      "formal_prefill_members_counter": 19,
+      "event_prefix_complete_to_snapshot": true,
+      "first_prefill_output_event_t": 30.149936059489846,
+      "first_prefill_input_host_start_derived_t": 29.922347179614007,
+      "owner_snapshot_t": 32.24240817967802,
+      "exact_vad_finished_t": null,
+      "scope": "prefill event emitted after forward/readback; subtract event wall_s estimates input-stage host start, not exact VAD end"
+    },
+    {
+      "index": 2,
+      "formal_prefill_event_members_retained": 39,
+      "formal_prefill_members_counter": 39,
+      "event_prefix_complete_to_snapshot": true,
+      "first_prefill_output_event_t": 29.97587968967855,
+      "first_prefill_input_host_start_derived_t": 29.859833359718323,
+      "owner_snapshot_t": 33.15935485996306,
+      "exact_vad_finished_t": null,
+      "scope": "prefill event emitted after forward/readback; subtract event wall_s estimates input-stage host start, not exact VAD end"
+    },
+    {
+      "index": 3,
+      "formal_prefill_event_members_retained": 28,
+      "formal_prefill_members_counter": 28,
+      "event_prefix_complete_to_snapshot": true,
+      "first_prefill_output_event_t": 30.370312419719994,
+      "first_prefill_input_host_start_derived_t": 30.057497719302773,
+      "owner_snapshot_t": 32.55889409966767,
+      "exact_vad_finished_t": null,
+      "scope": "prefill event emitted after forward/readback; subtract event wall_s estimates input-stage host start, not exact VAD end"
+    },
+    {
+      "index": 4,
+      "formal_prefill_event_members_retained": 47,
+      "formal_prefill_members_counter": 47,
+      "event_prefix_complete_to_snapshot": true,
+      "first_prefill_output_event_t": 27.0984570896253,
+      "first_prefill_input_host_start_derived_t": 26.92532282974571,
+      "owner_snapshot_t": 32.27408989984542,
+      "exact_vad_finished_t": null,
+      "scope": "prefill event emitted after forward/readback; subtract event wall_s estimates input-stage host start, not exact VAD end"
+    },
+    {
+      "index": 5,
+      "formal_prefill_event_members_retained": 30,
+      "formal_prefill_members_counter": 30,
+      "event_prefix_complete_to_snapshot": true,
+      "first_prefill_output_event_t": 28.46518260985613,
+      "first_prefill_input_host_start_derived_t": 28.308301109820604,
+      "owner_snapshot_t": 32.75094977021217,
+      "exact_vad_finished_t": null,
+      "scope": "prefill event emitted after forward/readback; subtract event wall_s estimates input-stage host start, not exact VAD end"
+    },
+    {
+      "index": 6,
+      "formal_prefill_event_members_retained": 51,
+      "formal_prefill_members_counter": 51,
+      "event_prefix_complete_to_snapshot": true,
+      "first_prefill_output_event_t": 23.23196537978947,
+      "first_prefill_input_host_start_derived_t": 22.905498969368637,
+      "owner_snapshot_t": 32.54602282028645,
+      "exact_vad_finished_t": null,
+      "scope": "prefill event emitted after forward/readback; subtract event wall_s estimates input-stage host start, not exact VAD end"
+    },
+    {
+      "index": 7,
+      "formal_prefill_event_members_retained": 56,
+      "formal_prefill_members_counter": 56,
+      "event_prefix_complete_to_snapshot": true,
+      "first_prefill_output_event_t": 21.12078741006553,
+      "first_prefill_input_host_start_derived_t": 20.97611980047077,
+      "owner_snapshot_t": 32.74341506976634,
+      "exact_vad_finished_t": null,
+      "scope": "prefill event emitted after forward/readback; subtract event wall_s estimates input-stage host start, not exact VAD end"
+    }
+  ],
+  "timing_interpretation": "Sparse samples show0knownVAD at20.963s,3at28.895s,8at32.854s. Perowner firstprefill events establish late real model entry, not exactVAD end; 188/33s is not steady throughput and cannot be extrapolated."
+}

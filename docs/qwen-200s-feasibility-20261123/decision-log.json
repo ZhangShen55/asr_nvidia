@@ -1,5 +1,5 @@
 {
-  "status": "user_authorized_M6_M8_verification_completed",
+  "status": "explicit_user_authorized_M8_full_completed_resource_stop",
   "target_s": 200,
   "resource_free_hbm_mb": 8192,
   "hard_deadline_s": 336,
@@ -23,7 +23,23 @@
   },
   "mn_full": {
     "M6": "resource aborted 49.362232s/free7738MiB/0of8; not full latency",
+    "M8": "explicit user-authorized independent followup executed: resource stop33.288573s/free7334MiB/0of8, normal exit0"
+  },
+  "positive_200s_feasibility_proven": false,
+  "m8_full_followup": {
+    "user_authorization": "8实例，8完整音频并发，处理效率评估下，使用真实的音频测试下，处理过慢直接停掉，排查原因",
+    "prior_no_entry_decision_was_valid_for_previous_batch": true,
+    "old_M2_deviation_retained": true,
+    "formal_wall_s": 33.288572610355914,
+    "full_audio_completed": 0,
+    "stop": "card7 free7334MiB below8192",
+    "full_latency_and_speedup": null,
+    "normal_exit0": true,
+    "production_changes": false
+  },
+  "previous_mn_full_decision": {
+    "M6": "resource aborted 49.362232s/free7738MiB/0of8; not full latency",
     "M8": "not entered after M6 resource redline; capacity only"
   },
-  "positive_200s_feasibility_proven": false
+  "scope_note": "original conditional matrix no-entry remains historical; latest user explicitly requested independent M8 full, covered in section7 and m8_full_followup"
 }

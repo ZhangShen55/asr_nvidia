@@ -1,0 +1,149 @@
+{
+  "scope": "lightweight read-only M8 controller final result audit; no new CPU tests, HTTP or NPU activity",
+  "utc": "2026-11-23T09:28:56.622736+00:00",
+  "source_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m8-formal",
+  "inputs_sha256": {
+    "summary.json": "1fabedc6a2967facce53a93e9fd00185199b640e971e38c708ab3b845d3834df",
+    "diagnostic-trigger.json": "b9c5546a587ee55e60db698822946c9293a36c17755354d411aebdc4986a46dc",
+    "shutdown.json": "33cca58b21882cda298b8ec9d5889db7fa715409cae01e34aaa3e94ee1451629",
+    "run.json": "6020d16e489207911c6720148a1b96aa2a54d0d802e7b429fcb58ee6ed9067b0",
+    "prediction.json": "8b56ef856a3fa1af1e20f444efff739bb4bef2f13bce8b1acf4dbc6b00d15744",
+    "warmup-final-status.json": "d5a189deaba825f05b506baef4514672bfed9f3d98bd4275a02ab92f938950c2"
+  },
+  "checks": {
+    "source_identity_complete": true,
+    "source_unchanged": true,
+    "experiment_assets_unchanged": true,
+    "git_head_unchanged": true,
+    "original_eight_requests_submitted": true,
+    "duration_from_common_t0": true,
+    "resource_stop_before_336": true,
+    "resource7_correct_value": true,
+    "all_eight_censored_not_success": true,
+    "full_quantiles_null": true,
+    "speedup_null": true,
+    "time_goal_not_claimed": true,
+    "eta_report_only": true,
+    "eight_warmups_separate": true,
+    "eight_model_workers_observed": true,
+    "per_worker_real_warmup_forward": true,
+    "normal_owned_cleanup": true,
+    "summary_cleanup_consistent": true,
+    "port_free5s": true,
+    "private_pcm_empty": true,
+    "m8_new_admission_audit_passed": true,
+    "prior_m2_admission_deviation_preserved": true
+  },
+  "controller_consistency_passed": true,
+  "protocol_admission_compliant": true,
+  "protocol_admission_scope": "The latest explicit user request authorizes an independent eight-model original-eight-full-audio HTTP round, superseding the previous M6-red no-M8-full decision for this new round only. Original M2 admission deviation remains unchanged. Redline,200s goal,336s hard stop and cleanup stay enforced.",
+  "authorization_plan_path": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-23-qwen-asr-200s-feasibility/test-plan.md",
+  "authorization_plan_sha256": "ca4ec565ebd2d59383f4f86d7d7f61467e7b52348c5a6441ad9da3103ad50056",
+  "passed": true,
+  "passed_scope": "controller bookkeeping, frozen sources/assets, authorized admission and normal cleanup audit only; NOT a200s performance or quality pass",
+  "normalized_trigger": {
+    "reason": "resource_hbm_free",
+    "trigger_elapsed_s": 33.16850346978754,
+    "formal_observation_wall_s": 33.288572610355914,
+    "observed": 7334,
+    "threshold": 8192.0,
+    "unit": "MiB of driver-reported free HBM",
+    "card": 7,
+    "legacy_field_warning": "DiagnosticTrigger observed_s/threshold_s names retained, but resource_hbm_free values are MiB, NOT seconds"
+  },
+  "classification": {
+    "result": "M8 resource-aborted, full-audio efficiency and quality not established",
+    "completed_http_requests": 0,
+    "expected_http_requests": 8,
+    "censored_http_requests": 8,
+    "full_latency": null,
+    "precise_speedup": null,
+    "strict_success_rate_observed_at_stop": 0.0,
+    "warning_scope": "summary warning_segments=0 reflects zero returned complete responses, not proof all unfinished segments were warning-free",
+    "worker_snapshot_warning_counts": [
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {},
+      {}
+    ],
+    "worker_snapshot_end_reasons": [
+      {
+        "eos": 25
+      },
+      {
+        "eos": 5
+      },
+      {
+        "eos": 27
+      },
+      {
+        "eos": 13
+      },
+      {
+        "eos": 32
+      },
+      {
+        "eos": 15
+      },
+      {
+        "eos": 36
+      },
+      {
+        "eos": 43
+      }
+    ]
+  },
+  "warmup_accounting": {
+    "warmup_completed_per_worker": [
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1,
+      1
+    ],
+    "warmup_completed_total": 8,
+    "diagnostic_model_completed_per_worker_including_warmup": [
+      25,
+      5,
+      27,
+      13,
+      32,
+      15,
+      36,
+      43
+    ],
+    "diagnostic_model_completed_total_including_warmup": 196,
+    "formal_model_completed_segment_delta": 188,
+    "scope": "difference of safe-boundary cumulative model snapshots, not complete HTTP results;8 warmup segments never count as formal audio completion"
+  },
+  "timing": {
+    "batch_t0": 7513631.41033079,
+    "submit_offsets_s": [
+      0.3056095400825143,
+      0.3074412299320102,
+      0.30863097961992025,
+      0.309817329980433,
+      0.3109788401052356,
+      0.31213537976145744,
+      0.31329874973744154,
+      0.3146945498883724
+    ],
+    "last_client_terminal_after_trigger_s": 0.12006914056837559,
+    "term_to_parent_exit_s": 58.72862371057272,
+    "cleanup_included_in_formal_wall": false
+  },
+  "limits": [
+    "Process birth/port evidence comes from immutable shutdown records; this audit performs no live scan.",
+    "33.289s is time to resource stop, not full-audio processing time or proof200s impossible.",
+    "Eight-model short capacity success did not imply128-active VAD capacity under full-audio load.",
+    "No complete HTTP transcript was returned, so complete-audio text quality cannot be judged from this round.",
+    "Eight model CPU threads versus baseline4/M6 total6 remains an extra variable; no single-factor speedup is inferred."
+  ]
+}

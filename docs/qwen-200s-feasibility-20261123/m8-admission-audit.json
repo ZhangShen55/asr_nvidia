@@ -1,0 +1,86 @@
+{
+  "scope": "read-only admission audit of frozen MN controller/config/source for newly user-authorized original-eight-full-audio M8 HTTP trial; not new tests, HTTP or NPU activity",
+  "utc": "2026-11-23T09:22:07.632917+00:00",
+  "checks": {
+    "controller_28_cpu_passed": true,
+    "controller_sha_matches_CPU_freeze": true,
+    "mn_42_cpu_passed": true,
+    "mn_source_config_sha_matches_CPU_freeze": true,
+    "all_runtime_sources_match_M6_formal_freeze": true,
+    "controller_matches_M6_formal": true,
+    "m8_config_matches_successful_capacity_case": true,
+    "only_instance_count_differs_from_M6_config": true,
+    "eight_model_original_HF_npu7_BF16": true,
+    "audio8_segment16_global128": true,
+    "model_generation_unchanged": true,
+    "eight_worker_independent16_budgets": true,
+    "same_eight_CPU_VAD_real_chain": true,
+    "per_model_shutdown120": true,
+    "M6_final_source_freeze_valid": true,
+    "prior_M2_deviation_retained": true
+  },
+  "passed": true,
+  "latest_user_authorization": {
+    "scope": "User explicitly requested eight model instances on original eight full audios through real HTTP after M6 red; this authorizes a new independent M8 batch",
+    "supersedes": "prior instruction not to enter M8 full after M6 red",
+    "does_not_supersede": [
+      "8GiB free-HBM redline at startup/warmup/formal phases",
+      "200s target and336s hard stop",
+      "owned cleanup/PID birth safeguards",
+      "preservation of original M2 protocol admission deviation"
+    ]
+  },
+  "runtime_source_changes_since_M6": [],
+  "controller_cpu_sha_matches": {
+    "scripts/benchmark_qwen200.py": true,
+    "core/qwen200_watchdog.py": true,
+    "tests/test_qwen200_controller.py": true
+  },
+  "mn_cpu_sha_matches": {
+    "core/qwen_asr_client.py": true,
+    "core/config.py": true,
+    "core/qwen_continuous_process.py": true,
+    "core/qwen_asr_process.py": true,
+    "core/qwen_continuous_runtime.py": true,
+    "tests/test_qwen200_mn.py": true,
+    "test/config.qwen200-m6.toml": true,
+    "test/config.qwen200-m8.toml": true
+  },
+  "current_controller_sha256": "1f32ebbd8963fda2c567900a25c417e8c681108a8e4ea0e6a68fb1efe1fca479",
+  "current_M8_config_sha256": "42650a8053d8a2315187a0477049d3bcabb57fda7318dda09f7adaa1038a7d5f",
+  "M6_to_M8_config_differences": {
+    "qwen_asr.local_instance_count": {
+      "m6": 6,
+      "m8": 8
+    }
+  },
+  "coverage_from_frozen_CPU_and_capacity": {
+    "startup_monitor": "OS-only npu-smi exact card7 at2s while HTTP not ready; final fresh probe before ready; no torch/NPU initialization",
+    "redline_free_hbm_mib": 8192,
+    "cooperative_startup_stop": "owner-private QWEN200_STARTUP_STOP_FILE, checked before/after each safe worker load; loaded workers closed, next not started",
+    "expected_workers": 8,
+    "warmup": "eight real-v3 short clips with original source-hash upload filenames; each runtime must have at least1prefill",
+    "formal": "original eight full audios,8HTTP,per-audio16/global128,common-t0336s hard stop,ETA report-only",
+    "cleanup": "HTTP drain30,modelgrace120,overall210,portfree>=5s; expected startup abort exit0/3 distinguished from normal inference close"
+  },
+  "required_launch_parameters": {
+    "expected_qwen_workers": 8,
+    "startup_timeout_s": 600,
+    "warmup_only": false,
+    "target_s": 200,
+    "diagnostic_wall_timeout_s": 336,
+    "observe_s": 5,
+    "environment": {
+      "QWEN200_EXPERIMENT_WORKERS": "8",
+      "QWEN200_ROUTING_MANIFEST": "/tmp/qwen200-20261123-j9r2czoi/assets/inputs.json",
+      "QWEN200_MODEL_THREADS": "1",
+      "QWEN200_STARTUP_STOP_FILE": "<owned controller TMPDIR>/startup-stop"
+    }
+  },
+  "limits": [
+    "This audit verifies frozen artifacts, not fresh shared-card headroom. Root/controller must measure actual startup resources.",
+    "M8 startup and eight sequential short forwards previously passed but do not establish128-active VAD memory safety or full-audio200s performance.",
+    "Aggregate model CPU threads8 versus baseline4 and M6 total6 remain an extra variable; do not claim single-factor throughput causality.",
+    "The previous instruction not to enter M8 formal was valid at the time of M6 audit; newer user authorization changes the next-trial scope without rewriting that history."
+  ]
+}

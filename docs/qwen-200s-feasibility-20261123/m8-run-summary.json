@@ -1,0 +1,32 @@
+{
+  "case": "m8-formal",
+  "status": "diagnostic_aborted",
+  "formal_round_started": true,
+  "formal_wall_s": 33.288572610355914,
+  "full_audio_completed": 0,
+  "target_passed": false,
+  "warmup_n": 8,
+  "warmup_all_completed": true,
+  "warmup_s": 34.67881696857512,
+  "full_request_latency": null,
+  "exact_speedup": null,
+  "source_frozen": true,
+  "asset_changes": [],
+  "resource_trigger": {
+    "reason": "resource_hbm_free",
+    "free_hbm_mib": 7334,
+    "threshold_mib": 8192,
+    "card": 7
+  },
+  "shutdown": {
+    "passed": true,
+    "normal_exit0": true,
+    "forced": false,
+    "exit_code": 0,
+    "remaining_pids": [],
+    "remaining_cache_files": [],
+    "observe_s": 5,
+    "term_to_parent_exit_s": 58.72862371057272
+  },
+  "source_run": "/home/zhangs/asr_nvidia/logs/qwen-200s-feasibility-20261123/m8-formal"
+}
