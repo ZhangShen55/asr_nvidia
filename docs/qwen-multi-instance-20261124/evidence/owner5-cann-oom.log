@@ -1,0 +1,15 @@
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:36.992.030 [npu_driver.cc:1399]1027285 DevMemAllocHugePageManaged:[INIT][DEFAULT][drv api] halMemAlloc failed:size=23068672(bytes), type=0, moduleId=33, drvFlag=2377900603261207559, drvRetCode=6, device_id=7!
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.029.408 [npu_driver.cc:1529]1027285 DevMemAllocManaged:[INIT][DEFAULT][drv api] halMemAlloc failed:size=23068672(bytes), type=0, moduleId=33, drvFlag=2377900603261076487, drvRetCode=6, device_id=7!
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.029.419 [api_error.cc:1247]1027285 DevMalloc:[INIT][DEFAULT]Device malloc failed, size=23068672(bytes), type=1024.
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.029.443 [api_c_memory.cc:47]1027285 rtMalloc:[INIT][DEFAULT]ErrCode=207001, desc=[driver error:out of memory], InnerCode=0x7020016
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.029.449 [error_message_manage.cc:53]1027285 FuncErrorReason:[INIT][DEFAULT]report error module_type=3, module_name=EE8888
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.029.455 [error_message_manage.cc:53]1027285 FuncErrorReason:[INIT][DEFAULT]rtMalloc execute failed, reason=[driver error:out of memory]
+[ERROR] ASCENDCL(1027285,python):2026-11-24-01:36:37.030.482 [memory.cpp:147]1027285 aclMallocMemInner: [INIT][DEFAULT]alloc device memory failed, runtime result = 207001
+[ERROR] APP(1027285,python):2026-11-24-01:36:37.030.538 [log_inner.cpp:76]1027285 build/CMakeFiles/torch_npu.dir/compiler_depend.ts:malloc:1262: "[PTA]:"Get a block from the existing pool failed. Try to free cached blocks and reallocate. This error log " "can be ignored.""
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.120.070 [npu_driver.cc:1399]1027285 DevMemAllocHugePageManaged:[INIT][DEFAULT][drv api] halMemAlloc failed:size=23068672(bytes), type=0, moduleId=33, drvFlag=2377900603261207559, drvRetCode=6, device_id=7!
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.151.180 [npu_driver.cc:1529]1027285 DevMemAllocManaged:[INIT][DEFAULT][drv api] halMemAlloc failed:size=23068672(bytes), type=0, moduleId=33, drvFlag=2377900603261076487, drvRetCode=6, device_id=7!
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.151.189 [api_error.cc:1247]1027285 DevMalloc:[INIT][DEFAULT]Device malloc failed, size=23068672(bytes), type=1024.
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.151.206 [api_c_memory.cc:47]1027285 rtMalloc:[INIT][DEFAULT]ErrCode=207001, desc=[driver error:out of memory], InnerCode=0x7020016
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.151.211 [error_message_manage.cc:53]1027285 FuncErrorReason:[INIT][DEFAULT]report error module_type=3, module_name=EE8888
+[ERROR] RUNTIME(1027285,python):2026-11-24-01:36:37.151.218 [error_message_manage.cc:53]1027285 FuncErrorReason:[INIT][DEFAULT]rtMalloc execute failed, reason=[driver error:out of memory]
+[ERROR] ASCENDCL(1027285,python):2026-11-24-01:36:37.151.529 [memory.cpp:147]1027285 aclMallocMemInner: [INIT][DEFAULT]alloc device memory failed, runtime result = 207001
