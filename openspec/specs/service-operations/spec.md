@@ -289,7 +289,7 @@ Docker 部署 MUST 在 docker/ 下提供 README.md、Dockerfile 和 docker-compo
 - **THEN** 构建或启动说明明确提示格式错误，不把旧 v2 tag 当作默认镜像
 
 ### Requirement: 启动前校验部署前置条件
-昇腾部署 MUST 在就绪前校验设备可见性、必需资产、torch_npu运行时及CONFIG_PATH可读性，失败明确报告并阻止就绪。三个必需模型资产与Qwen权重策略分开：preload=false时Qwen缺失在转写触发按4011处理，不为预检加载；正式默认preload=true时全部N份权重及processor须顺序加载成功且健康后才就绪，任何部分启动失败统一回收。校验不得触发未请求增强模型加载或绕过功能开关。
+昇腾部署 MUST 在就绪前校验设备可见性、必需资产、torch_npu运行时及CONFIG_PATH可读性，失败明确报告并阻止就绪。三个必需模型资产与Qwen权重策略分开：preload=false时Qwen缺失在转写触发按4011处理，不为预检加载；正式默认preload=true时全部N份权重及processor须顺序加载成功且健康后才就绪，任何部分启动失败统一回收。前置校验本身不得加载模型或绕过功能开关；校验通过后，HTTP就绪前须完成已开启且非空数组的增强池预加载尝试，失败按增强池降级契约处理。
 
 #### Scenario: GPU 或资产不可用
 - **WHEN** 容器无可用NPU、必需模型目录缺失或配置不可读
