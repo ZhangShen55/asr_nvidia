@@ -29,3 +29,5 @@
 约200秒仍为纯A目标单列，B4无200秒硬门槛；增强驻留A4须完整4/4且无OOM/owned故障，实际目标是否达到据实报告。336秒、真实OOM/故障停止、不恢复free-HBM提前线、PID/birth正常退出/端口5秒/PCM清理及共享服务保留不变。控制器新final_n4_functional_matrix_complete覆盖最终A4/B4/共驻A4/准入/close/integrity，原formal_matrix_complete保留N6历史判据；最终相近背景恢复由root另核原始资源证据，未知或非零delta不改raw冒充通过。本轮仅范围修订，不同步main/归档；最终实测通过后root另行处理。
 
 最终验收29/29完成：正式根配置Qwen4/CAM4/emo1，A4墙钟186.44、B4 200.10、增强驻留A4 183.47秒，均4/4，无推理OOM；最低HBM采样15406MB。源码1299/保护373及归档清单兼容增量源49/保护49通过，真实N4总满4013探针、三组具体差异、正常exit0/全部owned回收/port5/PCM空/shared1601397及8007保留。root独立相近背景审查+2MB通过，raw unknown不改写。5.3/5.6已勾，待本轮提交与按覆盖账本sync/archive当前change；N6/N5历史和旧change不冒称通过。详见FINAL4-REPORT.md。
+
+2026-11-24最终完成：29/29真实验收与root收尾审查通过，已将本change六能力（36 MODIFIED/17 ADDED）同步main并与审阅预览逐文件SHA相等，严格9/9通过；归档至openspec/changes/archive/2026-11-23-qwen-multi-instance-serving。只归档本change，旧N6/N5事实及三个旧open任务不改。交付报告FINAL4-REPORT.md，具体归档/校验证据final4-evidence/archive-result.json。

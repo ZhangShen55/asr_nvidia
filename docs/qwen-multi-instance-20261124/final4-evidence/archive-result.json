@@ -1,0 +1,32 @@
+{
+  "change": "2026-11-23-qwen-multi-instance-serving",
+  "schema": "spec-driven",
+  "tasks_complete": 29,
+  "tasks_total": 29,
+  "archived_path": "/home/zhangs/asr_nvidia/openspec/changes/archive/2026-11-23-qwen-multi-instance-serving",
+  "archived_relative_path": "openspec/changes/archive/2026-11-23-qwen-multi-instance-serving",
+  "specs_synced": true,
+  "capabilities": [
+    "local-model-runtime",
+    "local-qwen-asr-inference",
+    "offline-asr-service",
+    "qwen-asr-v2-adapter",
+    "resource-pressure-diagnostics",
+    "service-operations"
+  ],
+  "modified_requirements": 36,
+  "added_requirements": 17,
+  "reviewed_preview_exact_match": true,
+  "implementation_commit": "449aed9fa2fd843c2f76a315934cf02416920a8b",
+  "old_changes_untouched": true,
+  "old_N6_failure_preserved": true,
+  "final_profile": {
+    "Qwen": 4,
+    "CAM_process": 4,
+    "emo": 1,
+    "S": 16,
+    "global": 64
+  },
+  "all_owned_service_and_tests_stopped": true,
+  "source_quality_not_human_certified": true
+}

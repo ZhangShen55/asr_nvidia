@@ -1,0 +1,829 @@
+{
+  "generated_utc": "2026-11-24T03:00:08.179627+00:00",
+  "change": "2026-11-23-qwen-multi-instance-serving",
+  "skill": "/Users/zhangshen/Documents/workspace/remote_dev /asr_offline_v3_910b/.codex/skills/openspec-sync-specs/SKILL.md",
+  "source_commit": "449aed9fa2fd843c2f76a315934cf02416920a8b",
+  "working_tree_clean_before": true,
+  "preview": "/tmp/qwen-final4-spec-preview-20261124-7wtf4e5w",
+  "coverage_manifest": "/tmp/qwen-final4-20261124-gn1bbflf/spec-preview.json",
+  "coverage_manifest_sha256": "1b87c6bf0b37cd04fffd963e5d01deb9fc25f1575e9709f385d9ffd6425293d2",
+  "scope": "Only current change six deltas; preserve unmentioned requirements/scenarios, no old open deltas imported.",
+  "final_contract": "continuous/process N4 (legal N1..8), S16/global64, total4/B4, CAM4/emo1; historical N6/N5 evidence and failure remain unchanged.",
+  "counts": {
+    "capabilities": 6,
+    "modified": 36,
+    "added": 17,
+    "removed": 0,
+    "renamed": 0
+  },
+  "all_match_reviewed_preview": true,
+  "all_original_scenarios_preserved": true,
+  "idempotent": true,
+  "old_open_changes_imported": false,
+  "archived": false,
+  "committed": false,
+  "capabilities": [
+    {
+      "modified_titles": [
+        "本地模型按需懒加载",
+        "实例数量与显存放大的关系可控",
+        "本地增强模型池按设备数组建立固定实例",
+        "模型池并发容量由各自设备数组决定",
+        "主服务与固定 VAD worker 分工承载模型"
+      ],
+      "added_titles": [
+        "B类三分支独立排队且按原段汇合",
+        "PCM汇合预算保持全服务有界所有权"
+      ],
+      "declared_modified_count": 5,
+      "declared_added_count": 2,
+      "actual_new_requirement_count": 2,
+      "removed_count": 0,
+      "renamed_count": 0,
+      "requirements_before": 10,
+      "requirements_after": 12,
+      "scenarios_before": 26,
+      "scenarios_after": 33,
+      "all_original_requirements_preserved": true,
+      "all_original_scenario_titles_preserved": true,
+      "unmentioned_requirements_unchanged": [
+        "暴露本地模型的加载状态与显存明细",
+        "模型池配置只使用新配置结构",
+        "暴露模型池配置容量与运行容量",
+        "模型池状态区分独立容量与等待",
+        "功能开关不能被设备配置或推理入口绕过"
+      ],
+      "preserved_original_scenarios_in_modified_requirements": [
+        {
+          "requirement": "本地模型按需懒加载",
+          "scenario": "未请求说话人能力"
+        },
+        {
+          "requirement": "本地模型按需懒加载",
+          "scenario": "首次请求触发加载"
+        },
+        {
+          "requirement": "本地模型按需懒加载",
+          "scenario": "模型加载失败"
+        },
+        {
+          "requirement": "实例数量与显存放大的关系可控",
+          "scenario": "默认单实例"
+        },
+        {
+          "requirement": "实例数量与显存放大的关系可控",
+          "scenario": "配置多个实例"
+        },
+        {
+          "requirement": "本地增强模型池按设备数组建立固定实例",
+          "scenario": "CAM++ 与 emotion2vec 实例数量不同"
+        },
+        {
+          "requirement": "本地增强模型池按设备数组建立固定实例",
+          "scenario": "多卡设备数组"
+        },
+        {
+          "requirement": "模型池并发容量由各自设备数组决定",
+          "scenario": "两个模型配置不同数量实例"
+        },
+        {
+          "requirement": "模型池并发容量由各自设备数组决定",
+          "scenario": "配置数组为空"
+        },
+        {
+          "requirement": "模型池并发容量由各自设备数组决定",
+          "scenario": "部分实例加载失败"
+        },
+        {
+          "requirement": "主服务与固定 VAD worker 分工承载模型",
+          "scenario": "服务启动并预热 VAD"
+        },
+        {
+          "requirement": "主服务与固定 VAD worker 分工承载模型",
+          "scenario": "查询进程资源"
+        },
+        {
+          "requirement": "主服务与固定 VAD worker 分工承载模型",
+          "scenario": "本轮宿主开发使用指定设备"
+        }
+      ],
+      "idempotent": true,
+      "capability": "local-model-runtime",
+      "main_path": "/home/zhangs/asr_nvidia/openspec/specs/local-model-runtime/spec.md",
+      "delta_path": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-23-qwen-multi-instance-serving/specs/local-model-runtime/spec.md",
+      "preview_path": "/tmp/qwen-final4-spec-preview-20261124-7wtf4e5w/openspec/specs/local-model-runtime/spec.md",
+      "before_sha256": "b2aa75987ff0c50c34b11d30bf7dcffd871521b18da5372e5268d814b22d1974",
+      "delta_sha256": "58808fb0fb2d40e5139d09fc8554db8c7ab064724977c462eb02c156a9df7d24",
+      "preview_sha256": "9e2ffb16dffd6603aababfe1ab453be076dc5d382f5bb46e2fd182457d655aab",
+      "after_sha256": "9e2ffb16dffd6603aababfe1ab453be076dc5d382f5bb46e2fd182457d655aab",
+      "preview_byte_identical": true
+    },
+    {
+      "modified_titles": [
+        "本地推理受并发闸门约束",
+        "推理失败映射到既有错误码",
+        "推理模型按需加载且状态可观测"
+      ],
+      "added_titles": [
+        "正式continuous多实例具有独立执行所有权",
+        "请求动态独占健康owner租约",
+        "多owner内独立段完成并及时补位",
+        "多实例预算按owner与全服务分别生效",
+        "owner故障隔离并如实报告健康容量",
+        "多owner段级生成异常保留恢复与警告",
+        "多owner关闭保持在途与出生所有权"
+      ],
+      "declared_modified_count": 3,
+      "declared_added_count": 7,
+      "actual_new_requirement_count": 7,
+      "removed_count": 0,
+      "renamed_count": 0,
+      "requirements_before": 8,
+      "requirements_after": 15,
+      "scenarios_before": 23,
+      "scenarios_after": 45,
+      "all_original_requirements_preserved": true,
+      "all_original_scenario_titles_preserved": true,
+      "unmentioned_requirements_unchanged": [
+        "从本地权重目录加载转写模型",
+        "以内存音频直接发起转写",
+        "语种参数按既有规则注入",
+        "原始输出保持既有前缀格式",
+        "原生交付基线与性能候选分阶段验收"
+      ],
+      "preserved_original_scenarios_in_modified_requirements": [
+        {
+          "requirement": "本地推理受并发闸门约束",
+          "scenario": "单音频内段并发受限"
+        },
+        {
+          "requirement": "本地推理受并发闸门约束",
+          "scenario": "全局并发受限"
+        },
+        {
+          "requirement": "本地推理受并发闸门约束",
+          "scenario": "同一实例不并发执行"
+        },
+        {
+          "requirement": "推理失败映射到既有错误码",
+          "scenario": "推理执行失败"
+        },
+        {
+          "requirement": "推理失败映射到既有错误码",
+          "scenario": "模型不可用"
+        },
+        {
+          "requirement": "推理失败映射到既有错误码",
+          "scenario": "失败不被误判为无人声"
+        },
+        {
+          "requirement": "推理模型按需加载且状态可观测",
+          "scenario": "查询状态不触发加载"
+        },
+        {
+          "requirement": "推理模型按需加载且状态可观测",
+          "scenario": "首次请求触发加载"
+        },
+        {
+          "requirement": "推理模型按需加载且状态可观测",
+          "scenario": "加载失败不影响服务启动"
+        }
+      ],
+      "idempotent": true,
+      "capability": "local-qwen-asr-inference",
+      "main_path": "/home/zhangs/asr_nvidia/openspec/specs/local-qwen-asr-inference/spec.md",
+      "delta_path": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-23-qwen-multi-instance-serving/specs/local-qwen-asr-inference/spec.md",
+      "preview_path": "/tmp/qwen-final4-spec-preview-20261124-7wtf4e5w/openspec/specs/local-qwen-asr-inference/spec.md",
+      "before_sha256": "6c48ec7a41806b510b2ca82e72281ffe0b7a4c8e5794d14b06a9d335661a0cbd",
+      "delta_sha256": "10c518e4e22848f1517da007cef33e1a328e5de2f9414c8582a7e270cf4cff1d",
+      "preview_sha256": "c9a80c8b561de0103f7a77ccbd66c6865efe37dfdd6fbda7723419e5ef8517bf",
+      "after_sha256": "c9a80c8b561de0103f7a77ccbd66c6865efe37dfdd6fbda7723419e5ef8517bf",
+      "preview_byte_identical": true
+    },
+    {
+      "modified_titles": [
+        "NPU 迁移保持 v3 接口序列化与计时契约",
+        "批执行保持独立段的业务归属"
+      ],
+      "added_titles": [
+        "正式持续转写返回段警告状态"
+      ],
+      "declared_modified_count": 2,
+      "declared_added_count": 1,
+      "actual_new_requirement_count": 1,
+      "removed_count": 0,
+      "renamed_count": 0,
+      "requirements_before": 5,
+      "requirements_after": 6,
+      "scenarios_before": 11,
+      "scenarios_after": 18,
+      "all_original_requirements_preserved": true,
+      "all_original_scenario_titles_preserved": true,
+      "unmentioned_requirements_unchanged": [
+        "保留最小业务接口集",
+        "移除低频能力依赖",
+        "语速统计覆盖非 ASCII 文本"
+      ],
+      "preserved_original_scenarios_in_modified_requirements": [
+        {
+          "requirement": "NPU 迁移保持 v3 接口序列化与计时契约",
+          "scenario": "NPU 转写请求返回结果"
+        },
+        {
+          "requirement": "NPU 迁移保持 v3 接口序列化与计时契约",
+          "scenario": "未请求增强能力"
+        },
+        {
+          "requirement": "NPU 迁移保持 v3 接口序列化与计时契约",
+          "scenario": "模型加载或推理失败"
+        },
+        {
+          "requirement": "批执行保持独立段的业务归属",
+          "scenario": "多个独立段组成一批"
+        },
+        {
+          "requirement": "批执行保持独立段的业务归属",
+          "scenario": "批次执行期间请求取消"
+        }
+      ],
+      "idempotent": true,
+      "capability": "offline-asr-service",
+      "main_path": "/home/zhangs/asr_nvidia/openspec/specs/offline-asr-service/spec.md",
+      "delta_path": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-23-qwen-multi-instance-serving/specs/offline-asr-service/spec.md",
+      "preview_path": "/tmp/qwen-final4-spec-preview-20261124-7wtf4e5w/openspec/specs/offline-asr-service/spec.md",
+      "before_sha256": "80740078077529e23da948cd23cac1a00a939660dc960b83f3ec1d53e88f9f36",
+      "delta_sha256": "63200d3d2233afd881e3e5b7688d16964d4c7bce44b5669b0bc9e834de9f42f7",
+      "preview_sha256": "69f1eaebf6ce5c016bd1cee347dc6d20d78ed1e98cd6d42ee2540819f97353a6",
+      "after_sha256": "69f1eaebf6ce5c016bd1cee347dc6d20d78ed1e98cd6d42ee2540819f97353a6",
+      "preview_byte_identical": true
+    },
+    {
+      "modified_titles": [
+        "限制同时处理的音频数量",
+        "限制对 Qwen 服务的并发请求数",
+        "通过配置外置运行参数",
+        "异步并行计算真实角色与情绪",
+        "v2 本地增强能力按模型池独立排队",
+        "增强音频容量是总容量的子集",
+        "等待队列按可用容量调度",
+        "取消和并发竞争不泄漏名额",
+        "验证效果与性能边界",
+        "验证角色与情绪的效果与性能",
+        "记录本地模型池排队对端到端耗时的影响",
+        "完成固定配置的全量 WAV 质量压测",
+        "解析 Qwen 转写结果"
+      ],
+      "added_titles": [
+        "正式持续多实例采用独立完整音频验收"
+      ],
+      "declared_modified_count": 13,
+      "declared_added_count": 1,
+      "actual_new_requirement_count": 1,
+      "removed_count": 0,
+      "renamed_count": 0,
+      "requirements_before": 49,
+      "requirements_after": 50,
+      "scenarios_before": 162,
+      "scenarios_after": 175,
+      "all_original_requirements_preserved": true,
+      "all_original_scenario_titles_preserved": true,
+      "unmentioned_requirements_unchanged": [
+        "提供 Qwen 版转写接口",
+        "以 VAD 段作为转写与时间轴单元",
+        "自动发现 Qwen 服务模型",
+        "按规则透传语言参数",
+        "返回语种占比字典",
+        "保留扩展字段",
+        "配置 v2 链路模型的落卡",
+        "规范化输出分段文本的标点",
+        "提供文本规范化开关",
+        "VAD worker 数量由设备数组固定决定",
+        "VAD 配置删除动态池参数",
+        "段级低能量过滤在 Qwen 请求前生效",
+        "段级 decibel 抽帧比例可控且统计口径稳定",
+        "段级过滤时间范围按完整音频边界控制",
+        "全局 FunASR 参数与段级参数职责分离",
+        "每个 VAD 段通过内存音频请求 Qwen",
+        "严格清理服务自有缓存文件",
+        "显示每个音频的有效段处理进度",
+        "检测并修复复读分段文本",
+        "长度异常但无复读结构时不得截断",
+        "复读判据的阈值可配置且有明确的标定依据",
+        "复读修复独立于文本规范化开关",
+        "复读修复行为可观测",
+        "提供细小声音统计报告",
+        "配置低音量过滤参数",
+        "自动搜索可行低音量阈值",
+        "低音量段不得发送给 Qwen",
+        "验证细小声音区间内无识别内容",
+        "参考音频验收必须区分帧和段",
+        "按时间和文本证据评估低音量过滤",
+        "审计复读后处理并识别漏网模式",
+        "形成可归档报告和后续优化决策",
+        "按请求的增强能力分类音频",
+        "关闭能力在准入之前拒绝",
+        "本地后端切换保持音频准入和取消契约",
+        "移除 v2 Qwen 路由"
+      ],
+      "preserved_original_scenarios_in_modified_requirements": [
+        {
+          "requirement": "限制同时处理的音频数量",
+          "scenario": "请求数超过音频并发上限"
+        },
+        {
+          "requirement": "限制同时处理的音频数量",
+          "scenario": "排队等待超时"
+        },
+        {
+          "requirement": "限制同时处理的音频数量",
+          "scenario": "队列容量已满"
+        },
+        {
+          "requirement": "限制同时处理的音频数量",
+          "scenario": "音频处理结束释放槽位"
+        },
+        {
+          "requirement": "限制同时处理的音频数量",
+          "scenario": "音频处理异常时释放槽位"
+        },
+        {
+          "requirement": "限制对 Qwen 服务的并发请求数",
+          "scenario": "单个音频产生大量分段"
+        },
+        {
+          "requirement": "限制对 Qwen 服务的并发请求数",
+          "scenario": "多个音频同时处理"
+        },
+        {
+          "requirement": "通过配置外置运行参数",
+          "scenario": "修改并发参数后重启生效"
+        },
+        {
+          "requirement": "通过配置外置运行参数",
+          "scenario": "VAD 旧配置不作为回退"
+        },
+        {
+          "requirement": "通过配置外置运行参数",
+          "scenario": "配置缺省时使用默认值"
+        },
+        {
+          "requirement": "异步并行计算真实角色与情绪",
+          "scenario": "开启角色与情绪能力"
+        },
+        {
+          "requirement": "异步并行计算真实角色与情绪",
+          "scenario": "角色与情绪能力未开启"
+        },
+        {
+          "requirement": "异步并行计算真实角色与情绪",
+          "scenario": "配置未开启说话人能力"
+        },
+        {
+          "requirement": "异步并行计算真实角色与情绪",
+          "scenario": "配置未开启情绪能力"
+        },
+        {
+          "requirement": "异步并行计算真实角色与情绪",
+          "scenario": "配置未同时开启说话人与情绪能力"
+        },
+        {
+          "requirement": "异步并行计算真实角色与情绪",
+          "scenario": "角色或情绪推断失败"
+        },
+        {
+          "requirement": "异步并行计算真实角色与情绪",
+          "scenario": "情绪模型精度"
+        },
+        {
+          "requirement": "异步并行计算真实角色与情绪",
+          "scenario": "情绪 TensorRT 精度"
+        },
+        {
+          "requirement": "异步并行计算真实角色与情绪",
+          "scenario": "两个模型使用不同后端"
+        },
+        {
+          "requirement": "v2 本地增强能力按模型池独立排队",
+          "scenario": "CAM++ 槽位少于 emotion2vec 槽位"
+        },
+        {
+          "requirement": "v2 本地增强能力按模型池独立排队",
+          "scenario": "本地模型池等待期间 Qwen 仍可调度"
+        },
+        {
+          "requirement": "增强音频容量是总容量的子集",
+          "scenario": "三个 A 和四个 B"
+        },
+        {
+          "requirement": "增强音频容量是总容量的子集",
+          "scenario": "五个 A 和三个 B"
+        },
+        {
+          "requirement": "增强音频容量是总容量的子集",
+          "scenario": "八个普通音频占满总容量"
+        },
+        {
+          "requirement": "增强音频容量是总容量的子集",
+          "scenario": "总容量和增强容量同时已满"
+        },
+        {
+          "requirement": "增强音频容量是总容量的子集",
+          "scenario": "两类容量均有余量"
+        },
+        {
+          "requirement": "增强音频容量是总容量的子集",
+          "scenario": "增强容量满不占满总容量"
+        },
+        {
+          "requirement": "等待队列按可用容量调度",
+          "scenario": "A 绕过被增强容量阻塞的 B"
+        },
+        {
+          "requirement": "等待队列按可用容量调度",
+          "scenario": "较早 B 变为可处理"
+        },
+        {
+          "requirement": "等待队列按可用容量调度",
+          "scenario": "两类共享等待上限"
+        },
+        {
+          "requirement": "等待队列按可用容量调度",
+          "scenario": "等待 B 不阻塞空闲总容量"
+        },
+        {
+          "requirement": "取消和并发竞争不泄漏名额",
+          "scenario": "等待中取消"
+        },
+        {
+          "requirement": "取消和并发竞争不泄漏名额",
+          "scenario": "获准与取消同时发生"
+        },
+        {
+          "requirement": "取消和并发竞争不泄漏名额",
+          "scenario": "获准与等待超时竞争"
+        },
+        {
+          "requirement": "取消和并发竞争不泄漏名额",
+          "scenario": "处理取消或清理异常"
+        },
+        {
+          "requirement": "验证效果与性能边界",
+          "scenario": "完成并发压测"
+        },
+        {
+          "requirement": "验证效果与性能边界",
+          "scenario": "产出测试报告"
+        },
+        {
+          "requirement": "验证角色与情绪的效果与性能",
+          "scenario": "角色与情绪效果比对"
+        },
+        {
+          "requirement": "验证角色与情绪的效果与性能",
+          "scenario": "8 路非对称模型池压测"
+        },
+        {
+          "requirement": "验证角色与情绪的效果与性能",
+          "scenario": "并行开销可接受"
+        },
+        {
+          "requirement": "验证角色与情绪的效果与性能",
+          "scenario": "开启增强能力不破坏分段结构"
+        },
+        {
+          "requirement": "验证角色与情绪的效果与性能",
+          "scenario": "显存与吞吐可记录"
+        },
+        {
+          "requirement": "记录本地模型池排队对端到端耗时的影响",
+          "scenario": "8 路完整音频压测"
+        },
+        {
+          "requirement": "记录本地模型池排队对端到端耗时的影响",
+          "scenario": "模型池实例比例变化"
+        },
+        {
+          "requirement": "完成固定配置的全量 WAV 质量压测",
+          "scenario": "45 个 WAV 全部配对并执行"
+        },
+        {
+          "requirement": "完成固定配置的全量 WAV 质量压测",
+          "scenario": "记录端到端分位数"
+        },
+        {
+          "requirement": "解析 Qwen 转写结果",
+          "scenario": "返回带语种前缀的文本"
+        },
+        {
+          "requirement": "解析 Qwen 转写结果",
+          "scenario": "段内无有效语音"
+        },
+        {
+          "requirement": "解析 Qwen 转写结果",
+          "scenario": "服务返回多段拼接文本"
+        },
+        {
+          "requirement": "解析 Qwen 转写结果",
+          "scenario": "Qwen 服务调用失败"
+        }
+      ],
+      "idempotent": true,
+      "capability": "qwen-asr-v2-adapter",
+      "main_path": "/home/zhangs/asr_nvidia/openspec/specs/qwen-asr-v2-adapter/spec.md",
+      "delta_path": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-23-qwen-multi-instance-serving/specs/qwen-asr-v2-adapter/spec.md",
+      "preview_path": "/tmp/qwen-final4-spec-preview-20261124-7wtf4e5w/openspec/specs/qwen-asr-v2-adapter/spec.md",
+      "before_sha256": "8711d13837d1422bee081366468cfa5a0e06c049c22aa991c98ab26d6deeb606",
+      "delta_sha256": "ecb107c492983b5141854433a7f39630d4f4910339c146addbd4cba80190ce84",
+      "preview_sha256": "4d828fe92aea4d9dce1fdfbaabacc308eb41fc38101cfca9c5132cfa11328ed7",
+      "after_sha256": "4d828fe92aea4d9dce1fdfbaabacc308eb41fc38101cfca9c5132cfa11328ed7",
+      "preview_byte_identical": true
+    },
+    {
+      "modified_titles": [
+        "按阶段受控升压",
+        "执行资源安全闸门",
+        "保留请求和模型池关联指标",
+        "测试结束后验证回收"
+      ],
+      "added_titles": [
+        "正式多实例采用真实完整接口验收矩阵",
+        "正式多实例性能和质量采用完整统计口径"
+      ],
+      "declared_modified_count": 4,
+      "declared_added_count": 2,
+      "actual_new_requirement_count": 2,
+      "removed_count": 0,
+      "renamed_count": 0,
+      "requirements_before": 8,
+      "requirements_after": 10,
+      "scenarios_before": 18,
+      "scenarios_after": 31,
+      "all_original_requirements_preserved": true,
+      "all_original_scenario_titles_preserved": true,
+      "unmentioned_requirements_unchanged": [
+        "采集统一资源快照",
+        "输出资源压力归因报告",
+        "转写推理资源必须纳入诊断归因",
+        "共享设备与异步执行的诊断边界明确"
+      ],
+      "preserved_original_scenarios_in_modified_requirements": [
+        {
+          "requirement": "按阶段受控升压",
+          "scenario": "逐级进入下一阶段"
+        },
+        {
+          "requirement": "按阶段受控升压",
+          "scenario": "阶段失败停止升压"
+        },
+        {
+          "requirement": "执行资源安全闸门",
+          "scenario": "Swap 或内存压力终止"
+        },
+        {
+          "requirement": "执行资源安全闸门",
+          "scenario": "GPU 或进程异常终止"
+        },
+        {
+          "requirement": "保留请求和模型池关联指标",
+          "scenario": "定位请求落后环节"
+        },
+        {
+          "requirement": "测试结束后验证回收",
+          "scenario": "正常阶段结束"
+        },
+        {
+          "requirement": "测试结束后验证回收",
+          "scenario": "异常阶段终止"
+        },
+        {
+          "requirement": "测试结束后验证回收",
+          "scenario": "测试批次完成后释放接口"
+        },
+        {
+          "requirement": "测试结束后验证回收",
+          "scenario": "关闭流程自身被重复取消"
+        },
+        {
+          "requirement": "测试结束后验证回收",
+          "scenario": "测试服务关闭失败"
+        }
+      ],
+      "idempotent": true,
+      "capability": "resource-pressure-diagnostics",
+      "main_path": "/home/zhangs/asr_nvidia/openspec/specs/resource-pressure-diagnostics/spec.md",
+      "delta_path": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-23-qwen-multi-instance-serving/specs/resource-pressure-diagnostics/spec.md",
+      "preview_path": "/tmp/qwen-final4-spec-preview-20261124-7wtf4e5w/openspec/specs/resource-pressure-diagnostics/spec.md",
+      "before_sha256": "7f8be35e0d086530c2dbabdb1dfeb3e090fe14bc42d9f391908888c50b9676cb",
+      "delta_sha256": "8522e182a2b02c93cccb5a47a05397e85aa078c0298796eba02bf0c1e76bfe2c",
+      "preview_sha256": "c4893007962fabcdc6071b6bddb85b262b8b6d42a772fc1ca733875765da68e0",
+      "after_sha256": "c4893007962fabcdc6071b6bddb85b262b8b6d42a772fc1ca733875765da68e0",
+      "preview_byte_identical": true
+    },
+    {
+      "modified_titles": [
+        "明确实例数量的语义",
+        "维护配置项清单",
+        "启动时固定预热 VAD 实例",
+        "默认配置体现有效并发来源",
+        "支持安全的测试收尾",
+        "增强音频并发配置具有确定默认值",
+        "暴露音频分类准入状态",
+        "文档明确分类限制与能力错误",
+        "启动前校验部署前置条件"
+      ],
+      "added_titles": [
+        "每owner预算与配置边界明确",
+        "多owner状态身份和资源可核对",
+        "多owner暖身覆盖和正式计时分离",
+        "增强池交付默认来自最终四Qwen共驻标定"
+      ],
+      "declared_modified_count": 9,
+      "declared_added_count": 4,
+      "actual_new_requirement_count": 4,
+      "removed_count": 0,
+      "renamed_count": 0,
+      "requirements_before": 23,
+      "requirements_after": 27,
+      "scenarios_before": 57,
+      "scenarios_after": 70,
+      "all_original_requirements_preserved": true,
+      "all_original_scenario_titles_preserved": true,
+      "unmentioned_requirements_unchanged": [
+        "限制服务日志的保留规模",
+        "提供稳定的状态查询契约",
+        "降低控制台 HTTP 访问日志噪声",
+        "暴露资源诊断状态",
+        "分类准入记录有界且可区分错误原因",
+        "明确实例设备与 TensorRT 配置的优先级",
+        "运维状态必须区分配置值和实际后端",
+        "后端文档和性能报告必须反映实际配置",
+        "八路完整音频报告必须提供可复算的 P50 和 P95",
+        "提供可复现的 v3 Docker 部署入口",
+        "镜像标签符合 v3 时间格式",
+        "配置挂载和镜像模型路径可观测",
+        "性能报告保留业务计时字段并区分内部测量",
+        "交付文件准备与部署执行分阶段跟踪"
+      ],
+      "preserved_original_scenarios_in_modified_requirements": [
+        {
+          "requirement": "明确实例数量的语义",
+          "scenario": "配置多个实例"
+        },
+        {
+          "requirement": "明确实例数量的语义",
+          "scenario": "配置缺省"
+        },
+        {
+          "requirement": "维护配置项清单",
+          "scenario": "配置文件包含已下线功能的配置项"
+        },
+        {
+          "requirement": "维护配置项清单",
+          "scenario": "配置文件包含旧模型设备结构"
+        },
+        {
+          "requirement": "维护配置项清单",
+          "scenario": "缺少可选配置项"
+        },
+        {
+          "requirement": "启动时固定预热 VAD 实例",
+          "scenario": "默认混合设备配置"
+        },
+        {
+          "requirement": "启动时固定预热 VAD 实例",
+          "scenario": "启动时设备不可用"
+        },
+        {
+          "requirement": "默认配置体现有效并发来源",
+          "scenario": "检查默认配置"
+        },
+        {
+          "requirement": "默认配置体现有效并发来源",
+          "scenario": "功能关闭时模型池不生效"
+        },
+        {
+          "requirement": "支持安全的测试收尾",
+          "scenario": "收到测试终止信号"
+        },
+        {
+          "requirement": "支持安全的测试收尾",
+          "scenario": "Qwen 服务保持运行"
+        },
+        {
+          "requirement": "增强音频并发配置具有确定默认值",
+          "scenario": "缺少新增配置项"
+        },
+        {
+          "requirement": "增强音频并发配置具有确定默认值",
+          "scenario": "显式配置其他上限"
+        },
+        {
+          "requirement": "增强音频并发配置具有确定默认值",
+          "scenario": "非法增强上限"
+        },
+        {
+          "requirement": "增强音频并发配置具有确定默认值",
+          "scenario": "增强上限大于总上限"
+        },
+        {
+          "requirement": "增强音频并发配置具有确定默认值",
+          "scenario": "多服务实例"
+        },
+        {
+          "requirement": "暴露音频分类准入状态",
+          "scenario": "查询混合活动及等待状态"
+        },
+        {
+          "requirement": "暴露音频分类准入状态",
+          "scenario": "首次业务请求前查询"
+        },
+        {
+          "requirement": "暴露音频分类准入状态",
+          "scenario": "功能关闭并拒绝增强请求"
+        },
+        {
+          "requirement": "文档明确分类限制与能力错误",
+          "scenario": "查阅默认并发示例"
+        },
+        {
+          "requirement": "文档明确分类限制与能力错误",
+          "scenario": "查阅能力关闭行为"
+        },
+        {
+          "requirement": "启动前校验部署前置条件",
+          "scenario": "GPU 或资产不可用"
+        },
+        {
+          "requirement": "启动前校验部署前置条件",
+          "scenario": "前置条件通过"
+        }
+      ],
+      "idempotent": true,
+      "capability": "service-operations",
+      "main_path": "/home/zhangs/asr_nvidia/openspec/specs/service-operations/spec.md",
+      "delta_path": "/home/zhangs/asr_nvidia/openspec/changes/2026-11-23-qwen-multi-instance-serving/specs/service-operations/spec.md",
+      "preview_path": "/tmp/qwen-final4-spec-preview-20261124-7wtf4e5w/openspec/specs/service-operations/spec.md",
+      "before_sha256": "20bcfb297565554c98e696a9c75d5df92159eba7f1dc8356485f419a2cbde64d",
+      "delta_sha256": "be8c310ac3f06f501246fd1b05a8f5ab21d0946c4323a3aeddfb8fa37acad653",
+      "preview_sha256": "b302ba336fc7628699865e5d9b9a9f5ffd046946d017024eb5b96badfe9bfb5e",
+      "after_sha256": "b302ba336fc7628699865e5d9b9a9f5ffd046946d017024eb5b96badfe9bfb5e",
+      "preview_byte_identical": true
+    }
+  ],
+  "unmodified_main_specs": {
+    "openspec/specs/npu-910b-runtime/spec.md": {
+      "before_sha256": "5e82e77ee5c0e72bdad40f59574048c92315133ebd21c0be7cf9afc631dd822a",
+      "after_sha256": "5e82e77ee5c0e72bdad40f59574048c92315133ebd21c0be7cf9afc631dd822a",
+      "unchanged": true
+    },
+    "openspec/specs/local-model-inference-backends/spec.md": {
+      "before_sha256": "c4ce9dbbdb0184359e32bafd801931d7850897ab8b1c01d54ca67c0c6e68000b",
+      "after_sha256": "c4ce9dbbdb0184359e32bafd801931d7850897ab8b1c01d54ca67c0c6e68000b",
+      "unchanged": true
+    },
+    "openspec/specs/container-model-packaging/spec.md": {
+      "before_sha256": "4adfcdc5df66bb44ca2fdfd12f887abd3ed6e31e9aa17822c150f52983d0e447",
+      "after_sha256": "4adfcdc5df66bb44ca2fdfd12f887abd3ed6e31e9aa17822c150f52983d0e447",
+      "unchanged": true
+    }
+  },
+  "checks": [
+    {
+      "command": [
+        "openspec",
+        "validate",
+        "--specs",
+        "--strict",
+        "--no-interactive"
+      ],
+      "returncode": 0,
+      "stdout": "✓ spec/container-model-packaging\n✓ spec/local-model-inference-backends\n✓ spec/local-model-runtime\n✓ spec/local-qwen-asr-inference\n✓ spec/npu-910b-runtime\n✓ spec/offline-asr-service\n✓ spec/qwen-asr-v2-adapter\n✓ spec/resource-pressure-diagnostics\n✓ spec/service-operations\nTotals: 9 passed, 0 failed (9 items)\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "openspec",
+        "validate",
+        "2026-11-23-qwen-multi-instance-serving",
+        "--strict",
+        "--no-interactive"
+      ],
+      "returncode": 0,
+      "stdout": "Change '2026-11-23-qwen-multi-instance-serving' is valid\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--check",
+        "--",
+        "openspec/specs"
+      ],
+      "returncode": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "passed": true
+}

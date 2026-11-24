@@ -52,7 +52,7 @@
 - **THEN** 系统返回 `{"msg": "Qwen 服务不可用或未发现可用模型", "code": 4011}`
 
 ### Requirement: 解析 Qwen 转写结果
-系统 MUST 解析转写链路返回的原始文本，剥离 `language <语种><asr_text>` 前缀，取出转写文本与识别语种；返回文本为空或语种为空的段 MUST NOT 产出响应分段。进程内推理的原始输出 MUST 保持与外部服务一致的前缀格式，既有解析契约 MUST NOT 失效。
+系统 MUST 解析并剥离`language <语种><asr_text>`前缀，保持内嵌与原链路格式一致；空文本或空语种不产出响应段。legacy保留原配置失败重试；continuous仅明确未接收的容量拒绝可从首次拒绝起30秒内最多重试3次，沿用同一段ID，超限按既有错误收尾。已接收或接收状态未知 MUST NOT 重发，不重试整音频；内容异常沿段警告/恢复规则，基础设施错误不得伪装文本成功。
 
 #### Scenario: 返回带语种前缀的文本
 - **WHEN** 转写链路返回 `language Chinese<asr_text>识别文本`
@@ -68,7 +68,7 @@
 
 #### Scenario: Qwen 服务调用失败
 - **WHEN** 转写链路不可用、超时或返回错误状态
-- **THEN** 系统按配置的失败策略重试，重试耗尽后返回 `{"msg": "Qwen 服务调用失败，请稍后再试", "code": 4012}`
+- **THEN** legacy按配置失败策略重试，耗尽后保留`{"msg": "Qwen 服务调用失败，请稍后再试", "code": 4012}`；continuous仅对明确未接收的容量拒绝从首次拒绝起30秒内最多重试3次同段ID，已接收或接收状态未知不重发、不重试整音频，按既有4011/4012等适用错误安全收尾
 
 ### Requirement: 按规则透传语言参数
 系统 MUST 保留 `/v3/seacraft_asr` 的 `language` 请求参数（默认 `auto`），但当取值为 `auto`、空串或未提交时 MUST NOT 指定具体语种，由模型自动识别；提交具体语种时 MUST 传入处理器，处理器接受语种全名或 ISO 简写。系统 MUST 锁定并记录处理器实现与版本；当前目标环境的 system hint 行为 MUST 通过已安装 5.13.0 代码及实机语种用例验证，MUST NOT 将 latest 文档中的 assistant forced-language 行为当作本机事实。响应的 `language` MUST 取模型实际识别出的语种，而非请求参数回显。语种不受支持时 MUST 返回 `4009`，MUST NOT 降级为自动识别。
@@ -105,7 +105,7 @@
 - **THEN** 响应 `language_ratio` 为空字典
 
 ### Requirement: 限制同时处理的音频数量
-系统 MUST 使用 `audio_concurrency` 限制 A+B 同时处理的音频文件总数（默认 8）。每个请求 MUST 从准入成功持有槽位至处理及该请求全部临时文件清理完成，并在成功、异常或取消时准确释放。默认不等待，超过总上限 MUST 立即返回总处理队列满；B 类请求另受增强音频并发上限限制。
+continuous模式总音频配置容量 MUST 由Qwen实例数N派生（最终默认4、合法1～8），新请求只可原子取得一个健康可租owner和音频槽位；legacy显式模式保留其配置上限。每请求 MUST 持有同一owner至处理及全部设备/临时资源安全收尾，成功、异常、取消均准确释放。默认不等待，总满4013优先；B另受增强子上限限制。健康下降仅限制新授予，MUST NOT 伪释放仍在收尾的租约。
 
 #### Scenario: 请求数超过音频并发上限
 - **WHEN** `queue_wait_timeout_s=0` 且活动音频总数已达到 `audio_concurrency`
@@ -127,8 +127,16 @@
 - **WHEN** 一个音频请求在处理过程中抛出异常
 - **THEN** 系统清理该请求产生的全部临时文件后准确释放其全部活动槽位，不影响后续请求
 
+#### Scenario: 默认四实例音频准入
+- **WHEN** continuous配置N=4且四owner健康，已准入四条A/B音频
+- **THEN** 新A或B按既有默认立即拒绝策略返回4013，不创建第五Qwen、不按文件名或SHA分流；现有请求的owner归属不变
+
+#### Scenario: 任意文件与后续请求复用
+- **WHEN** 两个同名或同内容音频并发提交，随后另一个新音频到达
+- **THEN** 每个请求按request_id独立租健康owner并保持到安全归还；新请求可以复用已安全归还的owner，不要求测试源清单
+
 ### Requirement: 限制对 Qwen 服务的并发请求数
-系统 MUST 限制单个音频内同时执行的转写推理任务数量（`segment_concurrency`，由实测标定），并 MUST 限制所有音频合计同时执行的转写推理任务数量（`request_concurrency`，由实测标定），超出部分 MUST 等待可用名额后再执行。两个交付默认值 MUST 与本地推理的实测承载能力匹配，并记录依据，MUST NOT 将历史 16/128 或当前配置快照视为已验收档位。物理执行可在同一实例内采用已验证的微批，但每个逻辑段任务仍分别计入对应并发闸门；增加信号量本身 MUST NOT 被描述为吞吐扩容。
+continuous中每owner及其所绑定音频的Qwen在途上限 MUST 为配置S（默认16），全局配置上限 MUST 由N×S派生，最终默认64；超出等待，不重复维护冲突的request_concurrency。名额覆盖准备、待执行、设备执行和安全收尾，段独立完成即归还，不等待整组或增强汇合。物理步不得超过该owner的S，增加信号量不代表吞吐扩容；legacy显式模式保留原参数契约。
 
 #### Scenario: 单个音频产生大量分段
 - **WHEN** 一个音频切分出的有效段数超过配置的 segment_concurrency
@@ -136,7 +144,11 @@
 
 #### Scenario: 多个音频同时处理
 - **WHEN** 多个音频同时进入处理
-- **THEN** 全部音频合计执行的转写推理并发数不超过 配置的 `request_concurrency`
+- **THEN** 全部音频合计执行的转写推理并发数不超过 continuous的派生N×S（legacy为其配置的`request_concurrency`）
+
+#### Scenario: 短段结束及时补位
+- **WHEN** 同一owner一个段已安全结束而其它段仍生成，且音频还有待处理段
+- **THEN** 立即归还该段credit并在下个可用安全步接纳后续段，保留其它段独立KV；不等待16段一起结束、不跨owner迁移已执行段
 
 ### Requirement: 保留扩展字段
 `/v3/seacraft_asr` 的每个成功响应分段 MUST 保留 `segment_words`、`role`、`emotion` 三个字段，其中 `segment_words` 为空数组。`role`、`emotion` 在对应能力未被请求或已启用模型的段级推断失败时为 `null`；请求要求的能力被配置关闭时 MUST 返回请求级错误，不得作为成功转写返回 `null`。
@@ -150,11 +162,11 @@
 - **THEN** 每个分段的 `role` 与 `emotion` 均为 `null`
 
 ### Requirement: 通过配置外置运行参数
-Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音频并发度、增强音频并发度、队列容量、超时和 VAD 参数 MUST 来自配置文件；VAD 参数 MUST 只从 `[vad]` 读取，VAD 实例数 MUST 只由 `[vad].vad_device` 数组长度决定，动态 VAD 池参数 MUST 不再作为有效配置。
+Qwen本地目录、设备、实例数N、每owner段上限S、B上限、队列、超时及VAD参数 MUST 来自配置。continuous总音频N/全局N×S MUST 派生；旧audio_concurrency/request_concurrency显式相等可兼容并提示，冲突或非法值须启动前报迁移错误，根与Docker模板不重复维护派生值。VAD参数 MUST 只从`[vad]`读取，VAD实例数仅由`[vad].vad_device`数组长度决定，旧动态池字段不再有效；显式legacy保留其原参数行为。
 
 #### Scenario: 修改并发参数后重启生效
-- **WHEN** 运维把 `[vad].vad_device` 改为经验证的设备数组、`[qwen_asr].segment_concurrency` 改为有标定依据的值、`[qwen_asr].audio_concurrency` 改为 8、`[qwen_asr].audio_spk_emo_concurrency` 改为 4 并重启服务
-- **THEN** 服务按设备数组长度启动固定 VAD worker，并按新的转写、总音频和增强音频并发参数运行
+- **WHEN** 运维在continuous中配置实例数N、经验证的段上限S、B上限4与合法`[vad].vad_device`，或显式选择legacy配置，并重启服务
+- **THEN** 服务按VAD数组长度启动固定worker；continuous按N与N×S派生总音频/全局段窗口并展示B有效容量，legacy按其独立参数运行，配置修改需重启
 
 #### Scenario: VAD 旧配置不作为回退
 - **WHEN** 配置只在 `[qwen_asr]` 中提供 `vad_device` 或其它 VAD 参数，而 `[vad]` 未提供对应配置
@@ -163,6 +175,10 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 #### Scenario: 配置缺省时使用默认值
 - **WHEN** 配置文件缺少相关新配置项
 - **THEN** 服务使用配置加载器与交付模板一致的默认值；VAD 设备配比及段级/全局并发须有实机依据，不能静默恢复 NVIDIA 时期固定 16/128，默认满额立即拒绝策略保持不变
+
+#### Scenario: 旧派生字段冲突
+- **WHEN** continuous配置N=4、S=16但旧audio_concurrency或request_concurrency显式值与4或64冲突
+- **THEN** 服务启动前明确指出冲突字段、派生值和迁移办法，不静默忽略或启动成另一容量；相等值仅兼容读取并提示迁移
 
 ### Requirement: 配置 v2 链路模型的落卡
 该历史 Requirement 名称中的 v2 仅为能力标识，本次仅作用于现行 `/v3/seacraft_asr` 链路，不恢复 v2 路由。系统 MUST 通过 `[model_device_pool]` 下的 `speech_campplus_devices` 与 `emotion2vec_devices` 数组配置 CAM++ 和 emotion2vec 的实例设备；数组元素数量分别决定两个模型池的配置容量，旧 `[model_device]` 单设备字段和 `[model_device.local_model_pool]` 结构 MUST 不再生效。设备元素 MUST 支持 `cpu` 与 `npu:N`。
@@ -180,7 +196,7 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 - **THEN** 服务只使用新数组，并记录配置迁移提示
 
 ### Requirement: 异步并行计算真实角色与情绪
-系统 MUST 使用现有 CAM++ 与 emotion2vec 模型按请求能力产生角色和情绪，与同段 Qwen 任务并行发起。各模型按独立设备数组的健康实例提供容量，不增加共享模型槽位；总/B准入不改变模型池容量。CPU 使用 PyTorch CPU，`npu:N` 使用原生 torch_npu，CAM++ 与 emotion2vec MUST 保持已验证的 FP32 参数、浮点缓冲和计算策略，MUST NOT 沿用旧 CUDA FP16 或 TensorRT engine 精度配置。能力开关、段级失败降级和请求级错误优先级 MUST 保留。下列旧 Scenario 标题仅为稳定标识。
+系统 MUST 在VAD过滤、段credit与PCM预算取得及有效段裁剪后，并发发起同段Qwen、所请求CAM++及emo任务；各池独立等待，不把增强串成Qwen完成后调用，不承诺同卡kernel物理同时。CAM/emo按独立设备数组的健康容量执行，不随N复制或互借；CPU用PyTorch、NPU用torch_npu，保持已验证FP32参数/缓冲/计算，不使用旧FP16或TensorRT。功能开关、段级失败降级、错误优先级、现有聚类/ITN及业务映射 MUST 保留。
 
 #### Scenario: 开启角色与情绪能力
 - **WHEN** 两个功能开关均为 `true`，请求 `showSpk=true`、`showEmotion=true` 且模型推断成功
@@ -218,11 +234,19 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 - **WHEN** CAM++ 与emotion2vec分别采用经配置的CPU或NPU实例，或采用非对称实例数量
 - **THEN** 增强任务仍与同段Qwen任务并行发起，各自按所属模型池健康容量执行，不借用其它池槽位、不隐式回退、不改变业务映射
 
+#### Scenario: 增强时长边界
+- **WHEN** 有效段小于0.3秒，或保留段处于0.3～不足1秒、1～10秒含边界、超过10秒
+- **THEN** 小于0.3秒三路均不执行；保留且不少于0.3秒的段可做CAM，emo仅1～10秒真实推理，区间外按原规则返回平淡；skip单列且不计NN推理成功
+
+#### Scenario: Qwen先完成而增强仍在途
+- **WHEN** 同段Qwen已达到真实安全终态，CAM或emo仍等待或执行
+- **THEN** Qwen段credit先归还使后续段可补位；该段PCM仍由请求持有至三路均安全终态，取消不能提前释放PCM或正在执行的模型实例
+
 ### Requirement: 验证效果与性能边界
-系统 MUST 使用 `test/音频文件/` 实际可用且可追溯的音频完成本轮NPU效果与性能验证。报告 MUST 区分单路、混合并发、冷启动、稳态与候选实验，覆盖完整音频边界、幻觉/复读观测、NPU资源与客户端端到端时延；本轮正式混合验收按八条完整SHA256去重WAV的4B+4A及g1/g2条件执行。历史1/2/4/8逐档专项与当前验收范围 MUST 分别列明，未执行档位不得冒称完成；无人工真值时不得输出绝对准确率、WER或时间戳准确率。
+系统 MUST 使用显式清单、完整可追溯音频保存效果与端到端性能证据。下列八文件4B+4A/g1g2场景仅为显式选择的历史legacy专项，不是新continuous缺省验收，未执行不得称完成。正式continuous按最终N4/CAM4/emo1的B4及增强驻留A4要求验证，N6 A6/A4/B4与共驻失败保留历史，两类矩阵不得替代。报告须区分冷态/稳态/候选、过滤/复读/NPU资源及客户端时延；无人工真值不得输出绝对准确率、WER或时间戳准确率。
 
 #### Scenario: 完成并发压测
-- **WHEN** 按本轮测试计划执行单路、同源暖标定或八条独立完整音频混合批次
+- **WHEN** 显式选择历史legacy测试计划执行单路、同源暖标定或八条独立完整音频混合批次
 - **THEN** 分别记录样本、并发/实际活动峰值、g1/g2、加载是否计入、NPU与host资源、端到端耗时、错误、语种和质量观测；同源重复暖标定不冒充八条独立文件，未执行的历史并发专项列为未执行/不适用及原因
 
 #### Scenario: 产出测试报告
@@ -230,18 +254,18 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 - **THEN** 仓库保留可复算中文报告与原始响应/日志/清单，说明文本一致性、分段/时间边界、幻觉/复读样例及证据限制；没有人工标注或可追溯旧设备基准时明确未知，不将短片一致或无错误宣称绝对准确率或最优性能
 
 ### Requirement: 验证角色与情绪的效果与性能
-系统 MUST 在本轮可用音频上验证role/emotion及其模型数值和业务映射，测量时延、吞吐、模型池等待与明确定义口径的NPU/host资源增量。参考优先使用可追溯同权重CUDA golden；缺少时使用CPU FP32参考并明确限制，MUST NOT 恢复已下线接口来制造基准。正式八路验收 MUST 使用同一清单的八条完整去重WAV、4B+4A、NPU原生三CAM++/一emotion2vec与实际健康容量，按相同条件比较g1/g2；不把旧CUDA6:2组合作为本轮默认。
+系统 MUST 验证CAM/emo数值、业务标签、聚类和段结构，记录端到端延迟、吞吐、各池等待及资源范围；优先可追溯同权重CUDA golden，缺少则用CPU FP32并说明限制，不恢复旧接口。下列八路非对称池/g1g2与单路30%场景仅在显式历史legacy专项适用；正式continuous按独立B4要求标定，不以三CAM/一emo或旧6:2充当新默认，不把纯A约200秒目标承诺给B4。
 
 #### Scenario: 角色与情绪效果比对
 - **WHEN** 使用同段PCM、原始权重、特征与映射规则比较CPU FP32参考和NPU原生输出
 - **THEN** 保留CAM++192维embedding、emotion2vec完整分类及误差/容差证据，再核对角色聚类与业务标签；记录不一致样本，无CUDA golden或人工角色/情绪标注时明确未验证相应准确率，不调用已404的v2/v1.1.8充作参考
 
 #### Scenario: 8 路非对称模型池压测
-- **WHEN** 宿主npu:7使用三CAM++/一emotion2vec、单Qwen和固定VAD池，对八条完整去重WAV执行4B+4A并比较g1=1/1与g2=2/2
+- **WHEN** 显式选择历史legacy专项，在宿主npu:7使用三CAM++/一emotion2vec、单Qwen和固定VAD池，对八条完整去重WAV执行4B+4A并比较g1=1/1与g2=2/2
 - **THEN** 记录实际健康实例、总/B峰值、各池busy/waiting、逐请求客户端耗时及线性插值P50/P95、吞吐、错误、NPU/host与共享卡干扰；不同容量另列，不与本轮条件混算，按服务八路报告契约保留原始证据并关闭owned资源
 
 #### Scenario: 并行开销可接受
-- **WHEN** 比较「仅转写」与「说话人与情绪全开」两组在同一并发档位下的端到端时延
+- **WHEN** 显式选择历史legacy单路开销专项，比较「仅转写」与「说话人与情绪全开」两组在同一并发档位下的端到端时延
 - **THEN** 单路并发下全开组的 P50 时延增幅不超过 30%；更高并发档位下如实记录增幅幅度并给出可选处置手段供决策
 
 #### Scenario: 开启增强能力不破坏分段结构
@@ -595,8 +619,7 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 - **THEN** 报告明确标记声音规则无可行解，只有在后续阶段才允许评估音频段时长条件
 
 ### Requirement: v2 本地增强能力按模型池独立排队
-
-系统 MUST 让每个 VAD 段的 CAM++ 请求进入 CAM++ 独立模型池、emotion2vec 请求进入 emotion2vec 独立模型池；本地增强能力的等待 MUST 不改变 Qwen-ASR 的请求并发配置，也 MUST NOT 让一个模型池借用另一个模型池的实例。
+系统 MUST 让每段CAM++和emotion2vec进入各自独立共享池，不把每个Qwen owner复制成一套增强池，也不让两个池互借实例。增强等待 MUST NOT 持有已经安全结束的Qwen段credit；全服务PCM仍在全部所需分支终态后释放，并允许正常有界反压。段的三路入口仍受Qwen准备窗口及PCM预算约束；这不意味着每池实际并发等于N×S。
 
 #### Scenario: CAM++ 槽位少于 emotion2vec 槽位
 - **WHEN** CAM++ 设备数组配置 3 个实例且 emotion2vec 设备数组配置 1 个实例
@@ -604,29 +627,32 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 
 #### Scenario: 本地模型池等待期间 Qwen 仍可调度
 - **WHEN** 某个 VAD 段等待 CAM++ 或 emotion2vec 实例
-- **THEN** 其它已获得本地模型实例的段仍可并行调用 Qwen，且 Qwen 的 `segment_concurrency` 与 `request_concurrency` 上限保持生效
+- **THEN** 其它获准段仍可推进Qwen，安全结束的Qwen credit可先归还；每owner S及派生N×S继续限制Qwen，全服务PCM约束仍生效
 
 ### Requirement: 记录本地模型池排队对端到端耗时的影响
-
-系统 MUST 为 v3 请求记录 CAM++ 和 emotion2vec 的调用次数、推理耗时和模型池等待耗时，并 MUST 能在测试报告中分别比较本地模型等待、VAD、Qwen 分段处理和其它后处理阶段。
+系统 MUST 为v3记录CAM++/emo实际调用、推理、等待、时长skip与失败，分别比较VAD、裁剪、Qwen、各池等待、汇合、聚类和ITN。下列八路g1/g2为显式历史legacy专项，正式continuous使用最终N4固定A4/B4及增强驻留A4，不能互作验收。所有实际能力调用与请求开关关联，A不调用未请求增强；本次不改变聚类/ITN执行器或算法。
 
 #### Scenario: 8 路完整音频压测
-- **WHEN** 对本轮八条完整SHA256去重WAV按4B+4A执行同条件g1/g2混合批次
+- **WHEN** 显式选择历史legacy专项，对八条完整SHA256去重WAV按4B+4A执行同条件g1/g2混合批次
 - **THEN** 结果包含总/B实际活动峰值、两个模型池各自的busy/waiting与调用/跳过/失败情况、等待耗时、客户端端到端P50/P95、错误数和音频吞吐，A请求不触发未请求增强能力
 
 #### Scenario: 模型池实例比例变化
 - **WHEN** 仅改变两个设备数组的元素数量而不新增槽位配置
 - **THEN** 测试可以比较不同模型实例组合对 CAM++ 等待、emotion2vec 等待和端到端效率的影响
 
+#### Scenario: 正式四路双开增强对照
+- **WHEN** 正式continuous在四份Qwen及最终CAM4/emo1共驻下，对同一a1～a4分别执行A4与showSpk/showEmotion均true的B4
+- **THEN** 记录完整n4或删失子集口径、真实role/emotion字段与调用/skip覆盖、各池等待/推理、聚类/ITN及HBM；没有双开真实调用不能仅凭HTTP200宣称增强通过
+
 ### Requirement: 完成固定配置的全量 WAV 质量压测
-系统 MUST 支持按显式清单对 `test/音频文件/` 的完整WAV执行 `/v3/seacraft_asr` 质量与性能验证，保存每请求响应、错误、耗时和过滤/复读统计。本轮完整批次 MUST 为八条按完整源SHA256去重的WAV、4B+4A、总8/B4、Qwen单副本、三CAM++/一emo，分别执行g1=1/1与g2=2/2对照，按完整实测和质量/资源约束选择并记录最终默认；VAD、RMS及其它阈值保持迁移前实际行为。MUST NOT 自动套用历史RMS-41、segment4/audio16或要求恢复旧v2及其45文件配对资产。历史专项与本轮清单分别记录，不将八文件结果冒称旧专项已执行。
+系统 MUST 支持显式清单完整WAV的v3质量与性能验证并保存响应、错误、耗时、过滤和复读证据。本需求中八去重文件4B+4A、总8/B4、单Qwen、三CAM/一emo及g1/g2仅作用于显式历史legacy专项；新continuous使用最终N4/CAM4/emo1的B4及增强驻留A4矩阵，原N6/N5结果保留，不能勾选旧任务。VAD/RMS等阈值保持，不自动套用RMS-41或旧segment4/audio16，也不恢复v2或补造45文件配对。
 
 #### Scenario: 45 个 WAV 全部配对并执行
-- **WHEN** 准备本轮实际八条完整WAV清单，或另行提供历史45文件及其Paraformer配对参考
+- **WHEN** 显式选择历史legacy八条完整WAV专项，或另行提供历史45文件及其Paraformer配对参考
 - **THEN** 本轮验证先核八文件ID、路径编码、大小/完整时长/SHA256及实际配置，按固定清单完成4B+4A；历史标题保留作稳定标识，不以缺少旧45配对阻塞本轮迁移，也不称其已完成。若另行执行历史参考专项则逐一核对配对，缺失/多余明确失败，不补造旧接口或基线
 
 #### Scenario: 记录端到端分位数
-- **WHEN** 完整清单请求全部完成或任一失败
+- **WHEN** 显式历史legacy完整八文件清单请求全部完成或任一失败
 - **THEN** 报告每档成功数/8、失败/超时与原始逐文件耗时；成功完整批次按既有八路契约计算客户端端到端P50/P95和最大值、RTF及吞吐，失败批次完整保留并标记不完整，不丢失败后冒称八路成功
 
 ### Requirement: 按时间和文本证据评估低音量过滤
@@ -690,31 +716,43 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 - **THEN** 请求归为 B，仅占用一个总音频槽位及一个增强槽位
 
 ### Requirement: 增强音频容量是总容量的子集
-系统 MUST 始终满足 `active_A + active_B <= audio_concurrency` 且 `active_B <= audio_spk_emo_concurrency`。A 仅占总容量，B 原子取得总容量和增强容量；等待或拒绝的请求 MUST NOT 预占任何活动槽位。默认不等待时，总容量满返回 `4013`；仅 B 容量满返回 `4017`，消息 MUST 标识 `spk_emo` 和增强容量使用比。
+系统 MUST 满足配置总容量内的A+B活动约束及配置B子上限；continuous总容量由N派生，新准入同时受实际健康可租owner数H限制，B配置默认4、有效新准入上限min(B配置,H)。A仅占总容量，B原子取得总/B名额及owner；等待或拒绝不预占。默认总满4013优先、仅B满4017且消息含spk_emo与有效使用比。H下降时既有收尾租约 MUST 保留并单列，不能为降低计数而伪释放。
 
 #### Scenario: 三个 A 和四个 B
-- **WHEN** 总上限为 8、增强上限为 4、默认不等待，正在处理 `3A+4B`
+- **WHEN** 显式选择N=8且owner健康的continuous或总上限8的legacy配置、增强上限为 4、默认不等待，正在处理 `3A+4B`
 - **THEN** 新 B 返回 `4017` 和 `spk_emo队列已满，请稍后再试（当前增强音频并发：4/4）`；新 A 可获准形成 `4A+4B`
 
 #### Scenario: 五个 A 和三个 B
-- **WHEN** 总上限为 8、增强上限为 4、默认不等待，正在处理 `5A+3B`
+- **WHEN** 显式选择N=8且owner健康的continuous或总上限8的legacy配置、增强上限为 4、默认不等待，正在处理 `5A+3B`
 - **THEN** 新 A 和新 B 均返回 `4013`，B 不因还有一个增强名额而获准
 
 #### Scenario: 八个普通音频占满总容量
-- **WHEN** 总上限为 8、增强上限为 4、默认不等待，正在处理 `8A`
+- **WHEN** 显式选择N=8且owner健康的continuous或总上限8的legacy配置、增强上限为 4、默认不等待，正在处理 `8A`
 - **THEN** 新 A 和新 B 均返回 `4013`，系统不为 B 预留总容量
 
 #### Scenario: 总容量和增强容量同时已满
-- **WHEN** 总上限为 8、增强上限为 4、默认不等待，正在处理 `4A+4B`
+- **WHEN** 显式选择N=8且owner健康的continuous或总上限8的legacy配置、增强上限为 4、默认不等待，正在处理 `4A+4B`
 - **THEN** 新 A 和新 B 均返回 `4013`，总容量错误优先于增强容量错误
 
 #### Scenario: 两类容量均有余量
-- **WHEN** 总上限为 8、增强上限为 4，正在处理 `4A+3B` 且无等待请求
+- **WHEN** 显式选择N=8且owner健康的continuous或总上限8的legacy配置、增强上限为 4，正在处理 `4A+3B` 且无等待请求
 - **THEN** 下一请求无论为 A 或 B 均可获准，所有容量约束仍成立
 
 #### Scenario: 增强容量满不占满总容量
-- **WHEN** 总上限为 8、增强上限为 4、默认不等待，正在处理 `0A+4B`
+- **WHEN** 显式选择N=8且owner健康的continuous或总上限8的legacy配置、增强上限为 4、默认不等待，正在处理 `0A+4B`
 - **THEN** 新 B 返回 `4017`，新 A 可获准且增强活动数保持 4
+
+#### Scenario: 显式六owner四B仍允许两个A
+- **WHEN** 显式continuous N=6且六owner健康、B配置4，已准入0A+4B且默认不等待（原N6实测历史）
+- **THEN** 第五B返回4017，另两个A可以获准形成2A+4B；此时总满，新A/B均4013，不因模型池仍有空实例绕过准入
+
+#### Scenario: 健康容量下降
+- **WHEN** 配置N=6/B4但可用于新授予的健康owner仅3，已有故障请求仍在安全收尾
+- **THEN** 状态分列configured、healthy、leased/closing占用；B有效新准入容量不超过3，不迁移在途KV、不伪释放旧请求，健康资源实际可租后才授予新请求
+
+#### Scenario: 最终默认四B使总容量同时满
+- **WHEN** 最终continuous N=4/B4、四owner健康且已准入4B或任意总计4条A/B，默认不等待
+- **THEN** 新A/B均4013，优先于B满4017；本配置不存在B满而总容量有余的状态，不能单独触发4017，也不删除显式N6/N8的4017契约及历史实测
 
 ### Requirement: 关闭能力在准入之前拒绝
 系统 MUST 在音频准入、等待排队、音频预处理和模型调用之前校验请求所需的功能开关。仅所请求的说话人能力关闭返回 `4015`，仅所请求的情绪能力关闭返回 `4016`，同时请求两项且两项都关闭返回 `4018`。业务错误 MUST 保持 HTTP 200 和 `{"msg": ..., "code": ...}` 格式，不返回成功转写分段。
@@ -736,10 +774,10 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 - **THEN** 分别返回 `4015` 或 `4016`，不使用组合错误 `4018`
 
 ### Requirement: 等待队列按可用容量调度
-在 `queue_wait_timeout_s>0` 时，系统 MUST 以 `queue_max_size` 限制 A+B 的共享等待总数，保持同类请求的到达顺序，并优先准入最早满足容量条件的请求。B 被增强容量阻塞但总容量有余量时，A MUST 能绕过该 B；当较早 B 已满足两类容量条件时，较晚 A MUST NOT 抢占其名额。
+queue_wait_timeout_s>0时，系统 MUST 以queue_max_size限制A+B共享等待总数、保持同类FIFO并准入最早同时满足总/B/健康owner容量的请求；等待不预占owner。B仅因增强容量被阻塞而总容量有余时，A可绕过；较早B满足全部条件时，后A不得抢占。超时4010与总等待满4013保持，continuous由N派生容量，legacy保留显式容量。
 
 #### Scenario: A 绕过被增强容量阻塞的 B
-- **WHEN** `3A+4B`、总上限 8、增强上限 4，等待队列已有 B，此时新 A 到达
+- **WHEN** 显式N=8且owner健康（或legacy总8）的`3A+4B`、增强上限 4，等待队列已有 B，此时新 A 到达
 - **THEN** B 继续等待且不预占总槽位，A 能使用空闲总槽位；B 不因本次 A 获准而失去其同类顺序
 
 #### Scenario: 较早 B 变为可处理
@@ -755,7 +793,7 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 - **THEN** 该 B 不占用总音频活动名额或增强活动名额，等待超时仍返回 `4010`
 
 ### Requirement: 取消和并发竞争不泄漏名额
-系统 MUST 在等待取消、准入与取消竞争、准入与超时竞争、处理取消和清理异常时保持计数一致，每个已授予的活动名额至多释放一次且最终必定释放；未授予的请求只移除等待名额。B 的两个活动名额 MUST 作为同一个处理周期取得和释放。
+系统 MUST 在等待取消、授予/取消/超时竞争、处理取消和清理异常中保持总/B/owner计数一致。未授予只移除等待者；授予的总/B名额及同一request_id的owner租约至安全收尾后至多归还一次。设备未结束不得归还owner，段Qwen credit与三路PCM按各自安全终态释放；健康下降不以伪释放掩盖仍在收尾的占用。
 
 #### Scenario: 等待中取消
 - **WHEN** 等待中的 A 或 B 请求被取消
@@ -772,6 +810,10 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 #### Scenario: 处理取消或清理异常
 - **WHEN** 已获准的 B 请求处理取消，或其临时文件清理发生异常
 - **THEN** 系统完成必要的清理尝试并释放一个总音频槽位及一个增强槽位，保留原有错误或取消语义
+
+#### Scenario: 同内容请求取消不影响另一owner
+- **WHEN** 两个独立request_id提交同名或同内容音频，其中一个取消
+- **THEN** 只收尾并释放该请求持有的owner及分支资源，另一请求的段、KV、总/B计数和临时文件不受影响
 
 ### Requirement: 本地后端切换保持音频准入和取消契约
 系统 MUST 在将CAM++/emotion2vec迁移为原生torch_npu后保留既有A/B分类、总音频/B上限、段/Qwen并发、能力开关、错误优先级和缓存清理规则。设备为NPU时实际走torch_npu，CPU时走PyTorch CPU，不以已退役TensorRT开关、engine存在或设备数组绕过功能校验。请求取消 MUST 等待已启动线程、NPU实际工作、结果读取/必要同步及清理完成后再准确归还模型实例和整音频租约；异步提交或线程返回不代表设备完成，重复取消不得遗弃收尾。下列历史Scenario标题仅为兼容的规格标识，实际WHEN/THEN均采用现行原生后端，不恢复CUDA/TensorRT执行。
@@ -806,3 +848,14 @@ Qwen 适配链路的本地模型目录、设备标识、请求并发度、总音
 #### Scenario: v3 语义迁移
 - **WHEN** 客户端把原 v2 请求路径替换为 /v3/seacraft_asr
 - **THEN** VAD 切分、Qwen 调用、A/B 音频准入、role/emotion 错误码和响应字段继续遵循本能力其余要求
+
+### Requirement: 正式持续多实例采用独立完整音频验收
+正式continuous多实例 MUST 按2026-11-24用户范围在正式源码真实v3上完成最终N4/CAM4/emo1的同源a1～a4 B4及增强池驻留后的纯A4；已执行N6 A6/A4/B4、共驻OOM和N5补测完整保留，不能用N4冒称N6通过；B4的showSpk/showEmotion均true、showRoleIdentify=false。输入身份、冷暖态、生成与复读配置、每owner S及派生容量须固定；组件、实验194.81秒或历史八路成绩 MUST NOT 替代本矩阵。纯A约200秒仍是单列目标，B4只如实报告实测，不作同样承诺；336/OOM/owned故障停止、正常关闭及原质量限制不变。
+
+#### Scenario: 正式源码完整验收
+- **WHEN** 完成正式多实例接入并执行验收
+- **THEN** 原a1～a4完整源真实经过加载/VAD/过滤/裁剪/三路调度/ITN及HTTP响应，分别报告最终B4、增强驻留A4的完整或删失结果及具体差异，另保留原N6/N5历史，不减少输入工作量或用缓存VAD替代
+
+#### Scenario: 历史专项仍未完成
+- **WHEN** 新continuous矩阵已有结果，而旧legacy八路或旧open change仍有未验收任务
+- **THEN** 两类结果、任务与适用范围分别保留，新结果不能勾选旧任务，也不把旧八路条件当成N4缺省启动条件

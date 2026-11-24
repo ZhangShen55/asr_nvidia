@@ -34,52 +34,64 @@
 - **THEN** 状态接口仍返回引擎标识字段，取值为固定占位值，运维平台的字段结构保持不变
 
 ### Requirement: 明确实例数量的语义
-系统 MUST 支持通过配置设定同一容器内并行运行的服务实例数量（`instance_count`），该数量 MUST 影响实例进程数量，而每个实例 MUST 独立持有请求处理槽位与本地模型加载能力；该配置项的默认值 MUST 为 1。
+系统 MUST 保留instance_count表示完整HTTP服务进程数量、缺省1的语义，不能用它表示Qwen owner数。正式continuous多owner默认及本次验收 MUST 为一个HTTP服务内N个owned模型进程，N缺省4，合法整数1～8仍保留；增加N不增加HTTP、VAD或增强服务副本。显式多HTTP部署的各服务仍独立持有请求容量和模型资源，不把局部容量称为跨服务全局限制。
 
 #### Scenario: 配置多个实例
-- **WHEN** 配置中 `instance_count` 大于 1
-- **THEN** 容器内并行运行对应数量的服务实例，请求按负载均衡方式分发到各实例
+- **WHEN** 配置中instance_count大于1
+- **THEN** 容器内按原部署方式运行对应数量的完整HTTP服务并负载均衡；每服务分别创建其配置的Qwen/VAD/增强资源，报告总资源放大，不将该配置冒称本次单HTTP多owner验收
 
 #### Scenario: 配置缺省
 - **WHEN** 配置文件中缺少实例数量配置
-- **THEN** 系统按默认实例数量 1 运行
+- **THEN** 系统按默认一个HTTP实例运行；默认四Qwen owner不改变该值，也不生成四套请求处理服务
 
 ### Requirement: 维护配置项清单
-系统 MUST 只消费配置文件中实际生效的配置项；无业务含义或不再被任何功能读取的配置项 MUST NOT 保留在配置文件中。配置项的增删 MUST 与功能开关保持一致，功能下线时其专属配置项 MUST 一并移除。VAD 动态扩缩容字段和旧模型设备结构属于本次下线配置，必须从正式默认配置中删除。
+系统 MUST 只消费实际生效配置，删除下线功能专属字段，保留既有旧VAD和设备结构迁移诊断。正式continuous MUST 以N、S分别派生audio_concurrency=N和request_concurrency=N×S，根与Docker模板不重复维护这两个值；兼容显式相等值须提示迁移，冲突或非法类型/范围须就绪前报错。legacy显式选择时保留原独立容量参数，不能通过忽略冲突配置静默切换语义；修改均重启生效。
 
 #### Scenario: 配置文件包含已下线功能的配置项
-- **WHEN** 部署配置中残留 `vad_pool_size`、`vad_pool_max`、`vad_queue_watermark`、`vad_collapse_timeout_s`、`vad_queue_timeout_s` 或 `vad_call_timeout_s`
-- **THEN** 服务不使用这些字段改变固定 VAD 数组，并记录迁移提示或配置校验告警
+- **WHEN** 部署配置中残留vad_pool_size、vad_pool_max、vad_queue_watermark、vad_collapse_timeout_s、vad_queue_timeout_s或vad_call_timeout_s
+- **THEN** 服务不使用这些字段改变固定VAD数组，并记录迁移提示或配置校验告警
 
 #### Scenario: 配置文件包含旧模型设备结构
-- **WHEN** 部署配置中残留 `[model_device]` 或 `[model_device.local_model_pool]`
-- **THEN** 服务不使用旧结构覆盖 `[model_device_pool]`，并提示运维迁移到新的设备数组结构
+- **WHEN** 部署配置中残留model_device或model_device.local_model_pool结构
+- **THEN** 服务不使用旧结构覆盖model_device_pool，并提示迁移到新的设备数组
 
 #### Scenario: 缺少可选配置项
 - **WHEN** 配置文件缺少某个仍有效的可选配置项
-- **THEN** 服务使用该项声明的默认值运行，不因删除无效字段而改变其它能力
+- **THEN** 服务使用loader与交付模板一致的声明默认值，continuous的总音频及全局段容量仍从N、S派生，不因旧字段缺失回退到8或128
+
+#### Scenario: 旧容量值与派生值一致
+- **WHEN** continuous配置N=4、S=16且旧字段显式audio_concurrency=4、request_concurrency=64
+- **THEN** 允许启动并给出删除重复字段的迁移提示，状态报告其派生来源，模板不继续复制这两个赋值
+
+#### Scenario: 旧容量值冲突或类型非法
+- **WHEN** continuous的旧显式容量与N或N×S不一致，或N、S、容量字段包含布尔值、非整数、越界值
+- **THEN** 就绪前报具体字段及期望派生值，不静默取较小值、忽略冲突或将非法值纠正为1
 
 ### Requirement: 启动时固定预热 VAD 实例
-服务 MUST 仅按 `[vad].vad_device` 数组在启动阶段以 spawn 创建固定 VAD worker 池，数组每个元素对应一个独立 worker，按 FIFO 分派任务；旧 `[qwen_asr].vad_device` MUST NOT 作为配置回退。启动完成前 MUST 记录每个 worker 的设备及预热成功或失败状态，无可用 worker 时 MUST 拒绝就绪。运行期 MUST NOT 因等待队列自动扩缩容；NPU 预热失败 MUST NOT 静默改走 CPU。
+服务 MUST 仅按vad.vad_device数组在启动阶段以spawn创建固定VAD worker池，每元素一个独立worker，FIFO分派完整音频；旧qwen_asr.vad_device不得回退生效。正式本轮配置 MUST 保留八个CPU VAD实例，不随Qwen N扩缩；通用合法CPU/NPU数组仍按原规则支持。启动完成前记录逐worker设备、预热及失败，无可用worker拒绝就绪；运行期不自动扩缩，NPU失败不静默走CPU。
 
 #### Scenario: 默认混合设备配置
-- **WHEN** 使用本轮宿主默认 `[vad].vad_device=["cpu","cpu","npu:7","npu:7"]` 启动服务
-- **THEN** 固定池含两个 CPU 和两个物理7号卡 NPU worker；仅映射物理7号卡的容器模板按实际可见映射使用 `["cpu","cpu","npu:0","npu:0"]`，状态按四个配置实例和各自实际预热结果报告
+- **WHEN** 使用本轮正式配置vad_device的八个cpu元素启动服务
+- **THEN** 建立八个固定CPU worker并报告逐份健康结果；历史场景标题不表示本轮默认仍为混合落卡，Qwen四owner不改变VAD数量
 
 #### Scenario: 启动时设备不可用
-- **WHEN** VAD 数组中的某目标设备不可用或对应 worker 预热失败
-- **THEN** 服务记录该 worker 的设备和失败原因，不将其计入健康容量；无成功 worker 时拒绝完成服务启动，不以动态扩容或 CPU 回退掩盖失败
+- **WHEN** VAD数组中的某目标设备不可用或对应worker预热失败
+- **THEN** 记录该worker设备及原因，不计健康容量；无成功worker拒绝启动，不动态补worker或以CPU回退掩盖失败
+
+#### Scenario: 只改变Qwen实例数
+- **WHEN** N或S改变但VAD设备数组未改
+- **THEN** VAD仍按原固定数组创建，状态区分配置八份、实际健康与busy数量，不把Qwen容量当作VAD容量
 
 ### Requirement: 默认配置体现有效并发来源
-默认配置 MUST 使用 `vad_device` 数组表达 VAD 实例设备，使用 `[model_device_pool]` 表达 CAM++/emotion2vec 实例设备，使用 `[qwen_asr].audio_concurrency` 表达总音频准入上限、`audio_spk_emo_concurrency` 表达增强音频准入上限，并 MUST 不包含已删除的 VAD 动态池字段和旧模型设备结构。音频准入配置 MUST NOT 被解释为模型实例数量。
+正式最终缺省 MUST 为continuous/process、N=4（合法1～8保留）、宿主npu:7、S=16、preload_on_startup=true、总音频派生N、全局段派生N×S及B配置上限4；HTTP缺省1。VAD、CAM++和emo配置实例数仍各由设备数组决定，最终增强池默认为用户选择的CAM4/emo1，须在四Qwen共驻B4及增强驻留A4中真实验证并冻结；不能由N推导或仅凭选择宣称已通过。每owner物理步及输入预算与全服务PCM预算 MUST 分开说明，不能增加队列即声称增加执行容量；loader、根/Docker模板、README及部署说明的有效值与迁移规则保持一致。
 
 #### Scenario: 检查默认配置
-- **WHEN** 运维读取 `config.toml` 或 `docker/config.toml`
-- **THEN** 能直接通过 VAD 数组长度、模型设备数组长度计算配置实例数，并单独查看总音频和增强音频准入上限；无需额外配置模型推理槽位
+- **WHEN** 运维读取config.toml或docker/config.toml
+- **THEN** 能区分HTTP1、Qwen N4、每音频S16、总4/全局64、B4、独立CAM4/emo1及PCM预算；根配置设备为宿主npu:7，单卡容器按物理7实际可见映射使用逻辑npu:0，不把音频容量当模型池份数
 
 #### Scenario: 功能关闭时模型池不生效
-- **WHEN** `open_v2_role=false` 或 `open_v2_emotion=false`
-- **THEN** 对应模型设备数组不会触发模型加载或推理，但配置仍可保留用于重启后开启功能
+- **WHEN** open_v2_role=false或open_v2_emotion=false
+- **THEN** 对应模型数组不触发加载或推理，配置可保留供重启后开启；Qwen默认预加载不绕过增强功能开关
 
 ### Requirement: 降低控制台 HTTP 访问日志噪声
 服务 MUST 仅在控制台处理 `httpx`/`httpcore` 成功请求的 `INFO` 访问日志，使其不再逐段打印 HTTP 200 行；`WARNING`、`ERROR` 和业务处理日志 MUST 继续输出。文件日志是否保留完整 HTTP 访问记录 MUST 与控制台过滤解耦，并按现有文件日志策略保留。
@@ -108,53 +120,57 @@
 - **THEN** 该指标返回明确的不可用状态或原因，其他状态字段仍正常返回
 
 ### Requirement: 支持安全的测试收尾
-运维工具 MUST 支持停止接收新请求、等待已启动设备工作及结果读取完成，并关闭本次独立启动且持有生命周期的服务、worker、代理和测试容器。进程内 Qwen MUST 随所属服务统一收尾，MUST NOT 要求存在外部 Qwen 服务或保留固定外部转写端口。资源身份 MUST 在启动时登记；共享卡既有服务和其它非测试资源 MUST 保留，不能按名称或端口批量终止。收尾失败或超时后即使强制回收成功也 MUST 保留失败结论，不把接口解除监听单独作为全部收尾成功的证明。
+运维工具 MUST 停止新请求和owner授予，等待已启动设备工作、分支及必要清理，并关闭本次owned服务、Qwen owner、增强/VAD worker及代理。正式验收 HTTP drain缺省30秒、模型关闭独立grace120秒、外层owned回收210秒，不改业务调用超时。资源启动时登记PID及出生身份，部分启动也回收；共享服务保留，不按名称或端口批量终止。强制、超时、坏应答或非零退出 MUST 保留关闭失败，不只以解除监听证明全部正常。
 
 #### Scenario: 收到测试终止信号
 - **WHEN** 资源安全闸门触发或运维结束测试
-- **THEN** 工具停止提交新请求，等待 owned 在途任务及清理完成，关闭所属本地 Qwen、增强模型和固定 VAD worker，记录各自退出/失败/强制处置信息与进程树、缓存和监听端口最终状态
+- **THEN** 停止提交和授予，按30/120/210秒各自边界等待本次在途及owned关闭；逐份记录退出码、强制与出生身份，核验无孤儿、端口至少连续5秒空闲和私有音频缓存为空，取消不遗弃收尾
 
 #### Scenario: Qwen 服务保持运行
-- **WHEN** 服务器存在不属于本次测试生命周期的 Qwen 或其它共享服务
-- **THEN** 这些既有资源保持原状；本次测试不要求独立 Qwen 服务存在，也不以某个固定外部端口仍在监听作为成功条件。所属测试服务内嵌的 Qwen 已随其服务关闭，测试接口不继续后台占用
+- **WHEN** 服务器存在不属于本次测试生命周期的Qwen或其它共享服务
+- **THEN** 这些资源保持原状；无需外部Qwen服务或固定转写端口，本次owned内嵌owner随服务关闭，不继续后台占用，共享服务不能因本次超时被终止
 
 ### Requirement: 增强音频并发配置具有确定默认值
-系统 MUST 从 `[qwen_asr].audio_spk_emo_concurrency` 读取 B 类整音频并发上限，缺省值 MUST 为 `4`，并在本地及容器配置模板展示该项。该值 MUST 是正整数，非法值 MUST 在服务就绪前明确报错；关闭能力 MUST 使用功能开关。配置修改 MUST 重启生效，且每个服务实例独立执行两类音频限制。
+系统 MUST 从audio_spk_emo_concurrency读取B配置上限，缺省4，正整数且重启生效，根与Docker模板均展示；关闭能力使用功能开关。正式continuous的B新准入有效上限 MUST 不超过min(配置B上限,健康Qwen容量)，不得据此改写配置或复制增强池。健康下降时closing请求仍计原活动，安全终态前不伪释放；各HTTP服务独立维护，不是跨服务全局上限。
 
 #### Scenario: 缺少新增配置项
-- **WHEN** 旧配置未声明 `audio_spk_emo_concurrency`
-- **THEN** 服务使用增强上限 4，不自动回退为总音频上限；文档说明升级后增强并发受到新增默认上限约束
+- **WHEN** 旧配置未声明audio_spk_emo_concurrency
+- **THEN** 服务使用B配置上限4，不自动回退为N；文档说明有效上限还受总音频与健康owner约束
 
 #### Scenario: 显式配置其他上限
-- **WHEN** 运维配置 `audio_concurrency=8`、`audio_spk_emo_concurrency=2` 并重启
-- **THEN** 每个实例最多同时处理 8 个音频，其中最多 2 个为 B
+- **WHEN** 运维显式配置continuous N=8、相等旧audio_concurrency=8、audio_spk_emo_concurrency=2并重启
+- **THEN** 每个HTTP服务配置总容量8、B上限2，健康时最多8音频且至多2B；旧相等容量仅兼容并给迁移提示
 
 #### Scenario: 非法增强上限
-- **WHEN** 新增配置值为 0、负数、布尔值、浮点数或字符串
-- **THEN** 服务在就绪前报告字段名称和正整数约束，不静默纠正为 1 或把 0 当作关闭功能
+- **WHEN** B配置值为0、负数、布尔值、浮点数或字符串
+- **THEN** 就绪前报告字段和正整数约束，不静默纠正为1，不把0当作功能关闭
 
 #### Scenario: 增强上限大于总上限
-- **WHEN** 总上限为 2、增强上限为 4
-- **THEN** 配置有效，两个限制同时生效使 B 实际至多为 2；状态仍如实展示配置值 2 和 4，不静默改写增强配置
+- **WHEN** continuous N=2且B配置上限4，两个owner健康
+- **THEN** 配置有效，B有效至多2；状态仍分别报告配置总2和B4及有效值，不静默改写B配置
 
 #### Scenario: 多服务实例
-- **WHEN** 同一部署启动多个服务实例
-- **THEN** 每个实例独立维护总音频及增强音频容量，文档说明该限制不是跨实例的全局限制
+- **WHEN** 同一部署显式启动多个完整HTTP服务
+- **THEN** 每个服务独立维护总音频、B和其健康owner容量，文档说明这些不是跨服务共享上限，不能用多服务成绩代替本次单HTTP验收
 
 ### Requirement: 暴露音频分类准入状态
-`GET /get_status` MUST 以附加字段 `audioConcurrency` 展示 `configured_total`、`active_total`、`waiting_total`，以 `spkEmoConcurrency` 展示 `configured`、`active`、`waiting`。两组值 MUST 来自同一次准入状态快照，可由总数减 B 数得到 A 数；查询 MUST NOT 触发本地模型加载，既有业务、模型池及诊断字段语义 MUST 保持兼容。
+GET /get_status MUST 保留audioConcurrency的configured_total、active_total、waiting_total及spkEmoConcurrency的configured、active、waiting，来自同一次准入快照；configured_total在continuous为N。附加状态 MUST 显示健康owner与当前有效总/B新准入容量，失效/closing中的活动租约按实际保留，不将其减至H。查询不触发模型加载，原业务和各池语义不变，A活动/等待仍可由总数减B数取得。
 
 #### Scenario: 查询混合活动及等待状态
-- **WHEN** 总上限 8、增强上限 4、正在处理 `5A+3B`、等待 1 个 A 和 2 个 B
-- **THEN** `audioConcurrency` 返回 `{"configured_total":8,"active_total":8,"waiting_total":3}`，`spkEmoConcurrency` 返回 `{"configured":4,"active":3,"waiting":2}`，可计算活动 A 为 5、等待 A 为 1
+- **WHEN** 显式N=8、B上限4，正在处理5A+3B、等待1A和2B
+- **THEN** audioConcurrency仍返回configured_total=8、active_total=8、waiting_total=3，spkEmoConcurrency为configured=4、active=3、waiting=2；A活动5、等待1，另列健康与有效容量
 
 #### Scenario: 首次业务请求前查询
 - **WHEN** 服务已启动但尚无音频请求，运维查询状态
-- **THEN** 两组配置值如实返回，活动和等待计数均为 0，CAM++ 和 emotion2vec 不因查询而加载
+- **THEN** 配置与实际预加载/健康状态如实返回，活动等待均0；CAM++和emo不因查询加载，preload=false的Qwen也不加载
 
 #### Scenario: 功能关闭并拒绝增强请求
-- **WHEN** 两种增强能力均关闭且增强请求被准入前校验拒绝
-- **THEN** 状态中的增强活动数和等待数保持为 0，增强配置值仍正常展示
+- **WHEN** 两种增强能力关闭且增强请求在准入前被拒绝
+- **THEN** B活动与等待仍为0、B配置正常展示，不授予owner或增加总活动
+
+#### Scenario: owner失效但请求尚未收尾
+- **WHEN** 六个活动请求中一个owner失效，H降为5而其请求仍closing
+- **THEN** configured_total保持6、active_total仍按真实未释放租约计6，健康与有效新准入容量另列5；不提前减活动或重租该owner，只在安全终态后释放
 
 ### Requirement: 分类准入记录有界且可区分错误原因
 系统 MUST 为 v3 请求记录 A/B 分类、音频准入等待耗时、准入时的总容量与 B 容量快照及有限集合的失败原因。日志和遥测 MUST 能分别统计总容量满、增强容量满、共享等待队列满、等待超时及能力关闭；遥测 MUST 保持有界存储，不保存音频、转写正文或模型对象，且保留既有阶段字段的语义。
@@ -180,15 +196,15 @@
 - **THEN** 继续按有界历史保留策略更新事件，分类及拒绝原因统计明确使用该保留窗口，不创建按请求无限增长的记录或计数键
 
 ### Requirement: 文档明确分类限制与能力错误
-README 和部署文档 MUST 说明 A/B 分类、两类容量关系、默认值、缺省迁移、等待调度和按进程生效的范围；错误码清单 MUST 区分 `4013`、`4015`、`4016`、`4017`、`4018`。文档 MUST 区分配置关闭的请求级错误、模型池无可用实例和已开启模型的段级推理失败。
+README和部署说明 MUST 说明最终默认N4/S16、派生总4/global64、B4及CAM4/emo1、请求owner生命周期、健康降级、等待调度及按HTTP服务生效范围。错误码仍区分4013、4015、4016、4017、4018及等待4010，保留能力关闭优先和总容量满优先于B满；配置关闭、模型池不可用与普通段级失败降级不能混淆。legacy和旧A8矩阵保留各自历史范围，不用最终N4或历史N6/N5结果改写。
 
 #### Scenario: 查阅默认并发示例
-- **WHEN** 用户查阅总上限 8、增强上限 4 的说明
-- **THEN** 文档包含 `3A+4B` 时新 B 返回 `4017` 且新 A 可处理，以及 `5A+3B`、`8A` 时新 A/B 均返回 `4013` 的示例
+- **WHEN** 用户查阅正式最终默认总4、B4的说明
+- **THEN** 文档说明4A、4B或总计4个混合请求使总满，新A/B均4013优先；本配置不能单独触发4017。显式N6下1A+4B新B4017、新A可形成2A+4B的通用契约及原实测保留为历史，不伪装N4可达状态；B双开仍只占一个B槽
 
 #### Scenario: 查阅能力关闭行为
-- **WHEN** 用户查询两个功能开关为 `false`、请求增强参数为 `true` 的处理规则
-- **THEN** 文档说明请求失败及单项或组合错误码，不再承诺在配置关闭时以 `null` 字段正常转写；普通 A 请求仍可正常处理
+- **WHEN** 用户查询功能开关为false、增强请求参数为true的处理规则
+- **THEN** 文档说明准入前请求失败及4015/4016/4018单项组合错误，不承诺配置关闭时以null成功；普通A仍按自身容量处理，已开启模型的普通段级失败另列null降级
 
 ### Requirement: 明确实例设备与 TensorRT 配置的优先级
 模型设备数组 MUST 接受 cpu 与 npu:N。NPU MUST 固定走 torch_npu，CPU MUST 使用 PyTorch CPU；功能开关、请求能力与设备数组容量的既有含义 MUST 保留。系统 MUST NOT 保留仅对 NVIDIA 实例生效的加速器开关与引擎精度配置项。
@@ -273,15 +289,15 @@ Docker 部署 MUST 在 docker/ 下提供 README.md、Dockerfile 和 docker-compo
 - **THEN** 构建或启动说明明确提示格式错误，不把旧 v2 tag 当作默认镜像
 
 ### Requirement: 启动前校验部署前置条件
-昇腾 NPU 部署 MUST 在服务就绪前校验 NPU 设备可见性、模型目录完整性、torch_npu 运行时可用性和 CONFIG_PATH 可读性；任一必需条件失败 MUST 明确报告并阻止就绪。三个必需本地模型资产与懒加载 Qwen 权重 MUST 区分：缺少 Qwen 权重在触发转写时按 4011 处理，不能为预检强制加载 Qwen 或改变懒加载契约。
+昇腾部署 MUST 在就绪前校验设备可见性、必需资产、torch_npu运行时及CONFIG_PATH可读性，失败明确报告并阻止就绪。三个必需模型资产与Qwen权重策略分开：preload=false时Qwen缺失在转写触发按4011处理，不为预检加载；正式默认preload=true时全部N份权重及processor须顺序加载成功且健康后才就绪，任何部分启动失败统一回收。校验不得触发未请求增强模型加载或绕过功能开关。
 
 #### Scenario: GPU 或资产不可用
-- **WHEN** 容器无可用 NPU、必需模型目录缺失或配置文件不可读
-- **THEN** 启动日志指出具体前置条件并以失败状态结束，不接受请求
+- **WHEN** 容器无可用NPU、必需模型目录缺失或配置不可读
+- **THEN** 启动指出具体前置条件并失败，不接受请求；默认Qwen预加载失败同样阻止就绪并回收已启动owner，显式懒加载的Qwen缺失仍按原4011处理
 
 #### Scenario: 前置条件通过
-- **WHEN** NPU 设备、模型目录和配置检查均通过
-- **THEN** 服务启动 v3 路由并报告镜像 tag、实际配置路径和 torch_npu 后端状态
+- **WHEN** 设备、目录和配置检查通过，且按当前preload策略完成必要加载
+- **THEN** 服务就绪并报告镜像tag、实际配置路径、后端和N份实际健康加载状态；不把预检、READY或模型名当真实语音forward暖身
 
 ### Requirement: 配置挂载和镜像模型路径可观测
 运维文档和状态输出 MUST 区分挂载配置路径与镜像内模型路径，说明配置挂载只覆盖运行参数；默认三个本地模型仍来自 /app/model/，不得要求将这三个模型目录作为宿主机卷挂载。Qwen 权重目录可另行挂载，MUST 与三个必需模型的镜像内置策略区分。
@@ -303,3 +319,51 @@ Docker 部署 MUST 在 docker/ 下提供 README.md、Dockerfile 和 docker-compo
 #### Scenario: 规划或交付文件完成
 - **WHEN** 已修改 Dockerfile、compose、start.sh 或依赖清单但尚未执行构建上线
 - **THEN** 报告明确仅完成文件准备，构建、运行时检查和上线验收仍待执行，不勾选对应执行结果
+
+### Requirement: 每owner预算与配置边界明确
+正式配置的max_inference_batch_size MUST 为可选项，未显式提供时随S派生，根/Docker模板不得固定物理步或prefill值16；显式物理步大于S须拒绝，prefill缺省派生min(16,S)、显式值不得超过该值；每owner帧/token缺省14400/10000，不因N变化缩放。S、max_new_tokens或预算改变时 MUST 校验支持范围及单段可容纳性，说明可按预算拆prefill；全服务PCM256段/256MiB另列且不复制。各默认、有效值、重启语义与类型约束 MUST 同步loader、宿主/Docker模板及文档。
+
+#### Scenario: 仅修改N
+- **WHEN** N在支持范围内改变而S16及输入预算不变
+- **THEN** 派生总音频及全局段窗口改变，每owner仍帧14400/token10000，物理步上限16，PCM仍为同一个全服务预算，不把原global60000/86400当作每owner默认
+
+#### Scenario: 只改变每音频窗口
+- **WHEN** 根或Docker配置仅把S由16改为8而未显式提供物理步上限
+- **THEN** 物理步上限派生为8、prefill有效上限至多8，不因模板遗留固定16而冲突；每owner帧/token预算仍按显式值或缺省值校验
+
+#### Scenario: 非法物理步或预算配置
+- **WHEN** 显式物理步上限大于S、prefill上限大于min(16,S)，或预算类型/范围及单段可容纳性不满足约束
+- **THEN** 在服务就绪前报告具体字段和支持条件，不能静默截断、放大预算或改变段音频；有效但只能较小prefill的预算须如实显示实际限制
+
+### Requirement: 多owner状态身份和资源可核对
+状态 MUST 按owner区分配置、加载、健康、租用、可用数量、请求归属、设备、活跃段、预算、失败与PID/出生身份，保留父/worker及共享外部资源的范围和采样age。查询 MUST 仅读有界缓存，不等待忙worker、不保存正文、不触发spawn或加载；无法观测字段明确unknown，不能用父进程0代替各worker资源或将配置N冒充健康N。
+
+#### Scenario: 四owner均健康并出租
+- **WHEN** 最终N4的A4或B4活动且查询状态
+- **THEN** 可核对四个不同owned出生身份、四个请求各自唯一owner、每owner至多S及合计至多N×S的逻辑在途；物理步大小和逻辑窗口分别报告
+
+#### Scenario: 部分失败或资源快照过期
+- **WHEN** 某owner失效、仍closing，或资源采样失败/过期
+- **THEN** 分别保留健康下降、原未终态租约和失败历史；资源附age及unknown原因，不用旧采样、端口可通或配置数伪造实时健康容量
+
+### Requirement: 多owner暖身覆盖和正式计时分离
+正式多owner性能轮 MUST 先验证全部已配置owner的实际加载与真实语音forward/prefill，联合PID出生及请求/段执行证据确认覆盖；READY、模型名或发送N次HTTP不等于N份覆盖。暖身 MUST 有界、原件独立保存，并在全部安全归零后保存暖身后计数基线；正式HTTP计时、分位数和模型阶段增量不得混入加载暖身。暖身不依赖SHA路由或新增公开指定owner参数。
+
+#### Scenario: 请求次数足够但owner覆盖不足
+- **WHEN** 多次短clip真实v3请求只覆盖部分owner
+- **THEN** 不能开始正式性能轮或宣称N份就绪，记录实际覆盖并在有限暖身界限内处理；界限耗尽则诊断及owned收尾，不无限补请求
+
+#### Scenario: 全部owner覆盖完成
+- **WHEN** 四owner各有真实forward/prefill且窗口、PCM归零
+- **THEN** 独立保存四份身份覆盖及暖身后计数，再共同起跑最终N4的指定A4/B4；统计从暖身后基线扣除，不能用暖身前initial状态冒充暖身后基线
+
+### Requirement: 增强池交付默认来自最终四Qwen共驻标定
+CAM++和emo最终交付数组数量 MUST 按2026-11-24用户选择采用CAM4/emo1，并在四份Qwen真实驻留的B4及增强驻留A4中独立验证、标定并冻结；原N6各1共驻OOM、N5各1补测保留，不能拿旧小池成绩交付未经验证的4/1。MUST 不盲扫组合，也不把N4、B4或旧各8本身当已通过。最终值写入loader、根/Docker模板及说明，真实调用、skip、段级失败和质量限制分别报告，不以仅加载或HTTP200证明增强通过。
+
+#### Scenario: 一份增强实例成为瓶颈
+- **WHEN** 原N6/N5共驻B4显示CAM等待显著，用户据实选择最终N4/CAM4/emo1
+- **THEN** 仅按该明确选择验证最终组合，保留原瓶颈与失败，不再自动扫档；VAD、精度、生成和文本策略不变，真实故障停止后续压力并保留证据
+
+#### Scenario: 选择最终增强池数量
+- **WHEN** 最终N4/CAM4/emo1完成B4共驻标定及同a1～a4增强驻留纯A4验证
+- **THEN** 交付模板与loader采用同一冻结组合，记录完整/警告/资源与正常关闭；纯A约200秒目标单列，B4无200秒硬门槛。N4为用户批准的替代最终范围，不声称原N6共驻已通过

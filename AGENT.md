@@ -511,3 +511,5 @@ continuous模式对三类段生成异常做保守恢复/无法恢复警告并继
 当前正式默认continuous/process Qwen4@npu7、CAM4 process、emo1、S16，总音频4/global64，HTTP1。用户已确认替代最终范围，5.3/5.6通过，29/29：正式A4/B4/增强驻留A4均4/4，墙钟186.44/200.10/183.47秒；B4 P50/P95=183.26/199.45秒、严格无警告2/4（12warning/11discard），冷加载短clip暖身105.21秒单列。最低HBM采样free15406MB；CAM等待p50/p95/max0/1/25，PCM峰65，无推理OOM。source1299/379subtests、实际40SO保护373/244subtests、归档清单兼容源49/保护49通过。所有CPU/NPU/控制器退出，service正常exit0/34.89秒、端口≥5秒、PCM为空、shared1601397/8007保留。背景used15908→15910MB仅+2，root独立相近背景/归属审查通过，raw recovery unknown仍保留。
 
 本change完成后仅同步其六份delta并归档；旧N6共驻OOM、N5补测及三个旧open change任务不改。没有更改KV/allocator/阈值/生成策略或依赖/权重，没有Docker构建/上线，质量未认证。报告docs/qwen-multi-instance-20261124/FINAL4-REPORT.md，实际大原始日志final-m4-cam4-emo1-v1保留；上方“待验收/27of29/正式默认6”仅属此前历史检查点。测试控制器稳定清单在docs/.../test-inputs.json，active change归档不再使CLI路径失效。
+
+2026-11-24：`2026-11-23-qwen-multi-instance-serving`已29/29完成，六能力主规格已同步并严格校验，归档于`openspec/changes/archive/2026-11-23-qwen-multi-instance-serving`。当前正式默认Qwen4/CAM4/emo1；旧N6 OOM/N5结果和三个旧open change保留，不外推长期稳定/人工质量或Docker上线。所有测试服务已释放。

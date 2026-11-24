@@ -1,0 +1,12 @@
+{
+  "archive": {
+    "change": "2026-11-23-qwen-multi-instance-serving",
+    "archivedAs": "2026-11-23-qwen-multi-instance-serving",
+    "path": "/home/zhangs/asr_nvidia/openspec/changes/archive/2026-11-23-qwen-multi-instance-serving",
+    "specsUpdated": false
+  },
+  "root": {
+    "path": "/home/zhangs/asr_nvidia",
+    "source": "nearest"
+  }
+}

@@ -607,3 +607,5 @@ continuous保留已批准并用于noHBM参考的在线复读保护 `online_repet
 当前正式默认Qwen4/CAM++4/emo1、总音频4/global64。真实完整B4 4/4、P50/P95/墙钟183.26/199.45/200.10秒；全部模型驻留后的纯A4 4/4、172.54/182.31/183.47秒，最低剩余HBM采样15406MB（约15.05GiB），无推理OOM，正常exit0/全部owned回收。B冷加载短clip暖身105.21秒单列，不把暖态B4当冷态完整课程成绩。完成含段级警告，B4严格无警告2/4，人工质量未认证；具体文本波动保留。剩余5.3/5.6按用户确认的最终范围验收完成，29/29；原N6 OOM及N5成绩保持历史。完整报告见[最终报告](docs/qwen-multi-instance-20261124/FINAL4-REPORT.md)，规格同步/归档身份见交付元数据。Docker未构建/上线。
 
 测试控制器默认清单已移至稳定docs/qwen-multi-instance-20261124/test-inputs.json，归档后测试控制器仍可显式选择`--instance-count 4`，输出目录必须是新目录；仍需按独立端口/PID归属及故障停止流程执行，不自动重跑。
+
+2026-11-24：`2026-11-23-qwen-multi-instance-serving`已29/29完成，六能力主规格已同步并严格校验，归档于`openspec/changes/archive/2026-11-23-qwen-multi-instance-serving`。当前正式默认Qwen4/CAM4/emo1；旧N6 OOM/N5结果和三个旧open change保留，不外推长期稳定/人工质量或Docker上线。所有测试服务已释放。

@@ -7,19 +7,19 @@
 ## Requirements
 
 ### Requirement: 本地模型按需懒加载
-系统 MUST 支持本地模型的懒加载：对应功能开关关闭或请求未触发时，MUST NOT 加载或调用该模型；需要加载时，MUST 等待加载完成后才发起推理，模型加载失败 MUST NOT 导致整个服务无法启动。请求要求被关闭的能力时 MUST 在音频准入前返回明确错误，不得以空值掩盖配置关闭。
+系统 MUST 保持CAM++、emotion2vec的按能力懒加载：开关关闭或请求未触发时不加载、不调用，需要时等待实际加载完成后推理；该模型加载失败不使其它健康能力失去服务。Qwen MUST 按自身预加载契约处理：正式continuous缺省启动预加载，显式关闭时才懒加载，不能把增强模型懒加载规则用于跳过Qwen预加载失败。请求要求被关闭的能力 MUST 在音频准入前明确拒绝，不以空值掩盖配置关闭。
 
 #### Scenario: 未请求说话人能力
-- **WHEN** `showSpk` 和 `showRoleIdentify` 均为 `false`
-- **THEN** CAM++ 权重不因该请求加载，该请求不增加 CAM++ 权重显存占用，也不调用该模型
+- **WHEN** showSpk和showRoleIdentify均为false
+- **THEN** CAM++权重不因该请求加载，该请求不增加CAM++权重显存占用，也不调用该模型
 
 #### Scenario: 首次请求触发加载
-- **WHEN** `open_v2_role=true` 且首次出现需要 `showSpk` 或 `showRoleIdentify` 的已准入请求
-- **THEN** 系统加载 CAM++ 权重并完成本次推理，后续请求复用已加载的模型
+- **WHEN** open_v2_role=true且首次出现需要showSpk或showRoleIdentify的已准入请求
+- **THEN** 系统加载CAM++权重并完成本次推理，后续请求复用同一共享模型池，不按请求或Qwen owner重复加载
 
 #### Scenario: 模型加载失败
 - **WHEN** 功能开关已开启，但所请求模型的全部实例加载失败或设备数组为空
-- **THEN** 服务保持可用，该请求得到对应模型不可用错误（CAM++ 为 `4015`、emotion2vec 为 `4016`），且失败原因可被记录与查询
+- **THEN** 服务保持可用，该请求得到对应模型不可用错误（CAM++为4015、emotion2vec为4016），且失败原因可记录与查询；其它健康能力不受影响
 
 ### Requirement: 暴露本地模型的加载状态与显存明细
 系统 MUST 在状态接口中暴露 VAD、CAM++、emotion2vec 各自的加载状态与明确口径的 NPU HBM 占用信息，区分主服务与 VAD worker 进程；无法按模型准确归因的资源 MUST 明确标记，不得把其他进程占用算作本模型占用；对于 CAM++ 与 emotion2vec，状态 MUST 同时包含设备数组和独立模型池的容量、忙碌、等待与失败信息。
@@ -33,26 +33,30 @@
 - **THEN** 状态接口中该模型的加载状态为未加载且 HBM 占用为 0，同时保留其配置实例数和设备数组
 
 ### Requirement: 实例数量与显存放大的关系可控
-系统 MUST 保证服务实例数量与 HBM 占用之间存在明确、可预期的关系：完整服务进程实例数量 MUST 由配置项 `instance_count` 决定；单个服务进程内 CAM++ 与 emotion2vec 的模型副本数量和并发容量 MUST 分别由各自设备数组决定，不能由 `instance_count` 或共享模型槽位隐式改变。
+系统 MUST 分开表达完整HTTP服务数instance_count、每服务Qwen owner数N及CAM++/emotion2vec各自数组决定的副本数。正式多owner默认及本次验收 MUST 使用instance_count=1、N=4（合法N1～8保留），增加N不得复制整套HTTP、VAD或增强池。显式多HTTP部署的每服务仍独立持有其请求容量及模型资源，资源评估 MUST 计入全部副本，不将各服务局部上限称作跨进程全局上限。
 
 #### Scenario: 默认单实例
-- **WHEN** 配置中未显式设置 `instance_count` 且两个模型设备数组各有一个元素
-- **THEN** 服务以 1 个完整服务实例运行，两个模型池各有 1 个实例
+- **WHEN** 配置中未显式设置instance_count且两个模型设备数组各有一个元素
+- **THEN** 服务以1个完整HTTP实例运行，两个增强池各1份；正式continuous的四Qwen owner属于该HTTP实例，不按Qwen数复制增强池；此场景的显式各1数组是通用配置示例，最终交付数组为CAM4/emo1
 
 #### Scenario: 配置多个实例
-- **WHEN** 配置中 `instance_count` 为 2 且模型设备数组保持不变
-- **THEN** 服务以 2 个进程运行，每个进程独立建立增强模型池和 VAD worker 池，并在触发转写后各自加载 Qwen 权重；HBM 容量评估包含这些副本，模型池比例不在进程间合并
+- **WHEN** 配置中instance_count为2且模型设备数组保持不变
+- **THEN** 原显式多服务部署运行2个完整服务，各自独立建立增强池、VAD池和配置数量的Qwen owner，并按各自预加载或懒加载契约加载；HBM评估包含这些副本，池容量不在服务间合并，该配置不冒称本次单HTTP验收
+
+#### Scenario: 只增加Qwen实例
+- **WHEN** 一个HTTP服务内将N从一个合法值改为另一个合法值并重启，增强及VAD设备数组未改
+- **THEN** 只改变Qwen owner数量及其派生容量，VAD和两个增强池的配置实例数不随N倍增
 
 ### Requirement: 本地增强模型池按设备数组建立固定实例
-系统 MUST 从 `[model_device_pool]` 的两个设备数组建立 CAM++ 与 emotion2vec 独立模型池；每个数组元素对应一个模型实例，数组长度决定配置实例数，实例在首次启用对应能力时按数组顺序加载到指定设备。
+系统 MUST 从model_device_pool的两个设备数组建立每服务共享的CAM++与emotion2vec独立模型池，每个数组元素对应一个模型实例，数组长度决定配置实例数；首次需要该能力时按数组顺序加载到指定设备。各Qwen owner及不同请求 MUST 复用这两个池，不各自复制池；最终交付配置按用户选择CAM4/emo1，在四Qwen真实共驻B4下标定并冻结，不从N、S或B4推导；未验收不得宣称已通过。
 
 #### Scenario: CAM++ 与 emotion2vec 实例数量不同
-- **WHEN** CAM++ 数组有 3 个元素、emotion2vec 数组有 1 个元素
-- **THEN** 两个模型池分别最多提供 3 个和 1 个实例，不因数量不同而补齐或共享实例
+- **WHEN** CAM++数组有3个元素、emotion2vec数组有1个元素
+- **THEN** 两个模型池分别最多提供3个和1个健康执行实例，不因数量不同而补齐、共享或为每个Qwen owner复制一组
 
 #### Scenario: 多卡设备数组
-- **WHEN** 同一模型数组包含多个 `npu:N` 设备
-- **THEN** 每个实例加载到对应数组元素指定的设备，并在状态接口中按实例顺序展示设备
+- **WHEN** 同一模型数组包含多个npu:N设备
+- **THEN** 每个实例加载到对应数组元素指定的设备，并在状态接口按实例顺序展示设备；本次宿主验证仍仅使用物理7号卡
 
 ### Requirement: 模型池配置只使用新配置结构
 系统 MUST 将 `[model_device_pool]` 作为 CAM++ 与 emotion2vec 的唯一正式设备配置结构；旧 `[model_device]` 单设备字段和 `[model_device.local_model_pool]` 嵌套结构 MUST 不得覆盖新数组配置。
@@ -81,19 +85,19 @@
 - **THEN** 状态接口报告失败实例和原因，成功实例仍能服务请求
 
 ### Requirement: 模型池并发容量由各自设备数组决定
-系统 MUST 将 `speech_campplus_devices` 数组中成功加载的实例数作为 CAM++ 模型池的最大并发容量，并将 `emotion2vec_devices` 数组中成功加载的实例数作为 emotion2vec 模型池的最大并发容量；两个模型池 MUST 独立排队，MUST NOT 通过固定比例或额外模型槽位配置绑定容量。整音频 B 类准入上限 MUST NOT 改变这两个模型池的实例数或段级推理容量。
+系统 MUST 将各自成功加载的设备数组元素数作为CAM++和emotion2vec的最大执行并发，两个模型池独立排队，禁止固定比例、共享模型槽位或Qwen owner数隐式绑定容量。整音频B上限4及Qwen N、S的改变 MUST NOT 改变增强池实例数、预取深度或实际计算批大小；每项容量与实际健康数分别报告。
 
 #### Scenario: 两个模型配置不同数量实例
-- **WHEN** CAM++ 设备数组有 3 个元素且 emotion2vec 设备数组有 1 个元素
-- **THEN** CAM++ 最多同时执行 3 个推理，emotion2vec 最多同时执行 1 个推理，两个池互不借用容量
+- **WHEN** CAM++设备数组有3个元素且emotion2vec设备数组有1个元素
+- **THEN** CAM++最多同时执行3个推理，emotion2vec最多同时执行1个推理，两个池互不借用容量
 
 #### Scenario: 配置数组为空
-- **WHEN** 任一模型的设备数组为空
-- **THEN** 对应模型池容量为 0、不加载该模型实例，要求该能力的请求得到明确不可用结果
+- **WHEN** 任一模型设备数组为空
+- **THEN** 对应模型池容量为0、不加载该模型实例，要求该能力的请求得到明确不可用结果，不能以Qwen有空闲owner为由伪造增强成功
 
 #### Scenario: 部分实例加载失败
 - **WHEN** 设备数组声明多个实例但其中部分实例加载失败
-- **THEN** 模型池最大并发容量按成功加载的实例数计算，失败实例原因可查询且不占用可用槽位
+- **THEN** 模型池最大并发按成功加载的实例数计算，失败原因可查询且不占用可用槽位；不把配置数当健康容量
 
 ### Requirement: 模型池状态区分独立容量与等待
 
@@ -127,16 +131,46 @@
 - **THEN** 请求按 B 类正常准入，仅加载和调用所需模型，关闭的模型不因设备配置而生效
 
 ### Requirement: 主服务与固定 VAD worker 分工承载模型
-系统 MUST 在主服务进程中承载 CAM++、emotion2vec 与本地 Qwen 推理；CAM++、emotion2vec 和 Qwen 按各自能力契约懒加载。VAD MUST 保留 spawn 创建的固定独立 worker 池，启动时预热，按 FIFO 调度，设备数组长度决定 worker 数，MUST NOT 为本次迁移改为主进程内 VAD。主服务进程 MUST 命名为 `asr-offline-model`，VAD worker MUST 使用 `asr-offline-vad`；运维 MUST 能区分两类进程的资源，MUST NOT 把主服务 HBM 称为含独立 VAD worker 的全部占用。
+正式continuous/process MUST 由一个主HTTP进程协调N个owned spawn Qwen进程，每份仅在所属worker加载权重；CAM++按既有配置承载方式使用共享独立池，emotion2vec维持既有共享runner。VAD MUST 保留启动预热的固定spawn池，按数组长度配置并FIFO分派完整音频，不改主进程内VAD或运行期扩缩容。主进程保持asr-offline-model、VAD保持asr-offline-vad；运维 MUST 按出生身份区分各worker资源。legacy保留既有承载方式。
 
 #### Scenario: 服务启动并预热 VAD
-- **WHEN** 服务按固定 VAD 设备数组启动
-- **THEN** spawn worker 完成 VAD 预热后才报告就绪，主服务不因此加载尚未请求的增强模型或 Qwen 权重
+- **WHEN** 服务按固定VAD设备数组启动
+- **THEN** spawn worker完成VAD预热并满足可用条件后才就绪，不因此加载未请求的增强模型；Qwen另按preload开关完成全部预加载或保持懒加载，不能跳过默认预加载就绪条件
 
 #### Scenario: 查询进程资源
-- **WHEN** 运维查看 NPU 进程及服务状态
-- **THEN** 主服务与 VAD worker 可区分，资源统计覆盖各自进程，无法归因的 HBM 明确标记；查询不触发懒加载
+- **WHEN** 运维查看NPU进程及服务状态
+- **THEN** 主服务、VAD、各Qwen及已配置进程模式CAM可按PID和出生身份区分；父与worker资源分别统计，无法归因者明确标记，查询不触发懒加载，不把父进程HBM当作全部worker总量
 
 #### Scenario: 本轮宿主开发使用指定设备
-- **WHEN** 在 xjtu910b7 的 conda asr 环境开展本轮开发
-- **THEN** 使用 `/home/zhangs/conda-envs/asr/bin/python` 和宿主 `npu:7`，不调度其他卡或终止既有服务；容器内逻辑编号按实际设备映射核对，不照搬宿主卡号
+- **WHEN** 在xjtu910b7的conda asr环境开展本轮开发
+- **THEN** 使用/home/zhangs/conda-envs/asr/bin/python及宿主npu:7，不调度其他卡或终止既有服务；容器逻辑编号按实际可见映射核对，不照搬宿主卡号
+
+### Requirement: B类三分支独立排队且按原段汇合
+请求双增强时，有效VAD段裁剪后 MUST 并发分发给Qwen、CAM++和emotion2vec，各分支仅使用所属窗口及模型池，按请求ID和原段ID汇合；不得等待Qwen结束才发增强。Qwen安全完成 MUST 立即归还自身段credit，慢增强不能在共享PCM预算有余时占住该credit。CAM的0.3秒有效段覆盖、emo仅1～10秒实际推理及其它有效时长平淡、原聚类和情绪映射 MUST 保持。
+
+#### Scenario: 四音频同时双增强
+- **WHEN** 最终四Qwen、CAM4/emo1均驻留，四请求showSpk=true、showEmotion=true且能力可用
+- **THEN** 三分支独立排队并实际调用，CAM和emo实例由各自共享池提供；不为各请求或各Qwen复制增强池，结果保持原音频与原段归属
+
+#### Scenario: 情绪队列慢于转写
+- **WHEN** 某段Qwen安全结束而emo仍等待或执行，且全服务PCM预算有余
+- **THEN** 该段Qwen credit已释放，同请求下一段可进入Qwen；最终响应仍等待该段所有已启动分支终态，不串行化后续增强任务
+
+#### Scenario: 短段和情绪时长边界
+- **WHEN** 实际裁剪段分别不足0.3秒、0.3至不足1秒、1至10秒闭区间或超过10秒
+- **THEN** 不足0.3秒在三模型前移除；其余有效段执行Qwen及所请求CAM，只有1至10秒实际推emo，其它有效时长按既有规则平淡并明确计skip，不能将skip算作NN成功
+
+### Requirement: PCM汇合预算保持全服务有界所有权
+活动PCM段数与字节预算 MUST 为单HTTP服务共享，缺省256段/268435456字节，不按N复制，也不等同于N×S逻辑段窗口。每段PCM MUST 持有到全部已启动分支及必要读取清理终态；正常、失败、跳过和取消均只释放一次。预算耗尽 MUST 显式反压，不能无限堆积PCM、future或汇合结果；完整请求owner及音频/B租约到整请求安全收尾才归还。
+
+#### Scenario: 先完成转写但增强未结束
+- **WHEN** 一个段的Qwen已释放credit但CAM或emo仍有在途工作
+- **THEN** 该段PCM继续受全服务预算持有，归还Qwen credit不提前归还PCM，也不把此PCM计作仍在Qwen执行
+
+#### Scenario: 共享预算达到上限
+- **WHEN** 多音频的未完成分支使256段或256MiB PCM任一预算达到上限
+- **THEN** 暂停新增PCM工作并分别报告使用量和反压原因，释放后继续；不能每owner各使用一份同额预算或让一个模型实例等待另一池实例形成循环等待
+
+#### Scenario: 分支取消或失败后汇合
+- **WHEN** 已启动分支在设备访问期间失败、取消或遭重复取消
+- **THEN** 等实际工作及必要清理终态后回收PCM；段级增强失败维持原null降级与统计，模型全部不可用维持4015/4016，错误不导致提前释放owner或其它请求资源

@@ -41,3 +41,5 @@
 | tasks / implementation-status | 5.3最终N4/CAM4/emo1标定冻结、5.6同源增强驻留A4，实测前未勾；已勾历史事实保留 | 不删除原N6 OOM/N5结果，不勾旧change或宣称旧矩阵完成 |
 
 此前1/1 change与9/9 main/临时预览、36 MODIFIED/17 ADDED/184场景只是原N6文本校验记录，不能代替本轮N4修订后的重新严格校验或最终实测。只有root确认新范围完整、安全、正常关闭与实际配置一致后，才另行执行sync/archive；约200目标达标与否、警告和人工质量限制始终独立保留。
+
+2026-11-24最终完成：29/29真实验收与root收尾审查通过，已将本change六能力（36 MODIFIED/17 ADDED）同步main并与审阅预览逐文件SHA相等，严格9/9通过；归档至openspec/changes/archive/2026-11-23-qwen-multi-instance-serving。只归档本change，旧N6/N5事实及三个旧open任务不改。交付报告FINAL4-REPORT.md，具体归档/校验证据final4-evidence/archive-result.json。
