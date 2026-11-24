@@ -74,7 +74,7 @@
 - **THEN** 各响应保持自己的原段序号、边界和文本，取消及复用不读取另一请求KV或清理另一请求PCM，不以文件名或SHA决定固定owner
 
 ### Requirement: 正式持续转写返回段警告状态
-正式continuous响应 MUST 添加processing_status（complete或completed_with_warnings）及segment_warnings数组；每条警告含原segment_index、bg、ed、reason、action、recovered，不重排原警告索引或暴露内部原始生成轨迹。复读、长度耗尽、无效前缀经保守恢复保留可信文本，无法恢复明确警告并继续其它段；MUST NOT 将警告当完整无异常成功。显式legacy响应字段保持原样。
+正式continuous响应 MUST 添加processing_status（complete或completed_with_warnings）及segment_warnings数组；每条警告含原segment_index、bg、ed、reason、action、recovered，不重排原警告索引或暴露内部原始生成轨迹。已确认异常复读折叠成功时保留短句和一次循环，action=repetition_collapsed、recovered=true，仍返回completed_with_warnings；其它生成异常按既有恢复及不可恢复警告继续其它段，MUST NOT 将警告当完整无异常成功。显式legacy响应字段保持原样。
 
 #### Scenario: 所有段正常结束
 - **WHEN** continuous请求所有有效段正常处理且没有内容生成警告
@@ -95,3 +95,7 @@
 #### Scenario: 真实无有效人声
 - **WHEN** VAD及既有过滤后没有有效段，或没有有效文本且没有内容生成警告
 - **THEN** 继续返回既有4008规则，不因默认continuous变成无条件成功
+
+#### Scenario: 折叠短句仍显式警告
+- **WHEN** 一个短VAD段的异常复读被折叠成一次有效内容，其余段正常
+- **THEN** 短句进入segments并保留原bg/ed，其原segment_index警告标记repetition_collapsed和recovered=true，整音频为completed_with_warnings，内部原始轨迹不出现在响应中
