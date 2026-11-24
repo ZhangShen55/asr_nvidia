@@ -17,11 +17,17 @@
 
 当前外部构建工具conda-pack0.8.1依赖pkg_resources，而工具前缀的setuptools84已移除它。准备脚本只在workspace下载/解包setuptools80.9.0，作为conda-pack子进程临时PYTHONPATH；不安装至任何现有环境、不打进运行归档。这个工具兼容处理不能用于给业务运行时叠加系统包。
 
-## 已审核的宿主元数据偏差
+## 实际前缀字节打包与失败记录
 
-当前前缀实际distribution为numpy1.26.4，pip check无依赖冲突，但旧conda-meta仍记录numpy2.2.6；pip26.2.1、wheel0.48.0、setuptools84.0.0、packaging26.3的旧文件映射含lib/python3.1路径。首次严格conda-pack错误必须保留。仅当错误集合精确等于这五项已审核偏差时，准备工具才允许忽略缺失的历史管理记录并打包实际存在文件；出现任何其它缺项立即失败。不得修改宿主conda-meta，不能将忽略元数据解释为忽略依赖或运行错误。
+首次严格conda-pack发现宿主历史Conda元数据不一致；曾允许五项已确认缺失管理记录。但真实候选CPU导入失败进一步证明，conda-pack默认从旧package cache读取受管理文件，造成NumPy2.x与实际1.26.4混装。版本元数据/pip check通过不能证明字节正确。该旧方法已停用，坏归档、失败镜像和日志保留，不允许将旧state当成可复用实际快照。
 
-环境归档产生后记录SHA和实际包快照；相同workspace仅在指纹与归档SHA一致时复用，指纹变化则要求另选workspace，不能覆盖已有缓存。最终仍须在独立解包环境核验numpy1.26.4、torch/torchaudio/torchvision、pynini和ITN数据、实际导入路径及原生ABI，不能仅靠安装记录证明可用。
+当前固定 `pack_method=actual-prefix-v2`：宿主准备工具调用 `scripts/pack_actual_prefix.py`，以真实前缀现存路径集合为唯一输入，每个File.source均指向该前缀，完全不从package cache读取payload。前缀自身conda-meta.paths_data只提供text/binary重定位类型，占位符改为实际旧前缀；使用原库CondaEnv/File和conda-unpack完成重定位。不修改宿主环境、权重或元数据。
+
+未知二进制含旧前缀时默认阻止打包，必须先审计。当前唯一例外是crcmod的原生扩展，已用readelf确认真实DT_RPATH指向原环境lib，仅对精确路径和SHA登记binary类型，仍需候选容器验证新RPATH及实际导入。任何其它路径或内容变化继续失败。符号链接只允许相对且解析后位于前缀内，绝对/越界链接拒绝。
+
+所有源文件与归档成员保存SHA比对；仅允许库自身确定性的shebang与Conda元数据重写，以及固定版本生成的激活/conda-unpack模板。原生文件在归档中保持源字节，重定位记录进入conda-unpack；解包后再按库规则及真实native/ITN导入验证。源文件、归档SHA审计全部通过方可生成已完成state，不能仅靠包版本复用。
+
+失败旧目录保持为runtime_env；修复使用 `--runtime-context-name runtime_env_v2`，新归档及7文件上下文位于该目录。state为 `environment-pack-actual-prefix-v2-runtime_env_v2.json`，完整输入清单为 `context-preparation-runtime_env_v2.json`，逐文件审计为 `actual-prefix-v2-runtime_env_v2-audit.json`；新鲜workspace可使用默认runtime_env名称，但仍须v2方法state。不允许覆盖已有未知或旧方法归档。
 
 ## 构建和运行检查
 
@@ -36,3 +42,5 @@ Dockerfile不运行Cython、不复制项目脚本/测试/文档或配置；运�
 runtime_env因此精确包含7文件：原asr归档、torch-npu及上述三个补充wheel、runtime-packages.json和wheel-source.json。补充包来源、摘要及依赖检查记录在wheel-source.json的supplemental列表，实际版本快照同步加入三包；context-preparation.json记录更新后的完整输入摘要。额外文件、目录或符号链接均拒绝进入构建。
 
 底座op-compile-tool把标准库getopt/inspect/multiprocessing错误声明为pip包，te/op_test_frame元数据又带cp311 wheel标签；这些vendor元数据问题单独记录，不下载同名第三方包冒充标准库、不删除SDK文件。独立asr的pip一致性检查仅该子进程清空CANN PYTHONPATH，实际运行和算子编译保持CANN环境，仍须验证真实导入、编译和NPU前向。不能将通过独立pip check称为SDK全部兼容。
+
+复用v2归档必须同时存在已通过的v2字节审计，并重新核对全部实际源文件SHA及相对链接目标；保持相同版本、文件大小和mtime也不能跳过字节核验。缺少审计、来源不符或任一源变化均拒绝复用。所有workspace/staging的词法路径及祖先在resolve或写入前检查符号链接，models/runtime/tools已有条目递归检查；workspace不能位于运行前缀内，避免将打包产物写回原环境。新准备步骤不会覆盖旧方法失败归档。

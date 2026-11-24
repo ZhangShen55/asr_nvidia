@@ -65,3 +65,47 @@ def test_context_refuses_hidden_extra_and_symlink(tmp_path):
     (tmp_path/'archive').symlink_to(target)
     with pytest.raises(RuntimeError, match='符号链接'):
         preparation.validate_context_files(tmp_path, {'archive'})
+
+
+def valid_byte_audit(prefix, source):
+    return {'pack_method':'actual-prefix-v2','passed':True,'source_prefix':str(prefix),
+            'all_sources_from_actual_prefix':True,'package_cache_used':False,'errors':[],
+            'source_files':[{'path':source.name,'type':'file','source_sha256':preparation.sha(source)}]}
+
+
+def test_reuse_rehashes_source_even_if_size_and_mtime_are_preserved(tmp_path):
+    prefix=tmp_path/'prefix';prefix.mkdir();source=prefix/'native.so';source.write_bytes(b'first')
+    audit=tmp_path/'audit.json';audit.write_text(json.dumps(valid_byte_audit(prefix,source)))
+    preparation.validate_reuse_audit(prefix,audit)
+    before=source.stat();source.write_bytes(b'other')
+    import os
+    os.utime(source,ns=(before.st_atime_ns,before.st_mtime_ns))
+    with pytest.raises(RuntimeError,match='源SHA已变化'):
+        preparation.validate_reuse_audit(prefix,audit)
+
+
+@pytest.mark.parametrize('present',[False,True])
+def test_reuse_requires_present_successful_v2_audit(tmp_path,present):
+    prefix=tmp_path/'prefix';prefix.mkdir();source=prefix/'file';source.write_bytes(b'bytes');audit=tmp_path/'audit.json'
+    if present:
+        value=valid_byte_audit(prefix,source);value['passed']=False;audit.write_text(json.dumps(value))
+    with pytest.raises(RuntimeError,match='审计'):
+        preparation.validate_reuse_audit(prefix,audit)
+
+
+def test_staging_rejects_ancestor_and_existing_directory_symlinks(tmp_path):
+    outside=tmp_path/'outside';outside.mkdir();(tmp_path/'redirect').symlink_to(outside,target_is_directory=True)
+    with pytest.raises(RuntimeError,match='符号链接'):
+        preparation.reject_staging_symlinks(tmp_path/'redirect'/'new'/'file')
+    stage=tmp_path/'stage';stage.mkdir();(stage/'extra').symlink_to(outside,target_is_directory=True)
+    with pytest.raises(RuntimeError,match='已有符号链接'):
+        preparation.reject_staging_symlinks(stage,recursive=True)
+    assert not (outside/'new').exists()
+
+
+def test_workspace_inside_runtime_prefix_fails_before_any_write(tmp_path,monkeypatch):
+    prefix=tmp_path/'prefix';prefix.mkdir();workspace=prefix/'new-staging'
+    monkeypatch.setattr(preparation.sys,'argv',['prepare','--workspace',str(workspace),'--runtime-prefix',str(prefix),'--tool-python',preparation.sys.executable])
+    with pytest.raises(SystemExit,match='不得位于运行前缀内'):
+        preparation.main()
+    assert not workspace.exists()

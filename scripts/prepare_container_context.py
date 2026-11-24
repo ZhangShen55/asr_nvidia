@@ -8,6 +8,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import re
 import subprocess
 import sys
 import tarfile
@@ -70,6 +71,46 @@ MODELS = {
     'emotion2vec_plus_large': ('model.pt', 'config.yaml', 'configuration.json', 'tokens.txt'),
 }
 
+def reject_staging_symlinks(path, *, recursive=False):
+    """写前检查原始词法路径及祖先，不能resolve后掩盖重定向。"""
+    path = Path(path).absolute()
+    for candidate in [*reversed(path.parents), path]:
+        if candidate.is_symlink(): raise RuntimeError(f'拒绝staging符号链接: {candidate}')
+    if recursive and path.exists():
+        for candidate in path.rglob('*'):
+            if candidate.is_symlink(): raise RuntimeError(f'拒绝staging已有符号链接: {candidate}')
+
+
+def validate_reuse_audit(prefix, audit_path):
+    """逐实际源字节复核，拒绝仅靠版本、大小或mtime复用。"""
+    reject_staging_symlinks(audit_path)
+    if not audit_path.is_file(): raise RuntimeError('复用缺少v2字节审计')
+    audit = json.loads(audit_path.read_text())
+    if (audit.get('pack_method') != 'actual-prefix-v2' or audit.get('passed') is not True
+            or audit.get('source_prefix') != str(prefix) or audit.get('all_sources_from_actual_prefix') is not True
+            or audit.get('package_cache_used') is not False or audit.get('errors')):
+        raise RuntimeError('复用字节审计未通过或方法不匹配')
+    generated = {'bin/activate','bin/deactivate','bin/activate.fish','bin/conda-unpack'}
+    for entry in audit.get('source_files', []):
+        name = entry['path']
+        if Path(name).is_absolute() or '..' in Path(name).parts: raise RuntimeError('复用审计路径越界')
+        path = prefix/name
+        if entry['type'] == 'file' and 'source_sha256' not in entry:
+            if name not in generated: raise RuntimeError('缺少实际源SHA')
+            continue
+        if not path.resolve(strict=True).is_relative_to(prefix): raise RuntimeError('实际源越界')
+        if entry['type'] == 'file':
+            if path.is_symlink() or not path.is_file() or sha(path) != entry['source_sha256']:
+                raise RuntimeError(f'复用实际源SHA已变化: {name}')
+        elif entry['type'] == 'symlink':
+            if not path.is_symlink() or os.readlink(path) != entry['link'] or os.path.isabs(os.readlink(path)):
+                raise RuntimeError(f'复用实际symlink已变化: {name}')
+        elif entry['type'] == 'directory':
+            if path.is_symlink() or not path.is_dir(): raise RuntimeError('实际目录变化')
+        else: raise RuntimeError('复用审计类型非法')
+    if not audit.get('source_files'): raise RuntimeError('复用审计源清单为空')
+
+
 def sha(path):
     h = hashlib.sha256()
     with Path(path).open('rb') as f:
@@ -77,14 +118,18 @@ def sha(path):
     return h.hexdigest()
 
 def save(path, obj):
+    reject_staging_symlinks(path)
     Path(path).write_text(json.dumps(obj, ensure_ascii=False, indent=2) + '\n')
 
 def wheel(project, version, target, predicate=None):
+    reject_staging_symlinks(target, recursive=True)
     api = f'https://pypi.org/pypi/{project}/{version}/json'
     with urllib.request.urlopen(api, timeout=60) as response: info = json.load(response)
     entry = select_wheel(info, project, version)
     if predicate is not None and not predicate(entry['filename']): raise RuntimeError('wheel不满足额外锁定条件')
     dest = target / entry['filename']; expected = entry['digests']['sha256']
+    reject_staging_symlinks(dest)
+    reject_staging_symlinks(dest.with_suffix(dest.suffix + '.part'))
     if not dest.is_file() or sha(dest) != expected:
         part = dest.with_suffix(dest.suffix + '.part')
         with urllib.request.urlopen(entry['url'], timeout=120) as response, part.open('wb') as out:
@@ -96,15 +141,22 @@ def wheel(project, version, target, predicate=None):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--workspace', required=True)
+    parser.add_argument('--runtime-context-name', default='runtime_env')
     parser.add_argument('--runtime-prefix', default='/home/zhangs/conda-envs/asr')
     parser.add_argument('--tool-python', required=True)
     args = parser.parse_args()
     repo = Path(__file__).resolve().parent.parent
+    reject_staging_symlinks(args.workspace)
     work = Path(args.workspace).resolve()
+    prefix = Path(args.runtime_prefix).resolve(strict=True)
+    if work == prefix or prefix in work.parents: raise SystemExit('workspace不得位于运行前缀内')
     if work == repo or repo in work.parents: raise SystemExit('workspace必须在仓库外')
     work.mkdir(parents=True, exist_ok=True)
-    runtime = work / 'runtime_env'; models = work / 'model_assets'; tools = work / 'tools'
-    for directory in (runtime, models, tools): directory.mkdir(exist_ok=True)
+    if not re.fullmatch(r'runtime_env(?:_[a-zA-Z0-9-]+)?', args.runtime_context_name): raise SystemExit('非法runtime-context-name')
+    runtime = work / args.runtime_context_name; models = work / 'model_assets'; tools = work / 'tools'
+    for directory in (runtime, models, tools):
+        reject_staging_symlinks(directory, recursive=True)
+        directory.mkdir(exist_ok=True)
     # 显式白名单先筛选，再将目录交给构建器，避免无关模型资料进入上下文。
     model_records = []
     allowed = set()
@@ -120,6 +172,13 @@ def main():
     actual = {p.relative_to(models).as_posix() for p in models.rglob('*') if p.is_file()}
     if actual != allowed: raise RuntimeError(f'model_assets含非白名单文件: {actual - allowed}')
     save(work / 'model-assets-manifest.json', model_records)
+    if runtime.name != 'runtime_env':
+        # 复用已通过官方SHA校验的wheel字节；新目录仍由wheel()重新核对官方摘要。
+        for cached in (work/'runtime_env').glob('*.whl'):
+            if cached.is_symlink(): raise RuntimeError('拒绝复用symlink wheel')
+            target = runtime/cached.name
+            reject_staging_symlinks(target)
+            if not target.exists(): shutil.copyfile(cached,target)
     npu = wheel('torch-npu', '2.5.1.post1', runtime, lambda n: 'cp310-cp310' in n and 'aarch64' in n and n.endswith('.whl'))
     # conda-pack0.8.1需要pkg_resources；只为构建子进程解包兼容工具，不安装到任何现有环境。
     setuptools = wheel('setuptools', '80.9.0', tools, lambda n: n.endswith('py3-none-any.whl'))
@@ -145,38 +204,29 @@ def main():
         if item.is_file():
             st = item.stat()
             source_files.append({'path': item.relative_to(prefix).as_posix(), 'bytes': st.st_size, 'mtime_ns': st.st_mtime_ns, 'symlink': os.readlink(item) if item.is_symlink() else None})
-    save(work / 'source-prefix-files.json', source_files)
+    save(work / f'source-prefix-files-{runtime.name}.json', source_files)
     file_fingerprint = hashlib.sha256(json.dumps(source_files, sort_keys=True).encode()).hexdigest()
     fingerprint = hashlib.sha256(json.dumps(packages, sort_keys=True).encode()).hexdigest()
-    archive = runtime / 'asr-env.tar.gz'; state = work / 'environment-pack.json'
+    archive = runtime / 'asr-env.tar.gz'; state = work / f'environment-pack-actual-prefix-v2-{runtime.name}.json'
     reusable = False
     if archive.is_file() and state.is_file():
         old = json.loads(state.read_text())
-        reusable = old.get('package_fingerprint') == fingerprint and old.get('source_file_fingerprint') == file_fingerprint and old.get('sha256') == sha(archive)
+        reusable = old.get('pack_method') == 'actual-prefix-v2' and old.get('source_archive_sha_passed') is True and old.get('package_fingerprint') == fingerprint and old.get('source_file_fingerprint') == file_fingerprint and old.get('sha256') == sha(archive)
+    if reusable:
+        audit_file = work / f'actual-prefix-v2-{runtime.name}-audit.json'
+        if old.get('byte_audit') != str(audit_file): raise RuntimeError('复用审计来源不匹配')
+        validate_reuse_audit(prefix, audit_file)
     if not reusable:
         if archive.exists(): raise RuntimeError('现有归档不可复用，请选择新workspace，不能覆盖未核验缓存')
         pack_env = env.copy(); pack_env['PYTHONPATH'] = str(compat)
         excludes = ['**/__pycache__', '**/__pycache__/*', '**/*.pyc', '**/*.pyo', 'bin/pytest', 'bin/py.test', 'bin/cython*', 'bin/conda-pack', 'lib/python3.10/site-packages/pytest*', 'lib/python3.10/site-packages/_pytest*', 'lib/python3.10/site-packages/Cython*', 'lib/python3.10/site-packages/cython*', 'lib/python3.10/site-packages/conda_pack*']
-        code = """import conda_pack,sys,json,re,pathlib
-filters=[('exclude',p) for p in json.loads(sys.argv[3])]
-try:
-    conda_pack.CondaEnv.from_prefix(sys.argv[1])
-    audit={'missing_conda_metadata':[],'ignore_missing_files':False}
-except conda_pack.CondaPackException as exc:
-    message=str(exc)
-    observed=set(re.findall(r'^- ([^ ]+) ([^:]+):$',message,re.M))
-    allowed={('pip','26.2.1'),('wheel','0.48.0'),('setuptools','84.0.0'),('packaging','26.3'),('numpy','2.2.6')}
-    if observed != allowed or 'Files managed by conda' not in message:
-        raise
-    audit={'missing_conda_metadata':sorted(observed),'ignore_missing_files':True,'original_error':message,'reason':'已审核宿主历史Conda元数据偏差；按实际存在文件打包，实际distribution锁及解包验证为准'}
-pathlib.Path(sys.argv[4]).write_text(json.dumps(audit,ensure_ascii=False,indent=2))
-conda_pack.pack(prefix=sys.argv[1],output=sys.argv[2],filters=filters,ignore_missing_files=audit['ignore_missing_files'])
-"""
-        subprocess.run([args.tool_python, '-c', code, str(prefix), str(archive), json.dumps(excludes), str(work / "conda-metadata-audit.json")], env=pack_env, check=True)
+        audit_file = work / f'actual-prefix-v2-{runtime.name}-audit.json'
+        reject_staging_symlinks(audit_file)
+        subprocess.run([args.tool_python, str(repo/'scripts/pack_actual_prefix.py'), '--prefix',str(prefix),'--output',str(archive),'--audit',str(audit_file),'--excludes-json',json.dumps(excludes)], env=pack_env, check=True)
         with tarfile.open(archive) as packed:
             names = {n.name.lstrip('./') for n in packed}
             if not {'bin/python', 'bin/conda-unpack'} <= names: raise RuntimeError('环境缺少重定位入口')
-        save(state, {'source_prefix': str(prefix), 'tool_python': args.tool_python, 'tool_compatibility_wheel': setuptools, 'package_fingerprint': fingerprint, 'source_file_fingerprint': file_fingerprint, 'packages': packages, 'sha256': sha(archive), 'bytes': archive.stat().st_size, 'excludes': excludes})
+        save(state, {'pack_method':'actual-prefix-v2','source_archive_sha_passed':True,'byte_audit':str(audit_file),'source_prefix': str(prefix), 'tool_python': args.tool_python, 'tool_compatibility_wheel': setuptools, 'package_fingerprint': fingerprint, 'source_file_fingerprint': file_fingerprint, 'packages': packages, 'sha256': sha(archive), 'bytes': archive.stat().st_size, 'excludes': excludes})
     expected = dict(packages); expected['torch-npu'] = '2.5.1.post1'
     expected.pop('torch_npu', None)
     for key in list(expected):
@@ -193,8 +243,8 @@ conda_pack.pack(prefix=sys.argv[1],output=sys.argv[2],filters=filters,ignore_mis
     validate_context_files(runtime, expected_names)
     with tarfile.open(archive) as packed:
         members = [{'path':m.name,'bytes':m.size,'type':m.type.decode('ascii'),'link':m.linkname} for m in packed]
-    save(work / 'packed-files.json', members)
-    save(work / 'context-preparation.json', {'runtime_env': str(runtime), 'model_assets': str(models), 'runtime_env_files': [{'path': p.name, 'sha256': sha(p), 'bytes': p.stat().st_size} for p in sorted(runtime.iterdir())], 'models': model_records, 'host_environment_modified': False})
+    save(work / f'packed-files-{runtime.name}.json', members)
+    save(work / f'context-preparation-{runtime.name}.json', {'runtime_env': str(runtime), 'model_assets': str(models), 'runtime_env_files': [{'path': p.name, 'sha256': sha(p), 'bytes': p.stat().st_size} for p in sorted(runtime.iterdir())], 'models': model_records, 'host_environment_modified': False})
     print(json.dumps({'runtime_env': str(runtime), 'model_assets': str(models), 'environment_reused': reusable}, ensure_ascii=False))
 
 if __name__ == '__main__': main()

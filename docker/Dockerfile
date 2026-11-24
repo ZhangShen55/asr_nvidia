@@ -8,6 +8,7 @@ RUN --mount=type=bind,from=runtime_env,source=.,target=/input \
     mkdir -p /opt/asr \
     && tar -xzf /input/asr-env.tar.gz -C /opt/asr \
     && /opt/asr/bin/python /opt/asr/bin/conda-unpack \
+    && find /opt/asr/bin -maxdepth 1 \( -type f -o -type l \) -name "python*-config" -delete \
     && PYTHONPATH= /opt/asr/bin/python -m pip install --no-index --no-deps --no-compile /input/*.whl \
     && PYTHONPATH= /opt/asr/bin/python -m pip check \
     && /opt/asr/bin/python -c "from importlib.metadata import version; assert version('torch-npu') == '2.5.1.post1'; assert version('torch').split('+')[0] == '2.5.1'" \

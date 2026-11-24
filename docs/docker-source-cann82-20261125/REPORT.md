@@ -33,3 +33,5 @@
 构建v3的HTTPS同样403。进一步审计确认底座/etc/apt/apt.conf.d/01proxy硬编码旧Squid 10.30.6.2:3128，非软件包缺失；宿主直连同一官方HTTPS源返回200。构建层移除这份遗留配置，APT显式DIRECT，仍校验HTTPS与Ubuntu签名；同时pip使用--no-compile防止post1安装生成不必要.pyc。原底座与宿主APT均未修改。
 
 构建v4进入独立环境后，pip check因继承CANN PYTHONPATH读到SDK供应方元数据而失败：op-compile-tool将标准库getopt/inspect/multiprocessing误列pip依赖，te/op_test_frame的WHEEL带cp311标签；另确有absl-py/ml-dtypes/tornado缺项。已依据实际Requires-Dist补齐三个固定依赖（2.3.1/0.5.1/6.5.1，验证Python3.10/aarch64及NumPy1.26.4兼容），不安装虚假标准库包。ASR环境单独严格pip check，SDK真实导入/编译及模型forward须另验，不能以忽略供应方metadata代替实际运行通过。APT索引和包缓存改用专属BuildKit cache mounts，不进入最终层，保留至最终验收后统一清理。
+
+候选v5构建成功（17,199,859,464字节）但CPU审计失败，因此未交付、未进行NPU：archive中NumPy __init__字节来自Conda旧2.2缓存，与宿主实际1.26.4不同；ignore_missing_files容错不足，前述“实际前缀快照”假设不成立。v2改为真实prefix唯一源，Conda元数据仅提供重定位类型，45,049成员逐文件SHA验证通过、无package-cache来源，NumPy init重新核对与宿主SHA完全一致。一个crcmod原生RPATH例外按真实readelf及精确SHA审核，实际容器仍须核验/导入。旧archive、错误候选和失败原件保留，runtime_env_v2另建；Python开发config脚本无需运行，解包后从交付环境排除，真实解释器保持原库处理。
