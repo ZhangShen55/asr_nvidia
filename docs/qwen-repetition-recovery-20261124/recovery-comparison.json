@@ -1,0 +1,258 @@
+{
+  "baseline": "85bd900",
+  "scope": "constructed deterministic text, not original NPU output or recognition accuracy",
+  "records": [
+    {
+      "case": "中文短前缀",
+      "raw_text": "language Chinese<asr_text>今天天气很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好",
+      "duration_s": 2.02,
+      "reason": "repetition_stop",
+      "before": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      },
+      "after": {
+        "raw_text": "language Chinese<asr_text>今天天气很好",
+        "text": "今天天气很好",
+        "trusted_prefix": "今天天气很好",
+        "recovered": true,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "repetition_collapsed",
+          "recovered": true
+        }
+      }
+    },
+    {
+      "case": "整句复读",
+      "raw_text": "language Chinese<asr_text>今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好今天天气很好",
+      "duration_s": 2.02,
+      "reason": "repetition_stop",
+      "before": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      },
+      "after": {
+        "raw_text": "language Chinese<asr_text>今天天气很好",
+        "text": "今天天气很好",
+        "trusted_prefix": "今天天气很好",
+        "recovered": true,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "repetition_collapsed",
+          "recovered": true
+        }
+      }
+    },
+    {
+      "case": "中文半周期",
+      "raw_text": "language Chinese<asr_text>今天天气很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很好很",
+      "duration_s": 2.02,
+      "reason": "repetition_stop",
+      "before": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      },
+      "after": {
+        "raw_text": "language Chinese<asr_text>今天天气很好",
+        "text": "今天天气很好",
+        "trusted_prefix": "今天天气很好",
+        "recovered": true,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "repetition_collapsed",
+          "recovered": true
+        }
+      }
+    },
+    {
+      "case": "英文短句",
+      "raw_text": "language English<asr_text>hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again ",
+      "duration_s": 2.02,
+      "reason": "repetition_stop",
+      "before": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      },
+      "after": {
+        "raw_text": "language English<asr_text>hello again",
+        "text": "hello again",
+        "trusted_prefix": "hello again",
+        "recovered": true,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "repetition_collapsed",
+          "recovered": true
+        }
+      }
+    },
+    {
+      "case": "英文半周期和前文",
+      "raw_text": "language English<asr_text>Listen: hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello.",
+      "duration_s": 2.02,
+      "reason": "repetition_stop",
+      "before": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      },
+      "after": {
+        "raw_text": "language English<asr_text>Listen: hello again.",
+        "text": "Listen: hello again.",
+        "trusted_prefix": "Listen: hello again.",
+        "recovered": true,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "repetition_collapsed",
+          "recovered": true
+        }
+      }
+    },
+    {
+      "case": "英文前文无冒号",
+      "raw_text": "language English<asr_text>Within hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello again hello.",
+      "duration_s": 2.02,
+      "reason": "repetition_stop",
+      "before": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      },
+      "after": {
+        "raw_text": "language English<asr_text>Within hello again.",
+        "text": "Within hello again.",
+        "trusted_prefix": "Within hello again.",
+        "recovered": true,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "repetition_collapsed",
+          "recovered": true
+        }
+      }
+    },
+    {
+      "case": "数字短句",
+      "raw_text": "language Chinese<asr_text>12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 12345 ",
+      "duration_s": 2.02,
+      "reason": "repetition_stop",
+      "before": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      },
+      "after": {
+        "raw_text": "language Chinese<asr_text>12345",
+        "text": "12345",
+        "trusted_prefix": "12345",
+        "recovered": true,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "repetition_collapsed",
+          "recovered": true
+        }
+      }
+    },
+    {
+      "case": "保留前文正常强调",
+      "raw_text": "language English<asr_text>Class, very, very, very important. thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! thank you! ",
+      "duration_s": 2.02,
+      "reason": "repetition_stop",
+      "before": {
+        "raw_text": "language English<asr_text>Class, very, very, very important.",
+        "text": "Class, very, very, very important.",
+        "trusted_prefix": "Class, very, very, very important.",
+        "recovered": true,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "recover_prefix",
+          "recovered": true
+        }
+      },
+      "after": {
+        "raw_text": "language English<asr_text>Class, very, very, very important. thank you!",
+        "text": "Class, very, very, very important. thank you!",
+        "trusted_prefix": "Class, very, very, very important. thank you!",
+        "recovered": true,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "repetition_collapsed",
+          "recovered": true
+        }
+      }
+    },
+    {
+      "case": "纯填充词",
+      "raw_text": "language Chinese<asr_text>这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个这个",
+      "duration_s": 2.02,
+      "reason": "repetition_stop",
+      "before": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      },
+      "after": {
+        "raw_text": "language None<asr_text>",
+        "text": "",
+        "trusted_prefix": "",
+        "recovered": false,
+        "warning": {
+          "reason": "repetition_stop",
+          "action": "discard_unrecoverable",
+          "recovered": false
+        }
+      }
+    }
+  ]
+}

@@ -85,3 +85,23 @@ def test_fatal_inference_error_is_not_downgraded_to_warning():
             assert result['code'] == 4012
             assert 'processing_status' not in result
     asyncio.run(scenario())
+
+
+def test_actual_short_recovery_survives_v3_postprocess_with_original_boundary_and_warning():
+    from utils.qwen_segment_recovery import recover_segment_output
+    async def scenario():
+        recovery = recover_segment_output("language Chinese<asr_text>今天天气" + "很好" * 80,
+                                          "repetition_stop", 2.02)
+        recovery["text"] = recovery.pop("raw_text")
+        recovery["original_raw"] = "PRIVATE_ORIGINAL_RAW_MUST_NOT_LEAK"
+        result, _, _, _, calls = await run_continuous(raw_texts=[
+            recovery, structured("language English<asr_text>Hello class.")])
+        assert len(calls) == 2
+        assert result["segments"][0]["segment_text"] == "今天天气很好"
+        assert result["segments"][0]["bg"] == "0.00"
+        assert result["segments"][0]["ed"] == "1.00"
+        assert result["processing_status"] == "completed_with_warnings"
+        assert result["segment_warnings"] == [dict(segment_index=0, bg="0.00", ed="1.00",
+            reason="repetition_stop", action="repetition_collapsed", recovered=True)]
+        assert "PRIVATE_ORIGINAL_RAW" not in str(result)
+    asyncio.run(scenario())

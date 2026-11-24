@@ -1,0 +1,54 @@
+{
+  "npu-910b-runtime": {
+    "original_sha256": "5e82e77ee5c0e72bdad40f59574048c92315133ebd21c0be7cf9afc631dd822a",
+    "merged_sha256": "5e82e77ee5c0e72bdad40f59574048c92315133ebd21c0be7cf9afc631dd822a",
+    "modified_requirements": []
+  },
+  "service-operations": {
+    "original_sha256": "9c994da71b9cc0bf8a7ae3177286f1267da5a54261f734a7c6a44cb4ad4803b5",
+    "merged_sha256": "9c994da71b9cc0bf8a7ae3177286f1267da5a54261f734a7c6a44cb4ad4803b5",
+    "modified_requirements": []
+  },
+  "offline-asr-service": {
+    "original_sha256": "69f1eaebf6ce5c016bd1cee347dc6d20d78ed1e98cd6d42ee2540819f97353a6",
+    "merged_sha256": "9b8f1c6480de1f47312daa4cb342596f1e4d5c8d7f8bd55ed661af02943d70ae",
+    "modified_requirements": [
+      "### Requirement: 正式持续转写返回段警告状态"
+    ]
+  },
+  "local-model-inference-backends": {
+    "original_sha256": "c4ce9dbbdb0184359e32bafd801931d7850897ab8b1c01d54ca67c0c6e68000b",
+    "merged_sha256": "c4ce9dbbdb0184359e32bafd801931d7850897ab8b1c01d54ca67c0c6e68000b",
+    "modified_requirements": []
+  },
+  "resource-pressure-diagnostics": {
+    "original_sha256": "c4893007962fabcdc6071b6bddb85b262b8b6d42a772fc1ca733875765da68e0",
+    "merged_sha256": "c4893007962fabcdc6071b6bddb85b262b8b6d42a772fc1ca733875765da68e0",
+    "modified_requirements": []
+  },
+  "local-qwen-asr-inference": {
+    "original_sha256": "c9a80c8b561de0103f7a77ccbd66c6865efe37dfdd6fbda7723419e5ef8517bf",
+    "merged_sha256": "36148993f7a37e9d1a8f3c3d1a2a496972c6e11fa4ff614c31b92ae07f0a29b5",
+    "modified_requirements": [
+      "### Requirement: 多owner段级生成异常保留恢复与警告"
+    ]
+  },
+  "qwen-asr-v2-adapter": {
+    "original_sha256": "4d828fe92aea4d9dce1fdfbaabacc308eb41fc38101cfca9c5132cfa11328ed7",
+    "merged_sha256": "3bf792f539ed12fcc508decc2a4ba366d751b5834330f32da9d4ca7c1f3f73ad",
+    "modified_requirements": [
+      "### Requirement: 检测并修复复读分段文本",
+      "### Requirement: 复读判据的阈值可配置且有明确的标定依据"
+    ]
+  },
+  "local-model-runtime": {
+    "original_sha256": "c0f3c3326209e1d4a328b7eadfa17dabc812356c747ac018dd828cb878e0fe99",
+    "merged_sha256": "c0f3c3326209e1d4a328b7eadfa17dabc812356c747ac018dd828cb878e0fe99",
+    "modified_requirements": []
+  },
+  "container-model-packaging": {
+    "original_sha256": "4adfcdc5df66bb44ca2fdfd12f887abd3ed6e31e9aa17822c150f52983d0e447",
+    "merged_sha256": "4adfcdc5df66bb44ca2fdfd12f887abd3ed6e31e9aa17822c150f52983d0e447",
+    "modified_requirements": []
+  }
+}

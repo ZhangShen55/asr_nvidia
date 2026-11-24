@@ -217,3 +217,30 @@ def test_length_exhaustion_is_segment_warning_and_other_member_stays_active():
     assert len(result)==1 and result[0][0]==('a','0')
     assert result[0][1]['warning']['reason']=='length_limit'
     assert ('b','0') in adapter.active
+
+
+def test_real_online_guard_recovers_short_loop_and_releases_only_finished_member():
+    from utils.incremental_repetition import IncrementalRepetitionGuard
+    raw = ["language Chinese<asr_text>今天天气" + "很好" * 80]
+    tokenizer = SimpleNamespace(batch_decode=lambda *a, **k: [raw[0]], decode=lambda *a, **k: raw[0])
+    adapter = ContinuousHFAdapter(SimpleNamespace(device="cpu", max_new_tokens=256,
+        model=SimpleNamespace(generation_config=SimpleNamespace(eos_token_id=[63])),
+        processor=SimpleNamespace(tokenizer=tokenizer)), online_repetition_enabled=True)
+    key = ("audio", "141")
+    seq = Sequence(key=key, tokens=[1] * 64, duration_s=2.02)
+    seq.guard = IncrementalRepetitionGuard(2.02)
+    adapter.active[key] = seq
+    other = ("audio", "142")
+    adapter.active[other] = Sequence(key=other, tokens=[1], duration_s=2)
+    assert adapter._finish() == []  # 首次观测未满足连续确认
+    seq.tokens.extend([1] * 4)
+    raw[0] += "很好"
+    finished = adapter._finish()
+    assert finished[0][0] == key
+    result = finished[0][1]
+    assert result["text"] == "language Chinese<asr_text>今天天气很好"
+    assert result["warning"] == dict(reason="repetition_stop", action="repetition_collapsed", recovered=True)
+    assert key not in adapter.active and other in adapter.active
+    assert adapter.snapshot()["end_reasons"] == {"repetition_stop": 1}
+    assert adapter.snapshot()["warning_actions"] == {"repetition_collapsed": 1}
+    assert raw[0] not in str(adapter.snapshot())
