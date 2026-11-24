@@ -1,0 +1,60 @@
+{
+  "generated_utc": "2026-11-24T02:52:55.014673+00:00",
+  "all_owned_identities_absent": true,
+  "controller_original_identity_absent": true,
+  "shared_pid": 1601397,
+  "shared_birth": 1791963491.5,
+  "shared_ports": [
+    8007
+  ],
+  "test_port_observation_s": 6.473507479764521,
+  "test_port_listening": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "cache_files": [],
+  "same_root_config_semantics_as_test": true,
+  "minimum_hbm_root_verified": {
+    "index": 7,
+    "name": "910B3",
+    "health": "OK",
+    "chip": 0,
+    "bus_id": "0000:42:00.0",
+    "available": true,
+    "hbm_used_mb": 50130,
+    "hbm_total_mb": 65536,
+    "hbm_free_mb": 15406,
+    "utilization_aicore": 13,
+    "resource_timestamp": "2026-11-24T02:46:27.859+00:00"
+  },
+  "three_concrete_examples_verified_from_original_responses": true,
+  "normal_close_passed": true,
+  "near_background_root_review": {
+    "accepted_as_near_background": true,
+    "used_before_MB": 15908,
+    "used_after_MB": 15910,
+    "delta_MB": 2,
+    "shared_process_delta_MB": 0,
+    "reason": "全部本轮owned进程出生身份消失；共享原身份/8007及12417MB保持；卡总量65536MB仅差2MB，回到相近背景。此为收尾数值审查，不是free-HBM停测阈值，不声称精确恢复同值或证明无泄漏。",
+    "raw_recovery_status_retained": "unknown"
+  }
+}

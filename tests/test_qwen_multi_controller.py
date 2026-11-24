@@ -327,7 +327,7 @@ class ProbeResponse:
         return {"segments": [{"segment_text": "fixture"}], "processing_status": "complete", "segment_warnings": []}
 
 
-@pytest.mark.parametrize("owner_count", [5, 6])
+@pytest.mark.parametrize("owner_count", [4, 5, 6])
 @async_test
 async def test_admission_probe_requires_observed_real_capacity_windows(tmp_path, owner_count):
     # 仅测试controller时序的CPU替身；生产函数始终发送真实HTTP，不注入假hold服务。
@@ -359,7 +359,7 @@ async def test_admission_probe_requires_observed_real_capacity_windows(tmp_path,
                 enhanced -= int(is_b)
     owner = SimpleNamespace(process=SimpleNamespace(poll=lambda: None), register=lambda: None)
     result = await controller.admission_probes(Client(), clip, tmp_path / "probe", owner, owner_count=owner_count)
-    assert result["passed"] and result["records"]["fifthB"]["code"] == 4017
+    assert result["passed"] and result["records"]["fifthB"]["code"] == (4013 if owner_count == 4 else 4017)
     assert result["records"]["fullA"]["code"] == result["records"]["fullB"]["code"] == 4013
     assert any(row["audio"]["active_total"] == owner_count and row["B"]["active"] == 4 for row in result["observations"])
     assert active == enhanced == 0
@@ -539,3 +539,60 @@ async def test_n5_batch_stops_at_eighty_not_the_old_ninety_six(tmp_path):
                          hard_s=3, owner_count=5)
     assert result["trigger"] == "qwen_global_active_limit"
     assert result["all_request_latency"] is None
+
+
+
+def final_n4_config():
+    return (config_bytes().replace(b"local_instance_count=6", b"local_instance_count=4")
+            .replace(b'speech_campplus_devices=["npu:7"]', b'speech_campplus_devices=["npu:7","npu:7","npu:7","npu:7"]'))
+
+
+def test_final_n4_phase_plan_does_not_duplicate_a4_and_requires_resident_b4():
+    assert controller.phase_plan(4) == ["A4", "B4", "A4-resident"]
+    with pytest.raises(ValueError):
+        controller.phase_plan(4, ["A4-resident"])
+    with pytest.raises(ValueError):
+        controller.phase_plan(4, ["A5"])
+
+
+def test_final_n4_checks_cam_four_emo_one_and_sixty_four_capacity():
+    expected = controller.deployment_contract(final_n4_config(), instance_count=4)
+    assert expected["global"] == 64
+    with pytest.raises(ValueError):
+        controller.deployment_contract(config_bytes().replace(b"local_instance_count=6", b"local_instance_count=4"), instance_count=4)
+    status = good_status()
+    q = status["qwenModel"]
+    q["instances"] = q["instances"][:4]
+    q["capacity"] = 4
+    q["owner_pool"].update(configured=4, healthy=4, configured_global_segments=64)
+    q["batch_scheduler"].update(capacity=64, peak_inflight=64)
+    status["audioConcurrency"]["configured_total"] = 4
+    status["localModels"]["speech_campplus"].update(configured_instances=4, instances=4, called_instances=4)
+    assert controller.service_validation(status, expected, baseline=covered_owners(status), idle=True, resident=True)["passed"]
+    q["batch_scheduler"]["running_members"] = 65
+    assert Safety(owner_count=4).check(status) == "qwen_global_active_limit"
+    q["batch_scheduler"]["running_members"] = 0
+    status["localModels"]["speech_campplus"]["called_instances"] = 3
+    assert not controller.service_validation(status, expected, resident=True)["passed"]
+
+
+def test_default_manifest_remains_available_after_change_archive(tmp_path, monkeypatch):
+    from pathlib import Path
+    payload = (controller.ROOT / "docs/qwen-multi-instance-20261124/test-inputs.json").read_bytes()
+    rows = json.loads(payload)
+    assert [row["sample_id"] for row in rows] == [f"a{i}" for i in range(1, 7)]
+    assert len({row["sha256"] for row in rows}) == 6
+    assert all(len(row["sha256"]) == 64 and row["path_bytes_b64"] for row in rows)
+    stable = tmp_path / "docs/qwen-multi-instance-20261124/test-inputs.json"
+    stable.parent.mkdir(parents=True)
+    stable.write_bytes(payload)
+    assert not (tmp_path / "openspec/changes/2026-11-23-qwen-multi-instance-serving").exists()
+    async def inspect_arguments(args):
+        assert Path(args.manifest) == stable
+        assert Path(args.manifest).read_bytes() == payload
+        assert args.instance_count == 4
+        return {"checked": {"passed": True}}
+    monkeypatch.setattr(controller, "ROOT", tmp_path)
+    monkeypatch.setattr(controller, "execute", inspect_arguments)
+    monkeypatch.setattr(controller.sys, "argv", ["benchmark", "--output", str(tmp_path / "unused")])
+    assert controller.main() == 0

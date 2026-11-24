@@ -18,7 +18,7 @@
 - **THEN** 系统按既有错误分层返回，不新增对外错误码，不把推理错误伪装为无人声 `4008`
 
 #### Scenario: 多实例保持公开响应
-- **WHEN** 服务按continuous/process N=6启动并由不同owner承载普通或增强请求
+- **WHEN** 服务按continuous/process N=4启动并由不同owner承载普通或增强请求
 - **THEN** 每个响应仍保留现有顶层和segment_words/role/emotion等字段及类型，A开关默认false、未请求能力不被调用；不要求客户端提交owner、测试SHA或额外路由参数
 
 ### Requirement: 批执行保持独立段的业务归属

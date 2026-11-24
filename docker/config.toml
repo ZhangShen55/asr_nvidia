@@ -1,5 +1,6 @@
-# 2026-11-24：纯A6通过（墙钟186.32s），B4完成（302.60s）；增强驻留后A6真实OOM，尚未通过长期共驻验收。
+# 历史N6（2026-11-24）：纯A6通过（墙钟186.32s），B4完成（302.60s）；增强驻留后A6真实OOM，尚未通过长期共驻验收。
 # 昇腾 910B Docker v3 运行配置（模型随镜像交付，运行参数建议通过卷挂载覆盖）
+# 用户最终选择Qwen4/CAM++4/emo1，S=16/global=64；宿主B4/增强驻留A4已验收，容器另验。
 
 # 容器内并行运行的完整 ASR 服务进程数量。
 # 每个实例各自持有一份本地模型权重，实例数即HBM占用倍数，默认单实例。
@@ -72,7 +73,7 @@ model = ""  # 仅作本地模型标识，不发模型发现请求
 local_model_dir = "/app/qwen-model" # 从宿主只读挂载提供
 local_device = "npu:0" # 物理7号卡只映射一张时，容器内从0重新编号
 local_dtype = "bfloat16"
-local_instance_count = 6 # N：独立模型进程数，HTTP仍为1
+local_instance_count = 4 # N：独立模型进程数，HTTP仍为1；宿主B4/增强驻留A4已验收
 max_new_tokens = 256
 segment_concurrency = 16 # S：每请求在其owner内的活跃段上限
 audio_spk_emo_concurrency = 4           # B 类音频上限（请求说话人、情绪或角色识别）
@@ -126,8 +127,8 @@ before_end = 3
 # 复读段 282~313。取 40 留约 1.5 倍余量且远低于复读量级。
 
 [model_device_pool]
-speech_campplus_execution_mode = "thread" # 兼容安全缺省；process候选须完整矩阵/保护验收后选用
+speech_campplus_execution_mode = "process" # 与宿主最终CAM++4执行模式一致；容器仍待构建/验收
 speech_campplus_process_startup_timeout_s = 60 # 每worker READY启动期限；有限正数且不超过300秒
 speech_campplus_process_shutdown_grace_s = 30 # 仅显式关闭；不将普通请求取消改为kill
-speech_campplus_devices = ["npu:0"] # 独立增强池，各1起步，待真实B4标定
+speech_campplus_devices = ["npu:0", "npu:0", "npu:0", "npu:0"] # 最终选择CAM++4，与Qwen owner数独立；宿主已验收
 emotion2vec_devices = ["npu:0"] # 与Qwen owner数独立

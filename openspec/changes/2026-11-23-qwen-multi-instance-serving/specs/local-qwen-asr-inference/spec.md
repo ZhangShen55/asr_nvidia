@@ -48,8 +48,8 @@
 - **THEN** 服务保持可用并报告模型不可用及原因，其余健康能力仍可服务；该懒加载规则不把预加载失败改成服务就绪
 
 #### Scenario: 全部预加载完成后就绪
-- **WHEN** 正式默认六owner全部顺序加载完成且健康
-- **THEN** 服务才就绪，报告六份独立权重及processor的实际身份；加载计时与之后每owner真实forward暖身及正式请求计时分列
+- **WHEN** 正式默认四owner全部顺序加载完成且健康
+- **THEN** 服务才就绪，报告四份独立权重及processor的实际身份；加载计时与之后每owner真实forward暖身及正式请求计时分列
 
 #### Scenario: 部分预加载失败或关闭到达
 - **WHEN** 第k个owner加载失败、启动取消或服务关闭，而已有owner完成或正在加载
@@ -58,11 +58,11 @@
 ## ADDED Requirements
 
 ### Requirement: 正式continuous多实例具有独立执行所有权
-正式continuous MUST 支持经校验的可配置N个owned模型进程，缺省N=6、每音频S=16、宿主npu:7，保持原HF权重及BF16推理，不依赖实验环境开关或固定六/八档。每owner MUST 独立持有一份权重、执行状态与KV，父协调进程不得重复加载Qwen权重，HTTP服务数不随N增加。此正式模式明确替代旧continuous单实例限制及旧throughput跨副本按段均衡策略；legacy与历史验收范围不改写。
+正式continuous MUST 支持经校验的可配置N个owned模型进程，缺省N=4（合法整数1～8）、每音频S=16、宿主npu:7，保持原HF权重及BF16推理，不依赖实验环境开关或固定六/八档。每owner MUST 独立持有一份权重、执行状态与KV，父协调进程不得重复加载Qwen权重，HTTP服务数不随N增加。此正式模式明确替代旧continuous单实例限制及旧throughput跨副本按段均衡策略；legacy与历史验收范围不改写。
 
 #### Scenario: 正式默认启动
 - **WHEN** 正式continuous/process配置未显式改写N、S及设备
-- **THEN** 一HTTP服务协调六个模型进程，各owner仅承载所租请求最多16个逻辑段，配置总音频6、全局段96，不把96称为一份模型的物理批
+- **THEN** 一HTTP服务协调四个模型进程，各owner仅承载所租请求最多16个逻辑段，配置总音频4、全局段64，不把64称为一份模型的物理批；CAM4/emo1为独立共享池
 
 #### Scenario: 调整合法实例数
 - **WHEN** 运维配置支持范围内的其它N并重启
@@ -105,9 +105,9 @@
 ### Requirement: 多实例预算按owner与全服务分别生效
 系统 MUST 将max_inference_batch_size解释为每owner物理步上限，默认S，显式值大于S MUST 拒绝；每owner的prefill成员上限 MUST 不大于min(16,S)，默认取该值。每owner帧/token预算缺省14400/10000，不随N增加；S、max_new_tokens或预算变化 MUST 联合校验并明确拆分/反压，不能静默扩大预算。活动PCM段数及字节预算 MUST 保持全服务共享且独立于Qwen credit，不按N复制；预算是接纳限制，不是HBM保证。
 
-#### Scenario: 六owner使用默认窗口
-- **WHEN** N=6、S=16且使用默认每owner输入预算
-- **THEN** 每owner物理步上限16、prefill至多16、帧/token预算分别14400/10000；全局逻辑上限96与全服务PCM预算分别报告，不将每owner预算当成一个跨owner大批
+#### Scenario: 四owner使用默认窗口
+- **WHEN** N=4、S=16且使用默认每owner输入预算
+- **THEN** 每owner物理步上限16、prefill至多16、帧/token预算分别14400/10000；全局逻辑上限64与全服务PCM预算分别报告，不将每owner预算当成一个跨owner大批
 
 #### Scenario: 修改S或长段触发预算
 - **WHEN** S改变或候选prefill补齐后超过该owner帧/token预算

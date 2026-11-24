@@ -1,0 +1,17 @@
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_qwen_multi_enhancements.py::test_cold_loading_is_not_repeated_for_waiting_request_and_records_lock_wait
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_qwen_multi_enhancements.py::test_request_enhancement_counts_remain_bounded_isolated_and_survive_end_request
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_qwen_multi_enhancements.py::test_recent_stage_window_is_bounded_and_never_contains_text_or_arbitrary_dimensions
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_audio_admission_telemetry.py::AdmissionTelemetryTests::test_copies_metadata_and_filters_unbounded_keys
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_audio_admission_telemetry.py::AdmissionTelemetryTests::test_failure_reasons_and_classification_are_counted_separately
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_audio_admission_telemetry.py::AdmissionTelemetryTests::test_retained_window_eviction_and_legacy_events
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_audio_admission_lifecycle.py::AudioLifecycleTests::test_cancel_during_compat_clip_creation_cleans_file_created_after_cancel
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_audio_admission_lifecycle.py::AudioLifecycleTests::test_cancel_during_context_load_waits_for_thread_then_cleans_partial_file
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_audio_admission_lifecycle.py::AudioLifecycleTests::test_cancel_during_model_inference_holds_model_and_audio_leases
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_audio_admission_lifecycle.py::AudioLifecycleTests::test_cancel_during_vad_waits_for_worker_before_file_cleanup
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_v2_audio_admission_route.py::LeaseRouteTests::test_admission_rejection_does_not_add_processing_task
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_v2_audio_admission_route.py::LeaseRouteTests::test_successful_classification_and_disabled_features_allow_a
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_v2_audio_admission_route.py::AdmissionTraceTests::test_early_rejection_resets_phases_from_previous_request
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_v2_audio_admission_route.py::AdmissionTraceTests::test_rejections_record_distinct_reason_snapshot_and_log
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_v2_audio_admission_route.py::AdmissionTraceTests::test_waiting_cancellation_and_post_admission_failures
+FAILED ../qwen-final4-protected-20261124-9d3xz3h2/tests/test_v2_audio_admission_route.py::MixedAdmissionIntegrationTests::test_mixed_route_capacity_and_final_recovery
+56 failed, 357 passed, 1 warning, 204 subtests passed in 77.00s (0:01:17)

@@ -1,0 +1,14 @@
+{
+  "root_TOML_values_equal_test": true,
+  "post_test_changes": "acceptance comments only",
+  "tested_sha256": "1a59a645607d24a315b09f267af590235e148144a8b2ac18e6c8fd0e6df30f82",
+  "final_root_sha256": "86648ce29bb65a9a74c239b4cfe24557a619a3364d36f4bfac36770979d5089d",
+  "profile": {
+    "Qwen": 4,
+    "CAM_process": 4,
+    "emo": 1,
+    "audio": 4,
+    "global": 64
+  },
+  "docker_scope": "same instance combination, logical npu0; original VAD/filter environment differences retained, no build/deployment acceptance"
+}

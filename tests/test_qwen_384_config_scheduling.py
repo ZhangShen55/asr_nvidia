@@ -40,9 +40,9 @@ def test_shipped_templates_use_formal_multi_owner_profile(name):
     settings = Settings(str(ROOT / name))
     settings.validate_model_backends()
     assert settings.qwen_generation_mode == 'continuous'
-    assert settings.qwen_local_instance_count == 6
+    assert settings.qwen_local_instance_count == 4
     assert settings.qwen_segment_concurrency == 16
-    assert settings.qwen_request_concurrency == 96
+    assert settings.qwen_request_concurrency == 64
     assert settings.qwen_max_inference_batch_size == 16
     assert settings.qwen_preload_on_startup is True
     qwen = settings._cfg['qwen_asr']

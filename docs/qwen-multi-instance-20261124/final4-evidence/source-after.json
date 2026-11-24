@@ -1,0 +1,305 @@
+{
+  "root": "/home/zhangs/asr_nvidia",
+  "git_head": "1208793ae724a53ff1f36a65263eae874803602b",
+  "git_head_status": "known",
+  "git_head_reason": null,
+  "python_executable": "/home/zhangs/conda-envs/asr/bin/python",
+  "python_version": "3.10.22 | packaged by conda-forge | (main, Oct  6 2026, 22:53:30) [GCC 14.4.0]",
+  "files": {
+    "api/__init__.py": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "kind": "py"
+    },
+    "api/routes/__init__.py": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "kind": "py"
+    },
+    "api/routes/asr_common.py": {
+      "sha256": "5a04bac9bca03c62de15605966c23ae4cc84cd20fe1b44520c43e60152ed29b6",
+      "bytes": 6878,
+      "kind": "py"
+    },
+    "api/routes/asr_qwen_common.py": {
+      "sha256": "e3b6ce2cbcf04c61fffc07e59e587ef768dac369aa871665f9a0d67af8c279ec",
+      "bytes": 40141,
+      "kind": "py"
+    },
+    "api/routes/asr_v3.py": {
+      "sha256": "cc27724909893179022a6be4b603e9a6945ba3050b41297a2fb2ece89ac626d0",
+      "bytes": 7906,
+      "kind": "py"
+    },
+    "api/routes/status.py": {
+      "sha256": "492598502f0707775be7ae5a3b502f829bc6b6d31ff9790d6d6fd4db83f15394",
+      "bytes": 1392,
+      "kind": "py"
+    },
+    "core/__init__.py": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "kind": "py"
+    },
+    "core/async_utils.py": {
+      "sha256": "bbf61919dc7a5b986450c9b00ffed7df0980c99e94c5f16c4f2dca1f35abe5c6",
+      "bytes": 1074,
+      "kind": "py"
+    },
+    "core/cam_process.py": {
+      "sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3",
+      "bytes": 37562,
+      "kind": "py"
+    },
+    "core/config.py": {
+      "sha256": "97e72d092e89074f0f39da5eb3fbfeeafe85e1e4ccb007f94bf93fe33ed0ad9d",
+      "bytes": 33600,
+      "kind": "py"
+    },
+    "core/deployment.py": {
+      "sha256": "107b7c00dd0469c97acadcab34c32182a0321b67bd7e39ee740d1c89feb65966",
+      "bytes": 3544,
+      "kind": "py"
+    },
+    "core/local_inference.py": {
+      "sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01",
+      "bytes": 19287,
+      "kind": "py"
+    },
+    "core/logging.py": {
+      "sha256": "30e309f26c3e8ec5ccde044bbb53cf0d1a9084fca4fd8773ae9c2018ff0c64fa",
+      "bytes": 6037,
+      "kind": "py"
+    },
+    "core/model_loading.py": {
+      "sha256": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c",
+      "bytes": 2104,
+      "kind": "py"
+    },
+    "core/models.py": {
+      "sha256": "2d8078998d8b866d35cc011f93acfc32556219adb2e5aed4e82b8502104534a0",
+      "bytes": 46640,
+      "kind": "py"
+    },
+    "core/npu_resource_status.py": {
+      "sha256": "38dce7800a4e1bbc0fc11a7f4a50a545be3df9aa2e150359b36cb3a6ccc34bb6",
+      "bytes": 3534,
+      "kind": "py"
+    },
+    "core/performance_watchdog.py": {
+      "sha256": "6a8bad32fa704c9ccc0cb31a33e485577568393aa3ea2bfff4405b7513231db0",
+      "bytes": 3248,
+      "kind": "py"
+    },
+    "core/progress.py": {
+      "sha256": "8969e793015b8175e2990f5221b6e69e0b8c5072b64ccfa77e55b19e6a67bfb8",
+      "bytes": 2582,
+      "kind": "py"
+    },
+    "core/qwen_asr_client.py": {
+      "sha256": "48de1329467d9cb279074f2e013c718e06a146a49a772fadb96e4d959890d731",
+      "bytes": 46257,
+      "kind": "py"
+    },
+    "core/qwen_asr_process.py": {
+      "sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e",
+      "bytes": 33302,
+      "kind": "py"
+    },
+    "core/qwen_asr_queue.py": {
+      "sha256": "8e5fb766b31689484076c8b6c1764b2d9120455f4a9e07732d0e02facf636e06",
+      "bytes": 16801,
+      "kind": "py"
+    },
+    "core/qwen_asr_runtime.py": {
+      "sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe",
+      "bytes": 17927,
+      "kind": "py"
+    },
+    "core/qwen_batch_scheduler.py": {
+      "sha256": "399ffb0e4d8f282b597320c8acd6a0de9cae472d0442a625c37b265bff1ffbfc",
+      "bytes": 17963,
+      "kind": "py"
+    },
+    "core/qwen_continuous_process.py": {
+      "sha256": "13d08cb2774898300066ce69dfeb8813901732d9ae7b645b7453244e0f6d39c7",
+      "bytes": 21776,
+      "kind": "py"
+    },
+    "core/qwen_continuous_runtime.py": {
+      "sha256": "54566e37e25930100d61883d055f19f2aea7637a5ded051113d82dec070fb955",
+      "bytes": 17790,
+      "kind": "py"
+    },
+    "core/qwen_continuous_scheduler.py": {
+      "sha256": "a4954d5e1b00d54a166ca7c1959aafac3de432c9d7b246340b487bd7abf4db4d",
+      "bytes": 7094,
+      "kind": "py"
+    },
+    "core/request_telemetry.py": {
+      "sha256": "7c7c0a41e25e8d356bf29f4bfa4fba22a992f74a70e63bd0880976640e3084e7",
+      "bytes": 11716,
+      "kind": "py"
+    },
+    "core/resource_diagnostics.py": {
+      "sha256": "51b93a8193596e9a1c9b2cfab9a2f162d30cdaaa53f19a10ecee667870e18ae5",
+      "bytes": 27005,
+      "kind": "py"
+    },
+    "core/segment_pipeline.py": {
+      "sha256": "90214f5e1e7f95aef77fde336ef971dac8a9fdc703f2fb21273fdeec094eb32a",
+      "bytes": 6343,
+      "kind": "py"
+    },
+    "core/status.py": {
+      "sha256": "4ac95ee0355e1c984dce09132e88d8003eaec0502095cde0c39cda0b4d3f223f",
+      "bytes": 13320,
+      "kind": "py"
+    },
+    "core/vad.py": {
+      "sha256": "5977c424850ded7cd67d76708a52fa5750b01461723d6d35b1b5a0fe4a08edb1",
+      "bytes": 8188,
+      "kind": "py"
+    },
+    "core/vad_pool.py": {
+      "sha256": "196a4fff84c2b25d156f9840fba6d8e0c1162b4a7a23ef65ac6d4533902505fa",
+      "bytes": 28388,
+      "kind": "py"
+    },
+    "core/vad_volume.py": {
+      "sha256": "e97dfdf5cc4dc5a38fc5a5938dc3c20a70e81e09d6c2b50a2212295de624e6a4",
+      "bytes": 7451,
+      "kind": "py"
+    },
+    "entity/__init__.py": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "kind": "py"
+    },
+    "entity/data.py": {
+      "sha256": "4596ff74847397fdf2628433f79f3110c72c13219e7a7b49353bb3cdf65776ea",
+      "bytes": 2339,
+      "kind": "py"
+    },
+    "main.py": {
+      "sha256": "cd45a3e6689c289baac7fbdd437624812e4f0def4dcd982ba86d99b7934f43b2",
+      "bytes": 6975,
+      "kind": "py"
+    },
+    "model_status_runtime.py": {
+      "sha256": "5e1a7c044ee04973e8b42ba74d1b83bb20215f424a98a8221e6511cff1cd545a",
+      "bytes": 1414,
+      "kind": "py"
+    },
+    "telemetry_runtime.py": {
+      "sha256": "7d71697732fb30f712048f93cadc075b2a394da2945eaed9c7a787968c7cdc89",
+      "bytes": 2632,
+      "kind": "py"
+    },
+    "utils/__init__.py": {
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "bytes": 0,
+      "kind": "py"
+    },
+    "utils/asr_stats.py": {
+      "sha256": "1d3c0cefe775978503e8074c05e5fba347c196e7259e394ec409833c72bce351",
+      "bytes": 4870,
+      "kind": "py"
+    },
+    "utils/audio_utils.py": {
+      "sha256": "17ab6dfabda8fda6ead01f8cba785dda98278b4ea170330ab96d8df14d3a651d",
+      "bytes": 12724,
+      "kind": "py"
+    },
+    "utils/feature_utils.py": {
+      "sha256": "8f0c1fafab3f2d60398e53c9bcaf7d6f93f69a1aad2b4cb603866d12e457bef7",
+      "bytes": 6788,
+      "kind": "py"
+    },
+    "utils/incremental_repetition.py": {
+      "sha256": "5b3f63f86ad9c34e0176ceef7985f4e7a0c49aac7d13e5662b9d32bdd82e2bb8",
+      "bytes": 5730,
+      "kind": "py"
+    },
+    "utils/itn.py": {
+      "sha256": "5005178357003f716d819739b85f81b4dbe67e4d2764c9a3133244470fa3d0c0",
+      "bytes": 9537,
+      "kind": "py"
+    },
+    "utils/qwen_response.py": {
+      "sha256": "f48464ad4aa8648b4d7639a2d486cf9980a6a12866209fb9bd5893aed8a198fd",
+      "bytes": 3884,
+      "kind": "py"
+    },
+    "utils/qwen_segment_recovery.py": {
+      "sha256": "eb4cdf7ea9238b82fc45efc38d4a6b02e2df1636ab38d87ed9c59d383c2d730b",
+      "bytes": 2994,
+      "kind": "py"
+    },
+    "utils/repetition.py": {
+      "sha256": "02be6e84270414d30be39f721876553577760c62c59aaa695bf0d9ef94c4f0ef",
+      "bytes": 6924,
+      "kind": "py"
+    },
+    "utils/text_postprocess.py": {
+      "sha256": "3ee74af7164a2cda2f9ab56d06ee092159516c3dbbefdb99807d5e605e447530",
+      "bytes": 2718,
+      "kind": "py"
+    }
+  },
+  "preferred_module_files": {
+    "api/__init__": "api/__init__.py",
+    "api/routes/__init__": "api/routes/__init__.py",
+    "api/routes/asr_common": "api/routes/asr_common.py",
+    "api/routes/asr_qwen_common": "api/routes/asr_qwen_common.py",
+    "api/routes/asr_v3": "api/routes/asr_v3.py",
+    "api/routes/status": "api/routes/status.py",
+    "core/__init__": "core/__init__.py",
+    "core/async_utils": "core/async_utils.py",
+    "core/cam_process": "core/cam_process.py",
+    "core/config": "core/config.py",
+    "core/deployment": "core/deployment.py",
+    "core/local_inference": "core/local_inference.py",
+    "core/logging": "core/logging.py",
+    "core/model_loading": "core/model_loading.py",
+    "core/models": "core/models.py",
+    "core/npu_resource_status": "core/npu_resource_status.py",
+    "core/performance_watchdog": "core/performance_watchdog.py",
+    "core/progress": "core/progress.py",
+    "core/qwen_asr_client": "core/qwen_asr_client.py",
+    "core/qwen_asr_process": "core/qwen_asr_process.py",
+    "core/qwen_asr_queue": "core/qwen_asr_queue.py",
+    "core/qwen_asr_runtime": "core/qwen_asr_runtime.py",
+    "core/qwen_batch_scheduler": "core/qwen_batch_scheduler.py",
+    "core/qwen_continuous_process": "core/qwen_continuous_process.py",
+    "core/qwen_continuous_runtime": "core/qwen_continuous_runtime.py",
+    "core/qwen_continuous_scheduler": "core/qwen_continuous_scheduler.py",
+    "core/request_telemetry": "core/request_telemetry.py",
+    "core/resource_diagnostics": "core/resource_diagnostics.py",
+    "core/segment_pipeline": "core/segment_pipeline.py",
+    "core/status": "core/status.py",
+    "core/vad": "core/vad.py",
+    "core/vad_pool": "core/vad_pool.py",
+    "core/vad_volume": "core/vad_volume.py",
+    "entity/__init__": "entity/__init__.py",
+    "entity/data": "entity/data.py",
+    "main": "main.py",
+    "model_status_runtime": "model_status_runtime.py",
+    "telemetry_runtime": "telemetry_runtime.py",
+    "utils/__init__": "utils/__init__.py",
+    "utils/asr_stats": "utils/asr_stats.py",
+    "utils/audio_utils": "utils/audio_utils.py",
+    "utils/feature_utils": "utils/feature_utils.py",
+    "utils/incremental_repetition": "utils/incremental_repetition.py",
+    "utils/itn": "utils/itn.py",
+    "utils/qwen_response": "utils/qwen_response.py",
+    "utils/qwen_segment_recovery": "utils/qwen_segment_recovery.py",
+    "utils/repetition": "utils/repetition.py",
+    "utils/text_postprocess": "utils/text_postprocess.py"
+  },
+  "preferred_module_scope": "existing extension/source import candidates, not an in-memory import trace; main.py is the explicit entry",
+  "file_count": 48,
+  "hashed_bytes": 566379,
+  "complete": true,
+  "errors": []
+}

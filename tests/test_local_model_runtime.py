@@ -184,7 +184,7 @@ class ConfigFileStructureTests(unittest.TestCase):
         for name in ("config.toml", "docker/config.toml"):
             devices = self._load(name)["model_device_pool"]
             self.assertEqual(devices["emotion2vec_devices"], ["npu:7" if name == "config.toml" else "npu:0"])
-            self.assertEqual(devices["speech_campplus_devices"], ["npu:7" if name == "config.toml" else "npu:0"])
+            self.assertEqual(devices["speech_campplus_devices"], ["npu:7" if name == "config.toml" else "npu:0"] * 4)
 
     def test_log_path_and_vad_threshold_are_nested(self):
         expected_log_paths = {

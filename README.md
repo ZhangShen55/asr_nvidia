@@ -211,11 +211,11 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 | `preload_on_startup` | `true` | continuous就绪前顺序加载全部owner；legacy缺省false |
 | `owner_threads` | `1` | 每owner CPU线程预算，父进程OMP/MKL另行配置 |
 | `continuous_prefill_batch_size` | `min(16,S)` | 每owner每轮prefill上限，显式不得超过该派生值 |
-| `local_instance_count` | `6` | continuous的owner数N，范围1～8；显式legacy缺省1 |
+| `local_instance_count` | `4` | continuous的owner数N，范围1～8；显式legacy缺省1 |
 | `max_new_tokens` | `256` | 每段生成上限 |
 | `segment_concurrency` | `16` | continuous每音频及其owner逻辑活跃窗口S，范围1～128；legacy缺省1 |
-| `request_concurrency` | `N×S=96` | continuous由N×S派生，不在模板重复赋值；legacy缺省1 |
-| `audio_concurrency` | `N=6` | continuous由N派生；legacy缺省8 |
+| `request_concurrency` | `N×S=64` | continuous由N×S派生，不在模板重复赋值；legacy缺省1 |
+| `audio_concurrency` | `N=4` | continuous由N派生；legacy缺省8 |
 | `audio_spk_emo_concurrency` | `4` | 请求任一增强能力的 B 类整音频上限，必须为正整数 |
 | `queue_max_size` | `64` | A+B 共享等待队列容量 |
 | `queue_wait_timeout_s` | `0` | `0` = 队列满立即拒绝；`>0` 才排队等待，超时返回 `4010` |
@@ -276,10 +276,10 @@ CPU原始AutoModel与原生NPU保持同一既有行为；服务段级过滤独�
 
 | 参数 | 含义 | 默认值 |
 |------|------|--------|
-| `audio_concurrency` | 同时处于处理中的 A+B **音频文件**总数 | continuous派生N=6，legacy缺省8 |
+| `audio_concurrency` | 同时处于处理中的 A+B **音频文件**总数 | continuous派生N=4，legacy缺省8 |
 | `audio_spk_emo_concurrency` | 总音频中请求增强能力的 B 类音频数量 | 4 |
 | `segment_concurrency` | **单个音频内**同时执行本地转写的 VAD 段任务数 | continuous缺省16，legacy缺省1 |
-| `request_concurrency` | **所有音频合计**本地转写任务数上限 | continuous派生N×S=96，legacy缺省1 |
+| `request_concurrency` | **所有音频合计**本地转写任务数上限 | continuous派生N×S=64，legacy缺省1 |
 
 上述配置均在重启后生效，每个服务实例独立限流。旧配置缺少新增的
 `audio_spk_emo_concurrency` 时同样采用 **4**，升级后增强音频并发会受此上限限制。
@@ -290,7 +290,7 @@ B 上限允许大于总上限，实际 B 并发至多为 `min(audio_concurrency,
 任一个为 true 称为 B。每个 B 同时占用一个总音频名额和一个增强名额，即使开启多项也只计一个 B。
 不为 B 预留总名额，不改变 Qwen 段级信号量或模型设备数组决定的推理容量。
 
-总上限 8、B 上限 4、默认不等待时：
+当前最终配置为总4/B4：4A、4B或合计4个混合请求均使总容量满，新A/B都返回4013；此配置不能单独触发4017。以下表格是显式总8/B4（或legacy）的通用示例，不是当前默认：
 
 | 正在处理 | 新 A | 新 B |
 |---|---|---|
@@ -343,9 +343,9 @@ A 的活动数和等待数分别用总数减去 B 数。这里的 B 等待按完
 
 | 配置项 | 默认值 | 说明 |
 |--------|--------|------|
-| `speech_campplus_devices` | [`"npu:7", "npu:7", "npu:7"`] | 每个元素加载一个 CAM++ 实例；长度决定 CAM++ 最大并发 |
+| `speech_campplus_devices` | [`"npu:7", "npu:7", "npu:7", "npu:7"`] | 每个元素加载一个 CAM++ 实例；长度决定 CAM++ 最大并发 |
 | `emotion2vec_devices` | [`"npu:7"`] | 每个元素加载一个 emotion2vec 实例；长度决定 emotion2vec 最大并发 |
-| `speech_campplus_execution_mode` | `"thread"` | CAM原生执行：thread或process；process仅支持NPU设备数组，宿主npu:7/容器逻辑npu:0均可 |
+| `speech_campplus_execution_mode` | `"process"` | CAM原生执行：thread或process；process仅支持NPU设备数组，宿主npu:7/容器逻辑npu:0均可 |
 | `speech_campplus_process_startup_timeout_s` | `60` | 每CAM worker的READY启动期限，有限正数≤300秒，拒绝bool/字符串 |
 | `speech_campplus_process_shutdown_grace_s` | `30` | 仅显式关闭后的独立grace，有限正数≤300秒；不将普通取消改为kill |
 | `speech_campplus_prefetch_queue_depth` | `0` | 每健康CAM++实例的预取等待深度，0～64，不含运行任务；0为无预取 |
@@ -353,17 +353,18 @@ A 的活动数和等待数分别用总数减去 B 数。这里的 B 等待按完
 | `speech_campplus_batch_size` | `1` | 当前仅支持实际计算batch1；大于1在就绪前报错 |
 | `emotion2vec_batch_size` | `1` | 当前仅支持实际计算batch1；不因预取深度增大而自动变成批计算 |
 
-例如 CAM++ 3 个实例、emotion2vec 1 个实例：
+当前最终选择 CAM++ 4 个process实例、emotion2vec 1 个实例；本轮宿主B4与增强驻留A4已完成4/4验收（200.10秒/183.47秒）：
 
 ```toml
 [model_device_pool]
-speech_campplus_devices = ["npu:7", "npu:7", "npu:7"]
+speech_campplus_execution_mode = "process"
+speech_campplus_devices = ["npu:7", "npu:7", "npu:7", "npu:7"]
 emotion2vec_devices = ["npu:7"]
 ```
 
 预取使用每池共享FIFO任务源，未开始任务不永久绑定某个忙实例；空闲实例及时接下一段，无需等整音频响应。八个健康实例、深度5表示最多40个预取等待任务加最多8个运行任务，**不是batch5或40路实际计算**。深度0不建预取缓存，生产端公平等待空闲实例；生产端反压人数另计`backpressure_waiting`，不混入预取`waiting`。池还报告`waiting_capacity`、`oldest_wait_ms`、每实例`busy`、`handoff_count`及`last_handoff_ms`，交接间隙不把无任务时的空闲算作调度开销。
 
-CAM的process模式每个设备数组元素对应一个owned spawn worker，在该worker中加载同原生FP32模型；emo仍使用父进程runner，Qwen模式独立配置，不新增HTTP服务或更改模型格式/依赖。返回保持CPU float32 Tensor[1,192]，原短段聚类与错误码不变。状态查询或未请求CAM不启动worker、不发送RPC。非法模式、CPU/process组合和非法期限在就绪前拒绝，空数组仍禁用能力。宿主与容器模板继续保持thread安全默认；完整矩阵和最终保护版本尚未验收，组件候选增益不能当成完整音频性能通过。
+CAM的process模式每个设备数组元素对应一个owned spawn worker，在该worker中加载同原生FP32模型；emo仍使用父进程runner，Qwen模式独立配置，不新增HTTP服务或更改模型格式/依赖。返回保持CPU float32 Tensor[1,192]，原短段聚类与错误码不变。状态查询或未请求CAM不启动worker、不发送RPC。非法模式、CPU/process组合和非法期限在就绪前拒绝，空数组仍禁用能力。宿主与容器模板选择process、CAM++4/emo1；loader未显式设置CAM模式时仍保留thread兼容缺省。本轮B4与增强驻留A4及最终保护待验收，容器另待构建/验收，组件增益不能当成完整音频性能通过。
 
 八CAM进程会带来额外冷启动、进程RSS和IPC副本。实验16段原型约272秒的launcher全程包含启动、权重加载、预热及关闭，不能与约2.72秒暖态推理混同；单worker约16秒启动是该机观测，60秒配置值是每worker的READY期限，不承诺整个八worker池在60秒内完成加载。普通请求取消等待已启动工作真实DONE；显式关闭先发布closing并启用独立grace，仅回收出生身份仍匹配的owned worker，确认死亡前不归还容量。强制清理、坏ACK或非零退出必须保留为关闭失败，重复关闭不能洗为正常。
 
@@ -585,18 +586,24 @@ CONFIG_PATH=./test/config.qwen384.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 
 ### 正式多owner配置与迁移（2026-11-24）
 
-当前loader及根/Docker模板采用 `generation_mode="continuous"`、`execution_mode="process"`、`preload_on_startup=true`、N=6、S=16；HTTP `instance_count=1` 不变。总音频容量派生为N=6，全局Qwen逻辑窗口派生为N×S=96。每条请求动态租用一个健康owner，到整音频全部分支安全收尾才归还；一条音频尾段不能借空闲owner扩大S。历史单实例/128/384章节只描述原版本与实验，不代表新默认或已通过本轮验收。
+当前loader及根/Docker模板采用 `generation_mode="continuous"`、`execution_mode="process"`、`preload_on_startup=true`、N=4、S=16；HTTP `instance_count=1` 不变。总音频容量派生为N=4，全局Qwen逻辑窗口派生为N×S=64。本轮最终选择Qwen4/CAM++4/emo1，宿主B4与增强驻留A4已完成4/4验收（200.10秒/183.47秒）。每条请求动态租用一个健康owner，到整音频全部分支安全收尾才归还；一条音频尾段不能借空闲owner扩大S。历史单实例/128/384章节只描述原版本与实验，不代表新默认或已通过本轮验收。
 
 根/Docker模板不再写 `audio_concurrency`、`request_concurrency`、`max_inference_batch_size`、`continuous_prefill_batch_size`。continuous物理步缺省S，显式值只能1～S；prefill缺省min(16,S)，显式不能超过此值。旧audio/global显式值相等时给迁移提示，冲突、bool、字符串或越界在就绪前失败；应删除重复字段，或明确选择 `generation_mode="legacy"` 保留原独立容量配置。仅改N/S后重启即可更新派生配置，不需要跟着修改多份总量。legacy静态批行为仍使用其原独立参数和缺省，不暗中切换执行方式。
 
 每owner帧/token预算为14400/10000，N变化不放大这两项。S或生成上限变化时校验最短单段估算可接纳性，长段和多成员超预算仍须拆分/反压并报告；这不是HBM保证。每owner CPU线程预算 `owner_threads=1`，父进程 `OMP_NUM_THREADS=4 MKL_NUM_THREADS=4` 独立设置。全服务共享PCM预算为256段/256MiB，不复制N份。`audio_spk_emo_concurrency=4` 是B配置上限，有效B容量不超过健康Qwen数，健康下降不提前释放原请求。
 
-CAM++和emotion2vec数组独立，各1为本轮测试候选，实际B4已4/4完成；增强驻留后的A6发生真实OOM，尚未确定可长期共驻的最终池配置，2/4档已按故障停止条件暂停。N变化不复制增强池。VAD保持八CPU。宿主只验证npu:7，Docker仅映射物理7时使用逻辑npu:0，按可见设备核对。配置修改后需重启；本轮未部署Docker。预加载仅顺序装载权重/processor，真实forward暖身与性能计时另行验收；本轮源码/保护回归和正常关闭通过；纯A6墙钟186.32秒、B4墙钟302.60秒，但共驻验收失败，change保持开放，不能视为稳定部署配置。完整证据见[正式测试报告](docs/qwen-multi-instance-20261124/REPORT.md)。
+CAM++和emotion2vec数组独立，用户最终选择CAM++4个process实例、emo1；本轮宿主B4及增强驻留A4已完成4/4验收。此前N6/CAM1/emo1的B4已4/4完成，但增强驻留后的A6真实OOM，历史结果保留。N变化不复制增强池。VAD保持八CPU。宿主只验证npu:7，Docker仅映射物理7时使用逻辑npu:0，按可见设备核对。配置修改后需重启；本轮未部署Docker。预加载仅顺序装载权重/processor，真实forward暖身与性能计时另行验收；此前N6源码/保护回归和正常关闭通过；纯A6墙钟186.32秒、B4墙钟302.60秒，但共驻验收失败，change保持开放，不能视为稳定部署配置。完整证据见[正式测试报告](docs/qwen-multi-instance-20261124/REPORT.md)。
 
 continuous保留已批准并用于noHBM参考的在线复读保护 `online_repetition_enabled=true` 与 `continuous_admission_drain_ms=3`（收到提交后的有界IPC交接），不改变检测阈值或max_new_tokens；显式legacy缺省仍false/0。3ms不是重新等待凑整批或续期长等待，不影响无新段的decode周期。本次默认迁移不另行更换prefill/KV算法。
 
-本轮仅宿主根配置实测，Docker未构建/上线；模板保留原有VAD过滤和CAM thread模式等环境差异，不能套用宿主成绩。原始计时配置与当前根配置解析值完全相等，测试后只补充验收注释。
+此前N6/N5成绩仅对应各自冻结配置；当前根/Docker已改为用户最终选择Qwen4/CAM++4/emo1，本轮宿主B4与增强驻留A4已完成验收。Docker CAM模式同步为process，仍保留其原有VAD过滤等环境差异，未构建/上线，不能套用宿主成绩。
 
 ### 2026-11-24用户授权N5补充验证
 
 根配置副本仅N6→5，正式默认和业务代码保持不变。原完整a1～a5纯A5 5/5，P50/P95/墙钟173.70/183.18/183.83秒；A4 4/4墙钟195.44秒；双增强B4 4/4，284.91/296.24/296.96秒；增强驻留A5 5/5，173.32/203.23/206.12秒，严格200目标超约3.06%。本轮未复现OOM，最低HBM采样free5131原始MB（约5.01GiB），CAM排队/PCM反压及allocator缓存增长仍在。正常exit0、owned/端口/PCM回收、共享1601397/8007保留；N5不能替代原N6必需验收，change仍27/29/open。详见docs/qwen-multi-instance-20261124/N5-REPORT.md。
+
+### 最终组合验收完成（2026-11-24）
+
+当前正式默认Qwen4/CAM++4/emo1、总音频4/global64。真实完整B4 4/4、P50/P95/墙钟183.26/199.45/200.10秒；全部模型驻留后的纯A4 4/4、172.54/182.31/183.47秒，最低剩余HBM采样15406MB（约15.05GiB），无推理OOM，正常exit0/全部owned回收。B冷加载短clip暖身105.21秒单列，不把暖态B4当冷态完整课程成绩。完成含段级警告，B4严格无警告2/4，人工质量未认证；具体文本波动保留。剩余5.3/5.6按用户确认的最终范围验收完成，29/29；原N6 OOM及N5成绩保持历史。完整报告见[最终报告](docs/qwen-multi-instance-20261124/FINAL4-REPORT.md)，规格同步/归档身份见交付元数据。Docker未构建/上线。
+
+测试控制器默认清单已移至稳定docs/qwen-multi-instance-20261124/test-inputs.json，归档后测试控制器仍可显式选择`--instance-count 4`，输出目录必须是新目录；仍需按独立端口/PID归属及故障停止流程执行，不自动重跑。

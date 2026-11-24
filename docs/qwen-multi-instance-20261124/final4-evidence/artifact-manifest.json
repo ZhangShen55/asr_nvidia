@@ -1,0 +1,336 @@
+{
+  "generated_utc": "2026-11-24T02:54:48.549285+00:00",
+  "scope": "final N4 implementation/test delivery before main sync/archive; self excluded; older artifacts kept immutable",
+  "files": [
+    {
+      "path": "docs/qwen-multi-instance-20261124/FINAL4-MEMORY-REPORT.json",
+      "bytes": 105300,
+      "sha256": "1788945a5fe6468b2bfc123a5e8f9fac131fef5991909446cf4646326607eb4d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/FINAL4-MEMORY-REPORT.md",
+      "bytes": 7527,
+      "sha256": "1d17c2764dbac98679c5a10f6fcf7263a5c47ab04ba5d917d8b6cd7895dbe519"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/FINAL4-REPORT.md",
+      "bytes": 7010,
+      "sha256": "49cda7b3327637339799e5cbe0d10ce26e18032e25d407db0d2785f0428bceea"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/N4_A4_vs_N4_A4_resident.html",
+      "bytes": 675286,
+      "sha256": "2b55fe4bdd5db27acec5d5dffb87a56e907f5d56ebc427f6a14ca5d0b21a0f23"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/N4_A4_vs_N4_A4_resident.json",
+      "bytes": 791925,
+      "sha256": "2ea902b83473685b02e56e61751ceab2749f88cff5a302aaa175d3aa5215a2c0"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/N4_A4_vs_N4_A4_resident.md",
+      "bytes": 1506,
+      "sha256": "7cca9d1d2cf71fdc6a0c2a882e27bcdbdf4a5a420eed279921b10e367ea6e218"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/N4_A4_vs_N4_B4.html",
+      "bytes": 6690426,
+      "sha256": "9d70bf47e586d5f123db832f1722e39bdf373b5cf23455e999c7a7cab7e0a6ec"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/N4_A4_vs_N4_B4.json",
+      "bytes": 5324335,
+      "sha256": "666676218af4e67cafa8e5e626b8d113ca0ae0af009ea7297fda45adc4fd74de"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/N4_A4_vs_N4_B4.md",
+      "bytes": 1501,
+      "sha256": "46073e79bfecbbe7365658bab6d66b9ba3b2b197b6579fb278439e1038a3cd65"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/N5_B4_vs_N4_B4.html",
+      "bytes": 701013,
+      "sha256": "e3142934424ccbeb490b2b67b1886ca9f713b302c8fc9e256a3babe7280ae926"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/N5_B4_vs_N4_B4.json",
+      "bytes": 785007,
+      "sha256": "1b7b809b1bb6510e625095ad66928d45db4ac6031ce5b9ab710a27e060f971b7"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/N5_B4_vs_N4_B4.md",
+      "bytes": 1528,
+      "sha256": "2720dd18c89e5f24526358f98d72dd6ff9412bd98183c6a3f88e9f56aa7aa779"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/README.md",
+      "bytes": 1135,
+      "sha256": "e3bb7946a58d8486967c5ea38193f2d56a17b488cc49a03f0c77d6638b99a656"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-differences/verified-examples.json",
+      "bytes": 8176,
+      "sha256": "6e1e7ca553b43561efe086a37997ede303cfba2c7ff1a0cfc6d0403cb6422f12"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/A4/summary.json",
+      "bytes": 7428,
+      "sha256": "4ef4c7b6b8825253dee9e7fcf2f799ec5ca748e69c0b53e75bdefd904ee4bda3"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/A4-resident/summary.json",
+      "bytes": 7432,
+      "sha256": "f77c41e065a2c52a590761ba048490f46e9826d894fcdd98ba93df46c907ca34"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/B-cold-warmup/summary.json",
+      "bytes": 8826,
+      "sha256": "5561303802837f28753099b196a918300dc173b4ffc9c91a92c67b68a4c870b7"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/B4/summary.json",
+      "bytes": 9324,
+      "sha256": "abe375964657ca0944145ffef65c790c3ebc7c8d00cb7155aa1456d3174c801d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/admission-probes/summary.json",
+      "bytes": 3243,
+      "sha256": "8ecde1e462167d6728011a990d6ec30ed38c7fda5c6999923f57d6499538f91a"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/background-after.json",
+      "bytes": 34637,
+      "sha256": "672482a851c69b190f512271ec938ecc58b9e4d720852e2f1e6aeddce074a5e2"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/background-before.json",
+      "bytes": 34638,
+      "sha256": "18bb9647720479be4cfe21f4df44d6b4b52f75b5631d0b785b4cc554bb664eee"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/build-result.json",
+      "bytes": 13984,
+      "sha256": "398a2b30c15cc99ca72435856d2c95ed82006525b8d1a28b4531ea96d280dfb2"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/change-validation.json",
+      "bytes": 483,
+      "sha256": "154b3d3b932b7cff1e9d6d351c858b10a751889542fa00dd392085e1e64c528b"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/config.toml",
+      "bytes": 7575,
+      "sha256": "1a59a645607d24a315b09f267af590235e148144a8b2ac18e6c8fd0e6df30f82"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/controller-during-run.py",
+      "bytes": 49211,
+      "sha256": "2b0b784216542afcaea882b17893ce9a185936cef747b40bd2b665341e48d637"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-archive-protected-v2/owner.json",
+      "bytes": 39,
+      "sha256": "6cabb7fd3c8b30906f4cf1a5505591caf920bd0e5c81aa42c22f125ba8131d5b"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-archive-protected-v2/pytest-summary.txt",
+      "bytes": 19,
+      "sha256": "2c47251d3e0a5808852b055f3dad6775f08b2e9c3b2bd1fe2e494d0334b7416f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-archive-protected-v2/required-node-evidence.json",
+      "bytes": 5159,
+      "sha256": "2020e338e5c6454638841938f09eb55d30901620c2c6e37c1162bb0ab51789ed"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-archive-protected-v2/result.json",
+      "bytes": 7048,
+      "sha256": "513f1a4c3912dada3e980a8ef73cc4073494ce321b6ce8d2100e4685d165a2a5"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-archive-source-v2/owner.json",
+      "bytes": 40,
+      "sha256": "e293318ee15f5a772267491019230ef11c7d2f1ece930a937e28a0509c8f737d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-archive-source-v2/pytest-summary.txt",
+      "bytes": 19,
+      "sha256": "31e9fab6f9d9f9dc8b395e4510bb03d5a2597d25dd6d51ab842c0f3ac646d75f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-archive-source-v2/result.json",
+      "bytes": 4627,
+      "sha256": "c6a7aa38ca92a4c5ed6448b42f52e7e4feed1720081599dcba3ede68c0e47200"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-full-v1/owner.json",
+      "bytes": 39,
+      "sha256": "f9d2afcebc5da17174345a5f56f7a89dfd7267f4484a344580ca5bddf4379c0f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-full-v1/pytest-summary.txt",
+      "bytes": 249,
+      "sha256": "e3b50fd3d9203cb951d09ba8e46bc6b56d0e09f65ab267f3eb61e9070994a2fc"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-full-v1/required-node-evidence.json",
+      "bytes": 914,
+      "sha256": "76245a69022e60b4e6b96980aef1972052bc63908d625b35094153a5989038c5"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-full-v1/result.json",
+      "bytes": 24858,
+      "sha256": "36d6ae28e1d7680efeccc607aa70866c427d28d11bd410f93eed1a7cd667e84c"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-full-v2/owner.json",
+      "bytes": 40,
+      "sha256": "2722f82c44636ff61212964141be939bd1925f67fd2cb670147cdf9ef9f3f550"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-full-v2/pytest-summary.txt",
+      "bytes": 91,
+      "sha256": "777908011652e53019ecc1ba5bef69f04ccb1cfa4cddc61f672d69f8c20c50fd"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-full-v2/required-node-evidence.json",
+      "bytes": 914,
+      "sha256": "76245a69022e60b4e6b96980aef1972052bc63908d625b35094153a5989038c5"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-full-v2/result.json",
+      "bytes": 25103,
+      "sha256": "8243802e3fb0be75c09bf8a57bd4936f113d06389dcc3f3d1b8b82b8e88fecce"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-protected-v1/owner.json",
+      "bytes": 40,
+      "sha256": "3118b3a8a4786af3ffb8d7732ad182a79a360569e94dcf1443536144c0d0a69b"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-protected-v1/pytest-summary.txt",
+      "bytes": 2803,
+      "sha256": "91a55ea2c3dd87275b73f5223280557ceb8e0f8cac4358edf93db61d68df8e92"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-protected-v1/required-node-evidence.json",
+      "bytes": 5159,
+      "sha256": "2020e338e5c6454638841938f09eb55d30901620c2c6e37c1162bb0ab51789ed"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-protected-v1/result.json",
+      "bytes": 10499,
+      "sha256": "a600edf31b9a03f936e3ca4327f03d4232e8d84390fc98b36c3ee18766aae3e8"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-protected-v2/owner.json",
+      "bytes": 40,
+      "sha256": "71f07525f6666301c3cea05f27108ac9bf52ea3e2056f82612ab0601b75d6fc1"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-protected-v2/pytest-summary.txt",
+      "bytes": 53,
+      "sha256": "b7d5967f390f39d8045ea7b0ce0ffb738bcde9d6e27d5e1253b8cf9081e41da6"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-protected-v2/required-node-evidence.json",
+      "bytes": 5159,
+      "sha256": "2020e338e5c6454638841938f09eb55d30901620c2c6e37c1162bb0ab51789ed"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/cpu-protected-v2/result.json",
+      "bytes": 10499,
+      "sha256": "5973151ae3978ff230c3bbeb1d89dd678adb4a0042e6300427ef98bd3c38cdd9"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/final-config-equivalence.json",
+      "bytes": 522,
+      "sha256": "15e5ff95cf47db40bb73e98a34348aa251b68d7364c77bb1c5a2ef654ed77cc9"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/inputs.json",
+      "bytes": 3458,
+      "sha256": "876a4c3cd710c7043863e9ade4d4006fc0a3e247862fd2c0f4d74513cfdf5327"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/launch.json",
+      "bytes": 5327,
+      "sha256": "7c5af22e4de29315adffd68b22d5178633354fca8e8be52a422a9badc9d34ef0"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/main-before-sync-validation.json",
+      "bytes": 1554,
+      "sha256": "fb1ceb60af095fe36d2650118634f4c11ff4f7c455698f1c3f9f7d7c7fcb279c"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/owner-coverage.json",
+      "bytes": 7559,
+      "sha256": "15c3601f45af4d4dbaa52745e0c25e066c4f85a5d3ea37ae5c05b00e1cfa94de"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/post-run-helper-change.json",
+      "bytes": 518,
+      "sha256": "0dabe780e83228be8b95a7d9e4cf93624ff50070caa8c2a45252d1d8c9d589ef"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/preview-validation.json",
+      "bytes": 1577,
+      "sha256": "3ab9a483222d2f582df7da932e24aeddfc6c61590f4c9ceae4abd47c4efa96d3"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/root-acceptance-audit.json",
+      "bytes": 1532,
+      "sha256": "127bd5a2efd0c7a3b1a325bc8a1ce2b96b5362983f89923c2e7b3b9cfd23c03d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/run.json",
+      "bytes": 69993,
+      "sha256": "ac075a62facb9abfa4d7ceb14fdde767669ba0f700cc2d7317c0f6be97ef4070"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/service-launch.json",
+      "bytes": 438,
+      "sha256": "348830fbbcdc00018043935b3b26b6633999886d5d59ce31148d1665237d3359"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/setup.json",
+      "bytes": 5365,
+      "sha256": "178f9764fca19f85cdfbd935aa85b69d0f87432da84b4e164aa0e57626948966"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/shutdown.json",
+      "bytes": 16427,
+      "sha256": "11d76caba7ecbf896490c9460b60246b99b233ea41e24804210b98749846aae6"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/source-after.json",
+      "bytes": 10824,
+      "sha256": "7a61e0c4221bba41bc4d59b4513c1d02bac16acc70d3f5c6972e0be85a004f1d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/source-before.json",
+      "bytes": 10824,
+      "sha256": "7a61e0c4221bba41bc4d59b4513c1d02bac16acc70d3f5c6972e0be85a004f1d"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/spec-preview.json",
+      "bytes": 5521,
+      "sha256": "1b87c6bf0b37cd04fffd963e5d01deb9fc25f1575e9709f385d9ffd6425293d2"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/final4-evidence/warmup/summary.json",
+      "bytes": 2541,
+      "sha256": "75e698ad5c88e757f41980fcb3ad288495203ec5647cdd363415326a22184396"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/test-inputs.json",
+      "bytes": 2375,
+      "sha256": "af754088f766c2865d9557cfe4ed8ebee009cf4bf677543fbd9cede23fbebb42"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/tools/compare_final4.py",
+      "bytes": 12672,
+      "sha256": "294fd9d36fbf733fd4befa9123fa7ba8bd4213a6d6c1abde8e5fa8c7040d202e"
+    }
+  ]
+}

@@ -30,8 +30,8 @@
 **SeaCraftASR**：面向课堂录音的离线语音转写服务（FastAPI）。
 
 - 当前**只有 v3 一条链路**：`POST /v3/seacraft_asr`。v1.1.8（SeACo-Paraformer + PUNC + Whisper）和 v2 路由已下线，代码与模型均已清理，不要"顺手恢复"。
-- FSMN-VAD是固定spawn进程池；CAM++懒加载池可选thread/process（安全默认thread），emotion2vec保持主进程runner。
-- **Qwen3-ASR使用本地原始权重**，BF16 / npu:7；当前continuous/process、顺序预加载6份owner，每请求独占一份、每份窗口16、全局96，HTTP仍1。纯A6墙钟186.32秒；B4完成但增强驻留后A6真实OOM，尚未通过长期共驻验收，详见文末当前检查点。
+- FSMN-VAD是固定spawn进程池；CAM++懒加载池可选thread/process（loader兼容缺省thread，当前模板process4实例），emotion2vec保持主进程runner。
+- **Qwen3-ASR使用本地原始权重**，BF16 / npu:7；当前continuous/process、顺序预加载4份owner，每请求独占一份、每份窗口16、全局64，HTTP仍1；CAM++4个process实例、emo1。用户已采用该最终配置，宿主B4与增强驻留A4已完成4/4验收（200.10/183.47秒）。历史N6/N5结果及失败保留，详见文末检查点。
 - 对外只有三个接口：`POST /v3/seacraft_asr`、`GET /get_status`、`DELETE /clear_tasks_list`。
 
 ### 业务目标（容易理解错，先看这段）
@@ -162,11 +162,11 @@ Qwen完成即还自身名额，增强队列/汇合受段数和PCM字节预算反
 
 | 层       | 参数                                                | 语义                            | 当前值                 |
 | ------- | ------------------------------------------------- | ----------------------------- | ------------------- |
-| 整音频准入 | `audio_concurrency` / `audio_spk_emo_concurrency` | continuous总数由owner数N派生 / B子集上限 | 6 / 4 |
-| Qwen 请求 | `segment_concurrency` / `request_concurrency` | 每音频段窗口S / 全局由N×S派生 | 16 / 96 |
-| 本地增强池 | `speech_campplus_devices` / `emotion2vec_devices` | 数组长度=各自实例数，独立于Qwen N | 1×npu:7 / 1×npu:7（共驻未验收） |
+| 整音频准入 | `audio_concurrency` / `audio_spk_emo_concurrency` | continuous总数由owner数N派生 / B子集上限 | 4 / 4 |
+| Qwen 请求 | `segment_concurrency` / `request_concurrency` | 每音频段窗口S / 全局由N×S派生 | 16 / 64 |
+| 本地增强池 | `speech_campplus_devices` / `emotion2vec_devices` | 数组长度=各自实例数，独立于Qwen N | 4×npu:7 process / 1×npu:7（宿主本轮已验收） |
 
-音频准入、Qwen逻辑窗口、物理批大小与模型实例容量分别计数；增加等待任务不增加模型实际计算容量。表中当前值是前次配置快照，新增吞吐候选与实施状态见下一节；历史压测见`docs/cam*`、`docs/vad-pool*`。
+音频准入、Qwen逻辑窗口、物理批大小与模型实例容量分别计数；增加等待任务不增加模型实际计算容量。表中当前值是用户最终选择Qwen4/CAM++4/emo1，宿主B4及增强驻留A4已完成验收；历史压测见`docs/cam*`、`docs/vad-pool*`。
 
 **错误码契约不可随意改号**（客户端已按此判断）：完整定义分散在  
 `core/qwen_asr_queue.py`、`core/qwen_asr_client.py`、`core/models.py`、`core/vad_pool.py` 的异常类 `code` 属性；  
@@ -501,3 +501,13 @@ continuous模式对三类段生成异常做保守恢复/无法恢复警告并继
 ### 2026-11-24用户授权N5补充验证
 
 根配置副本仅N6→5，正式默认和业务代码保持不变。原完整a1～a5纯A5 5/5，P50/P95/墙钟173.70/183.18/183.83秒；A4 4/4墙钟195.44秒；双增强B4 4/4，284.91/296.24/296.96秒；增强驻留A5 5/5，173.32/203.23/206.12秒，严格200目标超约3.06%。本轮未复现OOM，最低HBM采样free5131原始MB（约5.01GiB），CAM排队/PCM反压及allocator缓存增长仍在。正常exit0、owned/端口/PCM回收、共享1601397/8007保留；N5不能替代原N6必需验收，change仍27/29/open。详见docs/qwen-multi-instance-20261124/N5-REPORT.md。
+
+### 2026-11-24用户最终配置（验收前检查点）
+
+用户明确采用Qwen4/CAM++4/emo1：loader continuous缺省owner数4，根与Docker模板Qwen process/preload=true、S16，派生audio4/global64；CAM++设备数组4份且process，emo数组1份，宿主物理npu7/容器逻辑npu0。VAD、生成策略、每owner预算、阈值及HTTP1保持原配置。本轮B4与增强驻留A4及最终完整guard/保护待root验收，未提前宣布通过或归档。此前N6真实OOM与N5超200秒等历史段落保留原冻结语境，不能作为当前配置成绩；Docker仍待构建/验收。
+
+### 2026-11-24最终组合验收完成
+
+当前正式默认continuous/process Qwen4@npu7、CAM4 process、emo1、S16，总音频4/global64，HTTP1。用户已确认替代最终范围，5.3/5.6通过，29/29：正式A4/B4/增强驻留A4均4/4，墙钟186.44/200.10/183.47秒；B4 P50/P95=183.26/199.45秒、严格无警告2/4（12warning/11discard），冷加载短clip暖身105.21秒单列。最低HBM采样free15406MB；CAM等待p50/p95/max0/1/25，PCM峰65，无推理OOM。source1299/379subtests、实际40SO保护373/244subtests、归档清单兼容源49/保护49通过。所有CPU/NPU/控制器退出，service正常exit0/34.89秒、端口≥5秒、PCM为空、shared1601397/8007保留。背景used15908→15910MB仅+2，root独立相近背景/归属审查通过，raw recovery unknown仍保留。
+
+本change完成后仅同步其六份delta并归档；旧N6共驻OOM、N5补测及三个旧open change任务不改。没有更改KV/allocator/阈值/生成策略或依赖/权重，没有Docker构建/上线，质量未认证。报告docs/qwen-multi-instance-20261124/FINAL4-REPORT.md，实际大原始日志final-m4-cam4-emo1-v1保留；上方“待验收/27of29/正式默认6”仅属此前历史检查点。测试控制器稳定清单在docs/.../test-inputs.json，active change归档不再使CLI路径失效。

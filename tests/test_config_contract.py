@@ -161,10 +161,13 @@ class ConfigContractTests(unittest.TestCase):
             with self.subTest(template=name):
                 cfg = Settings(config_path=str(root / name))
                 cfg.validate_model_backends()
-                self.assertEqual(cfg.model_device_speech_campplus_execution_mode, 'process' if name == 'config.toml' else 'thread')
+                self.assertEqual(cfg.model_device_speech_campplus_execution_mode, 'process')
                 self.assertEqual(cfg.model_device_speech_campplus_process_startup_timeout_s, 60.)
                 self.assertEqual(cfg.model_device_speech_campplus_process_shutdown_grace_s, 30.)
-                self.assertEqual(cfg.model_device_speech_campplus_devices, [device])
+                self.assertEqual(cfg.model_device_speech_campplus_devices, [device] * 4)
+                self.assertEqual(cfg.model_device_emotion2vec_devices, [device])
+                self.assertEqual(cfg.qwen_local_instance_count, 4)
+                self.assertEqual(cfg.qwen_request_concurrency, 64)
 
     def test_calibrated_qwen_limits_keep_one_model_copy(self):
         settings = self._legacy_settings("")

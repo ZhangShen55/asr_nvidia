@@ -1,0 +1,245 @@
+{
+  "generated_utc": "2026-11-24T02:49:00.789426+00:00",
+  "shutdown_gate": true,
+  "scope": "纯stdlib回读实际响应校验具体变化；无人工GT，不是准确率/召回验收。",
+  "examples": [
+    {
+      "report": "N4_A4_vs_N4_B4",
+      "sample_id": "a1",
+      "bg": "215.62",
+      "ed": "216.36",
+      "status": "raw_response_rows_verified",
+      "left_response": {
+        "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4/response-a1.json",
+        "exists": true,
+        "sha256": "809718ef8aa1a24a4c7df0d72936d071cfbd4c8573a52eb21e2264b6cf8bdda6",
+        "bytes": 171992
+      },
+      "right_response": {
+        "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/B4/response-a1.json",
+        "exists": true,
+        "sha256": "76cab52bb3bfa8112891e80cb7410acb246f1bc77cbdebb62372e36b973dd058",
+        "bytes": 181324
+      },
+      "left": {
+        "segment_text": "estou bem",
+        "bg": "215.62",
+        "ed": "216.36",
+        "speed": 64,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      },
+      "right": {
+        "segment_text": "This one, okay.",
+        "bg": "215.62",
+        "ed": "216.36",
+        "speed": 97,
+        "segment_words": [],
+        "role": "spk_0",
+        "emotion": "平淡"
+      },
+      "field_changes": {
+        "emotion": {
+          "left": null,
+          "right": "平淡",
+          "left_present": true,
+          "right_present": true,
+          "expected_cross_mode_field": true
+        },
+        "role": {
+          "left": null,
+          "right": "spk_0",
+          "left_present": true,
+          "right_present": true,
+          "expected_cross_mode_field": true
+        },
+        "segment_text": {
+          "left": "estou bem",
+          "right": "This one, okay.",
+          "left_present": true,
+          "right_present": true,
+          "expected_cross_mode_field": false
+        },
+        "speed": {
+          "left": 64,
+          "right": 97,
+          "left_present": true,
+          "right_present": true,
+          "expected_cross_mode_field": false
+        }
+      },
+      "left_warnings": [],
+      "right_warnings": []
+    },
+    {
+      "report": "N4_A4_vs_N4_A4_resident",
+      "sample_id": "a2",
+      "bg": "40.05",
+      "ed": "48.06",
+      "status": "raw_response_rows_verified",
+      "left_response": {
+        "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4/response-a2.json",
+        "exists": true,
+        "sha256": "37fae2993f10d54065ff6abfc3f02b78ca99756235650db6983ae1c3b2fafaf0",
+        "bytes": 183062
+      },
+      "right_response": {
+        "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4-resident/response-a2.json",
+        "exists": true,
+        "sha256": "9cebc2250bfafa60b6000cac96743f16a6550b80697055f4dab7a9c412304302",
+        "bytes": 182676
+      },
+      "left": {
+        "segment_text": "外头工资高一点，味道没有，没钱吃，没钱吃，中秋不是年假吗？刚算到多少？一万三，然后。",
+        "bg": "40.05",
+        "ed": "48.06",
+        "speed": 101,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      },
+      "right": {
+        "segment_text": "外头工资高一点，内头工资没钱，没钱，没钱。",
+        "bg": "40.05",
+        "ed": "48.06",
+        "speed": 50,
+        "segment_words": [],
+        "role": null,
+        "emotion": null
+      },
+      "field_changes": {
+        "segment_text": {
+          "left": "外头工资高一点，味道没有，没钱吃，没钱吃，中秋不是年假吗？刚算到多少？一万三，然后。",
+          "right": "外头工资高一点，内头工资没钱，没钱，没钱。",
+          "left_present": true,
+          "right_present": true,
+          "expected_cross_mode_field": false
+        },
+        "speed": {
+          "left": 101,
+          "right": 50,
+          "left_present": true,
+          "right_present": true,
+          "expected_cross_mode_field": false
+        }
+      },
+      "left_warnings": [],
+      "right_warnings": []
+    },
+    {
+      "report": "N5_B4_vs_N4_B4",
+      "sample_id": "a3",
+      "bg": "118.07",
+      "ed": "120.11",
+      "status": "raw_response_rows_verified",
+      "left_response": {
+        "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/B4/response-a3.json",
+        "exists": true,
+        "sha256": "58319aa0e13d4c8dd5996bcb83998ab32614f78cc3334d88f469a03945222795",
+        "bytes": 193867
+      },
+      "right_response": {
+        "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/B4/response-a3.json",
+        "exists": true,
+        "sha256": "d1790385253388bcebc6d5def2c682060b51874a686f26c3435ccce24391ee24",
+        "bytes": 194210
+      },
+      "left": {
+        "segment_text": "对对对。",
+        "bg": "118.07",
+        "ed": "120.11",
+        "speed": 35,
+        "segment_words": [],
+        "role": "spk_0",
+        "emotion": "平淡"
+      },
+      "right": {
+        "segment_text": "对。",
+        "bg": "118.07",
+        "ed": "120.11",
+        "speed": 11,
+        "segment_words": [],
+        "role": "spk_0",
+        "emotion": "平淡"
+      },
+      "field_changes": {
+        "segment_text": {
+          "left": "对对对。",
+          "right": "对。",
+          "left_present": true,
+          "right_present": true,
+          "expected_cross_mode_field": false
+        },
+        "speed": {
+          "left": 35,
+          "right": 11,
+          "left_present": true,
+          "right_present": true,
+          "expected_cross_mode_field": false
+        }
+      },
+      "left_warnings": [],
+      "right_warnings": []
+    }
+  ],
+  "summaries": {
+    "N4_A4_vs_N4_B4": {
+      "expected_audio_pairs": 4,
+      "comparable_audio_pairs": 4,
+      "unknown_audio_pairs": 0,
+      "different_boundaries_in_comparable_pairs": 2580,
+      "matched_text_changes_in_comparable_pairs": 189,
+      "matched_field_changes_in_comparable_pairs": {
+        "emotion": 2568,
+        "role": 2568,
+        "segment_text": 189,
+        "speed": 92
+      },
+      "left_only_boundaries_in_comparable_pairs": 5,
+      "right_only_boundaries_in_comparable_pairs": 7,
+      "all_audio_pairs_comparable": true,
+      "aggregation_scope": "仅可比较完整配对；unknown不参与求和且不解释为0变化",
+      "warning_known_audio_pairs": 4,
+      "warning_unknown_audio_pairs": 0,
+      "changed_warning_boundaries_in_known_pairs": 7
+    },
+    "N4_A4_vs_N4_A4_resident": {
+      "expected_audio_pairs": 4,
+      "comparable_audio_pairs": 4,
+      "unknown_audio_pairs": 0,
+      "different_boundaries_in_comparable_pairs": 198,
+      "matched_text_changes_in_comparable_pairs": 191,
+      "matched_field_changes_in_comparable_pairs": {
+        "segment_text": 191,
+        "speed": 96
+      },
+      "left_only_boundaries_in_comparable_pairs": 4,
+      "right_only_boundaries_in_comparable_pairs": 3,
+      "all_audio_pairs_comparable": true,
+      "aggregation_scope": "仅可比较完整配对；unknown不参与求和且不解释为0变化",
+      "warning_known_audio_pairs": 4,
+      "warning_unknown_audio_pairs": 0,
+      "changed_warning_boundaries_in_known_pairs": 5
+    },
+    "N5_B4_vs_N4_B4": {
+      "expected_audio_pairs": 4,
+      "comparable_audio_pairs": 4,
+      "unknown_audio_pairs": 0,
+      "different_boundaries_in_comparable_pairs": 204,
+      "matched_text_changes_in_comparable_pairs": 174,
+      "matched_field_changes_in_comparable_pairs": {
+        "segment_text": 174,
+        "speed": 74,
+        "role": 25
+      },
+      "left_only_boundaries_in_comparable_pairs": 2,
+      "right_only_boundaries_in_comparable_pairs": 4,
+      "all_audio_pairs_comparable": true,
+      "aggregation_scope": "仅可比较完整配对；unknown不参与求和且不解释为0变化",
+      "warning_known_audio_pairs": 4,
+      "warning_unknown_audio_pairs": 0,
+      "changed_warning_boundaries_in_known_pairs": 3
+    }
+  }
+}

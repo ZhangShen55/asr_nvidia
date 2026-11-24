@@ -16,8 +16,8 @@ def test_formal_defaults(tmp_path):
     cfg.validate_model_backends()
     assert (cfg.qwen_generation_mode, cfg.qwen_execution_mode) == ("continuous", "process")
     assert cfg.qwen_preload_on_startup is True
-    assert (cfg.qwen_local_instance_count, cfg.qwen_segment_concurrency) == (6, 16)
-    assert (cfg.qwen_audio_concurrency, cfg.qwen_request_concurrency) == (6, 96)
+    assert (cfg.qwen_local_instance_count, cfg.qwen_segment_concurrency) == (4, 16)
+    assert (cfg.qwen_audio_concurrency, cfg.qwen_request_concurrency) == (4, 64)
     assert (cfg.qwen_max_inference_batch_size, cfg.qwen_continuous_prefill_batch_size) == (16, 16)
     assert (cfg.qwen_max_batch_audio_frames, cfg.qwen_max_batch_tokens) == (14400, 10000)
     assert (cfg.qwen_pending_segment_limit, cfg.qwen_pending_audio_bytes_limit) == (256, 268435456)
@@ -39,7 +39,7 @@ def test_derived_capacity_and_owner_budgets(tmp_path, n, s):
 
 
 def test_equal_legacy_capacity_warns_once(tmp_path, caplog):
-    cfg = config(tmp_path, "audio_concurrency=6\nrequest_concurrency=96\n")
+    cfg = config(tmp_path, "local_instance_count=6\naudio_concurrency=6\nrequest_concurrency=96\n")
     with caplog.at_level(logging.WARNING):
         cfg.validate_model_backends()
         cfg.validate_model_backends()
@@ -78,9 +78,11 @@ def test_shipped_templates_derive_capacities(tmp_path):
         cfg.validate_model_backends()
         assert cfg.instance_count == 1
         assert cfg.qwen_local_device == device
-        assert cfg.qwen_local_instance_count == 6
+        assert cfg.qwen_local_instance_count == 4
+        assert (cfg.qwen_audio_concurrency, cfg.qwen_request_concurrency) == (4, 64)
         assert cfg.qwen_segment_concurrency == 16
         assert cfg.qwen_audio_spk_emo_concurrency == 4
-        assert cfg.model_device_speech_campplus_devices == [device]
+        assert cfg.model_device_speech_campplus_devices == [device] * 4
+        assert cfg.model_device_speech_campplus_execution_mode == "process"
         assert cfg.model_device_emotion2vec_devices == [device]
         assert not {"audio_concurrency", "request_concurrency", "max_inference_batch_size", "continuous_prefill_batch_size"}.intersection(cfg._cfg["qwen_asr"])

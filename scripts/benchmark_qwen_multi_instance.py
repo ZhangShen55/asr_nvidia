@@ -174,8 +174,8 @@ def covered_owners(status):
 
 def deployment_contract(config_bytes, *, instance_count=6):
     import tomli
-    if type(instance_count) is not int or instance_count not in (5, 6):
-        raise ValueError("本控制器只支持原N6验收或用户明确授权的N5补充验证")
+    if type(instance_count) is not int or instance_count not in (4, 5, 6):
+        raise ValueError("本控制器支持最终N4验收及原N5/N6历史对照")
     cfg = tomli.loads(config_bytes.decode())
     q, pools = cfg.get("qwen_asr", {}), cfg.get("model_device_pool", {})
     expected = {"generation_mode": q.get("generation_mode"), "execution_mode": q.get("execution_mode"),
@@ -187,6 +187,9 @@ def deployment_contract(config_bytes, *, instance_count=6):
         raise ValueError(f"控制器配置必须明确匹配continuous/process/N{instance_count}/S16/npu7/B4")
     if any(not isinstance(devices, list) or not devices for devices in expected["pools"].values()):
         raise ValueError("正式B4需明确独立增强设备数组，不能猜测池规模")
+    if instance_count == 4 and (expected["pools"]["speech_campplus"] != ["npu:7"] * 4
+                                or expected["pools"]["emotion2vec"] != ["npu:7"]):
+        raise ValueError("最终N4验收要求CAM4/emo1，不能用较小池数替代")
     if cfg.get("instance_count", 1) != 1:
         raise ValueError("正式验收保持一个HTTP服务")
     expected["global"] = expected["N"] * expected["S"]
@@ -488,8 +491,10 @@ async def admission_probes(client, clip, output, owner, *, owner_count=6):
             result["reason"] = "4B_activity_window_not_observed"
             return result
         fifth = await asyncio.wait_for(launch("fifthB", "B"), min(15, HARD_S - (time.monotonic() - started)))
-        if fifth["code"] != 4017:
-            result["reason"] = "fifthB_not_4017; capacity may have changed during HTTP admission"
+        # N4/B4的总容量与B上限相同，总满4013优先，单独4017在此配置不可达。
+        expected_fifth = 4013 if owner_count == 4 else 4017
+        if fifth["code"] != expected_fifth:
+            result["reason"] = f"fifthB_not_{expected_fifth}; capacity may have changed during HTTP admission"
             return result
         if not await active(4, 4):
             result["reason"] = "4B_window_released_before_A"
@@ -519,7 +524,9 @@ async def admission_probes(client, clip, output, owner, *, owner_count=6):
             await asyncio.wait(pending, timeout=.1)
         await asyncio.gather(*tasks)
         accepted_ok = all(rows[label].get("business_complete") for label in [*(f"B{i}" for i in range(4)), *(f"A{i}" for i in range(owner_count - 4))])
-        result.update(passed=accepted_ok, status="passed" if accepted_ok else "failed", reason=None if accepted_ok else "accepted_request_failed")
+        result.update(passed=accepted_ok, status="passed" if accepted_ok else "failed", reason=None if accepted_ok else "accepted_request_failed",
+                      owner_count=owner_count, accepted_A_count=owner_count - 4, fifth_B_expected_code=expected_fifth,
+                      B_only_4017_reachable=owner_count > 4)
     except asyncio.CancelledError:
         result.update(status="cancelled", reason="controller_cancelled")
         raise
@@ -655,11 +662,11 @@ def integrity_result(before, after, original_config, final_config, shared_before
 
 
 def phase_plan(instance_count, phases=None):
-    if type(instance_count) is not int or instance_count not in (5, 6):
-        raise ValueError("only explicitly selected N5 follow-up or original N6 matrix is supported")
+    if type(instance_count) is not int or instance_count not in (4, 5, 6):
+        raise ValueError("only final N4 or explicitly selected historical N5/N6 matrix is supported")
     primary = f"A{instance_count}"
     resident = primary + "-resident"
-    phases = list(phases) if phases is not None else [primary, "A4", "B4", resident]
+    phases = list(phases) if phases is not None else ([primary, "B4", resident] if instance_count == 4 else [primary, "A4", "B4", resident])
     if (not phases or len(set(phases)) != len(phases)
             or any(phase not in (primary, "A4", "B4", resident) for phase in phases)
             or (resident in phases and ("B4" not in phases or phases.index("B4") > phases.index(resident)))):
@@ -714,12 +721,15 @@ async def execute(args):
         hbm_observed = reports["resource_recovery"]["hbm_observed"]
         formal = (instance_count == 6 and all(reports.get(name, {}).get("passed", False) for name in ("A6", "A4", "B4", "A6-resident", "admission_probes", "shutdown", "integrity", "resource_recovery")))
         requested_complete = all(reports.get(name, {}).get("passed", False) for name in ["warmup", *phases, "shutdown", "integrity"])
+        final_n4_functional = (instance_count == 4 and all(reports.get(name, {}).get("passed", False)
+            for name in ("warmup", "A4", "B4", "A4-resident", "admission_probes", "shutdown", "integrity")))
         write_json(out / "run.json", {"phases": reports, "integrity": integrity,
                    "requested_phases": phases, "hbm_free_stop_enabled": False,
                    "admission_probes_requested": not getattr(args, "skip_admission_probes", False),
                    "formal_matrix_complete": formal, "requested_phases_complete": requested_complete,
                    "instance_count": instance_count, "deployment_contract": expected,
-                   "test_scope": "original N6 acceptance" if instance_count == 6 else "user-authorized N5 follow-up; does not satisfy original N6 acceptance",
+                   "final_n4_functional_matrix_complete": final_n4_functional,
+                   "test_scope": ("user-adopted final N4/CAM4/emo1 acceptance" if instance_count == 4 else "original N6 acceptance" if instance_count == 6 else "user-authorized N5 follow-up; does not satisfy original N6 acceptance"),
                    "target_s": TARGET_S, "hard_s": HARD_S,
                    "background_hbm_scope": "physical NPU7 before/after actual MB values; shared load may change, no replacement free threshold",
                    "background_hbm_observed": hbm_observed})
@@ -815,12 +825,12 @@ async def execute(args):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--manifest", default=str(ROOT / "openspec/changes/2026-11-23-qwen-multi-instance-serving/test-inputs.json"))
+    parser.add_argument("--manifest", default=str(ROOT / "docs/qwen-multi-instance-20261124/test-inputs.json"))
     parser.add_argument("--config", default=str(ROOT / "config.toml"))
     parser.add_argument("--output", required=True)
     parser.add_argument("--warmup-clip", default="/tmp/qc-warmup.wav")
-    parser.add_argument("--instance-count", type=int, choices=(5, 6), default=6, help="N5仅为用户授权补充验证，不替代原N6验收")
-    parser.add_argument("--phases", nargs="+", choices=("A5", "A6", "A4", "B4", "A5-resident", "A6-resident"), default=None)
+    parser.add_argument("--instance-count", type=int, choices=(4, 5, 6), default=4, help="最终N4/CAM4/emo1验收；5/6仅明确选择的历史对照")
+    parser.add_argument("--phases", nargs="+", choices=("A5", "A6", "A4", "B4", "A4-resident", "A5-resident", "A6-resident"), default=None)
     parser.add_argument("--skip-admission-probes", action="store_true", help="仅用于独立标定轮；不代表准入探针通过")
     args = parser.parse_args()
     result = asyncio.run(execute(args))

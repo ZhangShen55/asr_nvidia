@@ -9,10 +9,12 @@
 
 ## 正式continuous多owner迁移
 
-loader及根/Docker模板默认N=6、S=16、process、continuous、preload=true；HTTP仍1。总音频N/全局段N×S由loader派生，删除旧audio_concurrency/request_concurrency显式赋值；相等值提示迁移，冲突及非法类型启动前报错。显式legacy保留原独立容量配置。physical步缺省S、prefill缺省min(16,S)，模板不固定；每owner frame/token=14400/10000，PCM全服务256段/256MiB。每owner线程owner_threads=1；父进程OMP/MKL=4。所有更改需重启生效。
+loader及根/Docker模板默认N=4、S=16、process、continuous、preload=true；HTTP仍1。总音频N/全局段N×S由loader派生，删除旧audio_concurrency/request_concurrency显式赋值；相等值提示迁移，冲突及非法类型启动前报错。显式legacy保留原独立容量配置。physical步缺省S、prefill缺省min(16,S)，模板不固定；每owner frame/token=14400/10000，PCM全服务256段/256MiB。每owner线程owner_threads=1；父进程OMP/MKL=4。所有更改需重启生效。
 
-宿主只用物理npu:7，单卡容器使用逻辑npu:0；不能直接复制宿主编号。VAD八CPU，CAM/emo各1独立共享池为B4标定起点，待实际瓶颈验证后分别选择最终数量；N变化不复制增强池。B配置上限4，有效值不超过健康owner数。预加载失败须阻止ready并回滚本次资源；懒加载可显式preload=false，状态查询不得触发模型加载。
+宿主只用物理npu:7，单卡容器使用逻辑npu:0；不能直接复制宿主编号。VAD八CPU保持不变；最终选择Qwen4/CAM++4/emo1，CAM采用process，两个增强数组独立，N变化不复制增强池。总音频4、全局段64由loader派生。本轮宿主B4与增强驻留A4已完成4/4验收。B配置上限4，有效值不超过健康owner数。预加载失败须阻止ready并回滚本次资源；懒加载可显式preload=false，状态查询不得触发模型加载。
 
-先完成正式源码及保护回归，再由root独占NPU7执行完整A6/A4/B4与共驻验证。当前配置落地不表示性能/质量或Docker上线已验收。实际正常close/PID出生身份/端口释放证据必须保留，强制清理不计正常关闭通过。
+先完成正式源码及保护回归，再由root独占NPU7执行本轮B4与增强驻留A4验证。当前配置落地不表示性能/质量或Docker上线已验收。实际正常close/PID出生身份/端口释放证据必须保留，强制清理不计正常关闭通过。
 
-2026-11-24实际验收：纯A6为6/6、P50/P95=173.24/185.42秒、墙钟186.32秒；B4双增强为4/4、289.81/301.37秒、墙钟302.60秒。增强驻留后的A6因真实HBM OOM中止，未通过长期共驻验收，CAM/emo各1仍是候选，未继续2/4。全部owned正常exit0并释放端口/PCM，共享服务保留。详见[正式报告](qwen-multi-instance-20261124/REPORT.md)。当前仅宿主根配置实测；Docker仍保留其VAD过滤/CAM thread等历史差异，未构建或验收，不应直接视为同配置复现。
+2026-11-24历史N6实际验收（原冻结配置）：纯A6为6/6、P50/P95=173.24/185.42秒、墙钟186.32秒；B4双增强为4/4、289.81/301.37秒、墙钟302.60秒。增强驻留后的A6因真实HBM OOM中止，未通过长期共驻验收，CAM/emo各1仍是候选，未继续2/4。全部owned正常exit0并释放端口/PCM，共享服务保留。详见[正式报告](qwen-multi-instance-20261124/REPORT.md)。上述结果不对应当前Qwen4/CAM++4/emo1模板；最终宿主结果见下文。Docker CAM模式已同步process，仍保留其原有VAD过滤等差异，未构建或验收，不应直接视为宿主成绩复现。
+
+最终宿主Qwen4/CAM4/emo1组合已验收：B4墙钟200.10秒、增强驻留A4 183.47秒、最低free采样15406MB；正常exit0、端口/owned/PCM回收、共享服务保留。当前change 29/29，原N6失败保留；详见[最终报告](qwen-multi-instance-20261124/FINAL4-REPORT.md)。Docker仅同步配置/逻辑设备映射，尚未构建/运行验收或上线；质量警告及缺人工GT不因功能验收而消失。

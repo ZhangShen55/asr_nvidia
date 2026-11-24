@@ -1,0 +1,127 @@
+{
+  "preview": "/tmp/qwen-final4-spec-preview-20261124-7wtf4e5w",
+  "main_written": false,
+  "coverage": [
+    {
+      "capability": "local-model-runtime",
+      "modified_titles": [
+        "本地模型按需懒加载",
+        "实例数量与显存放大的关系可控",
+        "本地增强模型池按设备数组建立固定实例",
+        "模型池并发容量由各自设备数组决定",
+        "主服务与固定 VAD worker 分工承载模型"
+      ],
+      "added_titles": [
+        "B类三分支独立排队且按原段汇合",
+        "PCM汇合预算保持全服务有界所有权"
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "main_sha256": "b2aa75987ff0c50c34b11d30bf7dcffd871521b18da5372e5268d814b22d1974",
+      "delta_sha256": "58808fb0fb2d40e5139d09fc8554db8c7ab064724977c462eb02c156a9df7d24",
+      "preview_sha256": "9e2ffb16dffd6603aababfe1ab453be076dc5d382f5bb46e2fd182457d655aab"
+    },
+    {
+      "capability": "local-qwen-asr-inference",
+      "modified_titles": [
+        "本地推理受并发闸门约束",
+        "推理失败映射到既有错误码",
+        "推理模型按需加载且状态可观测"
+      ],
+      "added_titles": [
+        "正式continuous多实例具有独立执行所有权",
+        "请求动态独占健康owner租约",
+        "多owner内独立段完成并及时补位",
+        "多实例预算按owner与全服务分别生效",
+        "owner故障隔离并如实报告健康容量",
+        "多owner段级生成异常保留恢复与警告",
+        "多owner关闭保持在途与出生所有权"
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "main_sha256": "6c48ec7a41806b510b2ca82e72281ffe0b7a4c8e5794d14b06a9d335661a0cbd",
+      "delta_sha256": "10c518e4e22848f1517da007cef33e1a328e5de2f9414c8582a7e270cf4cff1d",
+      "preview_sha256": "c9a80c8b561de0103f7a77ccbd66c6865efe37dfdd6fbda7723419e5ef8517bf"
+    },
+    {
+      "capability": "offline-asr-service",
+      "modified_titles": [
+        "NPU 迁移保持 v3 接口序列化与计时契约",
+        "批执行保持独立段的业务归属"
+      ],
+      "added_titles": [
+        "正式持续转写返回段警告状态"
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "main_sha256": "80740078077529e23da948cd23cac1a00a939660dc960b83f3ec1d53e88f9f36",
+      "delta_sha256": "63200d3d2233afd881e3e5b7688d16964d4c7bce44b5669b0bc9e834de9f42f7",
+      "preview_sha256": "69f1eaebf6ce5c016bd1cee347dc6d20d78ed1e98cd6d42ee2540819f97353a6"
+    },
+    {
+      "capability": "qwen-asr-v2-adapter",
+      "modified_titles": [
+        "限制同时处理的音频数量",
+        "限制对 Qwen 服务的并发请求数",
+        "通过配置外置运行参数",
+        "异步并行计算真实角色与情绪",
+        "v2 本地增强能力按模型池独立排队",
+        "增强音频容量是总容量的子集",
+        "等待队列按可用容量调度",
+        "取消和并发竞争不泄漏名额",
+        "验证效果与性能边界",
+        "验证角色与情绪的效果与性能",
+        "记录本地模型池排队对端到端耗时的影响",
+        "完成固定配置的全量 WAV 质量压测",
+        "解析 Qwen 转写结果"
+      ],
+      "added_titles": [
+        "正式持续多实例采用独立完整音频验收"
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "main_sha256": "8711d13837d1422bee081366468cfa5a0e06c049c22aa991c98ab26d6deeb606",
+      "delta_sha256": "ecb107c492983b5141854433a7f39630d4f4910339c146addbd4cba80190ce84",
+      "preview_sha256": "4d828fe92aea4d9dce1fdfbaabacc308eb41fc38101cfca9c5132cfa11328ed7"
+    },
+    {
+      "capability": "resource-pressure-diagnostics",
+      "modified_titles": [
+        "按阶段受控升压",
+        "执行资源安全闸门",
+        "保留请求和模型池关联指标",
+        "测试结束后验证回收"
+      ],
+      "added_titles": [
+        "正式多实例采用真实完整接口验收矩阵",
+        "正式多实例性能和质量采用完整统计口径"
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "main_sha256": "7f8be35e0d086530c2dbabdb1dfeb3e090fe14bc42d9f391908888c50b9676cb",
+      "delta_sha256": "8522e182a2b02c93cccb5a47a05397e85aa078c0298796eba02bf0c1e76bfe2c",
+      "preview_sha256": "c4893007962fabcdc6071b6bddb85b262b8b6d42a772fc1ca733875765da68e0"
+    },
+    {
+      "capability": "service-operations",
+      "modified_titles": [
+        "明确实例数量的语义",
+        "维护配置项清单",
+        "启动时固定预热 VAD 实例",
+        "默认配置体现有效并发来源",
+        "支持安全的测试收尾",
+        "增强音频并发配置具有确定默认值",
+        "暴露音频分类准入状态",
+        "文档明确分类限制与能力错误",
+        "启动前校验部署前置条件"
+      ],
+      "added_titles": [
+        "每owner预算与配置边界明确",
+        "多owner状态身份和资源可核对",
+        "多owner暖身覆盖和正式计时分离",
+        "增强池交付默认来自最终四Qwen共驻标定"
+      ],
+      "unmentioned_scenarios_preserved": [],
+      "main_sha256": "20bcfb297565554c98e696a9c75d5df92159eba7f1dc8356485f419a2cbde64d",
+      "delta_sha256": "be8c310ac3f06f501246fd1b05a8f5ab21d0946c4323a3aeddfb8fa37acad653",
+      "preview_sha256": "b302ba336fc7628699865e5d9b9a9f5ffd046946d017024eb5b96badfe9bfb5e"
+    }
+  ],
+  "default": "final N4/CAM4/emo1",
+  "old_open_changes_imported": false
+}

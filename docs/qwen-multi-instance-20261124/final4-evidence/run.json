@@ -1,0 +1,2802 @@
+{
+  "phases": {
+    "warmup": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 4.623007534537464,
+        "p95_s": 4.646653126552701
+      },
+      "completion_subset_latency": {
+        "n": 4,
+        "p50_s": 4.623007534537464,
+        "p95_s": 4.646653126552701
+      },
+      "wall_s": 4.653431939892471,
+      "observation_wall_s": 4.891352149657905,
+      "wall_scope": "first_send_to_last_response",
+      "trigger": null,
+      "warning_free": 4,
+      "warning_segments": 0,
+      "discarded_segments": 0,
+      "target_s": null,
+      "target_200s_met": null,
+      "records": [
+        {
+          "sample_id": "warm0",
+          "sha256": null,
+          "status": "completed",
+          "upload_filename": "539f22a1ac9c4a78b0fe448a54a1de4c-0.wav",
+          "started": 7575394.93822188,
+          "response_received": 7575399.56189739,
+          "elapsed_s": 4.623675509355962,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 1,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0
+        },
+        {
+          "sample_id": "warm1",
+          "sha256": null,
+          "status": "completed",
+          "upload_filename": "539f22a1ac9c4a78b0fe448a54a1de4c-1.wav",
+          "started": 7575394.93988925,
+          "response_received": 7575399.50032626,
+          "elapsed_s": 4.56043700966984,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 1,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0
+        },
+        {
+          "sample_id": "warm2",
+          "sha256": null,
+          "status": "completed",
+          "upload_filename": "539f22a1ac9c4a78b0fe448a54a1de4c-2.wav",
+          "started": 7575394.94094582,
+          "response_received": 7575399.59165382,
+          "elapsed_s": 4.650708000175655,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 1,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0
+        },
+        {
+          "sample_id": "warm3",
+          "sha256": null,
+          "status": "completed",
+          "upload_filename": "539f22a1ac9c4a78b0fe448a54a1de4c-3.wav",
+          "started": 7575394.94194701,
+          "response_received": 7575399.56428657,
+          "elapsed_s": 4.6223395597189665,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 1,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0
+        }
+      ],
+      "hbm_free_stop_enabled": false
+    },
+    "A4": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 164.84560754988343,
+        "p95_s": 184.5242322735954
+      },
+      "completion_subset_latency": {
+        "n": 4,
+        "p50_s": 164.84560754988343,
+        "p95_s": 184.5242322735954
+      },
+      "wall_s": 186.44343913998455,
+      "observation_wall_s": 186.69728924985975,
+      "wall_scope": "first_send_to_last_response",
+      "trigger": null,
+      "warning_free": 2,
+      "warning_segments": 13,
+      "discarded_segments": 12,
+      "target_s": 200.0,
+      "target_200s_met": true,
+      "records": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "6b870ff0ac424628bcb9e9e8f88c7b88-0.wav",
+          "started": 7575399.90478782,
+          "response_received": 7575555.76673504,
+          "elapsed_s": 155.86194721981883,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 729,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "54660ba6-1ecc-4181-b0c9-e0c5cfea4257",
+            "filename": "6b870ff0ac424628bcb9e9e8f88c7b88-0.wav",
+            "started_monotonic": 7575401.63950627,
+            "ended_monotonic": 7575555.72450852,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 24867639.996,
+              "qwen_ms": 2003144.775,
+              "qwen_calls": 753.0,
+              "vad_ms": 23180.213,
+              "cut_sum_ms": 5657.653,
+              "cut_wall_ms": 124397.935,
+              "segment_ms": 126612.374,
+              "cluster_ms": 0.0,
+              "itn_ms": 3611.567,
+              "cleanup_ms": 17.136,
+              "audio_wait_ms": 15.011,
+              "cut_cpu_ms": 2729.499,
+              "cut_dispatch_wait_ms": 2901.793,
+              "pending_wait_ms": 26.73,
+              "vad_wait_ms": 1.279,
+              "vad_worker_ms": 23175.053,
+              "low_volume_filter_ms": 0.085,
+              "model_load_lock_wait_ms": 0.013
+            }
+          }
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "6b870ff0ac424628bcb9e9e8f88c7b88-1.wav",
+          "started": 7575399.90631207,
+          "response_received": 7575555.92639793,
+          "elapsed_s": 156.02008586004376,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 3,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 568,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "76fd6ac6-0e15-4d57-807e-fd52dbc5676e",
+            "filename": "6b870ff0ac424628bcb9e9e8f88c7b88-1.wav",
+            "started_monotonic": 7575401.76500493,
+            "ended_monotonic": 7575555.89141677,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 23143218.502,
+              "qwen_ms": 1996720.037,
+              "qwen_calls": 615.0,
+              "vad_ms": 23937.014,
+              "cut_sum_ms": 3932.481,
+              "cut_wall_ms": 122964.82,
+              "segment_ms": 129488.341,
+              "cluster_ms": 0.0,
+              "itn_ms": 44.296,
+              "cleanup_ms": 17.217,
+              "audio_wait_ms": 14.914,
+              "cut_cpu_ms": 2038.644,
+              "cut_dispatch_wait_ms": 1871.809,
+              "pending_wait_ms": 22.307,
+              "vad_wait_ms": 1.362,
+              "vad_worker_ms": 23932.656,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.012
+            }
+          }
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "6b870ff0ac424628bcb9e9e8f88c7b88-2.wav",
+          "started": 7575399.90756122,
+          "response_received": 7575573.57869046,
+          "elapsed_s": 173.6711292397231,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 659,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "aa4f2db2-4a7d-42bb-a819-3e54469a38c4",
+            "filename": "6b870ff0ac424628bcb9e9e8f88c7b88-2.wav",
+            "started_monotonic": 7575401.80167561,
+            "ended_monotonic": 7575573.41855374,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 26153402.869,
+              "qwen_ms": 2226997.776,
+              "qwen_calls": 706.0,
+              "vad_ms": 24617.997,
+              "cut_sum_ms": 7519.784,
+              "cut_wall_ms": 137824.0,
+              "segment_ms": 141826.368,
+              "cluster_ms": 0.0,
+              "itn_ms": 4426.336,
+              "cleanup_ms": 17.13,
+              "audio_wait_ms": 15.982,
+              "cut_cpu_ms": 3057.321,
+              "cut_dispatch_wait_ms": 4438.862,
+              "pending_wait_ms": 23.915,
+              "vad_wait_ms": 1.815,
+              "vad_worker_ms": 24612.259,
+              "low_volume_filter_ms": 0.037,
+              "model_load_lock_wait_ms": 0.015
+            }
+          }
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "6b870ff0ac424628bcb9e9e8f88c7b88-3.wav",
+          "started": 7575399.90874121,
+          "response_received": 7575586.34822696,
+          "elapsed_s": 186.4394857501611,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 10,
+          "discarded": 10,
+          "processing_status": "completed_with_warnings",
+          "segments": 617,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "fa210e5e-e6f7-4981-abb1-6d1f0cf6bdd3",
+            "filename": "6b870ff0ac424628bcb9e9e8f88c7b88-3.wav",
+            "started_monotonic": 7575401.78388836,
+            "ended_monotonic": 7575586.24710403,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 27533909.703,
+              "qwen_ms": 2397097.726,
+              "qwen_calls": 701.0,
+              "vad_ms": 23741.007,
+              "cut_sum_ms": 6959.403,
+              "cut_wall_ms": 147323.401,
+              "segment_ms": 157050.168,
+              "cluster_ms": 0.0,
+              "itn_ms": 2963.504,
+              "cleanup_ms": 16.371,
+              "audio_wait_ms": 14.958,
+              "cut_cpu_ms": 2987.486,
+              "cut_dispatch_wait_ms": 3947.698,
+              "pending_wait_ms": 24.539,
+              "vad_wait_ms": 1.705,
+              "vad_worker_ms": 23736.083,
+              "low_volume_filter_ms": 0.042,
+              "model_load_lock_wait_ms": 0.007
+            }
+          }
+        }
+      ],
+      "hbm_free_stop_enabled": false,
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "unknown": []
+      },
+      "stage_validation": {
+        "passed": true,
+        "errors": []
+      }
+    },
+    "B-cold-warmup": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 105.0089095751755,
+        "p95_s": 105.20966728352941
+      },
+      "completion_subset_latency": {
+        "n": 4,
+        "p50_s": 105.0089095751755,
+        "p95_s": 105.20966728352941
+      },
+      "wall_s": 105.2113085705787,
+      "observation_wall_s": 105.45344037935138,
+      "wall_scope": "first_send_to_last_response",
+      "trigger": null,
+      "warning_free": 4,
+      "warning_segments": 0,
+      "discarded_segments": 0,
+      "target_s": null,
+      "target_200s_met": null,
+      "records": [
+        {
+          "sample_id": "warm0",
+          "sha256": null,
+          "status": "completed",
+          "upload_filename": "1a0b4d34047c4340b7ec6cad75a3acdc-0.wav",
+          "started": 7575586.78945425,
+          "response_received": 7575691.99926414,
+          "elapsed_s": 105.20980989001691,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 1,
+          "role_nonnull": 1,
+          "emotion_nonnull": 1,
+          "request_stages": {
+            "request_id": "c389e752-cc6d-4594-9b3c-adc4136f2802",
+            "filename": "1a0b4d34047c4340b7ec6cad75a3acdc-0.wav",
+            "started_monotonic": 7575586.84959429,
+            "ended_monotonic": 7575691.65117918,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 1.497,
+              "spk_ms": 4595.361,
+              "spk_calls": 1.0,
+              "emo_wait_ms": 2926.111,
+              "emo_ms": 30.831,
+              "emo_calls": 1.0,
+              "qwen_wait_ms": 0.011,
+              "qwen_ms": 2279.044,
+              "qwen_calls": 1.0,
+              "vad_ms": 74.873,
+              "cut_sum_ms": 16.251,
+              "cut_wall_ms": 16.195,
+              "segment_ms": 4642.227,
+              "cluster_ms": 0.257,
+              "itn_ms": 24.669,
+              "cleanup_ms": 0.788,
+              "audio_wait_ms": 124.624,
+              "cut_cpu_ms": 11.347,
+              "cut_dispatch_wait_ms": 4.859,
+              "pending_wait_ms": 0.045,
+              "vad_wait_ms": 3.786,
+              "vad_worker_ms": 66.604,
+              "low_volume_filter_ms": 0.032,
+              "model_load_lock_wait_ms": 99467.947,
+              "emo_nn_calls": 1.0,
+              "emo_nn_success": 1.0,
+              "spk_nn_calls": 1.0,
+              "spk_nn_success": 1.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "warm1",
+          "sha256": null,
+          "status": "completed",
+          "upload_filename": "1a0b4d34047c4340b7ec6cad75a3acdc-1.wav",
+          "started": 7575586.79085503,
+          "response_received": 7575691.54296652,
+          "elapsed_s": 104.75211149081588,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 1,
+          "role_nonnull": 1,
+          "emotion_nonnull": 1,
+          "request_stages": {
+            "request_id": "d90eece2-cfa5-4979-87e6-4db1a63d5b60",
+            "filename": "1a0b4d34047c4340b7ec6cad75a3acdc-1.wav",
+            "started_monotonic": 7575586.98832977,
+            "ended_monotonic": 7575691.53903126,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 1.434,
+              "spk_ms": 4494.087,
+              "spk_calls": 1.0,
+              "emo_wait_ms": 0.464,
+              "emo_ms": 2936.269,
+              "emo_calls": 1.0,
+              "qwen_wait_ms": 0.061,
+              "qwen_ms": 2182.602,
+              "qwen_calls": 1.0,
+              "vad_ms": 72.327,
+              "cut_sum_ms": 9.682,
+              "cut_wall_ms": 9.593,
+              "segment_ms": 4509.408,
+              "cluster_ms": 1.466,
+              "itn_ms": 44.408,
+              "cleanup_ms": 2.061,
+              "audio_wait_ms": 123.648,
+              "cut_cpu_ms": 8.26,
+              "cut_dispatch_wait_ms": 1.345,
+              "pending_wait_ms": 0.077,
+              "vad_wait_ms": 4.225,
+              "vad_worker_ms": 63.157,
+              "low_volume_filter_ms": 0.043,
+              "model_load_lock_wait_ms": 0.004,
+              "spk_load_lock_wait_ms": 0.006,
+              "spk_load_ms": 85091.028,
+              "spk_load_work_ms": 85088.262,
+              "spk_load_dispatch_wait_ms": 2.766,
+              "emo_load_lock_wait_ms": 0.009,
+              "emo_load_ms": 14369.15,
+              "emo_load_work_ms": 14368.224,
+              "emo_load_dispatch_wait_ms": 0.926,
+              "emo_nn_calls": 1.0,
+              "emo_nn_success": 1.0,
+              "spk_nn_calls": 1.0,
+              "spk_nn_success": 1.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "warm2",
+          "sha256": null,
+          "status": "completed",
+          "upload_filename": "1a0b4d34047c4340b7ec6cad75a3acdc-2.wav",
+          "started": 7575586.79190364,
+          "response_received": 7575692.00076282,
+          "elapsed_s": 105.20885918010026,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 1,
+          "role_nonnull": 1,
+          "emotion_nonnull": 1,
+          "request_stages": {
+            "request_id": "44c25a2f-ac67-4f2a-aa9e-86314394c7c2",
+            "filename": "1a0b4d34047c4340b7ec6cad75a3acdc-2.wav",
+            "started_monotonic": 7575587.12733375,
+            "ended_monotonic": 7575691.77042627,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 3.283,
+              "spk_ms": 4732.099,
+              "spk_calls": 1.0,
+              "emo_wait_ms": 2949.123,
+              "emo_ms": 27.227,
+              "emo_calls": 1.0,
+              "qwen_wait_ms": 0.012,
+              "qwen_ms": 2300.47,
+              "qwen_calls": 1.0,
+              "vad_ms": 73.964,
+              "cut_sum_ms": 20.306,
+              "cut_wall_ms": 20.256,
+              "segment_ms": 4758.122,
+              "cluster_ms": 0.27,
+              "itn_ms": 24.757,
+              "cleanup_ms": 0.759,
+              "audio_wait_ms": 124.492,
+              "cut_cpu_ms": 11.473,
+              "cut_dispatch_wait_ms": 8.801,
+              "pending_wait_ms": 0.032,
+              "vad_wait_ms": 1.373,
+              "vad_worker_ms": 68.498,
+              "low_volume_filter_ms": 0.034,
+              "model_load_lock_wait_ms": 99470.616,
+              "emo_nn_calls": 1.0,
+              "emo_nn_success": 1.0,
+              "spk_nn_calls": 1.0,
+              "spk_nn_success": 1.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "warm3",
+          "sha256": null,
+          "status": "completed",
+          "upload_filename": "1a0b4d34047c4340b7ec6cad75a3acdc-3.wav",
+          "started": 7575586.79295047,
+          "response_received": 7575691.60191044,
+          "elapsed_s": 104.80895997025073,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 1,
+          "role_nonnull": 1,
+          "emotion_nonnull": 1,
+          "request_stages": {
+            "request_id": "cfa8f2e5-3a79-4dd4-80ef-11a16e8e1c08",
+            "filename": "1a0b4d34047c4340b7ec6cad75a3acdc-3.wav",
+            "started_monotonic": 7575587.26542166,
+            "ended_monotonic": 7575691.59869466,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 3.727,
+              "spk_ms": 4520.533,
+              "spk_calls": 1.0,
+              "emo_wait_ms": 2969.95,
+              "emo_ms": 28.331,
+              "emo_calls": 1.0,
+              "qwen_wait_ms": 0.013,
+              "qwen_ms": 2232.992,
+              "qwen_calls": 1.0,
+              "vad_ms": 81.03,
+              "cut_sum_ms": 16.345,
+              "cut_wall_ms": 16.299,
+              "segment_ms": 4570.35,
+              "cluster_ms": 0.383,
+              "itn_ms": 26.76,
+              "cleanup_ms": 0.778,
+              "audio_wait_ms": 124.391,
+              "cut_cpu_ms": 10.386,
+              "cut_dispatch_wait_ms": 5.926,
+              "pending_wait_ms": 0.034,
+              "vad_wait_ms": 1.538,
+              "vad_worker_ms": 76.581,
+              "low_volume_filter_ms": 0.032,
+              "model_load_lock_wait_ms": 99471.819,
+              "emo_nn_calls": 1.0,
+              "emo_nn_success": 1.0,
+              "spk_nn_calls": 1.0,
+              "spk_nn_success": 1.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        }
+      ],
+      "hbm_free_stop_enabled": false,
+      "enhancement_validation": {
+        "passed": true,
+        "errors": [],
+        "pools": {
+          "speech_campplus": {
+            "instance_call_deltas": {
+              "0": 1,
+              "1": 1,
+              "2": 1,
+              "3": 1
+            },
+            "outcome_deltas": {
+              "success": 4,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0
+            },
+            "duration_skip_delta": 0
+          },
+          "emotion2vec": {
+            "instance_call_deltas": {
+              "0": 4
+            },
+            "outcome_deltas": {
+              "success": 4,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0
+            },
+            "duration_skip_delta": 0
+          }
+        },
+        "scope": "real NN/skip/field evidence, not human-labelled accuracy"
+      }
+    },
+    "B4": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 183.25955872470513,
+        "p95_s": 199.44685057224706
+      },
+      "completion_subset_latency": {
+        "n": 4,
+        "p50_s": 183.25955872470513,
+        "p95_s": 199.44685057224706
+      },
+      "wall_s": 200.1001828406006,
+      "observation_wall_s": 200.43600383028388,
+      "wall_scope": "first_send_to_last_response",
+      "trigger": null,
+      "warning_free": 2,
+      "warning_segments": 12,
+      "discarded_segments": 11,
+      "target_s": null,
+      "target_200s_met": null,
+      "records": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "0c5a8aa1152a48ccb619864544aa3b5d-0.wav",
+          "started": 7575692.4543614,
+          "response_received": 7575862.77189762,
+          "elapsed_s": 170.3175362199545,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 728,
+          "role_nonnull": 728,
+          "emotion_nonnull": 728,
+          "request_stages": {
+            "request_id": "c94e8d39-b26e-4b01-8f09-12250c463af8",
+            "filename": "0c5a8aa1152a48ccb619864544aa3b5d-0.wav",
+            "started_monotonic": 7575694.497395,
+            "ended_monotonic": 7575862.65384991,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 17092.437,
+              "spk_ms": 63460.322,
+              "spk_calls": 753.0,
+              "emo_wait_ms": 79926.442,
+              "emo_ms": 25115.785,
+              "emo_calls": 556.0,
+              "qwen_wait_ms": 28092224.495,
+              "qwen_ms": 2221055.416,
+              "qwen_calls": 753.0,
+              "vad_ms": 22916.531,
+              "cut_sum_ms": 7520.794,
+              "cut_wall_ms": 138142.112,
+              "segment_ms": 140437.9,
+              "cluster_ms": 604.465,
+              "itn_ms": 3256.859,
+              "cleanup_ms": 15.847,
+              "audio_wait_ms": 125.689,
+              "cut_cpu_ms": 3316.498,
+              "cut_dispatch_wait_ms": 4175.916,
+              "pending_wait_ms": 28.701,
+              "vad_wait_ms": 2.175,
+              "vad_worker_ms": 22859.534,
+              "low_volume_filter_ms": 0.05,
+              "model_load_lock_wait_ms": 0.011,
+              "emo_duration_skips": 197.0,
+              "spk_nn_calls": 753.0,
+              "spk_nn_success": 753.0,
+              "emo_nn_calls": 556.0,
+              "emo_nn_success": 556.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "0c5a8aa1152a48ccb619864544aa3b5d-1.wav",
+          "started": 7575692.45587437,
+          "response_received": 7575863.20913922,
+          "elapsed_s": 170.7532648500055,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 3,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 569,
+          "role_nonnull": 569,
+          "emotion_nonnull": 569,
+          "request_stages": {
+            "request_id": "cb955e72-714f-45ba-b5c6-1d27dc0baab7",
+            "filename": "0c5a8aa1152a48ccb619864544aa3b5d-1.wav",
+            "started_monotonic": 7575694.75499687,
+            "ended_monotonic": 7575863.17108378,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 14251.177,
+              "spk_ms": 52476.615,
+              "spk_calls": 615.0,
+              "emo_wait_ms": 81176.741,
+              "emo_ms": 21529.313,
+              "emo_calls": 508.0,
+              "qwen_wait_ms": 26137966.888,
+              "qwen_ms": 2215072.012,
+              "qwen_calls": 615.0,
+              "vad_ms": 23701.807,
+              "cut_sum_ms": 5764.552,
+              "cut_wall_ms": 136584.781,
+              "segment_ms": 143203.891,
+              "cluster_ms": 331.843,
+              "itn_ms": 44.702,
+              "cleanup_ms": 17.036,
+              "audio_wait_ms": 124.081,
+              "cut_cpu_ms": 2938.882,
+              "cut_dispatch_wait_ms": 2802.553,
+              "pending_wait_ms": 23.38,
+              "vad_wait_ms": 3.827,
+              "vad_worker_ms": 23691.081,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.01,
+              "spk_nn_calls": 615.0,
+              "spk_nn_success": 615.0,
+              "emo_nn_calls": 508.0,
+              "emo_nn_success": 508.0,
+              "emo_duration_skips": 107.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "0c5a8aa1152a48ccb619864544aa3b5d-2.wav",
+          "started": 7575692.4570118,
+          "response_received": 7575888.2228644,
+          "elapsed_s": 195.76585259940475,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 659,
+          "role_nonnull": 659,
+          "emotion_nonnull": 659,
+          "request_stages": {
+            "request_id": "e6936c9c-e81a-4d9b-ab48-edda1524ddb5",
+            "filename": "0c5a8aa1152a48ccb619864544aa3b5d-2.wav",
+            "started_monotonic": 7575694.90347314,
+            "ended_monotonic": 7575888.18456669,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 21760.168,
+              "spk_ms": 58916.881,
+              "spk_calls": 706.0,
+              "emo_wait_ms": 77420.995,
+              "emo_ms": 24032.783,
+              "emo_calls": 579.0,
+              "qwen_wait_ms": 31515714.212,
+              "qwen_ms": 2567868.344,
+              "qwen_calls": 706.0,
+              "vad_ms": 23957.8,
+              "cut_sum_ms": 14543.019,
+              "cut_wall_ms": 159610.04,
+              "segment_ms": 163492.422,
+              "cluster_ms": 461.833,
+              "itn_ms": 4361.216,
+              "cleanup_ms": 16.442,
+              "audio_wait_ms": 126.897,
+              "cut_cpu_ms": 3149.053,
+              "cut_dispatch_wait_ms": 11368.083,
+              "pending_wait_ms": 26.178,
+              "vad_wait_ms": 1.669,
+              "vad_worker_ms": 23952.617,
+              "low_volume_filter_ms": 0.042,
+              "model_load_lock_wait_ms": 0.007,
+              "emo_duration_skips": 127.0,
+              "spk_nn_calls": 706.0,
+              "spk_nn_success": 706.0,
+              "emo_nn_calls": 579.0,
+              "emo_nn_success": 579.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "0c5a8aa1152a48ccb619864544aa3b5d-3.wav",
+          "started": 7575692.45810579,
+          "response_received": 7575892.55454424,
+          "elapsed_s": 200.09643844980747,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 9,
+          "discarded": 9,
+          "processing_status": "completed_with_warnings",
+          "segments": 619,
+          "role_nonnull": 619,
+          "emotion_nonnull": 619,
+          "request_stages": {
+            "request_id": "84bd88b5-7770-4827-8e19-9b40bc9acbe9",
+            "filename": "0c5a8aa1152a48ccb619864544aa3b5d-3.wav",
+            "started_monotonic": 7575695.09496679,
+            "ended_monotonic": 7575892.51703364,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 15756.494,
+              "spk_ms": 60304.548,
+              "spk_calls": 701.0,
+              "emo_wait_ms": 81839.717,
+              "emo_ms": 23997.761,
+              "emo_calls": 583.0,
+              "qwen_wait_ms": 30630783.13,
+              "qwen_ms": 2548479.818,
+              "qwen_calls": 701.0,
+              "vad_ms": 23589.175,
+              "cut_sum_ms": 11230.187,
+              "cut_wall_ms": 157100.715,
+              "segment_ms": 169626.577,
+              "cluster_ms": 380.387,
+              "itn_ms": 2971.097,
+              "cleanup_ms": 16.699,
+              "audio_wait_ms": 125.592,
+              "cut_cpu_ms": 3305.816,
+              "cut_dispatch_wait_ms": 7898.86,
+              "pending_wait_ms": 25.819,
+              "vad_wait_ms": 1.764,
+              "vad_worker_ms": 23583.245,
+              "low_volume_filter_ms": 0.04,
+              "model_load_lock_wait_ms": 0.01,
+              "emo_duration_skips": 118.0,
+              "spk_nn_calls": 701.0,
+              "spk_nn_success": 701.0,
+              "emo_nn_calls": 583.0,
+              "emo_nn_success": 583.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        }
+      ],
+      "hbm_free_stop_enabled": false,
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "unknown": []
+      },
+      "enhancement_validation": {
+        "passed": true,
+        "errors": [],
+        "pools": {
+          "speech_campplus": {
+            "instance_call_deltas": {
+              "0": 700,
+              "1": 689,
+              "2": 699,
+              "3": 687
+            },
+            "outcome_deltas": {
+              "success": 2775,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0
+            },
+            "duration_skip_delta": 0
+          },
+          "emotion2vec": {
+            "instance_call_deltas": {
+              "0": 2226
+            },
+            "outcome_deltas": {
+              "success": 2226,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0
+            },
+            "duration_skip_delta": 549
+          }
+        },
+        "scope": "real NN/skip/field evidence, not human-labelled accuracy"
+      },
+      "stage_validation": {
+        "passed": true,
+        "errors": []
+      }
+    },
+    "admission_probes": {
+      "passed": true,
+      "status": "passed",
+      "scope": "real HTTP, observed active windows; no artificial hold",
+      "reason": null,
+      "owner_count": 4,
+      "accepted_A_count": 0,
+      "fifth_B_expected_code": 4013,
+      "B_only_4017_reachable": false,
+      "records": {
+        "B0": {
+          "mode": "B",
+          "started": 7575893.0223032,
+          "response_received": 7575896.20550149,
+          "http_status": 200,
+          "code": null,
+          "business_complete": true
+        },
+        "B1": {
+          "mode": "B",
+          "started": 7575893.02351386,
+          "response_received": 7575896.2958504,
+          "http_status": 200,
+          "code": null,
+          "business_complete": true
+        },
+        "B2": {
+          "mode": "B",
+          "started": 7575893.02458551,
+          "response_received": 7575896.3479157,
+          "http_status": 200,
+          "code": null,
+          "business_complete": true
+        },
+        "B3": {
+          "mode": "B",
+          "started": 7575893.02564046,
+          "response_received": 7575896.20451304,
+          "http_status": 200,
+          "code": null,
+          "business_complete": true
+        },
+        "fifthB": {
+          "mode": "B",
+          "started": 7575893.70480224,
+          "response_received": 7575893.8518472,
+          "http_status": 200,
+          "code": 4013,
+          "business_complete": false
+        },
+        "fullA": {
+          "mode": "A",
+          "started": 7575894.64092404,
+          "response_received": 7575894.78590556,
+          "http_status": 200,
+          "code": 4013,
+          "business_complete": false
+        },
+        "fullB": {
+          "mode": "B",
+          "started": 7575894.64208088,
+          "response_received": 7575894.91261912,
+          "http_status": 200,
+          "code": 4013,
+          "business_complete": false
+        }
+      },
+      "observations": [
+        {
+          "time": 7575893.08079683,
+          "audio": {
+            "configured_total": 4,
+            "active_total": 0,
+            "waiting_total": 0,
+            "effective_total": 4,
+            "healthy_owners": 4,
+            "leased_owners": 0,
+            "available_owners": 4
+          },
+          "B": {
+            "configured": 4,
+            "active": 0,
+            "waiting": 0,
+            "effective": 4
+          }
+        },
+        {
+          "time": 7575893.70419911,
+          "audio": {
+            "configured_total": 4,
+            "active_total": 4,
+            "waiting_total": 0,
+            "effective_total": 4,
+            "healthy_owners": 4,
+            "leased_owners": 4,
+            "available_owners": 0
+          },
+          "B": {
+            "configured": 4,
+            "active": 4,
+            "waiting": 0,
+            "effective": 4
+          }
+        },
+        {
+          "time": 7575894.2599164,
+          "audio": {
+            "configured_total": 4,
+            "active_total": 4,
+            "waiting_total": 0,
+            "effective_total": 4,
+            "healthy_owners": 4,
+            "leased_owners": 4,
+            "available_owners": 0
+          },
+          "B": {
+            "configured": 4,
+            "active": 4,
+            "waiting": 0,
+            "effective": 4
+          }
+        },
+        {
+          "time": 7575894.64037361,
+          "audio": {
+            "configured_total": 4,
+            "active_total": 4,
+            "waiting_total": 0,
+            "effective_total": 4,
+            "healthy_owners": 4,
+            "leased_owners": 4,
+            "available_owners": 0
+          },
+          "B": {
+            "configured": 4,
+            "active": 4,
+            "waiting": 0,
+            "effective": 4
+          }
+        }
+      ],
+      "elapsed_s": 3.648901879787445
+    },
+    "A4-resident": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 172.53814334003255,
+        "p95_s": 182.31297008213588
+      },
+      "completion_subset_latency": {
+        "n": 4,
+        "p50_s": 172.53814334003255,
+        "p95_s": 182.31297008213588
+      },
+      "wall_s": 183.4692624201998,
+      "observation_wall_s": 183.8105693794787,
+      "wall_scope": "first_send_to_last_response",
+      "trigger": null,
+      "warning_free": 2,
+      "warning_segments": 12,
+      "discarded_segments": 11,
+      "target_s": 200.0,
+      "target_200s_met": true,
+      "records": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "f20d451b4dc249228a3a9b1b2c649dbb-0.wav",
+          "started": 7575896.76932373,
+          "response_received": 7576055.83091624,
+          "elapsed_s": 159.06159250997007,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 728,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "0d87449c-6d11-43bd-b2c7-d2f1d90ca608",
+            "filename": "f20d451b4dc249228a3a9b1b2c649dbb-0.wav",
+            "started_monotonic": 7575898.72237502,
+            "ended_monotonic": 7576055.78876113,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 25918509.666,
+              "qwen_ms": 2057640.566,
+              "qwen_calls": 753.0,
+              "vad_ms": 22524.331,
+              "cut_sum_ms": 4856.94,
+              "cut_wall_ms": 127621.343,
+              "segment_ms": 130092.793,
+              "cluster_ms": 0.0,
+              "itn_ms": 3325.681,
+              "cleanup_ms": 15.686,
+              "audio_wait_ms": 127.459,
+              "cut_cpu_ms": 2278.686,
+              "cut_dispatch_wait_ms": 2552.27,
+              "pending_wait_ms": 26.291,
+              "vad_wait_ms": 1.792,
+              "vad_worker_ms": 22518.953,
+              "low_volume_filter_ms": 0.045,
+              "model_load_lock_wait_ms": 0.01
+            }
+          }
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "f20d451b4dc249228a3a9b1b2c649dbb-1.wav",
+          "started": 7575896.77087041,
+          "response_received": 7576066.06420444,
+          "elapsed_s": 169.29333403054625,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 3,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 568,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "9e3f875c-0598-4070-9ecc-a61da230d74a",
+            "filename": "f20d451b4dc249228a3a9b1b2c649dbb-1.wav",
+            "started_monotonic": 7575899.45457324,
+            "ended_monotonic": 7576066.03030998,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 26068086.368,
+              "qwen_ms": 2212793.845,
+              "qwen_calls": 615.0,
+              "vad_ms": 24116.973,
+              "cut_sum_ms": 4741.526,
+              "cut_wall_ms": 137140.316,
+              "segment_ms": 141712.233,
+              "cluster_ms": 0.0,
+              "itn_ms": 41.367,
+              "cleanup_ms": 16.891,
+              "audio_wait_ms": 130.166,
+              "cut_cpu_ms": 1935.726,
+              "cut_dispatch_wait_ms": 2785.131,
+              "pending_wait_ms": 20.916,
+              "vad_wait_ms": 1.658,
+              "vad_worker_ms": 24111.967,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.017
+            }
+          }
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "f20d451b4dc249228a3a9b1b2c649dbb-2.wav",
+          "started": 7575896.77209126,
+          "response_received": 7576072.55504391,
+          "elapsed_s": 175.78295264951885,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 658,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "1e34c203-d9ae-4acd-add4-07059283ce5f",
+            "filename": "f20d451b4dc249228a3a9b1b2c649dbb-2.wav",
+            "started_monotonic": 7575898.91709661,
+            "ended_monotonic": 7576072.51531866,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 27127429.654,
+              "qwen_ms": 2269284.515,
+              "qwen_calls": 706.0,
+              "vad_ms": 23962.519,
+              "cut_sum_ms": 6116.802,
+              "cut_wall_ms": 140368.068,
+              "segment_ms": 144192.603,
+              "cluster_ms": 0.0,
+              "itn_ms": 4455.643,
+              "cleanup_ms": 18.428,
+              "audio_wait_ms": 126.553,
+              "cut_cpu_ms": 2457.837,
+              "cut_dispatch_wait_ms": 3635.695,
+              "pending_wait_ms": 23.549,
+              "vad_wait_ms": 4.637,
+              "vad_worker_ms": 23949.812,
+              "low_volume_filter_ms": 0.037,
+              "model_load_lock_wait_ms": 0.015
+            }
+          }
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "f20d451b4dc249228a3a9b1b2c649dbb-3.wav",
+          "started": 7575896.77326005,
+          "response_received": 7576080.23858615,
+          "elapsed_s": 183.46532609965652,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 9,
+          "discarded": 9,
+          "processing_status": "completed_with_warnings",
+          "segments": 618,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "df3ed6b6-2a16-4b21-9a2a-10cab6bc77ae",
+            "filename": "f20d451b4dc249228a3a9b1b2c649dbb-3.wav",
+            "started_monotonic": 7575899.06284479,
+            "ended_monotonic": 7576080.19979663,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 28100528.3,
+              "qwen_ms": 2386625.669,
+              "qwen_calls": 701.0,
+              "vad_ms": 23850.663,
+              "cut_sum_ms": 5470.671,
+              "cut_wall_ms": 148812.538,
+              "segment_ms": 153168.722,
+              "cluster_ms": 0.0,
+              "itn_ms": 3173.749,
+              "cleanup_ms": 16.574,
+              "audio_wait_ms": 127.733,
+              "cut_cpu_ms": 2251.098,
+              "cut_dispatch_wait_ms": 3195.886,
+              "pending_wait_ms": 23.975,
+              "vad_wait_ms": 2.284,
+              "vad_worker_ms": 23382.351,
+              "low_volume_filter_ms": 0.039,
+              "model_load_lock_wait_ms": 0.011
+            }
+          }
+        }
+      ],
+      "hbm_free_stop_enabled": false,
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "unknown": []
+      },
+      "stage_validation": {
+        "passed": true,
+        "errors": []
+      }
+    },
+    "shutdown": {
+      "owned": true,
+      "identities": [
+        [
+          2140797,
+          1795487610.97
+        ],
+        [
+          2191712,
+          1795487616.14
+        ],
+        [
+          2191854,
+          1795487616.16
+        ],
+        [
+          2191855,
+          1795487616.16
+        ],
+        [
+          2191856,
+          1795487616.16
+        ],
+        [
+          2191857,
+          1795487616.16
+        ],
+        [
+          2191889,
+          1795487616.16
+        ],
+        [
+          2191929,
+          1795487616.17
+        ],
+        [
+          2191962,
+          1795487616.17
+        ],
+        [
+          2191982,
+          1795487616.17
+        ],
+        [
+          2307689,
+          1795487626.26
+        ],
+        [
+          2401444,
+          1795487635.16
+        ],
+        [
+          2465832,
+          1795487640.32
+        ],
+        [
+          2466564,
+          1795487640.38
+        ],
+        [
+          2466626,
+          1795487640.38
+        ],
+        [
+          2466687,
+          1795487640.38
+        ],
+        [
+          2466753,
+          1795487640.38
+        ],
+        [
+          2466825,
+          1795487640.39
+        ],
+        [
+          2466887,
+          1795487640.39
+        ],
+        [
+          2466907,
+          1795487640.39
+        ],
+        [
+          2466908,
+          1795487640.39
+        ],
+        [
+          2466909,
+          1795487640.39
+        ],
+        [
+          2469732,
+          1795487640.64
+        ],
+        [
+          2469774,
+          1795487640.65
+        ],
+        [
+          2469810,
+          1795487640.65
+        ],
+        [
+          2469845,
+          1795487640.65
+        ],
+        [
+          2469879,
+          1795487640.65
+        ],
+        [
+          2469917,
+          1795487640.65
+        ],
+        [
+          2469949,
+          1795487640.65
+        ],
+        [
+          2469964,
+          1795487640.65
+        ],
+        [
+          2554711,
+          1795487650.07
+        ],
+        [
+          2613247,
+          1795487658.83
+        ],
+        [
+          2629196,
+          1795487663.84
+        ],
+        [
+          2629304,
+          1795487663.9
+        ],
+        [
+          2629315,
+          1795487663.9
+        ],
+        [
+          2629338,
+          1795487663.9
+        ],
+        [
+          2629361,
+          1795487663.9
+        ],
+        [
+          2629389,
+          1795487663.9
+        ],
+        [
+          2629414,
+          1795487663.9
+        ],
+        [
+          2629431,
+          1795487663.9
+        ],
+        [
+          2629432,
+          1795487663.91
+        ],
+        [
+          2629433,
+          1795487663.91
+        ],
+        [
+          2630281,
+          1795487664.16
+        ],
+        [
+          2630282,
+          1795487664.16
+        ],
+        [
+          2630283,
+          1795487664.16
+        ],
+        [
+          2630284,
+          1795487664.16
+        ],
+        [
+          2630285,
+          1795487664.17
+        ],
+        [
+          2630286,
+          1795487664.17
+        ],
+        [
+          2630287,
+          1795487664.17
+        ],
+        [
+          2630288,
+          1795487664.17
+        ],
+        [
+          2663705,
+          1795487673.38
+        ],
+        [
+          2696339,
+          1795487682.2
+        ],
+        [
+          2715262,
+          1795487687.21
+        ],
+        [
+          2715626,
+          1795487687.27
+        ],
+        [
+          2715627,
+          1795487687.27
+        ],
+        [
+          2715628,
+          1795487687.27
+        ],
+        [
+          2715629,
+          1795487687.27
+        ],
+        [
+          2715630,
+          1795487687.27
+        ],
+        [
+          2715631,
+          1795487687.27
+        ],
+        [
+          2715632,
+          1795487687.28
+        ],
+        [
+          2715633,
+          1795487687.28
+        ],
+        [
+          2715634,
+          1795487687.28
+        ],
+        [
+          2716550,
+          1795487687.51
+        ],
+        [
+          2716551,
+          1795487687.51
+        ],
+        [
+          2716552,
+          1795487687.51
+        ],
+        [
+          2716553,
+          1795487687.52
+        ],
+        [
+          2716554,
+          1795487687.52
+        ],
+        [
+          2716555,
+          1795487687.52
+        ],
+        [
+          2716556,
+          1795487687.52
+        ],
+        [
+          2716557,
+          1795487687.52
+        ],
+        [
+          2759994,
+          1795487696.79
+        ],
+        [
+          2797666,
+          1795487705.27
+        ],
+        [
+          2830139,
+          1795487710.2
+        ],
+        [
+          2830443,
+          1795487710.26
+        ],
+        [
+          2830453,
+          1795487710.26
+        ],
+        [
+          2830454,
+          1795487710.26
+        ],
+        [
+          2830455,
+          1795487710.26
+        ],
+        [
+          2830456,
+          1795487710.27
+        ],
+        [
+          2830457,
+          1795487710.27
+        ],
+        [
+          2830458,
+          1795487710.27
+        ],
+        [
+          2830459,
+          1795487710.27
+        ],
+        [
+          2830460,
+          1795487710.27
+        ],
+        [
+          2831080,
+          1795487710.5
+        ],
+        [
+          2831081,
+          1795487710.5
+        ],
+        [
+          2831082,
+          1795487710.5
+        ],
+        [
+          2831083,
+          1795487710.5
+        ],
+        [
+          2831084,
+          1795487710.5
+        ],
+        [
+          2831085,
+          1795487710.51
+        ],
+        [
+          2831086,
+          1795487710.51
+        ],
+        [
+          2831087,
+          1795487710.51
+        ],
+        [
+          2894825,
+          1795487721.45
+        ],
+        [
+          2933090,
+          1795487726.82
+        ],
+        [
+          2961977,
+          1795487730.91
+        ],
+        [
+          2995548,
+          1795487735.46
+        ],
+        [
+          3035268,
+          1795487739.94
+        ],
+        [
+          3074255,
+          1795487744.42
+        ],
+        [
+          3124726,
+          1795487748.93
+        ],
+        [
+          3175345,
+          1795487753.54
+        ],
+        [
+          3215013,
+          1795487758.1
+        ],
+        [
+          3263197,
+          1795487762.71
+        ],
+        [
+          3303981,
+          1795487767.26
+        ],
+        [
+          3347144,
+          1795487771.8
+        ],
+        [
+          3391630,
+          1795487776.36
+        ],
+        [
+          3433842,
+          1795487780.93
+        ],
+        [
+          3476770,
+          1795487785.49
+        ],
+        [
+          3518752,
+          1795487790.33
+        ],
+        [
+          3571679,
+          1795487794.63
+        ],
+        [
+          3618330,
+          1795487799.25
+        ],
+        [
+          3660217,
+          1795487803.75
+        ],
+        [
+          3704303,
+          1795487808.35
+        ],
+        [
+          3755058,
+          1795487812.93
+        ],
+        [
+          3809122,
+          1795487817.49
+        ],
+        [
+          3851965,
+          1795487822.11
+        ],
+        [
+          3905173,
+          1795487826.64
+        ],
+        [
+          3957498,
+          1795487831.23
+        ],
+        [
+          4008313,
+          1795487835.8
+        ],
+        [
+          4053367,
+          1795487840.34
+        ],
+        [
+          4105724,
+          1795487844.95
+        ],
+        [
+          4154638,
+          1795487849.5
+        ],
+        [
+          14739,
+          1795487854.08
+        ],
+        [
+          59745,
+          1795487858.62
+        ],
+        [
+          102626,
+          1795487863.18
+        ],
+        [
+          147565,
+          1795487867.77
+        ],
+        [
+          187971,
+          1795487872.3
+        ],
+        [
+          240819,
+          1795487876.86
+        ],
+        [
+          302352,
+          1795487884.37
+        ],
+        [
+          340761,
+          1795487888.91
+        ],
+        [
+          375903,
+          1795487893.44
+        ],
+        [
+          438638,
+          1795487901.65
+        ],
+        [
+          467596,
+          1795487906.16
+        ],
+        [
+          489009,
+          1795487913.44
+        ],
+        [
+          489123,
+          1795487913.45
+        ],
+        [
+          498520,
+          1795487917.88
+        ],
+        [
+          522030,
+          1795487922.27
+        ],
+        [
+          523168,
+          1795487922.45
+        ],
+        [
+          534895,
+          1795487926.98
+        ],
+        [
+          535768,
+          1795487927.24
+        ],
+        [
+          536012,
+          1795487927.3
+        ],
+        [
+          536013,
+          1795487927.3
+        ],
+        [
+          536014,
+          1795487927.31
+        ],
+        [
+          536015,
+          1795487927.31
+        ],
+        [
+          536016,
+          1795487927.31
+        ],
+        [
+          536017,
+          1795487927.31
+        ],
+        [
+          536018,
+          1795487927.31
+        ],
+        [
+          536019,
+          1795487927.31
+        ],
+        [
+          536020,
+          1795487927.31
+        ],
+        [
+          536700,
+          1795487927.52
+        ],
+        [
+          536701,
+          1795487927.52
+        ],
+        [
+          536702,
+          1795487927.52
+        ],
+        [
+          536703,
+          1795487927.52
+        ],
+        [
+          536704,
+          1795487927.52
+        ],
+        [
+          536705,
+          1795487927.53
+        ],
+        [
+          536706,
+          1795487927.53
+        ],
+        [
+          536707,
+          1795487927.53
+        ],
+        [
+          549078,
+          1795487931.63
+        ],
+        [
+          557990,
+          1795487934.6
+        ],
+        [
+          570173,
+          1795487936.32
+        ],
+        [
+          604175,
+          1795487941.0
+        ],
+        [
+          611372,
+          1795487943.38
+        ],
+        [
+          620576,
+          1795487945.68
+        ],
+        [
+          632907,
+          1795487948.4
+        ],
+        [
+          633170,
+          1795487948.46
+        ],
+        [
+          633171,
+          1795487948.47
+        ],
+        [
+          633172,
+          1795487948.47
+        ],
+        [
+          633173,
+          1795487948.47
+        ],
+        [
+          633179,
+          1795487948.47
+        ],
+        [
+          633195,
+          1795487948.47
+        ],
+        [
+          633212,
+          1795487948.48
+        ],
+        [
+          633229,
+          1795487948.48
+        ],
+        [
+          633251,
+          1795487948.48
+        ],
+        [
+          634147,
+          1795487948.7
+        ],
+        [
+          634152,
+          1795487948.7
+        ],
+        [
+          634182,
+          1795487948.7
+        ],
+        [
+          634208,
+          1795487948.7
+        ],
+        [
+          634231,
+          1795487948.7
+        ],
+        [
+          634256,
+          1795487948.7
+        ],
+        [
+          634274,
+          1795487948.7
+        ],
+        [
+          634275,
+          1795487948.71
+        ],
+        [
+          642762,
+          1795487950.42
+        ],
+        [
+          678185,
+          1795487955.19
+        ],
+        [
+          684770,
+          1795487955.86
+        ],
+        [
+          706664,
+          1795487959.94
+        ],
+        [
+          736011,
+          1795487964.51
+        ],
+        [
+          737464,
+          1795487964.71
+        ],
+        [
+          771324,
+          1795487969.46
+        ],
+        [
+          774932,
+          1795487969.76
+        ],
+        [
+          775542,
+          1795487969.82
+        ],
+        [
+          775577,
+          1795487969.82
+        ],
+        [
+          775606,
+          1795487969.82
+        ],
+        [
+          775639,
+          1795487969.82
+        ],
+        [
+          775671,
+          1795487969.82
+        ],
+        [
+          775708,
+          1795487969.82
+        ],
+        [
+          775748,
+          1795487969.83
+        ],
+        [
+          775771,
+          1795487969.83
+        ],
+        [
+          775786,
+          1795487969.83
+        ],
+        [
+          778267,
+          1795487970.04
+        ],
+        [
+          778268,
+          1795487970.04
+        ],
+        [
+          778269,
+          1795487970.04
+        ],
+        [
+          778291,
+          1795487970.04
+        ],
+        [
+          778313,
+          1795487970.05
+        ],
+        [
+          778336,
+          1795487970.05
+        ],
+        [
+          778362,
+          1795487970.05
+        ],
+        [
+          778387,
+          1795487970.05
+        ],
+        [
+          796859,
+          1795487973.51
+        ],
+        [
+          820738,
+          1795487977.15
+        ],
+        [
+          829577,
+          1795487978.4
+        ],
+        [
+          866354,
+          1795487983.28
+        ],
+        [
+          885413,
+          1795487985.9
+        ],
+        [
+          899758,
+          1795487988.13
+        ],
+        [
+          920926,
+          1795487990.97
+        ],
+        [
+          921048,
+          1795487991.03
+        ],
+        [
+          921049,
+          1795487991.03
+        ],
+        [
+          921050,
+          1795487991.03
+        ],
+        [
+          921051,
+          1795487991.03
+        ],
+        [
+          921052,
+          1795487991.03
+        ],
+        [
+          921078,
+          1795487991.03
+        ],
+        [
+          921103,
+          1795487991.04
+        ],
+        [
+          921130,
+          1795487991.04
+        ],
+        [
+          921155,
+          1795487991.04
+        ],
+        [
+          922795,
+          1795487991.25
+        ],
+        [
+          922814,
+          1795487991.25
+        ],
+        [
+          922834,
+          1795487991.26
+        ],
+        [
+          922855,
+          1795487991.26
+        ],
+        [
+          922873,
+          1795487991.26
+        ],
+        [
+          922891,
+          1795487991.26
+        ],
+        [
+          922913,
+          1795487991.26
+        ],
+        [
+          922934,
+          1795487991.26
+        ],
+        [
+          929974,
+          1795487992.3
+        ],
+        [
+          969038,
+          1795487997.34
+        ],
+        [
+          1022144,
+          1795488002.76
+        ],
+        [
+          1022990,
+          1795488002.86
+        ],
+        [
+          1023354,
+          1795488002.92
+        ],
+        [
+          1023422,
+          1795488002.93
+        ],
+        [
+          1023467,
+          1795488002.93
+        ],
+        [
+          1023478,
+          1795488002.94
+        ],
+        [
+          1023479,
+          1795488002.94
+        ],
+        [
+          1023480,
+          1795488002.94
+        ],
+        [
+          1023481,
+          1795488002.94
+        ],
+        [
+          1023497,
+          1795488002.95
+        ],
+        [
+          1023534,
+          1795488002.95
+        ],
+        [
+          1030042,
+          1795488003.61
+        ],
+        [
+          1028384,
+          1795488003.43
+        ],
+        [
+          1028713,
+          1795488003.45
+        ],
+        [
+          1028777,
+          1795488003.46
+        ],
+        [
+          1028823,
+          1795488003.46
+        ],
+        [
+          1028827,
+          1795488003.46
+        ],
+        [
+          1028877,
+          1795488003.47
+        ],
+        [
+          1028950,
+          1795488003.47
+        ],
+        [
+          1028951,
+          1795488003.48
+        ],
+        [
+          1084068,
+          1795488010.79
+        ],
+        [
+          1119642,
+          1795488015.15
+        ],
+        [
+          1179428,
+          1795488021.33
+        ],
+        [
+          1221821,
+          1795488025.89
+        ],
+        [
+          1263327,
+          1795488030.09
+        ],
+        [
+          1312267,
+          1795488035.17
+        ],
+        [
+          1363329,
+          1795488039.46
+        ],
+        [
+          1422817,
+          1795488045.0
+        ],
+        [
+          1487441,
+          1795488050.63
+        ],
+        [
+          1554553,
+          1795488056.51
+        ],
+        [
+          1613096,
+          1795488061.82
+        ],
+        [
+          1678435,
+          1795488067.63
+        ],
+        [
+          1744184,
+          1795488073.62
+        ],
+        [
+          1811451,
+          1795488079.51
+        ],
+        [
+          1888451,
+          1795488085.64
+        ],
+        [
+          1947455,
+          1795488090.67
+        ],
+        [
+          2013465,
+          1795488096.63
+        ],
+        [
+          2070372,
+          1795488101.71
+        ],
+        [
+          2123341,
+          1795488107.08
+        ],
+        [
+          2182871,
+          1795488112.62
+        ],
+        [
+          2247006,
+          1795488118.23
+        ],
+        [
+          2299145,
+          1795488122.91
+        ],
+        [
+          2356191,
+          1795488128.62
+        ],
+        [
+          2428593,
+          1795488134.63
+        ],
+        [
+          2494206,
+          1795488140.7
+        ],
+        [
+          2558420,
+          1795488146.24
+        ],
+        [
+          2630213,
+          1795488151.65
+        ],
+        [
+          2681572,
+          1795488156.93
+        ],
+        [
+          2731529,
+          1795488161.97
+        ],
+        [
+          2795196,
+          1795488168.26
+        ],
+        [
+          2843205,
+          1795488174.17
+        ],
+        [
+          2891672,
+          1795488179.87
+        ],
+        [
+          2922023,
+          1795488184.38
+        ],
+        [
+          2977622,
+          1795488192.15
+        ],
+        [
+          3008656,
+          1795488197.41
+        ],
+        [
+          3039360,
+          1795488202.35
+        ],
+        [
+          3057972,
+          1795488207.2
+        ],
+        [
+          3108920,
+          1795488220.04
+        ],
+        [
+          3141628,
+          1795488225.91
+        ],
+        [
+          3163183,
+          1795488230.13
+        ],
+        [
+          3184536,
+          1795488234.38
+        ],
+        [
+          3206225,
+          1795488238.58
+        ],
+        [
+          3226606,
+          1795488242.83
+        ],
+        [
+          3259607,
+          1795488247.09
+        ],
+        [
+          3291334,
+          1795488252.22
+        ],
+        [
+          3315538,
+          1795488257.26
+        ],
+        [
+          3348201,
+          1795488262.36
+        ],
+        [
+          3381043,
+          1795488267.38
+        ],
+        [
+          3396884,
+          1795488272.47
+        ],
+        [
+          3414062,
+          1795488277.54
+        ],
+        [
+          3439830,
+          1795488282.53
+        ],
+        [
+          3457066,
+          1795488286.83
+        ],
+        [
+          3478309,
+          1795488291.83
+        ],
+        [
+          3499223,
+          1795488296.16
+        ],
+        [
+          3540439,
+          1795488301.21
+        ],
+        [
+          3575935,
+          1795488306.36
+        ],
+        [
+          3621613,
+          1795488311.47
+        ],
+        [
+          3661490,
+          1795488316.55
+        ],
+        [
+          3713419,
+          1795488321.64
+        ],
+        [
+          3755797,
+          1795488326.75
+        ],
+        [
+          3815119,
+          1795488331.97
+        ],
+        [
+          3866461,
+          1795488337.08
+        ],
+        [
+          3920658,
+          1795488342.13
+        ],
+        [
+          3967789,
+          1795488346.4
+        ],
+        [
+          4023281,
+          1795488351.58
+        ],
+        [
+          4084149,
+          1795488356.69
+        ],
+        [
+          4143843,
+          1795488361.81
+        ],
+        [
+          6958,
+          1795488366.9
+        ],
+        [
+          68983,
+          1795488371.99
+        ],
+        [
+          117960,
+          1795488377.53
+        ],
+        [
+          163176,
+          1795488384.66
+        ],
+        [
+          196242,
+          1795488388.88
+        ],
+        [
+          232562,
+          1795488393.89
+        ],
+        [
+          282144,
+          1795488401.43
+        ]
+      ],
+      "forced": false,
+      "temp_dir": "/tmp/asr-svc-d4hfnd9l",
+      "cache_dir": "/tmp/asr-svc-d4hfnd9l/seacraft_asr",
+      "temp_dir_retained": true,
+      "remaining_cache_files": [],
+      "cache_scan_error": null,
+      "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+      "exit_code": 0,
+      "expected_exit_codes": [
+        0
+      ],
+      "exit_code_ok": true,
+      "remaining_pids": [],
+      "port_observations": [
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false
+      ],
+      "observe_s": 5,
+      "orphan_cleanup": false,
+      "term_sent_monotonic": 7576080.87658628,
+      "parent_exit_observed_monotonic": 7576115.76553353,
+      "term_to_parent_exit_s": 34.88894725032151,
+      "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+      "passed": true
+    },
+    "integrity": {
+      "source_changes": [],
+      "config_changed": false,
+      "source_identity_complete": true,
+      "shared_service_preserved": true,
+      "shared_before": {
+        "available": true,
+        "pid": 1601397,
+        "birth": 1791963491.5,
+        "listening_ports": [
+          [
+            "127.0.0.1",
+            8007
+          ]
+        ],
+        "alive": true,
+        "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+      },
+      "shared_after": {
+        "available": true,
+        "pid": 1601397,
+        "birth": 1791963491.5,
+        "listening_ports": [
+          [
+            "127.0.0.1",
+            8007
+          ]
+        ],
+        "alive": true,
+        "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+      },
+      "passed": true,
+      "controller_sha256": "2b0b784216542afcaea882b17893ce9a185936cef747b40bd2b665341e48d637",
+      "controller_unchanged": true
+    },
+    "resource_recovery": {
+      "passed": null,
+      "observation_complete": true,
+      "hbm_observed": true,
+      "status": "unknown",
+      "before": {
+        "index": 7,
+        "available": true,
+        "status": "observed",
+        "hbm_used_mb": 15908,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 49628,
+        "chip": 0,
+        "bus_id": "0000:42:00.0"
+      },
+      "after": {
+        "index": 7,
+        "available": true,
+        "status": "observed",
+        "hbm_used_mb": 15910,
+        "hbm_total_mb": 65536,
+        "hbm_free_mb": 49626,
+        "chip": 0,
+        "bus_id": "0000:42:00.0"
+      },
+      "used_delta_mb": 2,
+      "free_delta_mb": -2,
+      "external_process_changes": [
+        {
+          "pid": 1601397,
+          "chip": 0,
+          "before_mb": 12417,
+          "after_mb": 12417,
+          "delta_mb": 0
+        }
+      ],
+      "owned_normal_exit": true,
+      "near_background": null,
+      "scope": "physical NPU7 actual MB evidence plus owned exit; nonzero aggregate delta requires shared-load review, no replacement free threshold",
+      "reason": "recovery not verified: inspect NPU7 numeric evidence, external changes and owned cleanup; unknown is not zero"
+    }
+  },
+  "integrity": {
+    "source_changes": [],
+    "config_changed": false,
+    "source_identity_complete": true,
+    "shared_service_preserved": true,
+    "shared_before": {
+      "available": true,
+      "pid": 1601397,
+      "birth": 1791963491.5,
+      "listening_ports": [
+        [
+          "127.0.0.1",
+          8007
+        ]
+      ],
+      "alive": true,
+      "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+    },
+    "shared_after": {
+      "available": true,
+      "pid": 1601397,
+      "birth": 1791963491.5,
+      "listening_ports": [
+        [
+          "127.0.0.1",
+          8007
+        ]
+      ],
+      "alive": true,
+      "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+    },
+    "passed": true,
+    "controller_sha256": "2b0b784216542afcaea882b17893ce9a185936cef747b40bd2b665341e48d637",
+    "controller_unchanged": true
+  },
+  "requested_phases": [
+    "A4",
+    "B4",
+    "A4-resident"
+  ],
+  "hbm_free_stop_enabled": false,
+  "admission_probes_requested": true,
+  "formal_matrix_complete": false,
+  "requested_phases_complete": true,
+  "instance_count": 4,
+  "deployment_contract": {
+    "generation_mode": "continuous",
+    "execution_mode": "process",
+    "N": 4,
+    "S": 16,
+    "device": "npu:7",
+    "B": 4,
+    "pools": {
+      "speech_campplus": [
+        "npu:7",
+        "npu:7",
+        "npu:7",
+        "npu:7"
+      ],
+      "emotion2vec": [
+        "npu:7"
+      ]
+    },
+    "global": 64
+  },
+  "final_n4_functional_matrix_complete": true,
+  "test_scope": "user-adopted final N4/CAM4/emo1 acceptance",
+  "target_s": 200.0,
+  "hard_s": 336.0,
+  "background_hbm_scope": "physical NPU7 before/after actual MB values; shared load may change, no replacement free threshold",
+  "background_hbm_observed": true
+}

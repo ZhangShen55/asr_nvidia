@@ -1,0 +1,2 @@
+FAILED ../../home/zhangs/asr_nvidia/tests/test_local_model_runtime.py::ConfigFileStructureTests::test_model_device_arrays_use_host_or_container_npu
+1 failed, 1298 passed, 2 skipped, 1 deselected, 2 warnings, 379 subtests passed in 252.66s (0:04:12)

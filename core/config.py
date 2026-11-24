@@ -265,7 +265,7 @@ class Settings:
 
     @property
     def qwen_local_instance_count(self) -> int:
-        return self._qwen_bounded_int("local_instance_count", 6 if self.qwen_generation_mode == "continuous" else 1, 1, 8)
+        return self._qwen_bounded_int("local_instance_count", 4 if self.qwen_generation_mode == "continuous" else 1, 1, 8)
 
     @property
     def qwen_max_new_tokens(self) -> int:

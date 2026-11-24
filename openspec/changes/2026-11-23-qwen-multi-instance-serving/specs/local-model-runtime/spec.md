@@ -18,11 +18,11 @@
 - **THEN** 服务保持可用，该请求得到对应模型不可用错误（CAM++为4015、emotion2vec为4016），且失败原因可记录与查询；其它健康能力不受影响
 
 ### Requirement: 实例数量与显存放大的关系可控
-系统 MUST 分开表达完整HTTP服务数instance_count、每服务Qwen owner数N及CAM++/emotion2vec各自数组决定的副本数。正式多owner默认及本次验收 MUST 使用instance_count=1、N=6，增加N不得复制整套HTTP、VAD或增强池。显式多HTTP部署的每服务仍独立持有其请求容量及模型资源，资源评估 MUST 计入全部副本，不将各服务局部上限称作跨进程全局上限。
+系统 MUST 分开表达完整HTTP服务数instance_count、每服务Qwen owner数N及CAM++/emotion2vec各自数组决定的副本数。正式多owner默认及本次验收 MUST 使用instance_count=1、N=4（合法N1～8保留），增加N不得复制整套HTTP、VAD或增强池。显式多HTTP部署的每服务仍独立持有其请求容量及模型资源，资源评估 MUST 计入全部副本，不将各服务局部上限称作跨进程全局上限。
 
 #### Scenario: 默认单实例
 - **WHEN** 配置中未显式设置instance_count且两个模型设备数组各有一个元素
-- **THEN** 服务以1个完整HTTP实例运行，两个增强池各1份；正式continuous的六Qwen owner属于该HTTP实例，不把六份Qwen算成六套增强池
+- **THEN** 服务以1个完整HTTP实例运行，两个增强池各1份；正式continuous的四Qwen owner属于该HTTP实例，不按Qwen数复制增强池；此场景的显式各1数组是通用配置示例，最终交付数组为CAM4/emo1
 
 #### Scenario: 配置多个实例
 - **WHEN** 配置中instance_count为2且模型设备数组保持不变
@@ -33,7 +33,7 @@
 - **THEN** 只改变Qwen owner数量及其派生容量，VAD和两个增强池的配置实例数不随N倍增
 
 ### Requirement: 本地增强模型池按设备数组建立固定实例
-系统 MUST 从model_device_pool的两个设备数组建立每服务共享的CAM++与emotion2vec独立模型池，每个数组元素对应一个模型实例，数组长度决定配置实例数；首次需要该能力时按数组顺序加载到指定设备。各Qwen owner及不同请求 MUST 复用这两个池，不各自复制池；最终配置数量由独立标定决定，不从N、S或B4推导。
+系统 MUST 从model_device_pool的两个设备数组建立每服务共享的CAM++与emotion2vec独立模型池，每个数组元素对应一个模型实例，数组长度决定配置实例数；首次需要该能力时按数组顺序加载到指定设备。各Qwen owner及不同请求 MUST 复用这两个池，不各自复制池；最终交付配置按用户选择CAM4/emo1，在四Qwen真实共驻B4下标定并冻结，不从N、S或B4推导；未验收不得宣称已通过。
 
 #### Scenario: CAM++ 与 emotion2vec 实例数量不同
 - **WHEN** CAM++数组有3个元素、emotion2vec数组有1个元素
@@ -79,8 +79,8 @@
 请求双增强时，有效VAD段裁剪后 MUST 并发分发给Qwen、CAM++和emotion2vec，各分支仅使用所属窗口及模型池，按请求ID和原段ID汇合；不得等待Qwen结束才发增强。Qwen安全完成 MUST 立即归还自身段credit，慢增强不能在共享PCM预算有余时占住该credit。CAM的0.3秒有效段覆盖、emo仅1～10秒实际推理及其它有效时长平淡、原聚类和情绪映射 MUST 保持。
 
 #### Scenario: 四音频同时双增强
-- **WHEN** 六Qwen均驻留，四请求showSpk=true、showEmotion=true且能力可用
-- **THEN** 三分支独立排队并实际调用，CAM和emo实例由各自共享池提供；不复制四套或六套增强池，结果保持原音频与原段归属
+- **WHEN** 最终四Qwen、CAM4/emo1均驻留，四请求showSpk=true、showEmotion=true且能力可用
+- **THEN** 三分支独立排队并实际调用，CAM和emo实例由各自共享池提供；不为各请求或各Qwen复制增强池，结果保持原音频与原段归属
 
 #### Scenario: 情绪队列慢于转写
 - **WHEN** 某段Qwen安全结束而emo仍等待或执行，且全服务PCM预算有余

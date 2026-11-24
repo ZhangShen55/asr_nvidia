@@ -1,0 +1,86 @@
+{
+  "items": [
+    {
+      "id": "container-model-packaging",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 28
+    },
+    {
+      "id": "local-model-inference-backends",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 10
+    },
+    {
+      "id": "local-model-runtime",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 7
+    },
+    {
+      "id": "local-qwen-asr-inference",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 5
+    },
+    {
+      "id": "npu-910b-runtime",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 2
+    },
+    {
+      "id": "offline-asr-service",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 2
+    },
+    {
+      "id": "qwen-asr-v2-adapter",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 16
+    },
+    {
+      "id": "resource-pressure-diagnostics",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 6
+    },
+    {
+      "id": "service-operations",
+      "type": "spec",
+      "valid": true,
+      "issues": [],
+      "durationMs": 4
+    }
+  ],
+  "summary": {
+    "totals": {
+      "items": 9,
+      "passed": 9,
+      "failed": 0
+    },
+    "byType": {
+      "spec": {
+        "items": 9,
+        "passed": 9,
+        "failed": 0
+      }
+    }
+  },
+  "version": "1.0",
+  "root": {
+    "path": "/tmp/qwen-final4-spec-preview-20261124-7wtf4e5w",
+    "source": "nearest"
+  }
+}

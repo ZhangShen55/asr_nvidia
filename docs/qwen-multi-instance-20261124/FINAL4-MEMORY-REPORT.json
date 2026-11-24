@@ -1,0 +1,3780 @@
+{
+  "scope": "Final user-adopted N4/CAM4/emo1 only; root acceptance required; no inference/device/test work; large JSONL read only after run.json shutdown.passed=true and no remaining owned PID",
+  "sources": [
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4/summary.json",
+      "sha256": "4ef4c7b6b8825253dee9e7fcf2f799ec5ca748e69c0b53e75bdefd904ee4bda3"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/B4/summary.json",
+      "sha256": "abe375964657ca0944145ffef65c790c3ebc7c8d00cb7155aa1456d3174c801d"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4-resident/summary.json",
+      "sha256": "f77c41e065a2c52a590761ba048490f46e9826d894fcdd98ba93df46c907ca34"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/startup-status.json",
+      "sha256": "e8c889aeb3c4a228e2cbc739a063e1d2f53e5d3f8c47c94441c865633ace5447"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/warmup-final-status.json",
+      "sha256": "eb871f87f05243d8c657bc495a00d58d8ac8c6e9b0e793363fd43764a9ba702c"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4-final-status.json",
+      "sha256": "287755e42bc0fa54db12f6be4b9e5cdc3bd0b1a88a512092aadafa576b2b9cb0"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/B-warm-status.json",
+      "sha256": "da5117e9a2d51d220c6187b77f3024366073cd32b9ecb18395f0d24177ddf26d"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/B4-final-status.json",
+      "sha256": "56eae14a1a59306f1f5a0d272dd6add412bf423dd6e92d0ec99f242316d8af49"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4-resident-pre-status.json",
+      "sha256": "ebf6e3c98a520c580120c4a2351ec1de1d14a62b63026a52dd976fa02f64bb22"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4-resident-final-status.json",
+      "sha256": "9445282128ed1a6c3ac9e49248ed2c3b3bb73a2a78c22b2572f0b67f01ac89a5"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/docs/qwen-multi-instance-20261124/N5-MEMORY-REPORT.json",
+      "sha256": "69e1070bdafcc3d5bdf12adbca8957b8d012a7a07b1c95e876623eafa6734e2e",
+      "scope": "reuse summary report only; old large JSONL not re-read"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/run.json",
+      "sha256": "ac075a62facb9abfa4d7ceb14fdde767669ba0f700cc2d7317c0f6be97ef4070"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/config.toml",
+      "sha256": "1a59a645607d24a315b09f267af590235e148144a8b2ac18e6c8fd0e6df30f82"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/background-before.json",
+      "sha256": "18bb9647720479be4cfe21f4df44d6b4b52f75b5631d0b785b4cc554bb664eee"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/owner-coverage.json",
+      "sha256": "15c3601f45af4d4dbaa52745e0c25e066c4f85a5d3ea37ae5c05b00e1cfa94de"
+    }
+  ],
+  "phases": {
+    "A4": {
+      "result": {
+        "expected": 4,
+        "completed": 4,
+        "complete": true,
+        "passed": true,
+        "all_request_latency": {
+          "n": 4,
+          "p50_s": 164.84560754988343,
+          "p95_s": 184.5242322735954
+        },
+        "completion_subset_latency": {
+          "n": 4,
+          "p50_s": 164.84560754988343,
+          "p95_s": 184.5242322735954
+        },
+        "wall_s": 186.44343913998455,
+        "observation_wall_s": 186.69728924985975,
+        "wall_scope": "first_send_to_last_response",
+        "trigger": null,
+        "warning_free": 2,
+        "warning_segments": 13,
+        "discarded_segments": 12,
+        "target_s": 200.0,
+        "target_200s_met": true,
+        "hbm_free_stop_enabled": false,
+        "validation": {
+          "passed": true,
+          "errors": [],
+          "unknown": []
+        },
+        "stage_validation": {
+          "passed": true,
+          "errors": []
+        }
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "6b870ff0ac424628bcb9e9e8f88c7b88-0.wav",
+          "started": 7575399.90478782,
+          "response_received": 7575555.76673504,
+          "elapsed_s": 155.86194721981883,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 729,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "54660ba6-1ecc-4181-b0c9-e0c5cfea4257",
+            "filename": "6b870ff0ac424628bcb9e9e8f88c7b88-0.wav",
+            "started_monotonic": 7575401.63950627,
+            "ended_monotonic": 7575555.72450852,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 24867639.996,
+              "qwen_ms": 2003144.775,
+              "qwen_calls": 753.0,
+              "vad_ms": 23180.213,
+              "cut_sum_ms": 5657.653,
+              "cut_wall_ms": 124397.935,
+              "segment_ms": 126612.374,
+              "cluster_ms": 0.0,
+              "itn_ms": 3611.567,
+              "cleanup_ms": 17.136,
+              "audio_wait_ms": 15.011,
+              "cut_cpu_ms": 2729.499,
+              "cut_dispatch_wait_ms": 2901.793,
+              "pending_wait_ms": 26.73,
+              "vad_wait_ms": 1.279,
+              "vad_worker_ms": 23175.053,
+              "low_volume_filter_ms": 0.085,
+              "model_load_lock_wait_ms": 0.013
+            }
+          }
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "6b870ff0ac424628bcb9e9e8f88c7b88-1.wav",
+          "started": 7575399.90631207,
+          "response_received": 7575555.92639793,
+          "elapsed_s": 156.02008586004376,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 3,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 568,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "76fd6ac6-0e15-4d57-807e-fd52dbc5676e",
+            "filename": "6b870ff0ac424628bcb9e9e8f88c7b88-1.wav",
+            "started_monotonic": 7575401.76500493,
+            "ended_monotonic": 7575555.89141677,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 23143218.502,
+              "qwen_ms": 1996720.037,
+              "qwen_calls": 615.0,
+              "vad_ms": 23937.014,
+              "cut_sum_ms": 3932.481,
+              "cut_wall_ms": 122964.82,
+              "segment_ms": 129488.341,
+              "cluster_ms": 0.0,
+              "itn_ms": 44.296,
+              "cleanup_ms": 17.217,
+              "audio_wait_ms": 14.914,
+              "cut_cpu_ms": 2038.644,
+              "cut_dispatch_wait_ms": 1871.809,
+              "pending_wait_ms": 22.307,
+              "vad_wait_ms": 1.362,
+              "vad_worker_ms": 23932.656,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.012
+            }
+          }
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "6b870ff0ac424628bcb9e9e8f88c7b88-2.wav",
+          "started": 7575399.90756122,
+          "response_received": 7575573.57869046,
+          "elapsed_s": 173.6711292397231,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 659,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "aa4f2db2-4a7d-42bb-a819-3e54469a38c4",
+            "filename": "6b870ff0ac424628bcb9e9e8f88c7b88-2.wav",
+            "started_monotonic": 7575401.80167561,
+            "ended_monotonic": 7575573.41855374,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 26153402.869,
+              "qwen_ms": 2226997.776,
+              "qwen_calls": 706.0,
+              "vad_ms": 24617.997,
+              "cut_sum_ms": 7519.784,
+              "cut_wall_ms": 137824.0,
+              "segment_ms": 141826.368,
+              "cluster_ms": 0.0,
+              "itn_ms": 4426.336,
+              "cleanup_ms": 17.13,
+              "audio_wait_ms": 15.982,
+              "cut_cpu_ms": 3057.321,
+              "cut_dispatch_wait_ms": 4438.862,
+              "pending_wait_ms": 23.915,
+              "vad_wait_ms": 1.815,
+              "vad_worker_ms": 24612.259,
+              "low_volume_filter_ms": 0.037,
+              "model_load_lock_wait_ms": 0.015
+            }
+          }
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "6b870ff0ac424628bcb9e9e8f88c7b88-3.wav",
+          "started": 7575399.90874121,
+          "response_received": 7575586.34822696,
+          "elapsed_s": 186.4394857501611,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 10,
+          "discarded": 10,
+          "processing_status": "completed_with_warnings",
+          "segments": 617,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "fa210e5e-e6f7-4981-abb1-6d1f0cf6bdd3",
+            "filename": "6b870ff0ac424628bcb9e9e8f88c7b88-3.wav",
+            "started_monotonic": 7575401.78388836,
+            "ended_monotonic": 7575586.24710403,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 27533909.703,
+              "qwen_ms": 2397097.726,
+              "qwen_calls": 701.0,
+              "vad_ms": 23741.007,
+              "cut_sum_ms": 6959.403,
+              "cut_wall_ms": 147323.401,
+              "segment_ms": 157050.168,
+              "cluster_ms": 0.0,
+              "itn_ms": 2963.504,
+              "cleanup_ms": 16.371,
+              "audio_wait_ms": 14.958,
+              "cut_cpu_ms": 2987.486,
+              "cut_dispatch_wait_ms": 3947.698,
+              "pending_wait_ms": 24.539,
+              "vad_wait_ms": 1.705,
+              "vad_worker_ms": 23736.083,
+              "low_volume_filter_ms": 0.042,
+              "model_load_lock_wait_ms": 0.007
+            }
+          }
+        }
+      ],
+      "status_source": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4/status.jsonl",
+      "status_sha256": "5ade04518065ab1a33b3e673893cd2a760c2610a796dd800023f20154251f503",
+      "poll_count": 232,
+      "missing_hbm_poll_count": 0,
+      "distinct_resource_samples": 39,
+      "resource_gap_s": {
+        "n": 38,
+        "min": 4.288,
+        "p50": 4.585,
+        "p95": 5.675949999999998,
+        "max": 8.37
+      },
+      "poll_gap_s": {
+        "n": 231,
+        "min": 0.7405466800555587,
+        "p50": 0.7596797607839108,
+        "p95": 0.768470065202564,
+        "max": 5.193080449476838
+      },
+      "memory": {
+        "hbm_free_mb": {
+          "n": 39,
+          "min": 21997,
+          "p50": 22731.0,
+          "p95": 31228.0,
+          "max": 31987
+        },
+        "hbm_used_mb": {
+          "n": 39,
+          "min": 33549,
+          "p50": 42805.0,
+          "p95": 43539.0,
+          "max": 43539
+        },
+        "host_available_bytes": {
+          "n": 39,
+          "min": 1879774674944,
+          "p50": 1881714860032.0,
+          "p95": 1883606050816.0,
+          "max": 1884750626816
+        },
+        "host_swap_used_bytes": {
+          "n": 39,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "cache_age_s": {
+          "n": 39,
+          "min": 3.544719369150698,
+          "p50": 4.33235498983413,
+          "p95": 5.365924745891246,
+          "max": 7.905140989460051
+        },
+        "swap_in_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        },
+        "swap_out_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        }
+      },
+      "queues": {
+        "CAM_waiting": {
+          "n": 232,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "EMO_waiting": {
+          "n": 232,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_active": {
+          "n": 232,
+          "min": 0,
+          "p50": 64.0,
+          "p95": 64.0,
+          "max": 64
+        },
+        "PCM_waiting": {
+          "n": 232,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_bytes": {
+          "n": 232,
+          "min": 0,
+          "p50": 27738784.0,
+          "p95": 34053808.0,
+          "max": 37430464
+        }
+      },
+      "PCM_full_poll_count": 0,
+      "sampled_points_are_not_time_weighted": true
+    },
+    "B4": {
+      "result": {
+        "expected": 4,
+        "completed": 4,
+        "complete": true,
+        "passed": true,
+        "all_request_latency": {
+          "n": 4,
+          "p50_s": 183.25955872470513,
+          "p95_s": 199.44685057224706
+        },
+        "completion_subset_latency": {
+          "n": 4,
+          "p50_s": 183.25955872470513,
+          "p95_s": 199.44685057224706
+        },
+        "wall_s": 200.1001828406006,
+        "observation_wall_s": 200.43600383028388,
+        "wall_scope": "first_send_to_last_response",
+        "trigger": null,
+        "warning_free": 2,
+        "warning_segments": 12,
+        "discarded_segments": 11,
+        "target_s": null,
+        "target_200s_met": null,
+        "hbm_free_stop_enabled": false,
+        "validation": {
+          "passed": true,
+          "errors": [],
+          "unknown": []
+        },
+        "enhancement_validation": {
+          "passed": true,
+          "errors": [],
+          "pools": {
+            "speech_campplus": {
+              "instance_call_deltas": {
+                "0": 700,
+                "1": 689,
+                "2": 699,
+                "3": 687
+              },
+              "outcome_deltas": {
+                "success": 2775,
+                "empty": 0,
+                "failed": 0,
+                "cancelled": 0
+              },
+              "duration_skip_delta": 0
+            },
+            "emotion2vec": {
+              "instance_call_deltas": {
+                "0": 2226
+              },
+              "outcome_deltas": {
+                "success": 2226,
+                "empty": 0,
+                "failed": 0,
+                "cancelled": 0
+              },
+              "duration_skip_delta": 549
+            }
+          },
+          "scope": "real NN/skip/field evidence, not human-labelled accuracy"
+        },
+        "stage_validation": {
+          "passed": true,
+          "errors": []
+        }
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "0c5a8aa1152a48ccb619864544aa3b5d-0.wav",
+          "started": 7575692.4543614,
+          "response_received": 7575862.77189762,
+          "elapsed_s": 170.3175362199545,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 728,
+          "role_nonnull": 728,
+          "emotion_nonnull": 728,
+          "request_stages": {
+            "request_id": "c94e8d39-b26e-4b01-8f09-12250c463af8",
+            "filename": "0c5a8aa1152a48ccb619864544aa3b5d-0.wav",
+            "started_monotonic": 7575694.497395,
+            "ended_monotonic": 7575862.65384991,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 17092.437,
+              "spk_ms": 63460.322,
+              "spk_calls": 753.0,
+              "emo_wait_ms": 79926.442,
+              "emo_ms": 25115.785,
+              "emo_calls": 556.0,
+              "qwen_wait_ms": 28092224.495,
+              "qwen_ms": 2221055.416,
+              "qwen_calls": 753.0,
+              "vad_ms": 22916.531,
+              "cut_sum_ms": 7520.794,
+              "cut_wall_ms": 138142.112,
+              "segment_ms": 140437.9,
+              "cluster_ms": 604.465,
+              "itn_ms": 3256.859,
+              "cleanup_ms": 15.847,
+              "audio_wait_ms": 125.689,
+              "cut_cpu_ms": 3316.498,
+              "cut_dispatch_wait_ms": 4175.916,
+              "pending_wait_ms": 28.701,
+              "vad_wait_ms": 2.175,
+              "vad_worker_ms": 22859.534,
+              "low_volume_filter_ms": 0.05,
+              "model_load_lock_wait_ms": 0.011,
+              "emo_duration_skips": 197.0,
+              "spk_nn_calls": 753.0,
+              "spk_nn_success": 753.0,
+              "emo_nn_calls": 556.0,
+              "emo_nn_success": 556.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "0c5a8aa1152a48ccb619864544aa3b5d-1.wav",
+          "started": 7575692.45587437,
+          "response_received": 7575863.20913922,
+          "elapsed_s": 170.7532648500055,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 3,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 569,
+          "role_nonnull": 569,
+          "emotion_nonnull": 569,
+          "request_stages": {
+            "request_id": "cb955e72-714f-45ba-b5c6-1d27dc0baab7",
+            "filename": "0c5a8aa1152a48ccb619864544aa3b5d-1.wav",
+            "started_monotonic": 7575694.75499687,
+            "ended_monotonic": 7575863.17108378,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 14251.177,
+              "spk_ms": 52476.615,
+              "spk_calls": 615.0,
+              "emo_wait_ms": 81176.741,
+              "emo_ms": 21529.313,
+              "emo_calls": 508.0,
+              "qwen_wait_ms": 26137966.888,
+              "qwen_ms": 2215072.012,
+              "qwen_calls": 615.0,
+              "vad_ms": 23701.807,
+              "cut_sum_ms": 5764.552,
+              "cut_wall_ms": 136584.781,
+              "segment_ms": 143203.891,
+              "cluster_ms": 331.843,
+              "itn_ms": 44.702,
+              "cleanup_ms": 17.036,
+              "audio_wait_ms": 124.081,
+              "cut_cpu_ms": 2938.882,
+              "cut_dispatch_wait_ms": 2802.553,
+              "pending_wait_ms": 23.38,
+              "vad_wait_ms": 3.827,
+              "vad_worker_ms": 23691.081,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.01,
+              "spk_nn_calls": 615.0,
+              "spk_nn_success": 615.0,
+              "emo_nn_calls": 508.0,
+              "emo_nn_success": 508.0,
+              "emo_duration_skips": 107.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "0c5a8aa1152a48ccb619864544aa3b5d-2.wav",
+          "started": 7575692.4570118,
+          "response_received": 7575888.2228644,
+          "elapsed_s": 195.76585259940475,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 659,
+          "role_nonnull": 659,
+          "emotion_nonnull": 659,
+          "request_stages": {
+            "request_id": "e6936c9c-e81a-4d9b-ab48-edda1524ddb5",
+            "filename": "0c5a8aa1152a48ccb619864544aa3b5d-2.wav",
+            "started_monotonic": 7575694.90347314,
+            "ended_monotonic": 7575888.18456669,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 21760.168,
+              "spk_ms": 58916.881,
+              "spk_calls": 706.0,
+              "emo_wait_ms": 77420.995,
+              "emo_ms": 24032.783,
+              "emo_calls": 579.0,
+              "qwen_wait_ms": 31515714.212,
+              "qwen_ms": 2567868.344,
+              "qwen_calls": 706.0,
+              "vad_ms": 23957.8,
+              "cut_sum_ms": 14543.019,
+              "cut_wall_ms": 159610.04,
+              "segment_ms": 163492.422,
+              "cluster_ms": 461.833,
+              "itn_ms": 4361.216,
+              "cleanup_ms": 16.442,
+              "audio_wait_ms": 126.897,
+              "cut_cpu_ms": 3149.053,
+              "cut_dispatch_wait_ms": 11368.083,
+              "pending_wait_ms": 26.178,
+              "vad_wait_ms": 1.669,
+              "vad_worker_ms": 23952.617,
+              "low_volume_filter_ms": 0.042,
+              "model_load_lock_wait_ms": 0.007,
+              "emo_duration_skips": 127.0,
+              "spk_nn_calls": 706.0,
+              "spk_nn_success": 706.0,
+              "emo_nn_calls": 579.0,
+              "emo_nn_success": 579.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "0c5a8aa1152a48ccb619864544aa3b5d-3.wav",
+          "started": 7575692.45810579,
+          "response_received": 7575892.55454424,
+          "elapsed_s": 200.09643844980747,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 9,
+          "discarded": 9,
+          "processing_status": "completed_with_warnings",
+          "segments": 619,
+          "role_nonnull": 619,
+          "emotion_nonnull": 619,
+          "request_stages": {
+            "request_id": "84bd88b5-7770-4827-8e19-9b40bc9acbe9",
+            "filename": "0c5a8aa1152a48ccb619864544aa3b5d-3.wav",
+            "started_monotonic": 7575695.09496679,
+            "ended_monotonic": 7575892.51703364,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 15756.494,
+              "spk_ms": 60304.548,
+              "spk_calls": 701.0,
+              "emo_wait_ms": 81839.717,
+              "emo_ms": 23997.761,
+              "emo_calls": 583.0,
+              "qwen_wait_ms": 30630783.13,
+              "qwen_ms": 2548479.818,
+              "qwen_calls": 701.0,
+              "vad_ms": 23589.175,
+              "cut_sum_ms": 11230.187,
+              "cut_wall_ms": 157100.715,
+              "segment_ms": 169626.577,
+              "cluster_ms": 380.387,
+              "itn_ms": 2971.097,
+              "cleanup_ms": 16.699,
+              "audio_wait_ms": 125.592,
+              "cut_cpu_ms": 3305.816,
+              "cut_dispatch_wait_ms": 7898.86,
+              "pending_wait_ms": 25.819,
+              "vad_wait_ms": 1.764,
+              "vad_worker_ms": 23583.245,
+              "low_volume_filter_ms": 0.04,
+              "model_load_lock_wait_ms": 0.01,
+              "emo_duration_skips": 118.0,
+              "spk_nn_calls": 701.0,
+              "spk_nn_success": 701.0,
+              "emo_nn_calls": 583.0,
+              "emo_nn_success": 583.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        }
+      ],
+      "status_source": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/B4/status.jsonl",
+      "status_sha256": "50e92ba74fd6e2537377b57ea149bad146caab34e9895a39fd4247ee936d2a10",
+      "poll_count": 222,
+      "missing_hbm_poll_count": 0,
+      "distinct_resource_samples": 36,
+      "resource_gap_s": {
+        "n": 35,
+        "min": 4.363,
+        "p50": 5.579,
+        "p95": 6.0801,
+        "max": 7.101
+      },
+      "poll_gap_s": {
+        "n": 221,
+        "min": 0.8341426700353622,
+        "p50": 0.8539573000743985,
+        "p95": 0.8736894205212593,
+        "max": 4.981097080744803
+      },
+      "memory": {
+        "hbm_free_mb": {
+          "n": 36,
+          "min": 18996,
+          "p50": 19055.0,
+          "p95": 20251.0,
+          "max": 20307
+        },
+        "hbm_used_mb": {
+          "n": 36,
+          "min": 45229,
+          "p50": 46481.0,
+          "p95": 46539.25,
+          "max": 46540
+        },
+        "host_available_bytes": {
+          "n": 36,
+          "min": 1848086827008,
+          "p50": 1850031947776.0,
+          "p95": 1851537168384.0,
+          "max": 1852005736448
+        },
+        "host_swap_used_bytes": {
+          "n": 36,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "cache_age_s": {
+          "n": 36,
+          "min": 0.7775339400395751,
+          "p50": 5.138017349876463,
+          "p95": 5.9695751399267465,
+          "max": 9.299879030324519
+        },
+        "swap_in_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        },
+        "swap_out_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        }
+      },
+      "queues": {
+        "CAM_waiting": {
+          "n": 222,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 1.0,
+          "max": 25
+        },
+        "EMO_waiting": {
+          "n": 222,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 8.0,
+          "max": 29
+        },
+        "PCM_active": {
+          "n": 222,
+          "min": 0,
+          "p50": 64.0,
+          "p95": 64.0,
+          "max": 65
+        },
+        "PCM_waiting": {
+          "n": 222,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_bytes": {
+          "n": 222,
+          "min": 0,
+          "p50": 27758592.0,
+          "p95": 33486352.0,
+          "max": 36480064
+        }
+      },
+      "PCM_full_poll_count": 0,
+      "sampled_points_are_not_time_weighted": true
+    },
+    "A4-resident": {
+      "result": {
+        "expected": 4,
+        "completed": 4,
+        "complete": true,
+        "passed": true,
+        "all_request_latency": {
+          "n": 4,
+          "p50_s": 172.53814334003255,
+          "p95_s": 182.31297008213588
+        },
+        "completion_subset_latency": {
+          "n": 4,
+          "p50_s": 172.53814334003255,
+          "p95_s": 182.31297008213588
+        },
+        "wall_s": 183.4692624201998,
+        "observation_wall_s": 183.8105693794787,
+        "wall_scope": "first_send_to_last_response",
+        "trigger": null,
+        "warning_free": 2,
+        "warning_segments": 12,
+        "discarded_segments": 11,
+        "target_s": 200.0,
+        "target_200s_met": true,
+        "hbm_free_stop_enabled": false,
+        "validation": {
+          "passed": true,
+          "errors": [],
+          "unknown": []
+        },
+        "stage_validation": {
+          "passed": true,
+          "errors": []
+        }
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "f20d451b4dc249228a3a9b1b2c649dbb-0.wav",
+          "started": 7575896.76932373,
+          "response_received": 7576055.83091624,
+          "elapsed_s": 159.06159250997007,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 728,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "0d87449c-6d11-43bd-b2c7-d2f1d90ca608",
+            "filename": "f20d451b4dc249228a3a9b1b2c649dbb-0.wav",
+            "started_monotonic": 7575898.72237502,
+            "ended_monotonic": 7576055.78876113,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 25918509.666,
+              "qwen_ms": 2057640.566,
+              "qwen_calls": 753.0,
+              "vad_ms": 22524.331,
+              "cut_sum_ms": 4856.94,
+              "cut_wall_ms": 127621.343,
+              "segment_ms": 130092.793,
+              "cluster_ms": 0.0,
+              "itn_ms": 3325.681,
+              "cleanup_ms": 15.686,
+              "audio_wait_ms": 127.459,
+              "cut_cpu_ms": 2278.686,
+              "cut_dispatch_wait_ms": 2552.27,
+              "pending_wait_ms": 26.291,
+              "vad_wait_ms": 1.792,
+              "vad_worker_ms": 22518.953,
+              "low_volume_filter_ms": 0.045,
+              "model_load_lock_wait_ms": 0.01
+            }
+          }
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "f20d451b4dc249228a3a9b1b2c649dbb-1.wav",
+          "started": 7575896.77087041,
+          "response_received": 7576066.06420444,
+          "elapsed_s": 169.29333403054625,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 3,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 568,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "9e3f875c-0598-4070-9ecc-a61da230d74a",
+            "filename": "f20d451b4dc249228a3a9b1b2c649dbb-1.wav",
+            "started_monotonic": 7575899.45457324,
+            "ended_monotonic": 7576066.03030998,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 26068086.368,
+              "qwen_ms": 2212793.845,
+              "qwen_calls": 615.0,
+              "vad_ms": 24116.973,
+              "cut_sum_ms": 4741.526,
+              "cut_wall_ms": 137140.316,
+              "segment_ms": 141712.233,
+              "cluster_ms": 0.0,
+              "itn_ms": 41.367,
+              "cleanup_ms": 16.891,
+              "audio_wait_ms": 130.166,
+              "cut_cpu_ms": 1935.726,
+              "cut_dispatch_wait_ms": 2785.131,
+              "pending_wait_ms": 20.916,
+              "vad_wait_ms": 1.658,
+              "vad_worker_ms": 24111.967,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.017
+            }
+          }
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "f20d451b4dc249228a3a9b1b2c649dbb-2.wav",
+          "started": 7575896.77209126,
+          "response_received": 7576072.55504391,
+          "elapsed_s": 175.78295264951885,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 658,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "1e34c203-d9ae-4acd-add4-07059283ce5f",
+            "filename": "f20d451b4dc249228a3a9b1b2c649dbb-2.wav",
+            "started_monotonic": 7575898.91709661,
+            "ended_monotonic": 7576072.51531866,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 27127429.654,
+              "qwen_ms": 2269284.515,
+              "qwen_calls": 706.0,
+              "vad_ms": 23962.519,
+              "cut_sum_ms": 6116.802,
+              "cut_wall_ms": 140368.068,
+              "segment_ms": 144192.603,
+              "cluster_ms": 0.0,
+              "itn_ms": 4455.643,
+              "cleanup_ms": 18.428,
+              "audio_wait_ms": 126.553,
+              "cut_cpu_ms": 2457.837,
+              "cut_dispatch_wait_ms": 3635.695,
+              "pending_wait_ms": 23.549,
+              "vad_wait_ms": 4.637,
+              "vad_worker_ms": 23949.812,
+              "low_volume_filter_ms": 0.037,
+              "model_load_lock_wait_ms": 0.015
+            }
+          }
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "f20d451b4dc249228a3a9b1b2c649dbb-3.wav",
+          "started": 7575896.77326005,
+          "response_received": 7576080.23858615,
+          "elapsed_s": 183.46532609965652,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 9,
+          "discarded": 9,
+          "processing_status": "completed_with_warnings",
+          "segments": 618,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "df3ed6b6-2a16-4b21-9a2a-10cab6bc77ae",
+            "filename": "f20d451b4dc249228a3a9b1b2c649dbb-3.wav",
+            "started_monotonic": 7575899.06284479,
+            "ended_monotonic": 7576080.19979663,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 28100528.3,
+              "qwen_ms": 2386625.669,
+              "qwen_calls": 701.0,
+              "vad_ms": 23850.663,
+              "cut_sum_ms": 5470.671,
+              "cut_wall_ms": 148812.538,
+              "segment_ms": 153168.722,
+              "cluster_ms": 0.0,
+              "itn_ms": 3173.749,
+              "cleanup_ms": 16.574,
+              "audio_wait_ms": 127.733,
+              "cut_cpu_ms": 2251.098,
+              "cut_dispatch_wait_ms": 3195.886,
+              "pending_wait_ms": 23.975,
+              "vad_wait_ms": 2.284,
+              "vad_worker_ms": 23382.351,
+              "low_volume_filter_ms": 0.039,
+              "model_load_lock_wait_ms": 0.011
+            }
+          }
+        }
+      ],
+      "status_source": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/final-m4-cam4-emo1-v1/A4-resident/status.jsonl",
+      "status_sha256": "5181ba5ce52473904ef89beb5aacc1e62711652e52db57c5acf99dcb590c397f",
+      "poll_count": 205,
+      "missing_hbm_poll_count": 0,
+      "distinct_resource_samples": 36,
+      "resource_gap_s": {
+        "n": 35,
+        "min": 4.207,
+        "p50": 5.063,
+        "p95": 6.386499999999994,
+        "max": 8.075
+      },
+      "poll_gap_s": {
+        "n": 204,
+        "min": 0.8304582592099905,
+        "p50": 0.846701554954052,
+        "p95": 0.8665349678136408,
+        "max": 5.000009689480066
+      },
+      "memory": {
+        "hbm_free_mb": {
+          "n": 36,
+          "min": 15406,
+          "p50": 16443.0,
+          "p95": 18997.0,
+          "max": 18997
+        },
+        "hbm_used_mb": {
+          "n": 36,
+          "min": 46539,
+          "p50": 49093.0,
+          "p95": 50130.0,
+          "max": 50130
+        },
+        "host_available_bytes": {
+          "n": 36,
+          "min": 1848477532160,
+          "p50": 1850068750336.0,
+          "p95": 1851431318528.0,
+          "max": 1852706770944
+        },
+        "host_swap_used_bytes": {
+          "n": 36,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "cache_age_s": {
+          "n": 36,
+          "min": 2.990721239708364,
+          "p50": 4.278743079863489,
+          "p95": 5.848855225369334,
+          "max": 7.691995469853282
+        },
+        "swap_in_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        },
+        "swap_out_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        }
+      },
+      "queues": {
+        "CAM_waiting": {
+          "n": 205,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "EMO_waiting": {
+          "n": 205,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_active": {
+          "n": 205,
+          "min": 0,
+          "p50": 64.0,
+          "p95": 64.0,
+          "max": 65
+        },
+        "PCM_waiting": {
+          "n": 205,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_bytes": {
+          "n": 205,
+          "min": 0,
+          "p50": 27334976.0,
+          "p95": 34681408.0,
+          "max": 36120064
+        }
+      },
+      "PCM_full_poll_count": 0,
+      "sampled_points_are_not_time_weighted": true
+    }
+  },
+  "allocator_snapshots": {
+    "warmup-final-status": [
+      {
+        "owner": 0,
+        "pid": 2307689,
+        "birth": 1795487626.26,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.11865234375,
+        "current_reserved_mb": 4390.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 0.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 2554711,
+        "birth": 1795487650.07,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 4390.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 0.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 2663705,
+        "birth": 1795487673.38,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.11865234375,
+        "current_reserved_mb": 4390.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 0.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 2759994,
+        "birth": 1795487696.79,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.22802734375,
+        "current_reserved_mb": 4390.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 0.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "A4-final-status": [
+      {
+        "owner": 0,
+        "pid": 2307689,
+        "birth": 1795487626.26,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3897.3681640625,
+        "current_reserved_mb": 5584.0,
+        "allocated_change_from_warmup_mb": -8.75048828125,
+        "reserved_change_from_warmup_mb": 1194.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 2554711,
+        "birth": 1795487650.07,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3915.197265625,
+        "current_reserved_mb": 6632.0,
+        "allocated_change_from_warmup_mb": 8.75048828125,
+        "reserved_change_from_warmup_mb": 2242.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 2663705,
+        "birth": 1795487673.38,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3913.228515625,
+        "current_reserved_mb": 7062.0,
+        "allocated_change_from_warmup_mb": 7.10986328125,
+        "reserved_change_from_warmup_mb": 2672.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 2759994,
+        "birth": 1795487696.79,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3921.43212890625,
+        "current_reserved_mb": 6028.0,
+        "allocated_change_from_warmup_mb": 15.2041015625,
+        "reserved_change_from_warmup_mb": 1638.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "B-warm-status": [
+      {
+        "owner": 0,
+        "pid": 2307689,
+        "birth": 1795487626.26,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 5584.0,
+        "allocated_change_from_warmup_mb": 0.328125,
+        "reserved_change_from_warmup_mb": 1194.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 2554711,
+        "birth": 1795487650.07,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3889.24560546875,
+        "current_reserved_mb": 6632.0,
+        "allocated_change_from_warmup_mb": -17.201171875,
+        "reserved_change_from_warmup_mb": 2242.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 2663705,
+        "birth": 1795487673.38,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 7062.0,
+        "allocated_change_from_warmup_mb": 0.328125,
+        "reserved_change_from_warmup_mb": 2672.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 2759994,
+        "birth": 1795487696.79,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 6028.0,
+        "allocated_change_from_warmup_mb": 0.21875,
+        "reserved_change_from_warmup_mb": 1638.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "B4-final-status": [
+      {
+        "owner": 0,
+        "pid": 2307689,
+        "birth": 1795487626.26,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 4001.16796875,
+        "current_reserved_mb": 5642.0,
+        "allocated_change_from_warmup_mb": 95.04931640625,
+        "reserved_change_from_warmup_mb": 1252.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 2554711,
+        "birth": 1795487650.07,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3914.759765625,
+        "current_reserved_mb": 6688.0,
+        "allocated_change_from_warmup_mb": 8.31298828125,
+        "reserved_change_from_warmup_mb": 2298.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 2663705,
+        "birth": 1795487673.38,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3889.24560546875,
+        "current_reserved_mb": 7062.0,
+        "allocated_change_from_warmup_mb": -16.873046875,
+        "reserved_change_from_warmup_mb": 2672.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 2759994,
+        "birth": 1795487696.79,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3920.11962890625,
+        "current_reserved_mb": 6936.0,
+        "allocated_change_from_warmup_mb": 13.8916015625,
+        "reserved_change_from_warmup_mb": 2546.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "A4-resident-pre-status": [
+      {
+        "owner": 0,
+        "pid": 2307689,
+        "birth": 1795487626.26,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 5642.0,
+        "allocated_change_from_warmup_mb": 0.328125,
+        "reserved_change_from_warmup_mb": 1252.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 2554711,
+        "birth": 1795487650.07,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 6688.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 2298.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 2663705,
+        "birth": 1795487673.38,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 7062.0,
+        "allocated_change_from_warmup_mb": 0.328125,
+        "reserved_change_from_warmup_mb": 2672.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 2759994,
+        "birth": 1795487696.79,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 6936.0,
+        "allocated_change_from_warmup_mb": 0.21875,
+        "reserved_change_from_warmup_mb": 2546.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "A4-resident-final-status": [
+      {
+        "owner": 0,
+        "pid": 2307689,
+        "birth": 1795487626.26,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3927.0107421875,
+        "current_reserved_mb": 6754.0,
+        "allocated_change_from_warmup_mb": 20.89208984375,
+        "reserved_change_from_warmup_mb": 2364.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 2554711,
+        "birth": 1795487650.07,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3905.68115234375,
+        "current_reserved_mb": 7376.0,
+        "allocated_change_from_warmup_mb": -0.765625,
+        "reserved_change_from_warmup_mb": 2986.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 2663705,
+        "birth": 1795487673.38,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3912.353515625,
+        "current_reserved_mb": 7062.0,
+        "allocated_change_from_warmup_mb": 6.23486328125,
+        "reserved_change_from_warmup_mb": 2672.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 2759994,
+        "birth": 1795487696.79,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3915.087890625,
+        "current_reserved_mb": 7520.0,
+        "allocated_change_from_warmup_mb": 8.85986328125,
+        "reserved_change_from_warmup_mb": 3130.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ]
+  },
+  "B4_pool_deltas": {
+    "speech_campplus": {
+      "calls": 2775,
+      "wait_total_ms": 67526.3,
+      "inference_total_ms": 235158.37,
+      "duration_skips": 0,
+      "outcome_deltas": {
+        "success": 2775,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "mean_wait_ms": 24.3338018018018,
+      "mean_inference_envelope_ms": 84.74175495495496
+    },
+    "emotion2vec": {
+      "calls": 2226,
+      "wait_total_ms": 318609.97000000003,
+      "inference_total_ms": 94675.64,
+      "duration_skips": 549,
+      "outcome_deltas": {
+        "success": 2226,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "mean_wait_ms": 143.1311635220126,
+      "mean_inference_envelope_ms": 42.53173405211141
+    }
+  },
+  "shutdown": {
+    "owned": true,
+    "identities": [
+      [
+        2140797,
+        1795487610.97
+      ],
+      [
+        2191712,
+        1795487616.14
+      ],
+      [
+        2191854,
+        1795487616.16
+      ],
+      [
+        2191855,
+        1795487616.16
+      ],
+      [
+        2191856,
+        1795487616.16
+      ],
+      [
+        2191857,
+        1795487616.16
+      ],
+      [
+        2191889,
+        1795487616.16
+      ],
+      [
+        2191929,
+        1795487616.17
+      ],
+      [
+        2191962,
+        1795487616.17
+      ],
+      [
+        2191982,
+        1795487616.17
+      ],
+      [
+        2307689,
+        1795487626.26
+      ],
+      [
+        2401444,
+        1795487635.16
+      ],
+      [
+        2465832,
+        1795487640.32
+      ],
+      [
+        2466564,
+        1795487640.38
+      ],
+      [
+        2466626,
+        1795487640.38
+      ],
+      [
+        2466687,
+        1795487640.38
+      ],
+      [
+        2466753,
+        1795487640.38
+      ],
+      [
+        2466825,
+        1795487640.39
+      ],
+      [
+        2466887,
+        1795487640.39
+      ],
+      [
+        2466907,
+        1795487640.39
+      ],
+      [
+        2466908,
+        1795487640.39
+      ],
+      [
+        2466909,
+        1795487640.39
+      ],
+      [
+        2469732,
+        1795487640.64
+      ],
+      [
+        2469774,
+        1795487640.65
+      ],
+      [
+        2469810,
+        1795487640.65
+      ],
+      [
+        2469845,
+        1795487640.65
+      ],
+      [
+        2469879,
+        1795487640.65
+      ],
+      [
+        2469917,
+        1795487640.65
+      ],
+      [
+        2469949,
+        1795487640.65
+      ],
+      [
+        2469964,
+        1795487640.65
+      ],
+      [
+        2554711,
+        1795487650.07
+      ],
+      [
+        2613247,
+        1795487658.83
+      ],
+      [
+        2629196,
+        1795487663.84
+      ],
+      [
+        2629304,
+        1795487663.9
+      ],
+      [
+        2629315,
+        1795487663.9
+      ],
+      [
+        2629338,
+        1795487663.9
+      ],
+      [
+        2629361,
+        1795487663.9
+      ],
+      [
+        2629389,
+        1795487663.9
+      ],
+      [
+        2629414,
+        1795487663.9
+      ],
+      [
+        2629431,
+        1795487663.9
+      ],
+      [
+        2629432,
+        1795487663.91
+      ],
+      [
+        2629433,
+        1795487663.91
+      ],
+      [
+        2630281,
+        1795487664.16
+      ],
+      [
+        2630282,
+        1795487664.16
+      ],
+      [
+        2630283,
+        1795487664.16
+      ],
+      [
+        2630284,
+        1795487664.16
+      ],
+      [
+        2630285,
+        1795487664.17
+      ],
+      [
+        2630286,
+        1795487664.17
+      ],
+      [
+        2630287,
+        1795487664.17
+      ],
+      [
+        2630288,
+        1795487664.17
+      ],
+      [
+        2663705,
+        1795487673.38
+      ],
+      [
+        2696339,
+        1795487682.2
+      ],
+      [
+        2715262,
+        1795487687.21
+      ],
+      [
+        2715626,
+        1795487687.27
+      ],
+      [
+        2715627,
+        1795487687.27
+      ],
+      [
+        2715628,
+        1795487687.27
+      ],
+      [
+        2715629,
+        1795487687.27
+      ],
+      [
+        2715630,
+        1795487687.27
+      ],
+      [
+        2715631,
+        1795487687.27
+      ],
+      [
+        2715632,
+        1795487687.28
+      ],
+      [
+        2715633,
+        1795487687.28
+      ],
+      [
+        2715634,
+        1795487687.28
+      ],
+      [
+        2716550,
+        1795487687.51
+      ],
+      [
+        2716551,
+        1795487687.51
+      ],
+      [
+        2716552,
+        1795487687.51
+      ],
+      [
+        2716553,
+        1795487687.52
+      ],
+      [
+        2716554,
+        1795487687.52
+      ],
+      [
+        2716555,
+        1795487687.52
+      ],
+      [
+        2716556,
+        1795487687.52
+      ],
+      [
+        2716557,
+        1795487687.52
+      ],
+      [
+        2759994,
+        1795487696.79
+      ],
+      [
+        2797666,
+        1795487705.27
+      ],
+      [
+        2830139,
+        1795487710.2
+      ],
+      [
+        2830443,
+        1795487710.26
+      ],
+      [
+        2830453,
+        1795487710.26
+      ],
+      [
+        2830454,
+        1795487710.26
+      ],
+      [
+        2830455,
+        1795487710.26
+      ],
+      [
+        2830456,
+        1795487710.27
+      ],
+      [
+        2830457,
+        1795487710.27
+      ],
+      [
+        2830458,
+        1795487710.27
+      ],
+      [
+        2830459,
+        1795487710.27
+      ],
+      [
+        2830460,
+        1795487710.27
+      ],
+      [
+        2831080,
+        1795487710.5
+      ],
+      [
+        2831081,
+        1795487710.5
+      ],
+      [
+        2831082,
+        1795487710.5
+      ],
+      [
+        2831083,
+        1795487710.5
+      ],
+      [
+        2831084,
+        1795487710.5
+      ],
+      [
+        2831085,
+        1795487710.51
+      ],
+      [
+        2831086,
+        1795487710.51
+      ],
+      [
+        2831087,
+        1795487710.51
+      ],
+      [
+        2894825,
+        1795487721.45
+      ],
+      [
+        2933090,
+        1795487726.82
+      ],
+      [
+        2961977,
+        1795487730.91
+      ],
+      [
+        2995548,
+        1795487735.46
+      ],
+      [
+        3035268,
+        1795487739.94
+      ],
+      [
+        3074255,
+        1795487744.42
+      ],
+      [
+        3124726,
+        1795487748.93
+      ],
+      [
+        3175345,
+        1795487753.54
+      ],
+      [
+        3215013,
+        1795487758.1
+      ],
+      [
+        3263197,
+        1795487762.71
+      ],
+      [
+        3303981,
+        1795487767.26
+      ],
+      [
+        3347144,
+        1795487771.8
+      ],
+      [
+        3391630,
+        1795487776.36
+      ],
+      [
+        3433842,
+        1795487780.93
+      ],
+      [
+        3476770,
+        1795487785.49
+      ],
+      [
+        3518752,
+        1795487790.33
+      ],
+      [
+        3571679,
+        1795487794.63
+      ],
+      [
+        3618330,
+        1795487799.25
+      ],
+      [
+        3660217,
+        1795487803.75
+      ],
+      [
+        3704303,
+        1795487808.35
+      ],
+      [
+        3755058,
+        1795487812.93
+      ],
+      [
+        3809122,
+        1795487817.49
+      ],
+      [
+        3851965,
+        1795487822.11
+      ],
+      [
+        3905173,
+        1795487826.64
+      ],
+      [
+        3957498,
+        1795487831.23
+      ],
+      [
+        4008313,
+        1795487835.8
+      ],
+      [
+        4053367,
+        1795487840.34
+      ],
+      [
+        4105724,
+        1795487844.95
+      ],
+      [
+        4154638,
+        1795487849.5
+      ],
+      [
+        14739,
+        1795487854.08
+      ],
+      [
+        59745,
+        1795487858.62
+      ],
+      [
+        102626,
+        1795487863.18
+      ],
+      [
+        147565,
+        1795487867.77
+      ],
+      [
+        187971,
+        1795487872.3
+      ],
+      [
+        240819,
+        1795487876.86
+      ],
+      [
+        302352,
+        1795487884.37
+      ],
+      [
+        340761,
+        1795487888.91
+      ],
+      [
+        375903,
+        1795487893.44
+      ],
+      [
+        438638,
+        1795487901.65
+      ],
+      [
+        467596,
+        1795487906.16
+      ],
+      [
+        489009,
+        1795487913.44
+      ],
+      [
+        489123,
+        1795487913.45
+      ],
+      [
+        498520,
+        1795487917.88
+      ],
+      [
+        522030,
+        1795487922.27
+      ],
+      [
+        523168,
+        1795487922.45
+      ],
+      [
+        534895,
+        1795487926.98
+      ],
+      [
+        535768,
+        1795487927.24
+      ],
+      [
+        536012,
+        1795487927.3
+      ],
+      [
+        536013,
+        1795487927.3
+      ],
+      [
+        536014,
+        1795487927.31
+      ],
+      [
+        536015,
+        1795487927.31
+      ],
+      [
+        536016,
+        1795487927.31
+      ],
+      [
+        536017,
+        1795487927.31
+      ],
+      [
+        536018,
+        1795487927.31
+      ],
+      [
+        536019,
+        1795487927.31
+      ],
+      [
+        536020,
+        1795487927.31
+      ],
+      [
+        536700,
+        1795487927.52
+      ],
+      [
+        536701,
+        1795487927.52
+      ],
+      [
+        536702,
+        1795487927.52
+      ],
+      [
+        536703,
+        1795487927.52
+      ],
+      [
+        536704,
+        1795487927.52
+      ],
+      [
+        536705,
+        1795487927.53
+      ],
+      [
+        536706,
+        1795487927.53
+      ],
+      [
+        536707,
+        1795487927.53
+      ],
+      [
+        549078,
+        1795487931.63
+      ],
+      [
+        557990,
+        1795487934.6
+      ],
+      [
+        570173,
+        1795487936.32
+      ],
+      [
+        604175,
+        1795487941.0
+      ],
+      [
+        611372,
+        1795487943.38
+      ],
+      [
+        620576,
+        1795487945.68
+      ],
+      [
+        632907,
+        1795487948.4
+      ],
+      [
+        633170,
+        1795487948.46
+      ],
+      [
+        633171,
+        1795487948.47
+      ],
+      [
+        633172,
+        1795487948.47
+      ],
+      [
+        633173,
+        1795487948.47
+      ],
+      [
+        633179,
+        1795487948.47
+      ],
+      [
+        633195,
+        1795487948.47
+      ],
+      [
+        633212,
+        1795487948.48
+      ],
+      [
+        633229,
+        1795487948.48
+      ],
+      [
+        633251,
+        1795487948.48
+      ],
+      [
+        634147,
+        1795487948.7
+      ],
+      [
+        634152,
+        1795487948.7
+      ],
+      [
+        634182,
+        1795487948.7
+      ],
+      [
+        634208,
+        1795487948.7
+      ],
+      [
+        634231,
+        1795487948.7
+      ],
+      [
+        634256,
+        1795487948.7
+      ],
+      [
+        634274,
+        1795487948.7
+      ],
+      [
+        634275,
+        1795487948.71
+      ],
+      [
+        642762,
+        1795487950.42
+      ],
+      [
+        678185,
+        1795487955.19
+      ],
+      [
+        684770,
+        1795487955.86
+      ],
+      [
+        706664,
+        1795487959.94
+      ],
+      [
+        736011,
+        1795487964.51
+      ],
+      [
+        737464,
+        1795487964.71
+      ],
+      [
+        771324,
+        1795487969.46
+      ],
+      [
+        774932,
+        1795487969.76
+      ],
+      [
+        775542,
+        1795487969.82
+      ],
+      [
+        775577,
+        1795487969.82
+      ],
+      [
+        775606,
+        1795487969.82
+      ],
+      [
+        775639,
+        1795487969.82
+      ],
+      [
+        775671,
+        1795487969.82
+      ],
+      [
+        775708,
+        1795487969.82
+      ],
+      [
+        775748,
+        1795487969.83
+      ],
+      [
+        775771,
+        1795487969.83
+      ],
+      [
+        775786,
+        1795487969.83
+      ],
+      [
+        778267,
+        1795487970.04
+      ],
+      [
+        778268,
+        1795487970.04
+      ],
+      [
+        778269,
+        1795487970.04
+      ],
+      [
+        778291,
+        1795487970.04
+      ],
+      [
+        778313,
+        1795487970.05
+      ],
+      [
+        778336,
+        1795487970.05
+      ],
+      [
+        778362,
+        1795487970.05
+      ],
+      [
+        778387,
+        1795487970.05
+      ],
+      [
+        796859,
+        1795487973.51
+      ],
+      [
+        820738,
+        1795487977.15
+      ],
+      [
+        829577,
+        1795487978.4
+      ],
+      [
+        866354,
+        1795487983.28
+      ],
+      [
+        885413,
+        1795487985.9
+      ],
+      [
+        899758,
+        1795487988.13
+      ],
+      [
+        920926,
+        1795487990.97
+      ],
+      [
+        921048,
+        1795487991.03
+      ],
+      [
+        921049,
+        1795487991.03
+      ],
+      [
+        921050,
+        1795487991.03
+      ],
+      [
+        921051,
+        1795487991.03
+      ],
+      [
+        921052,
+        1795487991.03
+      ],
+      [
+        921078,
+        1795487991.03
+      ],
+      [
+        921103,
+        1795487991.04
+      ],
+      [
+        921130,
+        1795487991.04
+      ],
+      [
+        921155,
+        1795487991.04
+      ],
+      [
+        922795,
+        1795487991.25
+      ],
+      [
+        922814,
+        1795487991.25
+      ],
+      [
+        922834,
+        1795487991.26
+      ],
+      [
+        922855,
+        1795487991.26
+      ],
+      [
+        922873,
+        1795487991.26
+      ],
+      [
+        922891,
+        1795487991.26
+      ],
+      [
+        922913,
+        1795487991.26
+      ],
+      [
+        922934,
+        1795487991.26
+      ],
+      [
+        929974,
+        1795487992.3
+      ],
+      [
+        969038,
+        1795487997.34
+      ],
+      [
+        1022144,
+        1795488002.76
+      ],
+      [
+        1022990,
+        1795488002.86
+      ],
+      [
+        1023354,
+        1795488002.92
+      ],
+      [
+        1023422,
+        1795488002.93
+      ],
+      [
+        1023467,
+        1795488002.93
+      ],
+      [
+        1023478,
+        1795488002.94
+      ],
+      [
+        1023479,
+        1795488002.94
+      ],
+      [
+        1023480,
+        1795488002.94
+      ],
+      [
+        1023481,
+        1795488002.94
+      ],
+      [
+        1023497,
+        1795488002.95
+      ],
+      [
+        1023534,
+        1795488002.95
+      ],
+      [
+        1030042,
+        1795488003.61
+      ],
+      [
+        1028384,
+        1795488003.43
+      ],
+      [
+        1028713,
+        1795488003.45
+      ],
+      [
+        1028777,
+        1795488003.46
+      ],
+      [
+        1028823,
+        1795488003.46
+      ],
+      [
+        1028827,
+        1795488003.46
+      ],
+      [
+        1028877,
+        1795488003.47
+      ],
+      [
+        1028950,
+        1795488003.47
+      ],
+      [
+        1028951,
+        1795488003.48
+      ],
+      [
+        1084068,
+        1795488010.79
+      ],
+      [
+        1119642,
+        1795488015.15
+      ],
+      [
+        1179428,
+        1795488021.33
+      ],
+      [
+        1221821,
+        1795488025.89
+      ],
+      [
+        1263327,
+        1795488030.09
+      ],
+      [
+        1312267,
+        1795488035.17
+      ],
+      [
+        1363329,
+        1795488039.46
+      ],
+      [
+        1422817,
+        1795488045.0
+      ],
+      [
+        1487441,
+        1795488050.63
+      ],
+      [
+        1554553,
+        1795488056.51
+      ],
+      [
+        1613096,
+        1795488061.82
+      ],
+      [
+        1678435,
+        1795488067.63
+      ],
+      [
+        1744184,
+        1795488073.62
+      ],
+      [
+        1811451,
+        1795488079.51
+      ],
+      [
+        1888451,
+        1795488085.64
+      ],
+      [
+        1947455,
+        1795488090.67
+      ],
+      [
+        2013465,
+        1795488096.63
+      ],
+      [
+        2070372,
+        1795488101.71
+      ],
+      [
+        2123341,
+        1795488107.08
+      ],
+      [
+        2182871,
+        1795488112.62
+      ],
+      [
+        2247006,
+        1795488118.23
+      ],
+      [
+        2299145,
+        1795488122.91
+      ],
+      [
+        2356191,
+        1795488128.62
+      ],
+      [
+        2428593,
+        1795488134.63
+      ],
+      [
+        2494206,
+        1795488140.7
+      ],
+      [
+        2558420,
+        1795488146.24
+      ],
+      [
+        2630213,
+        1795488151.65
+      ],
+      [
+        2681572,
+        1795488156.93
+      ],
+      [
+        2731529,
+        1795488161.97
+      ],
+      [
+        2795196,
+        1795488168.26
+      ],
+      [
+        2843205,
+        1795488174.17
+      ],
+      [
+        2891672,
+        1795488179.87
+      ],
+      [
+        2922023,
+        1795488184.38
+      ],
+      [
+        2977622,
+        1795488192.15
+      ],
+      [
+        3008656,
+        1795488197.41
+      ],
+      [
+        3039360,
+        1795488202.35
+      ],
+      [
+        3057972,
+        1795488207.2
+      ],
+      [
+        3108920,
+        1795488220.04
+      ],
+      [
+        3141628,
+        1795488225.91
+      ],
+      [
+        3163183,
+        1795488230.13
+      ],
+      [
+        3184536,
+        1795488234.38
+      ],
+      [
+        3206225,
+        1795488238.58
+      ],
+      [
+        3226606,
+        1795488242.83
+      ],
+      [
+        3259607,
+        1795488247.09
+      ],
+      [
+        3291334,
+        1795488252.22
+      ],
+      [
+        3315538,
+        1795488257.26
+      ],
+      [
+        3348201,
+        1795488262.36
+      ],
+      [
+        3381043,
+        1795488267.38
+      ],
+      [
+        3396884,
+        1795488272.47
+      ],
+      [
+        3414062,
+        1795488277.54
+      ],
+      [
+        3439830,
+        1795488282.53
+      ],
+      [
+        3457066,
+        1795488286.83
+      ],
+      [
+        3478309,
+        1795488291.83
+      ],
+      [
+        3499223,
+        1795488296.16
+      ],
+      [
+        3540439,
+        1795488301.21
+      ],
+      [
+        3575935,
+        1795488306.36
+      ],
+      [
+        3621613,
+        1795488311.47
+      ],
+      [
+        3661490,
+        1795488316.55
+      ],
+      [
+        3713419,
+        1795488321.64
+      ],
+      [
+        3755797,
+        1795488326.75
+      ],
+      [
+        3815119,
+        1795488331.97
+      ],
+      [
+        3866461,
+        1795488337.08
+      ],
+      [
+        3920658,
+        1795488342.13
+      ],
+      [
+        3967789,
+        1795488346.4
+      ],
+      [
+        4023281,
+        1795488351.58
+      ],
+      [
+        4084149,
+        1795488356.69
+      ],
+      [
+        4143843,
+        1795488361.81
+      ],
+      [
+        6958,
+        1795488366.9
+      ],
+      [
+        68983,
+        1795488371.99
+      ],
+      [
+        117960,
+        1795488377.53
+      ],
+      [
+        163176,
+        1795488384.66
+      ],
+      [
+        196242,
+        1795488388.88
+      ],
+      [
+        232562,
+        1795488393.89
+      ],
+      [
+        282144,
+        1795488401.43
+      ]
+    ],
+    "forced": false,
+    "temp_dir": "/tmp/asr-svc-d4hfnd9l",
+    "cache_dir": "/tmp/asr-svc-d4hfnd9l/seacraft_asr",
+    "temp_dir_retained": true,
+    "remaining_cache_files": [],
+    "cache_scan_error": null,
+    "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "exit_code_ok": true,
+    "remaining_pids": [],
+    "port_observations": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "observe_s": 5,
+    "orphan_cleanup": false,
+    "term_sent_monotonic": 7576080.87658628,
+    "parent_exit_observed_monotonic": 7576115.76553353,
+    "term_to_parent_exit_s": 34.88894725032151,
+    "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+    "passed": true
+  },
+  "resource_recovery": {
+    "passed": null,
+    "observation_complete": true,
+    "hbm_observed": true,
+    "status": "unknown",
+    "before": {
+      "index": 7,
+      "available": true,
+      "status": "observed",
+      "hbm_used_mb": 15908,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 49628,
+      "chip": 0,
+      "bus_id": "0000:42:00.0"
+    },
+    "after": {
+      "index": 7,
+      "available": true,
+      "status": "observed",
+      "hbm_used_mb": 15910,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 49626,
+      "chip": 0,
+      "bus_id": "0000:42:00.0"
+    },
+    "used_delta_mb": 2,
+    "free_delta_mb": -2,
+    "external_process_changes": [
+      {
+        "pid": 1601397,
+        "chip": 0,
+        "before_mb": 12417,
+        "after_mb": 12417,
+        "delta_mb": 0
+      }
+    ],
+    "owned_normal_exit": true,
+    "near_background": null,
+    "scope": "physical NPU7 actual MB evidence plus owned exit; nonzero aggregate delta requires shared-load review, no replacement free threshold",
+    "reason": "recovery not verified: inspect NPU7 numeric evidence, external changes and owned cleanup; unknown is not zero"
+  },
+  "integrity": {
+    "source_changes": [],
+    "config_changed": false,
+    "source_identity_complete": true,
+    "shared_service_preserved": true,
+    "shared_before": {
+      "available": true,
+      "pid": 1601397,
+      "birth": 1791963491.5,
+      "listening_ports": [
+        [
+          "127.0.0.1",
+          8007
+        ]
+      ],
+      "alive": true,
+      "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+    },
+    "shared_after": {
+      "available": true,
+      "pid": 1601397,
+      "birth": 1791963491.5,
+      "listening_ports": [
+        [
+          "127.0.0.1",
+          8007
+        ]
+      ],
+      "alive": true,
+      "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+    },
+    "passed": true,
+    "controller_sha256": "2b0b784216542afcaea882b17893ce9a185936cef747b40bd2b665341e48d637",
+    "controller_unchanged": true
+  },
+  "formal_matrix_complete": false,
+  "limits": [
+    "User adopted N4/CAM4/emo1; current report does not certify long-term stability or retroactively pass N6.",
+    "HBM raw MB snapshots contain TTL repeats; resource timestamps deduplicated, gaps not interpolated.",
+    "Allocator current values may reflect last worker status/RPC, not a synchronized global atomic snapshot.",
+    "Different owner maxima are not summed; reserved-allocated is not all immediately releasable.",
+    "Pool wait/inference are accumulated host envelopes, not additive end-to-end latency or kernel time.",
+    "Host/swap system counters include external shared load and do not uniquely attribute pressure to this service.",
+    "CAM four-way benefit is not an isolated causal comparison: N changed from 5 to 4 and there is one run per setting.",
+    "CAM NN calls/outcomes are observed instance dispatch counts; inference_ms includes frontend/IPC/device synchronization and is not device kernel time.",
+    "Frame/token admission estimates and PCM budgets do not guarantee HBM capacity or eliminate allocator cache growth."
+  ],
+  "CAM_snapshots": {
+    "startup-status": [],
+    "warmup-final-status": [],
+    "A4-final-status": [],
+    "B-warm-status": [
+      {
+        "pool_instance_index": 0,
+        "identity": {
+          "pid": 489009,
+          "start_ticks": "757558744",
+          "create_time": 1795487913.44,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 489009,
+          "worker_rss_mb": 2213.1171875,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_rpc": 1,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 1,
+        "identity": {
+          "pid": 557990,
+          "start_ticks": "757560860",
+          "create_time": 1795487934.6,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 557990,
+          "worker_rss_mb": 2209.984375,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_rpc": 1,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 2,
+        "identity": {
+          "pid": 684770,
+          "start_ticks": "757562986",
+          "create_time": 1795487955.86,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 684770,
+          "worker_rss_mb": 2216.52734375,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_rpc": 1,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 3,
+        "identity": {
+          "pid": 820738,
+          "start_ticks": "757565115",
+          "create_time": 1795487977.15,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 820738,
+          "worker_rss_mb": 2213.03125,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 71303168,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 71303168
+        },
+        "last_rpc": 1,
+        "last_done_ok": true
+      }
+    ],
+    "B4-final-status": [
+      {
+        "pool_instance_index": 0,
+        "identity": {
+          "pid": 489009,
+          "start_ticks": "757558744",
+          "create_time": 1795487913.44,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 489009,
+          "worker_rss_mb": 2239.4765625,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53350912,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 701,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 1,
+        "identity": {
+          "pid": 557990,
+          "start_ticks": "757560860",
+          "create_time": 1795487934.6,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 557990,
+          "worker_rss_mb": 2235.15625,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 49835520,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 690,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 2,
+        "identity": {
+          "pid": 684770,
+          "start_ticks": "757562986",
+          "create_time": 1795487955.86,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 684770,
+          "worker_rss_mb": 2242.390625,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53350912,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 700,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 3,
+        "identity": {
+          "pid": 820738,
+          "start_ticks": "757565115",
+          "create_time": 1795487977.15,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 820738,
+          "worker_rss_mb": 2240.34375,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 38164480,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 688,
+        "last_done_ok": true
+      }
+    ],
+    "A4-resident-pre-status": [
+      {
+        "pool_instance_index": 0,
+        "identity": {
+          "pid": 489009,
+          "start_ticks": "757558744",
+          "create_time": 1795487913.44,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 489009,
+          "worker_rss_mb": 2239.4765625,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 702,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 1,
+        "identity": {
+          "pid": 557990,
+          "start_ticks": "757560860",
+          "create_time": 1795487934.6,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 557990,
+          "worker_rss_mb": 2235.171875,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 691,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 2,
+        "identity": {
+          "pid": 684770,
+          "start_ticks": "757562986",
+          "create_time": 1795487955.86,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 684770,
+          "worker_rss_mb": 2242.40234375,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 701,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 3,
+        "identity": {
+          "pid": 820738,
+          "start_ticks": "757565115",
+          "create_time": 1795487977.15,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 820738,
+          "worker_rss_mb": 2240.34765625,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 689,
+        "last_done_ok": true
+      }
+    ],
+    "A4-resident-final-status": [
+      {
+        "pool_instance_index": 0,
+        "identity": {
+          "pid": 489009,
+          "start_ticks": "757558744",
+          "create_time": 1795487913.44,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 489009,
+          "worker_rss_mb": 2239.4765625,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 702,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 1,
+        "identity": {
+          "pid": 557990,
+          "start_ticks": "757560860",
+          "create_time": 1795487934.6,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 557990,
+          "worker_rss_mb": 2235.171875,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 691,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 2,
+        "identity": {
+          "pid": 684770,
+          "start_ticks": "757562986",
+          "create_time": 1795487955.86,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 684770,
+          "worker_rss_mb": 2242.40234375,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 701,
+        "last_done_ok": true
+      },
+      {
+        "pool_instance_index": 3,
+        "identity": {
+          "pid": 820738,
+          "start_ticks": "757565115",
+          "create_time": 1795487977.15,
+          "sid": 2140797
+        },
+        "configured_device": "npu:7",
+        "loaded": true,
+        "healthy": true,
+        "ready_precision": "fp32",
+        "ready_math_mode": "fp32_ops_hf32_disabled",
+        "all_floating_fp32": true,
+        "test_double": false,
+        "current_allocator": {
+          "worker_pid": 820738,
+          "worker_rss_mb": 2240.34765625,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "last_generate_only",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 73400320,
+          "max_memory_allocated_bytes": 53329920,
+          "max_memory_reserved_bytes": 73400320
+        },
+        "last_rpc": 689,
+        "last_done_ok": true
+      }
+    ]
+  },
+  "B4_CAM_per_instance_deltas": [
+    {
+      "instance_index": 0,
+      "deltas": {
+        "calls": 700,
+        "inference_ms": 58738.95181436092,
+        "success": 700,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "wait_ms": 17052.369724027812,
+        "leases": 700
+      }
+    },
+    {
+      "instance_index": 1,
+      "deltas": {
+        "calls": 689,
+        "inference_ms": 58000.5032196641,
+        "success": 689,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "wait_ms": 16549.692404456437,
+        "leases": 689
+      }
+    },
+    {
+      "instance_index": 2,
+      "deltas": {
+        "calls": 699,
+        "inference_ms": 58267.89792254567,
+        "success": 699,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "wait_ms": 17746.24869506806,
+        "leases": 699
+      }
+    },
+    {
+      "instance_index": 3,
+      "deltas": {
+        "calls": 687,
+        "inference_ms": 60151.01314894855,
+        "success": 687,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0,
+        "wait_ms": 16177.991432137787,
+        "leases": 687
+      }
+    }
+  ],
+  "B4_comparison_to_N5": {
+    "N5_config": "Qwen5/CAM1/emo1, same a1-a4 inputs; parameters differ, not isolated CAM causal experiment",
+    "N5_result": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 284.9117664853111,
+        "p95_s": 296.2360109240748
+      },
+      "completion_subset_latency": {
+        "n": 4,
+        "p50_s": 284.9117664853111,
+        "p95_s": 296.2360109240748
+      },
+      "wall_s": 296.9611797099933,
+      "observation_wall_s": 297.27658437006176,
+      "wall_scope": "first_send_to_last_response",
+      "trigger": null,
+      "warning_free": 2,
+      "warning_segments": 13,
+      "discarded_segments": 11,
+      "target_s": null,
+      "target_200s_met": null,
+      "hbm_free_stop_enabled": false,
+      "validation": {
+        "passed": true,
+        "errors": [],
+        "unknown": []
+      },
+      "enhancement_validation": {
+        "passed": true,
+        "errors": [],
+        "pools": {
+          "speech_campplus": {
+            "instance_call_deltas": {
+              "0": 2775
+            },
+            "outcome_deltas": {
+              "success": 2775,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0
+            },
+            "duration_skip_delta": 0
+          },
+          "emotion2vec": {
+            "instance_call_deltas": {
+              "0": 2226
+            },
+            "outcome_deltas": {
+              "success": 2226,
+              "empty": 0,
+              "failed": 0,
+              "cancelled": 0
+            },
+            "duration_skip_delta": 549
+          }
+        },
+        "scope": "real NN/skip/field evidence, not human-labelled accuracy"
+      },
+      "stage_validation": {
+        "passed": true,
+        "errors": []
+      }
+    },
+    "N5_memory": {
+      "hbm_free_mb": {
+        "n": 59,
+        "min": 9191,
+        "p50": 9254.0,
+        "p95": 10165.0,
+        "max": 10229
+      },
+      "hbm_used_mb": {
+        "n": 59,
+        "min": 55307,
+        "p50": 56282.0,
+        "p95": 56344.0,
+        "max": 56345
+      },
+      "host_available_bytes": {
+        "n": 59,
+        "min": 1860167749632,
+        "p50": 1861798436864.0,
+        "p95": 1863681712128.0,
+        "max": 1864720408576
+      },
+      "host_swap_used_bytes": {
+        "n": 59,
+        "min": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0
+      },
+      "cache_age_s": {
+        "n": 59,
+        "min": 0.9000442400574684,
+        "p50": 4.502038139849901,
+        "p95": 5.394559699855744,
+        "max": 8.93903184030205
+      },
+      "swap_in_bytes": {
+        "first": 0,
+        "last": 0,
+        "delta": 0
+      },
+      "swap_out_bytes": {
+        "first": 0,
+        "last": 0,
+        "delta": 0
+      }
+    },
+    "N5_queues": {
+      "CAM_waiting": {
+        "n": 348,
+        "min": 0,
+        "p50": 254.0,
+        "p95": 255.0,
+        "max": 255
+      },
+      "EMO_waiting": {
+        "n": 348,
+        "min": 0,
+        "p50": 0.0,
+        "p95": 1.0,
+        "max": 34
+      },
+      "PCM_active": {
+        "n": 348,
+        "min": 0,
+        "p50": 256.0,
+        "p95": 256.0,
+        "max": 256
+      },
+      "PCM_waiting": {
+        "n": 348,
+        "min": 0,
+        "p50": 26.0,
+        "p95": 37.0,
+        "max": 41
+      },
+      "PCM_bytes": {
+        "n": 348,
+        "min": 0,
+        "p50": 82469056.0,
+        "p95": 101002144.0,
+        "max": 104940736
+      }
+    },
+    "N5_PCM_full_poll_count": 240,
+    "N5_poll_count": 348,
+    "N5_B4_pool_deltas": {
+      "speech_campplus": {
+        "calls": 2775,
+        "wait_total_ms": 59438662.550000004,
+        "inference_total_ms": 259584.38,
+        "duration_skips": 0,
+        "outcome_deltas": {
+          "success": 2775,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        },
+        "mean_wait_ms": 21419.337855855858,
+        "mean_inference_envelope_ms": 93.54392072072072
+      },
+      "emotion2vec": {
+        "calls": 2226,
+        "wait_total_ms": 95330.31,
+        "inference_total_ms": 82912.31999999999,
+        "duration_skips": 549,
+        "outcome_deltas": {
+          "success": 2226,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        },
+        "mean_wait_ms": 42.82583557951482,
+        "mean_inference_envelope_ms": 37.24722371967655
+      }
+    },
+    "N5_resident_memory": {
+      "hbm_free_mb": {
+        "n": 41,
+        "min": 5131,
+        "p50": 7351.0,
+        "p95": 9192.0,
+        "max": 9192
+      },
+      "hbm_used_mb": {
+        "n": 41,
+        "min": 56344,
+        "p50": 58185.0,
+        "p95": 60405.0,
+        "max": 60405
+      },
+      "host_available_bytes": {
+        "n": 41,
+        "min": 1858660802560,
+        "p50": 1860799782912.0,
+        "p95": 1864504348672.0,
+        "max": 1865190207488
+      },
+      "host_swap_used_bytes": {
+        "n": 41,
+        "min": 0,
+        "p50": 0.0,
+        "p95": 0.0,
+        "max": 0
+      },
+      "cache_age_s": {
+        "n": 41,
+        "min": 1.8511140998452902,
+        "p50": 4.252056299708784,
+        "p95": 5.102770489640534,
+        "max": 7.9573242999613285
+      },
+      "swap_in_bytes": {
+        "first": 0,
+        "last": 0,
+        "delta": 0
+      },
+      "swap_out_bytes": {
+        "first": 0,
+        "last": 0,
+        "delta": 0
+      }
+    },
+    "wall_change_s": -96.8609968693927
+  },
+  "scope_config": {
+    "qwen": 4,
+    "CAM": 4,
+    "emo": 1,
+    "segment_window": 16,
+    "global_window": 64,
+    "HTTP_processes": 1,
+    "acceptance": "user adopted final scope; full root acceptance is separate from this report"
+  },
+  "configuration_snapshot": "# 2026-11-24：纯A6通过（墙钟186.32s），B4完成（302.60s）；增强驻留后A6真实OOM，尚未通过长期共驻验收。\n# 用户最终选择Qwen4/CAM++4/emo1，S=16/global=64；本轮B4及增强驻留A4待验收，变更后重启。\ninstance_count = 1\n\n[log]\nlog_path = \"./asr_service.log\"\nmax_days = 7\nmax_size_mb = 100\n\n[model_paths]\nvad_model_dir = \"/home/zhangs/asr_nvidia/model/speech_fsmn_vad_zh-cn-16k-common-pytorch\"\nspk_model_dir = \"/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced\"\nemotion_model_dir = \"/home/zhangs/asr_nvidia/model/emotion2vec_plus_large\"\n\n[speech_rate]\nrate_factor = 0.4  # 语速修正系数（数值偏高时下调），最终语速 = 原始字/分钟 * rate_factor\n\n[itn]\nenabled = true\nenable_standalone_number = true\nenable_0_to_9 = false\nremove_interjections = true\nfailure_mode = \"passthrough\"\n\n[qwen_asr]\nowner_threads = 1 # 每owner CPU线程预算；父进程OMP/MKL=4独立设置\n# 已收到新段后的IPC运输交接总上限0～5ms；不续期凑满，不影响空闲/无新段周期。\ncontinuous_admission_drain_ms = 3\n# physical步缺省随S，prefill缺省min(16,S)，模板不重复固定。\n# continuous按请求动态租用独立owner；legacy须显式选择保留旧行为。\ngeneration_mode = \"continuous\"\n# continuous保留已批准的生成中复读保护，与生成后文本折叠独立；阈值不变。\nonline_repetition_enabled = true\n# 生成中复读候选阈值：至少观察量 + 异常长度 + 尾部循环 + 持续确认共同生效；非实测最优值。\n# 仅在线停止使用，与下方生成后修复阈值独立；修改需重启。\nonline_repetition_min_generated_tokens = 32 # 最少已生成token\nonline_repetition_min_chars = 120 # 正文异常长度绝对下限（字符）\nonline_repetition_max_chars_per_second = 40 # 异常长度还须超过音频秒数×此值\nonline_repetition_min_repeats = 8 # 尾部连续循环次数，至少3\nonline_repetition_min_repeat_chars = 64 # 循环覆盖字符总数，不得超过tail_chars\nonline_repetition_max_unit_chars = 32 # 检测单元最大字符数，不得超过tail_chars\nonline_repetition_tail_chars = 512 # 有界检测尾窗字符数\nonline_repetition_confirmations = 2 # 不同正文增长观测连续确认次数，至少2\n# 强循环路径：至少96个规范字符、占正文95%，且重复次数达到音频秒数×4；与异常长度路径并列。\n# 来源为两个真实循环轨迹及正常记录回放，仅候选标定，不能代替人工准确率。\nonline_repetition_strong_tail_min_chars = 96\nonline_repetition_strong_tail_min_ratio = 95\nonline_repetition_strong_tail_repeats_per_second = 4 # 强循环最少重复次数随音频时长增长\npreload_on_startup = true # 就绪前顺序加载所有owner，不等于forward暖身\nexecution_mode = \"process\"\nprocess_shutdown_grace_s = 120\nbatch_max_duration_ratio = 32.0 # 仅显式legacy长度分桶使用；continuous逐段入队不使用此等待策略\nenabled = true\nmodel = \"\"                              # 可选本地模型显示名称\nlocal_model_dir = \"/home/model/Qwen3-ASR-1.7B-hf\"\n# ASCEND_VISIBLE_DEVICES 指定宿主物理卡；容器内设备编号从0重新映射，单映射7时使用npu:0\nlocal_device = \"npu:7\"                  # 宿主指定物理卡7；容器仅映射卡7时按实际映射使用逻辑npu:0\nlocal_dtype = \"bfloat16\"\nlocal_instance_count = 4 # N：独立模型进程数，HTTP仍为1；本轮B4/增强驻留A4待验收\nmax_new_tokens = 256\nsegment_concurrency = 16 # S：每请求在其owner内的活跃段上限\naudio_spk_emo_concurrency = 4           # B 类音频上限（请求说话人、情绪或角色识别）\nqueue_max_size = 64                     # A+B 共享等待队列容量\nqueue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排队等待\nrequest_timeout_s = 120                 # 单次 Qwen 请求超时\nretry_count = 2                         # Qwen 请求失败重试次数\nspeaker_similarity_threshold = 0.3       # CAM++ 说话人聚类余弦相似度阈值（实测 sweep 取值）\n\n# 以下组批及PCM预算修改后需重启生效。\n# audio=N、global=N×S由loader派生，不在模板重复维护。\n# 仅显式legacy组批等待（0～1000ms）；continuous使用逐段补位及独立transport交接。\nbatch_wait_timeout_ms = 100\nmax_batch_audio_frames = 14400 # 每owner预算，不随N放大；非HBM保证\nmax_batch_tokens = 10000 # 每owner输入及生成估算预算\npending_segment_limit = 256 # 全服务共享PCM预算，不按N复制\n# 全服务活动原PCM字节预算（256MiB），与段数预算同时生效；不含模型、前端、IPC及临时工作buffer，满时反压等待。\npending_audio_bytes_limit = 268435456\n\n# 复读（生成幻觉循环）后处理。Qwen 偶尔会在某个 VAD 段上进入\n# 「同一短语无限重复」的循环，直到撞上 max_model_len 被截断（实测产出\n# 1863 字符的复读串）。这里按语速上限判定异常长度，再折叠重复部分。\n# 标定依据（68,018 段真实样本）：正常段 p99.9 = 20.3 字符/秒、峰值 26.2；\n# 复读段 282~313。取 40 留约 1.5 倍余量且远低于复读量级。\n# 复读保护由Qwen后处理读取；保持原有效缺省值。\nrepetition_guard_enabled = true          # 是否启用复读检测与修复\nrepetition_max_chars_per_second = 40     # 按段时长估算合理字符数的上限系数\nrepetition_min_chars = 120               # 判定长度异常的绝对下限字符数\nrepetition_min_unit = 4                  # 判定为循环的重复子串最小长度\nrepetition_min_times = 3                 # 判定为循环的最小连续重复次数\n\n[vad]\n# 详见docs/npu-910b-migration-20261117/classroom-threshold-review.md。\n# 每个元素对应一个独立 FSMN-VAD worker；数组长度决定完整音频 VAD 并发上限\nvad_device = [\"cpu\",\"cpu\",\"cpu\",\"cpu\",\"cpu\",\"cpu\",\"cpu\",\"cpu\"]\n# 小于该时长的候选段直接丢弃，单位：秒\nmin_segment_duration_s = 0.3\n\nvad_snr_thres = 18.0 # 段级 SNR 过滤；18.0\nvad_snr_thres_filter_enabled = false\n\n# 独立服务段级log能量阈值，非dBFS；与模型内部FSMN全局选项独立\nvad_segment_decibel_thres = -40.0\nvad_decibel_frame_sample_ratio = 0.5 # 每秒采取帧率\nvad_decibel_low_frame_ratio_thres = 0.8 # 段级 decibel 过滤：抽取帧中低能量比例达到 0.8 时删除该段\nvad_decibel_thres_filter_enabled = false\n\n# 段级 RMS dBFS 过滤\nvad_low_volume_rms_dbfs_thres = -40.0\nvad_low_volume_filter_enabled = false\n\n# 段级过滤窗口，单位：分钟；0=整段都参与过滤，-1=该侧不限制\n# 3/3：只有落在开头 3 分钟、结尾 3 分钟内的段才做低音量/SNR/RMS 过滤；\n# 窗口外的中间段无条件保留，避免误删讲授主体。改动需重启生效。\nafter_start = -1\nbefore_end = -1\n\n\n# 功能开关配置：v3 链路的说话人与情绪能力互相独立\n[features]\nopen_v2_role = true      # CAM++ 说话人嵌入\nopen_v2_emotion = true   # emotion2vec 情绪\n\n[model_device_pool]\nspeech_campplus_execution_mode = \"process\"\nspeech_campplus_process_startup_timeout_s = 60\nspeech_campplus_process_shutdown_grace_s = 30\nspeech_campplus_devices = [\"npu:7\", \"npu:7\", \"npu:7\", \"npu:7\"] # 最终选择CAM++4，与Qwen owner数独立；本轮待验收\nemotion2vec_devices = [\"npu:7\"] # 与Qwen owner数独立\n\nspeech_campplus_prefetch_queue_depth = 0\nemotion2vec_prefetch_queue_depth = 0\nspeech_campplus_batch_size = 1\nemotion2vec_batch_size = 1\n\n[status]\nresource_sample_interval_s = 1.0\n",
+  "requested_phases_complete": true,
+  "final_n4_functional_matrix_complete": true,
+  "test_scope": "user-adopted final N4/CAM4/emo1 acceptance",
+  "deployment_contract": {
+    "generation_mode": "continuous",
+    "execution_mode": "process",
+    "N": 4,
+    "S": 16,
+    "device": "npu:7",
+    "B": 4,
+    "pools": {
+      "speech_campplus": [
+        "npu:7",
+        "npu:7",
+        "npu:7",
+        "npu:7"
+      ],
+      "emotion2vec": [
+        "npu:7"
+      ]
+    },
+    "global": 64
+  },
+  "admission_probe_summary": {
+    "passed": true,
+    "scope": "real HTTP, observed active windows; no artificial hold",
+    "owner_count": 4,
+    "accepted_A_count": 0,
+    "fifth_B_expected_code": 4013,
+    "B_only_4017_reachable": false
+  }
+}

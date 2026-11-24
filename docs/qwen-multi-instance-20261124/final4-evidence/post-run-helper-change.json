@@ -1,0 +1,7 @@
+{
+  "scope": "After all owned NPU shutdown: controller default manifest moved to stable tracked docs path so archive does not break future CLI; no inference/runtime/config value change",
+  "during_run_sha256": "2b0b784216542afcaea882b17893ce9a185936cef747b40bd2b665341e48d637",
+  "current_controller_sha256": "b27c0e2bbd56fd2e6dd1af3965ef5eda6e700f0320651ba0ccaf76c37920245f",
+  "stable_manifest_sha256": "af754088f766c2865d9557cfe4ed8ebee009cf4bf677543fbd9cede23fbebb42",
+  "same_as_tested_original_manifest": true
+}

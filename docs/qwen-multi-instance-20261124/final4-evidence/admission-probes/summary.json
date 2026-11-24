@@ -1,0 +1,143 @@
+{
+  "passed": true,
+  "status": "passed",
+  "scope": "real HTTP, observed active windows; no artificial hold",
+  "reason": null,
+  "owner_count": 4,
+  "accepted_A_count": 0,
+  "fifth_B_expected_code": 4013,
+  "B_only_4017_reachable": false,
+  "records": {
+    "B0": {
+      "mode": "B",
+      "started": 7575893.0223032,
+      "response_received": 7575896.20550149,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "B1": {
+      "mode": "B",
+      "started": 7575893.02351386,
+      "response_received": 7575896.2958504,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "B2": {
+      "mode": "B",
+      "started": 7575893.02458551,
+      "response_received": 7575896.3479157,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "B3": {
+      "mode": "B",
+      "started": 7575893.02564046,
+      "response_received": 7575896.20451304,
+      "http_status": 200,
+      "code": null,
+      "business_complete": true
+    },
+    "fifthB": {
+      "mode": "B",
+      "started": 7575893.70480224,
+      "response_received": 7575893.8518472,
+      "http_status": 200,
+      "code": 4013,
+      "business_complete": false
+    },
+    "fullA": {
+      "mode": "A",
+      "started": 7575894.64092404,
+      "response_received": 7575894.78590556,
+      "http_status": 200,
+      "code": 4013,
+      "business_complete": false
+    },
+    "fullB": {
+      "mode": "B",
+      "started": 7575894.64208088,
+      "response_received": 7575894.91261912,
+      "http_status": 200,
+      "code": 4013,
+      "business_complete": false
+    }
+  },
+  "observations": [
+    {
+      "time": 7575893.08079683,
+      "audio": {
+        "configured_total": 4,
+        "active_total": 0,
+        "waiting_total": 0,
+        "effective_total": 4,
+        "healthy_owners": 4,
+        "leased_owners": 0,
+        "available_owners": 4
+      },
+      "B": {
+        "configured": 4,
+        "active": 0,
+        "waiting": 0,
+        "effective": 4
+      }
+    },
+    {
+      "time": 7575893.70419911,
+      "audio": {
+        "configured_total": 4,
+        "active_total": 4,
+        "waiting_total": 0,
+        "effective_total": 4,
+        "healthy_owners": 4,
+        "leased_owners": 4,
+        "available_owners": 0
+      },
+      "B": {
+        "configured": 4,
+        "active": 4,
+        "waiting": 0,
+        "effective": 4
+      }
+    },
+    {
+      "time": 7575894.2599164,
+      "audio": {
+        "configured_total": 4,
+        "active_total": 4,
+        "waiting_total": 0,
+        "effective_total": 4,
+        "healthy_owners": 4,
+        "leased_owners": 4,
+        "available_owners": 0
+      },
+      "B": {
+        "configured": 4,
+        "active": 4,
+        "waiting": 0,
+        "effective": 4
+      }
+    },
+    {
+      "time": 7575894.64037361,
+      "audio": {
+        "configured_total": 4,
+        "active_total": 4,
+        "waiting_total": 0,
+        "effective_total": 4,
+        "healthy_owners": 4,
+        "leased_owners": 4,
+        "available_owners": 0
+      },
+      "B": {
+        "configured": 4,
+        "active": 4,
+        "waiting": 0,
+        "effective": 4
+      }
+    }
+  ],
+  "elapsed_s": 3.648901879787445
+}
