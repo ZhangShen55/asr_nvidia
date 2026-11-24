@@ -163,3 +163,86 @@ async def test_final_snapshot_failure_does_not_hide_cleanup_result(tmp_path, mon
     assert await validator.execute(args(tmp_path)) == 1
     result = json.loads((tmp_path/'result/result.json').read_text())
     assert result['cleanup']['passed'] and result['final_snapshot_error']
+
+
+def _cold_status():
+    rows, owners = [], []
+    for i in range(4):
+        worker = {'worker_pid': i+10, 'worker_create_time': 100+i,
+                  'worker_entry_module_file': '/app/core/qwen_asr_process.py',
+                  'ready_verified': True, 'worker_alive': True, 'closing': False, 'closed': False,
+                  'launch_config': {'device': 'npu:0', 'continuous_options': {'max_active': 16}}}
+        rows.append({'index': i, 'model_worker': worker, 'loaded': True, 'leased': False,
+                     'busy': False, 'request_id': None})
+        owners.append({'index': i, 'loaded': True, 'healthy': True, 'available': True,
+                       'leased': False, 'releasing': False, 'closing': False, 'active_sequences': None})
+    return {'qwenModel': {'generation_mode': 'continuous', 'execution_mode': 'process', 'device': 'npu:0',
+                         'instances': rows, 'batch_scheduler': {'running_members': 0},
+                         'owner_pool': {'configured': 4, 'healthy': 4, 'leased': 0, 'available': 4,
+                                        'segment_capacity_per_owner': 16, 'configured_global_segments': 64,
+                                        'owners': owners}},
+            'audioConcurrency': {'configured_total': 4, 'active_total': 0},
+            'spkEmoConcurrency': {'effective': 4, 'active': 0},
+            'resourceDiagnostics': {'segmentPipeline': {'active': 0, 'audio_bytes': 0}},
+            'localModels': {'speech_campplus': {'configured_instances': 4, 'instances': 4},
+                            'emotion2vec': {'configured_instances': 1, 'instances': 1}}}
+
+
+def _mapped_owner():
+    return SimpleNamespace(map_owner=lambda _pid, _birth: {'verified': True})
+
+
+def test_cold_ready_uninitialized_scheduler_is_explicitly_idle():
+    result = validator.validate_status(_cold_status(), _mapped_owner(), idle=True)
+    assert result['passed'] and result['cold_uninitialized_idle_owners'] == [0, 1, 2, 3]
+
+
+@pytest.mark.parametrize('case', ['lease', 'available', 'unhealthy', 'not_ready', 'not_alive',
+                                  'not_loaded', 'closing', 'known_active', 'inflight', 'PCM', 'global_leased'])
+def test_cold_idle_exception_never_hides_known_work_or_unhealthy_state(case):
+    status = _cold_status(); row = status['qwenModel']['instances'][0]
+    owner = status['qwenModel']['owner_pool']['owners'][0]
+    if case == 'lease': owner['leased'] = True
+    elif case == 'available': owner['available'] = False
+    elif case == 'unhealthy': owner['healthy'] = False
+    elif case == 'not_ready': row['model_worker']['ready_verified'] = False
+    elif case == 'not_alive': row['model_worker']['worker_alive'] = False
+    elif case == 'not_loaded': row['loaded'] = False
+    elif case == 'closing': owner['closing'] = True
+    elif case == 'known_active': owner['active_sequences'] = 1
+    elif case == 'inflight': status['qwenModel']['batch_scheduler']['running_members'] = 1
+    elif case == 'PCM': status['resourceDiagnostics']['segmentPipeline']['audio_bytes'] = 16
+    else: status['qwenModel']['owner_pool']['leased'] = 1
+    assert not validator.validate_status(status, _mapped_owner(), idle=True)['passed']
+
+
+def test_after_warmup_missing_continuous_is_still_failure():
+    result = validator.validate_status(_cold_status(), _mapped_owner(), idle=True, baseline={})
+    assert not result['passed'] and 'owner not idle' in result['errors']
+
+
+def test_cold_explicit_continuous_activity_is_not_uninitialized_idle():
+    status = _cold_status()
+    status['qwenModel']['instances'][0]['continuous'] = {'active_sequences': 1}
+    assert not validator.validate_status(status, _mapped_owner(), idle=True)['passed']
+
+
+@pytest.mark.parametrize('kind', ['absent', 'permission', 'other_path', 'other_container', 'daemon_error'])
+def test_cache_absent_only_accepts_exact_fixed_path_and_owned_id(monkeypatch, kind):
+    import io
+    missing = f'Error response from daemon: Could not find the file /tmp/asr-offline/seacraft_asr in container {ID}\n'
+    message, code = missing, 1
+    if kind == 'permission': message = 'Error response from daemon: permission denied\n'
+    elif kind == 'other_path': message = missing.replace('seacraft_asr', 'other-cache')
+    elif kind == 'other_container': message = missing.replace(ID, 'c'*64)
+    elif kind == 'daemon_error': code = 125
+    class Process:
+        stdout = io.BytesIO(b'')
+        returncode = code
+        def communicate(self, **_kw): return b'', message.encode()
+        def poll(self): return self.returncode
+        def kill(self): raise AssertionError('already exited')
+    monkeypatch.setattr(validator.subprocess, 'Popen', lambda *_a, **_k: Process())
+    result = validator.stopped_cache(ID)
+    assert result['passed'] is (kind == 'absent')
+    assert result['directory_absent'] is (kind == 'absent')

@@ -157,7 +157,15 @@ def validate_status(status, owner, *, idle=False, resident=False, baseline=None)
     instances = q.get('instances', [])
     if len(instances) != 4:
         errors.append('four owner records required')
-    mappings = {}
+    mappings, cold_uninitialized = {}, []
+    pool_owners = {row.get('index'): row for row in pool.get('owners', [])}
+    pcm = status.get('resourceDiagnostics', {}).get('segmentPipeline', {})
+    cold_global_idle = (baseline is None and pool.get('leased') == 0 and pool.get('available') == 4
+                        and len(pool_owners) == 4
+                        and status.get('audioConcurrency', {}).get('active_total') == 0
+                        and status.get('spkEmoConcurrency', {}).get('active') == 0
+                        and q.get('batch_scheduler', {}).get('running_members') == 0
+                        and pcm.get('active') == 0 and pcm.get('audio_bytes') == 0)
     for item in instances:
         worker = item.get('model_worker', {}); entry = worker.get('worker_entry_module_file')
         launch = worker.get('launch_config', {})
@@ -168,11 +176,29 @@ def validate_status(status, owner, *, idle=False, resident=False, baseline=None)
             errors.append(f'owner {item.get("index")}: source/host PID mapping missing')
         if launch.get('device') != 'npu:0' or launch.get('continuous_options', {}).get('max_active') != 16:
             errors.append('owner launch device/window mismatch')
-        peak = item.get('continuous', {}).get('peak_active')
+        peak = (item.get('continuous') or {}).get('peak_active')
         if baseline is not None and (type(peak) is not int or not 0 <= peak <= 16):
             errors.append('owner peak window unknown or exceeds16')
-        if idle and item.get('continuous', {}).get('active_sequences') != 0:
-            errors.append('owner not idle')
+        continuous = item.get('continuous')
+        capacity_owner = pool_owners.get(item.get('index'), {})
+        # 预加载完成不代表调度器已创建。仅在冷态、身份健康且整个服务确实无租约/
+        # 在途/PCM时，将明确的未初始化状态记录为冷空闲，绝不将unknown普遍当成0。
+        cold_idle = (cold_global_idle and continuous is None
+                     and item.get('loaded') is True and item.get('leased') is False
+                     and item.get('busy') is False and item.get('request_id') is None and not item.get('failure')
+                     and item.get('active_sequences') in (None, 0)
+                     and worker.get('ready_verified') is True and worker.get('worker_alive') is True
+                     and worker.get('closing') is False and worker.get('closed') is False
+                     and capacity_owner.get('loaded') is True and capacity_owner.get('healthy') is True
+                     and capacity_owner.get('available') is True and capacity_owner.get('leased') is False
+                     and capacity_owner.get('releasing') is False and capacity_owner.get('closing') is False
+                     and 'active_sequences' in capacity_owner and capacity_owner['active_sequences'] is None
+                     and not capacity_owner.get('failure'))
+        if idle and (not isinstance(continuous, dict) or continuous.get('active_sequences') != 0):
+            if cold_idle:
+                cold_uninitialized.append(item.get('index'))
+            else:
+                errors.append('owner not idle')
     if baseline is not None:
         current = covered_owners(status)
         if set(current) != set(baseline) or any((current[k]['pid'], current[k]['birth']) !=
@@ -195,7 +221,8 @@ def validate_status(status, owner, *, idle=False, resident=False, baseline=None)
             errors.append(f'{name}: health mismatch')
         if resident and model.get('called_instances') != count:
             errors.append(f'{name}: real instance coverage missing')
-    return {'passed': not errors, 'errors': errors, 'host_namespace_mappings': mappings}
+    return {'passed': not errors, 'errors': errors, 'host_namespace_mappings': mappings,
+            'cold_uninitialized_idle_owners': cold_uninitialized}
 
 
 async def idle_snapshot(client, owner, *, baseline=None, resident=False):
@@ -226,6 +253,15 @@ def stopped_cache(container):
         _, stderr = process.communicate(timeout=3)
         return {'passed': not records and process.returncode == 0, 'non_directory_entries': records,
                 'copy_exit': process.returncode, 'stderr': stderr.decode(errors='replace'), 'scope': 'stopped container cache tar headers; no audio saved'}
+    except tarfile.ReadError as exc:
+        stdout, stderr = process.communicate(timeout=3)
+        message = stderr.decode(errors='replace').strip()
+        missing = f'Error response from daemon: Could not find the file /tmp/asr-offline/seacraft_asr in container {container}'
+        # 完全无请求时目录尚未创建；只接受固定路径、当前immutable容器和精确daemon错误。
+        absent = process.returncode == 1 and str(exc) == 'empty file' and not stdout and message == missing
+        return {'passed': absent, 'directory_absent': absent, 'copy_exit': process.returncode,
+                'stderr': message, 'error': None if absent else repr(exc),
+                'scope': 'fixed upload PCM cache directory absent' if absent else 'unknown cache read failure'}
     except Exception as exc:
         return {'passed': False, 'status': 'unknown', 'error': repr(exc)}
     finally:

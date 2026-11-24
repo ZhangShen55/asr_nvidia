@@ -35,3 +35,7 @@
 构建v4进入独立环境后，pip check因继承CANN PYTHONPATH读到SDK供应方元数据而失败：op-compile-tool将标准库getopt/inspect/multiprocessing误列pip依赖，te/op_test_frame的WHEEL带cp311标签；另确有absl-py/ml-dtypes/tornado缺项。已依据实际Requires-Dist补齐三个固定依赖（2.3.1/0.5.1/6.5.1，验证Python3.10/aarch64及NumPy1.26.4兼容），不安装虚假标准库包。ASR环境单独严格pip check，SDK真实导入/编译及模型forward须另验，不能以忽略供应方metadata代替实际运行通过。APT索引和包缓存改用专属BuildKit cache mounts，不进入最终层，保留至最终验收后统一清理。
 
 候选v5构建成功（17,199,859,464字节）但CPU审计失败，因此未交付、未进行NPU：archive中NumPy __init__字节来自Conda旧2.2缓存，与宿主实际1.26.4不同；ignore_missing_files容错不足，前述“实际前缀快照”假设不成立。v2改为真实prefix唯一源，Conda元数据仅提供重定位类型，45,049成员逐文件SHA验证通过、无package-cache来源，NumPy init重新核对与宿主SHA完全一致。一个crcmod原生RPATH例外按真实readelf及精确SHA审核，实际容器仍须核验/导入。旧archive、错误候选和失败原件保留，runtime_env_v2另建；Python开发config脚本无需运行，解包后从交付环境排除，真实解释器保持原库处理。
+
+最终r3候选已完成构建/精确59文件/ABI导入/pip check/ITN/NPU矩阵+SDK/物理7身份验证，ID ef7b8add6a42c0297dc66eaa58718a67df8fba688d1738f1c314fe59b8565c5a，源码54c3ee8。CPU全量1419/379subtests通过，2既有skip/1硬件deselected；target-v8为82通过。
+
+首轮service冷启动415.69秒，HTTP及4owner健康，但验证器将冷态未创建continuous调度器误判仍忙，未发暖身或正式完整请求；服务正常exit0/全部PID消失/端口释放/shared保持，缓存目录尚不存在导致检查器cleanup字段false。已仅修host工具的严格cold-idle与精确目录不存在处理，实际cold状态重放/反例测试通过，不改镜像或业务调度；v1原始失败保留，新v2输出独立。正式B4/最终cleanup/tag尚未通过，不提前宣称镜像交付。
