@@ -318,7 +318,8 @@ async def execute(args):
         if mounts.get('/app/qwen-model', {}).get('RW') is not False:
             raise ValueError('Qwen mount missing or writable')
         environment = dict(item.split('=', 1) for item in owner.initial.get('Config', {}).get('Env', []) if '=' in item)
-        if environment.get('ASCEND_VISIBLE_DEVICES') != '7' or environment.get('ASR_CONTAINER_RUNTIME') != 'cann82-source':
+        if (environment.get('ASCEND_VISIBLE_DEVICES') != '7' or environment.get('ASCEND_RT_VISIBLE_DEVICES') != '7'
+                or environment.get('ASR_CONTAINER_RUNTIME') != 'cann82-source'):
             raise ValueError('physical device/container runtime marker mismatch')
         if not shared_before.get('available'):
             raise RuntimeError('shared service identity unavailable')

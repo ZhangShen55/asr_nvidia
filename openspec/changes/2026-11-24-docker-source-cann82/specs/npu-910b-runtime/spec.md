@@ -17,6 +17,28 @@
 - **WHEN** 使用本机指定 CANN8.2.RC1 底座构建本版容器
 - **THEN** 容器独立环境使用 torch2.5.1 / torch-npu2.5.1.post1，保存精确锁、包来源/摘要和依赖一致性结果；真实导入、NPU矩阵计算与模型前向分别通过后才进入完整验收
 
+### Requirement: 容器必须正确绑定 NPU 设备
+服务容器 MUST 以特权模式配合昇腾运行时启动并共享宿主 IPC，同时将宿主物理卡号通过 `ASCEND_VISIBLE_DEVICES` 传入容器。CANN8.2源码容器 MUST 同时设置 `ASCEND_RT_VISIBLE_DEVICES` 限定进程可见卡；特权模式下 MUST NOT 仅凭设备节点或一个环境变量推断已隔离单卡。容器 MUST NOT 在缺少 NPU 设备节点映射的情况下启动并声称具备 NPU 能力。
+
+#### Scenario: 缺少设备节点映射
+- **WHEN** 容器未映射 `/dev/davinci*` 设备节点却设置了 `ASCEND_VISIBLE_DEVICES`
+- **THEN** 运行时报告 `Invalid device ID ... Expected value: [0, 0)`，服务不得进入就绪状态
+
+#### Scenario: 正确绑定设备
+- **WHEN** 容器以特权模式与昇腾运行时启动并映射设备节点
+- **THEN** 容器内可见 NPU 数量与预期一致，NPU 矩阵计算通过
+
+### Requirement: 容器内设备编号按可见设备重新映射
+当容器通过设备绑定和实际进程可见卡限定了可见物理卡时，容器内 MUST 使用从 0 开始的重新映射编号访问设备，MUST NOT 继续使用宿主物理卡号。
+
+#### Scenario: 限定单张物理卡
+- **WHEN** CANN8.2源码容器设置 `ASCEND_VISIBLE_DEVICES=7` 与 `ASCEND_RT_VISIBLE_DEVICES=7` 后访问设备
+- **THEN** 启动预检在任何设备放置/模型worker创建前确认进程仅可见1卡，配置仅允许 `npu:0`，并以宿主进程身份核对物理7；配置 `npu:7` 或实际可见数量不为1时就绪前失败
+
+#### Scenario: 未限定可见设备
+- **WHEN** 容器不设置可见卡限定且宿主机共有多张卡
+- **THEN** 系统检查实际可见设备与物理卡映射并记录结果，不仅凭未设置单一变量就推断编号一致
+
 ## ADDED Requirements
 
 ### Requirement: 本地CANN底座身份及宿主兼容性可验证

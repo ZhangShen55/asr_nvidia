@@ -100,6 +100,23 @@ def validate_npu_runtime(settings) -> dict:
             if not api.is_available():
                 raise DeploymentPreflightError("没有可用 NPU；检查 CANN 环境和容器设备映射")
             count = api.device_count()
+            if container_config is not None:
+                # privileged设备节点可见不等于进程已被限制在所选卡；若仍看见8卡，
+                # 逻辑npu:0会落到错误物理卡，必须在任何set_device/worker之前拒绝。
+                if type(count) is not int or count != 1:
+                    raise DeploymentPreflightError(
+                        f"CANN8.2源码容器必须且只能有1张进程可见NPU，实际 {count}；"
+                        "检查 ASCEND_RT_VISIBLE_DEVICES（CANN进程可见性）与 "
+                        f"ASCEND_VISIBLE_DEVICES（当前 {os.getenv('ASCEND_VISIBLE_DEVICES')!r}）的物理卡选择，"
+                        "确认单卡重新映射后再启动，禁止直接使用当前逻辑npu:0"
+                    )
+                if npu_devices != ["npu:0"]:
+                    raise DeploymentPreflightError(
+                        f"单卡源码容器仅允许配置逻辑 npu:0，实际 {npu_devices}；"
+                        "物理卡号由 ASCEND_VISIBLE_DEVICES/ASCEND_RT_VISIBLE_DEVICES 选择"
+                    )
+                container_config["visible_npu_count"] = count
+                container_config["ascend_rt_visible_devices"] = os.getenv("ASCEND_RT_VISIBLE_DEVICES")
             for device in npu_devices:
                 if int(device.split(":", 1)[1]) >= count:
                     raise DeploymentPreflightError(f"设备 {device} 不可见，可见逻辑设备数 {count}")

@@ -61,5 +61,5 @@ EXPOSE 9000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=360s --retries=6 \
     CMD /opt/asr/bin/python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/get_status',timeout=4).read()" || exit 1
 # CANN环境脚本有未定义变量，不能在set -u下source；exec保留TERM及正常NPU退出链。
-ENTRYPOINT ["/bin/bash", "-c", "set -e; set +u; source /usr/local/Ascend/ascend-toolkit/set_env.sh; exec /opt/asr/bin/python /app/main.py \"$@\"", "asr"]
+ENTRYPOINT ["/bin/bash", "-c", "set -e; set +u; source /usr/local/Ascend/ascend-toolkit/set_env.sh; export ASCEND_RT_VISIBLE_DEVICES=\"${ASCEND_RT_VISIBLE_DEVICES:-${ASCEND_VISIBLE_DEVICES:-7}}\"; exec /opt/asr/bin/python /app/main.py \"$@\"", "asr"]
 CMD ["--host", "0.0.0.0", "--port", "9000", "--workers", "1", "--timeout-graceful-shutdown", "30"]

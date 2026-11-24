@@ -118,3 +118,79 @@ runpy.run_path(sys.argv[1], run_name='container_import_probe')
     assert result.returncode != 0
     assert "CONFIG_PATH" in result.stderr and "普通挂载配置文件" in result.stderr
     assert "before mount gate" not in result.stderr
+
+
+def _fake_npu_settings(tmp_path, device):
+    directories = {}
+    for name, files in [('vad', ['model.pt', 'config.yaml', 'am.mvn']),
+                        ('spk', ['campplus_cn_en_common.pt', 'config.yaml']),
+                        ('emo', ['model.pt', 'config.yaml', 'tokens.txt'])]:
+        directory = tmp_path / name
+        directory.mkdir()
+        for filename in files:
+            (directory / filename).write_bytes(b'asset')
+        directories[name] = str(directory)
+    return SimpleNamespace(validate_model_backends=lambda: None, vad_device=['cpu'],
+                           model_device_speech_campplus_devices=[device],
+                           model_device_emotion2vec_devices=[device], qwen_asr_enabled=True,
+                           qwen_local_device=device, vad_model_dir=directories['vad'],
+                           spk_model_dir=directories['spk'], emotion_model_dir=directories['emo'],
+                           deployment_profile='npu-910b')
+
+
+def _fake_device_count(monkeypatch, count):
+    observations = []
+    def available():
+        observations.append('is_available')
+        return True
+    def device_count():
+        observations.append('device_count')
+        return count
+    def forbidden(*_a, **_k):
+        pytest.fail('preflight must not set_device or allocate tensor')
+    api = SimpleNamespace(is_available=available, device_count=device_count, set_device=forbidden)
+    torch = SimpleNamespace(npu=api, tensor=forbidden)
+    extension = SimpleNamespace(npu=api)
+    def module(name):
+        observations.append(name)
+        return {'torch': torch, 'torch_npu': extension}[name]
+    monkeypatch.setattr(deployment.importlib, 'import_module', module)
+    return observations
+
+
+def test_container_rejects_all_visible_cards_before_device_selection(tmp_path, monkeypatch):
+    _enable(tmp_path, monkeypatch)
+    _versions(monkeypatch, '2.5.1.post1')
+    observations = _fake_device_count(monkeypatch, 8)
+    cfg = _fake_npu_settings(tmp_path, 'npu:0')
+    with pytest.raises(deployment.DeploymentPreflightError, match='只能有1.*实际 8.*ASCEND_RT_VISIBLE_DEVICES'):
+        deployment.validate_npu_runtime(cfg)
+    assert observations == ['torch', 'torch_npu', 'is_available', 'device_count']
+
+
+def test_container_accepts_single_visible_card_and_logical_zero(tmp_path, monkeypatch):
+    _enable(tmp_path, monkeypatch)
+    _versions(monkeypatch, '2.5.1.post1')
+    monkeypatch.setenv('ASCEND_RT_VISIBLE_DEVICES', '7')
+    observations = _fake_device_count(monkeypatch, 1)
+    result = deployment.validate_npu_runtime(_fake_npu_settings(tmp_path, 'npu:0'))
+    assert result['devices'] == ['npu:0']
+    assert result['container_runtime']['visible_npu_count'] == 1
+    assert result['container_runtime']['ascend_rt_visible_devices'] == '7'
+    assert observations == ['torch', 'torch_npu', 'is_available', 'device_count']
+
+
+def test_single_card_container_rejects_host_physical_index(tmp_path, monkeypatch):
+    _enable(tmp_path, monkeypatch)
+    _versions(monkeypatch, '2.5.1.post1')
+    _fake_device_count(monkeypatch, 1)
+    with pytest.raises(deployment.DeploymentPreflightError, match='仅允许配置逻辑 npu:0'):
+        deployment.validate_npu_runtime(_fake_npu_settings(tmp_path, 'npu:7'))
+
+
+def test_host_retains_eight_visible_cards_and_physical_seven(tmp_path, monkeypatch):
+    _versions(monkeypatch, '2.5.1')
+    observations = _fake_device_count(monkeypatch, 8)
+    result = deployment.validate_npu_runtime(_fake_npu_settings(tmp_path, 'npu:7'))
+    assert result['devices'] == ['npu:7'] and result['container_runtime'] is None
+    assert observations == ['torch', 'torch_npu', 'is_available', 'device_count']

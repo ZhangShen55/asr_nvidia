@@ -6,7 +6,7 @@
 
 ## 构建前置条件
 
-- Linux arm64 / 910B，Docker27及Compose2、Ascend Docker Runtime，驱动与CANN8.2 RC1配套。物理卡默认7，容器只暴露该卡时使用逻辑npu:0。
+- Linux arm64 / 910B，Docker27及Compose2、Ascend Docker Runtime，驱动与CANN8.2 RC1配套。物理卡默认7；`ASCEND_VISIBLE_DEVICES`选择runtime目标设备，`ASCEND_RT_VISIBLE_DEVICES`进一步约束进程可见设备，单张物理7确认映射后配置逻辑npu:0。
 - 本机底座 `cann:8.2.rc1-910b-ubuntu22.04-py3.10`；本轮核验ID为 `sha256:634118c33bcc879ee709510a532f3e8f90cb0d6a884922b5996367f9a6a7d864`。先核对实际toolkit/kernel及架构，禁止从公网拉同名镜像冒充本机底座。
 - 容器运行环境为独立Python3.10、torch2.5.1、torch-npu2.5.1.post1；其余业务依赖按容器专用锁。宿主asr的torch-npu2.5.1/CANN8.1环境不升级。精确版本由容器专用入口检查，不只比较主次版本。
 - 三个小模型原资产在仓库 `model/`，构建仅取必要权重/配置；Qwen原始HF权重不入镜像，运行时另行只读挂载。
@@ -127,6 +127,7 @@ cd /home/zhangs/asr_nvidia/docker
 export ASR_IMAGE=asr_offline_910b:v3_20261125
 export QWEN_MODEL_DIR=/home/model/Qwen3-ASR-1.7B-hf
 export ASCEND_VISIBLE_DEVICES=7
+export ASR_RT_VISIBLE_DEVICES=7 # Compose将该覆盖值传为ASCEND_RT_VISIBLE_DEVICES
 export ASR_PORT=9000
 export ASR_COMPOSE_PROJECT=asr-910b-v3
 export ASR_CONFIG="$PWD/config.toml"
@@ -137,7 +138,7 @@ docker compose -p "$ASR_COMPOSE_PROJECT" up -d --no-build
 docker compose -p "$ASR_COMPOSE_PROJECT" ps
 ```
 
-Compose设置环境变量 `CONFIG_PATH=/config.toml`，主服务实际从该路径读取宿主只读挂载的配置。配置内容修改后需使用下文 `--force-recreate` 重新创建容器，确保文件重新绑定。配置和Qwen均为只读bind，缺失源不自动建目录。三个小模型在镜像 `/app/model/`，Qwen在 `/app/qwen-model`；配置只来自挂载的 `/config.toml`，不内置模板兜底。不要把宿主物理npu:7写进仅见单卡的容器配置。父进程OMP/MKL=4、Qwen owner_threads=1分别生效，不因容器化更改调度/精度/复读/过滤策略。
+Compose设置环境变量 `CONFIG_PATH=/config.toml`，主服务实际从该路径读取宿主只读挂载的配置。配置内容修改后需使用下文 `--force-recreate` 重新创建容器，确保文件重新绑定。配置和Qwen均为只读bind，缺失源不自动建目录。三个小模型在镜像 `/app/model/`，Qwen在 `/app/qwen-model`；配置只来自挂载的 `/config.toml`，不内置模板兜底。不要把宿主物理npu:7写进仅见单卡的容器配置。`ASCEND_VISIBLE_DEVICES`单独不能证明隔离：本机实测仅设置该变量时torch仍可见8卡，已在创建张量前拦截。Compose同时设置`ASCEND_RT_VISIBLE_DEVICES`，缺省沿用同一物理卡选择7；只有实测设备计数为1且映射确认后才执行NPU运算。`ASR_RT_VISIBLE_DEVICES`用于显式覆盖进程级编号：其它runtime若已重映射设备，须先只读核验再人工校准，不能凭卡号猜测。两变量含义见[昇腾环境变量文档](https://www.hiascend.com/doc_center/source/en/CANNCommunityEdition/910/maintenref/envvar/envref_07_0028.html)。父进程OMP/MKL=4、Qwen owner_threads=1分别生效，不因容器化更改调度/精度/复读/过滤策略。
 
 预加载耗时可能超过三分钟，健康检查预留360秒start_period。它验证HTTP生命周期就绪及状态响应，不代表四owner都做过真实语音forward；正式压测前另做有界暖身及身份覆盖。`restart: "no"`避免测试结束后台自动拉起。
 
@@ -164,6 +165,8 @@ curl --fail --silent --show-error \
 cd /home/zhangs/asr_nvidia
 export ASR_IMAGE="$CANDIDATE_IMAGE"
 export ASR_PORT=18083
+export ASCEND_VISIBLE_DEVICES=7
+export ASR_RT_VISIBLE_DEVICES=7
 export ASR_COMPOSE_PROJECT="asr-b4-${TASK_ID}"
 export ASR_BUILD_TASK_ID="$TASK_ID"
 export EXPECTED_IMAGE_ID=$(docker image inspect --format '{{.Id}}' "$CANDIDATE_IMAGE")

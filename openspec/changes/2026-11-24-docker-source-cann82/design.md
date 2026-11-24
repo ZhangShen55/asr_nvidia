@@ -132,3 +132,7 @@ Dockerfile内联入口在 `set +u` 下加载CANN环境，检查CONFIG_PATH及本
 5. 所有任务有证据完成后同步本change规格、归档；旧open change和历史成绩不改写。生产长期运行另行执行README命令。
 
 回退：候选失败不更新最终tag、不删除已有镜像或本轮可用缓存；停止本轮容器、保留报告及变更版本。原宿主环境与原有服务未修改，无需通过改依赖才能恢复。已存在的同日不同最终tag应保留其原ID记录，不能为让新验收通过悄悄覆盖。
+
+### 实测补充：特权容器的进程可见卡限制
+
+2026-11-25候选镜像实测仅设置ASCEND_VISIBLE_DEVICES=7时，torch.npu.device_count()仍为8，已在张量创建前拒绝继续。补齐ASCEND_RT_VISIBLE_DEVICES=7后实际仅1卡，逻辑0的BF16矩阵通过；宿主npu-smi物理7进程表与容器PID/NSpid出生身份相符。Compose同时传入两项，镜像入口补齐进程可见性缺省，源码容器预检强制count=1及逻辑npu:0；不改变宿主多卡配置语义。证据physical-mapping-proof.json和gpu-probe-r2-result.json。

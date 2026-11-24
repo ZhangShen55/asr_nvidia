@@ -18,6 +18,7 @@ services:
       OMP_NUM_THREADS: "4"
       MKL_NUM_THREADS: "4"
       ASCEND_VISIBLE_DEVICES: ${ASCEND_VISIBLE_DEVICES:-7}
+      ASCEND_RT_VISIBLE_DEVICES: ${ASR_RT_VISIBLE_DEVICES:-${ASCEND_VISIBLE_DEVICES:-7}}
     volumes:
       - type: bind
         source: ${ASR_CONFIG:-./config.toml}
