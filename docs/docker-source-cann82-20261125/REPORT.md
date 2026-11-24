@@ -29,3 +29,5 @@
 首个正式构建v1在外部Dockerfile frontend解析时因registry-1.docker.io网络超时失败，尚未进入业务依赖层。通过daemon获取官方固定frontend，并与base相同方式传入本机registry、核对config digest；重试通过BUILDKIT_SYNTAX固定本地frontend，保持原builder及缓存。追溯ARG/LABEL移至昂贵层之后，避免发布元数据使重试依赖缓存失效。
 
 完整CPU复验v2：1401passed、379subtests、2个既有保护专属skip、1个硬件节点deselected，240.28秒；无源码变化、owned残留或全局缓存写入。构建v2已完成底座解包，但Ubuntu HTTP源被网络代理403拒绝，改为同一官方ports.ubuntu.com HTTPS源并保持签名验证，重试复用底座缓存；apt索引仅在本层安装完成后移除，不清理BuildKit缓存。
+
+构建v3的HTTPS同样403。进一步审计确认底座/etc/apt/apt.conf.d/01proxy硬编码旧Squid 10.30.6.2:3128，非软件包缺失；宿主直连同一官方HTTPS源返回200。构建层移除这份遗留配置，APT显式DIRECT，仍校验HTTPS与Ubuntu签名；同时pip使用--no-compile防止post1安装生成不必要.pyc。原底座与宿主APT均未修改。

@@ -8,7 +8,7 @@ RUN --mount=type=bind,from=runtime_env,source=.,target=/input \
     mkdir -p /opt/asr \
     && tar -xzf /input/asr-env.tar.gz -C /opt/asr \
     && /opt/asr/bin/python /opt/asr/bin/conda-unpack \
-    && /opt/asr/bin/python -m pip install --no-index --no-deps /input/torch_npu-2.5.1.post1-*.whl \
+    && /opt/asr/bin/python -m pip install --no-index --no-deps --no-compile /input/torch_npu-2.5.1.post1-*.whl \
     && /opt/asr/bin/python -m pip check \
     && /opt/asr/bin/python -c "from importlib.metadata import version; assert version('torch-npu') == '2.5.1.post1'; assert version('torch').split('+')[0] == '2.5.1'" \
     && /opt/asr/bin/python -c "from pathlib import Path; Path('/opt/asr/bin/conda-unpack').unlink()"
@@ -16,9 +16,11 @@ RUN --mount=type=bind,from=runtime_env,source=.,target=/input \
 FROM ${BASE_IMAGE} AS runtime
 ENV DEBIAN_FRONTEND=noninteractive
 # 仅补运行库；本版不安装编译器、Cython、Nginx或保护构建工具。
-RUN sed -i 's|http://ports.ubuntu.com|https://ports.ubuntu.com|g' /etc/apt/sources.list \
-    && apt-get -o Acquire::Retries=3 update \
-    && apt-get install -y --no-install-recommends ffmpeg libsndfile1 libgomp1 ca-certificates \
+# 底座遗留01proxy指向旧网络，构建只直连已验证的官方HTTPS源，不继承该代理。
+RUN find /etc/apt/apt.conf.d -maxdepth 1 -type f -name 01proxy -delete \
+    && sed -i 's|http://ports.ubuntu.com|https://ports.ubuntu.com|g' /etc/apt/sources.list \
+    && apt-get -o Acquire::http::Proxy=DIRECT -o Acquire::https::Proxy=DIRECT -o Acquire::Retries=3 update \
+    && apt-get -o Acquire::http::Proxy=DIRECT -o Acquire::https::Proxy=DIRECT install -y --no-install-recommends ffmpeg libsndfile1 libgomp1 ca-certificates \
     && apt-get clean \
     && find /var/lib/apt/lists -type f -delete
 COPY --from=environment /opt/asr /opt/asr
