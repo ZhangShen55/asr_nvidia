@@ -75,4 +75,6 @@ Docker严格四文件（Dockerfile/docker-compose.yml/config.toml/README.md）�
 
 [metrics.json](metrics.json)为逐请求/RTF/模型阶段/HBM/镜像ID，[warning-details.json](warning-details.json)为全部异常。原始logs/docker-source-cann82-20261125及workspace.txt指向的W保留全部7轮构建/失败/CPU/原生/NPU、输入与资源manifest、四完整JSON、采样、关闭及cleanup-before/after/result；载荷和本轮缓存已清，日志审计不删。旧NVIDIA报告原字节迁为legacy-validation-report-20261103.md。
 
-本轮仅短时源码容器可用性，生产上线及人工质量另评。所有任务完成后同步四delta并独立归档；旧open change及历史OOM不改。
+本轮仅短时源码容器可用性，生产上线及人工质量另评。本change已27/27完成，四delta同步主规格并9/9严格通过，归档于openspec/changes/archive/2026-11-24-docker-source-cann82；旧open change及历史OOM不改。
+
+归档附加校验：9/9主规格及本change的27/27任务通过；整库归档检查23/25通过，失败为此前2026-10-28-fireredvad-vad-comparison（7项未完成）与2026-10-30-model-memory-pressure-diagnostics（1项未完成）。这两份历史文件与HEAD逐字一致，未因本轮改写/补勾，不能宣称整库历史校验全绿。

@@ -62,3 +62,5 @@
 - 正式v2 B4及关闭：result.json passed=true；P50/P95/墙钟182.44/196.25/198.65秒，4/4、严格无警告2/4，9恢复/7丢弃。shutdown-audit-v2.json及text-boundary-audit-v2.json通过，报告/metrics/warning-details已交付。
 - 发布/清理：cleanup-result.json passed=true；同一r3 ID标v3_20261125，原11镜像引用/14容器与状态保持；11任务容器、2旧候选、3helper、私有builder/2volume/registry/network/10staging清零。未使用全局prune，来源/审计先留存。
 - 最终预览：spec-preview-v2对4delta（18修改/4新增）合并后9/9严格通过，44个未提及原Requirement整块保留。主规格同步仍待全部任务完成后的独立归档。
+
+- 最终收尾：真实四份主规格已同步，9/9严格通过；本change归档至openspec/changes/archive/2026-11-24-docker-source-cann82，单独提交推送。

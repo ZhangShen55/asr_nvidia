@@ -34,15 +34,15 @@
 - **THEN** 状态接口仍返回引擎标识字段，取值为固定占位值，运维平台的字段结构保持不变
 
 ### Requirement: 明确实例数量的语义
-系统 MUST 保留instance_count表示完整HTTP服务进程数量、缺省1的语义，不能用它表示Qwen owner数。正式continuous多owner默认及本次验收 MUST 为一个HTTP服务内N个owned模型进程，N缺省4，合法整数1～8仍保留；增加N不增加HTTP、VAD或增强服务副本。显式多HTTP部署的各服务仍独立持有请求容量和模型资源，不把局部容量称为跨服务全局限制。
+`instance_count` MUST 继续表示完整 HTTP 服务进程数，缺省1，不表示 Qwen 数。本版无代理源码容器 MUST 仅支持 HTTP1，`instance_count != 1` 在创建模型/worker 前明确拒绝。单 HTTP 内 Qwen 数由 local_instance_count 配置，默认4，合法1～8；增加模型数不复制 HTTP/VAD/增强池。一般显式多 HTTP 架构仍按各服务独立资源评估，不属于本版容器支持范围。
 
 #### Scenario: 配置多个实例
-- **WHEN** 配置中instance_count大于1
-- **THEN** 容器内按原部署方式运行对应数量的完整HTTP服务并负载均衡；每服务分别创建其配置的Qwen/VAD/增强资源，报告总资源放大，不将该配置冒称本次单HTTP多owner验收
+- **WHEN** 本版容器配置 instance_count 大于1
+- **THEN** 启动明确说明只支持单 HTTP，并提示调整 Qwen 模型数量所用字段；不静默忽略、不启动 Nginx，也不在本版中复制多套服务
 
 #### Scenario: 配置缺省
-- **WHEN** 配置文件中缺少实例数量配置
-- **THEN** 系统按默认一个HTTP实例运行；默认四Qwen owner不改变该值，也不生成四套请求处理服务
+- **WHEN** 未声明 instance_count
+- **THEN** 一个 HTTP 服务内默认运行四个 Qwen owner，不产生四套 HTTP/VAD/增强服务
 
 ### Requirement: 维护配置项清单
 系统 MUST 只消费实际生效配置，删除下线功能专属字段，保留既有旧VAD和设备结构迁移诊断。正式continuous MUST 以N、S分别派生audio_concurrency=N和request_concurrency=N×S，根与Docker模板不重复维护这两个值；兼容显式相等值须提示迁移，冲突或非法类型/范围须就绪前报错。legacy显式选择时保留原独立容量参数，不能通过忽略冲突配置静默切换语义；修改均重启生效。根与Docker的continuous模板 MUST 删除仅legacy生效的batch_wait_timeout_ms、batch_max_duration_ratio显式赋值；显式legacy仍支持原字段及语义。features旧开关不再接受，残留时在任何worker/模型创建前明确拒绝并说明迁移；两个增强batch_size从正式模板移除，保留实际batch1与原非1值拒绝约束。
@@ -283,26 +283,26 @@ README和部署说明 MUST 说明最终默认N4/S16、派生总4/global64、B4�
 - **THEN** 完整列出错误并标记该轮不完整，不丢弃失败或补测后仍称原轮八个完整成功请求；成功子集另列时明确样本数。每批次统一关闭 owned 服务与worker，等待在途工作结束并检查逐worker退出、无孤儿/剩余监听；共享既有服务保留，关闭超时或强制处置不得被改写为验收通过
 
 ### Requirement: 提供可复现的 v3 Docker 部署入口
-Docker 部署 MUST 在 docker/ 下提供 README.md、Dockerfile 和 docker-compose.yaml；文档 MUST 给出构建、启动、健康检查、停止和配置挂载命令，并说明 v3 路由、昇腾设备绑定方式及模型内置策略。
+`docker/` MUST 恰好提供 Dockerfile、docker-compose.yml、config.toml、README.md。README MUST 说明依赖准备、构建/重试、启动、健康、真实 v3 请求、停止、配置挂载、NPU映射和模型策略。入口 MUST 直接启动一个 HTTP 服务，不使用 Nginx 或旧项目启动/构建脚本；Compose MUST 声明 NPU runtime、特权、IPC、端口、必需只读挂载及有界正常关闭策略。
 
 #### Scenario: 查看部署目录
-- **WHEN** 运维只查看 docker/ 目录
-- **THEN** 可以获得构建镜像、启动 NPU 容器、挂载配置和验证服务状态所需的完整说明
+- **WHEN** 运维仅查看 docker 目录
+- **THEN** 能从四个文件获得完整可执行命令及前置条件，构建材料及报告路径在目录外明确说明
 
 #### Scenario: compose 启动服务
-- **WHEN** 运维使用 docker-compose.yaml 启动服务并提供昇腾容器运行时
-- **THEN** 容器声明 NPU 设备使用、特权模式、IPC 共享、配置文件挂载、服务端口和 v3 镜像入口，服务可通过健康检查确认就绪；设备绑定参数位于 compose 或外部 docker run 入口，容器内 start.sh 仅负责环境、预检和服务进程管理
+- **WHEN** 使用 docker-compose.yml、必需宿主文件及昇腾容器 runtime
+- **THEN** 单 HTTP 直接提供 v3 和健康查询，预加载完成后才就绪，配置挂载只读；健康等待覆盖实际预加载耗时，停止给设备清理预留充足时间，不能用端口可通代替模型健康
 
 ### Requirement: 镜像标签符合 v3 时间格式
-部署构建 MUST 生成或接受 asr_offline:v3_<时间> 格式的镜像标签；compose 默认引用该格式的镜像变量，文档 MUST 说明如何覆盖标签。
+本版部署 MUST 使用 `asr_offline_910b:v3_YYYYMMDD`，日期为实际发布日期，首版示例 `asr_offline_910b:v3_20261125`。Compose 默认及覆盖方法 MUST 与构建一致；交付 MUST 记录已验收的不可变 image ID、源码提交及配置摘要，最终日期标签指向同一已测 image ID，不在验收后重建或误覆盖已有不同版本。
 
 #### Scenario: 构建并启动时间标签镜像
-- **WHEN** 运维使用 asr_offline:v3_ 加时间标识构建镜像并启动 compose
-- **THEN** compose 使用同一 tag 启动，状态和日志可关联到该构建
+- **WHEN** 完成候选构建及 B4 验收
+- **THEN** 最终日期标签引用已测 image ID，Compose 可按该标签启动，报告能核对源码、配置与镜像身份
 
 #### Scenario: 标签格式错误
-- **WHEN** 镜像 tag 不符合 asr_offline:v3_<时间> 且未显式覆盖部署变量
-- **THEN** 构建或启动说明明确提示格式错误，不把旧 v2 tag 当作默认镜像
+- **WHEN** 未覆盖默认值且标签不符合指定仓库名及八位日期
+- **THEN** 构建或部署说明明确指出错误，不继续使用旧仓库名或时间格式作为本版默认
 
 ### Requirement: 启动前校验部署前置条件
 昇腾部署 MUST 在就绪前校验设备可见性、必需资产、torch_npu运行时及CONFIG_PATH可读性，失败明确报告并阻止就绪。三个必需模型资产与Qwen权重策略分开：preload=false时Qwen缺失在转写触发按4011处理，不为预检加载；正式默认preload=true时全部N份权重及processor须顺序加载成功且健康后才就绪，任何部分启动失败统一回收。旧features开关MUST在任何worker/模型创建前给出迁移错误；前置校验本身不得加载模型或绕过空数组关闭；校验通过后，HTTP就绪前须完成非空设备数组增强池的预加载尝试，失败按增强池降级契约处理。
@@ -330,11 +330,11 @@ Docker 部署 MUST 在 docker/ 下提供 README.md、Dockerfile 和 docker-compo
 - **THEN** 同时保留原业务计时契约，并明确新增内部指标边界、设备同步方法、冷/稳态条件及样本和配置，避免以不同计时口径计算加速比
 
 ### Requirement: 交付文件准备与部署执行分阶段跟踪
-本 change MUST 准备可复现的昇腾构建、环境、启动配置及说明；依赖安装和环境校验 MUST 在后续实施阶段先行完成，实际镜像构建和上线 MUST 在完整服务稳定后按阶段执行。文件存在 MUST NOT 被表述为镜像已构建或已上线。
+交付 MUST 分别记录规划、文件准备、依赖/资产检查、镜像构建、真实 NPU 前向、完整音频验收、正常关闭及构建资源清理。仅规划或文件存在 MUST NOT 被称为已构建/部署。实际构建和容器验证属于本 change 后续 apply，生产常驻上线及人工质量认证另行区分，不以 B4 处理完成代替。
 
 #### Scenario: 规划或交付文件完成
-- **WHEN** 已修改 Dockerfile、compose、start.sh 或依赖清单但尚未执行构建上线
-- **THEN** 报告明确仅完成文件准备，构建、运行时检查和上线验收仍待执行，不勾选对应执行结果
+- **WHEN** proposal 或 Docker 交付文件已完成但尚未实际构建
+- **THEN** 仅报告对应准备阶段完成，不勾选镜像、推理或四音频验收任务
 
 ### Requirement: 每owner预算与配置边界明确
 正式配置的max_inference_batch_size MUST 为可选项，未显式提供时随S派生，根/Docker模板不得固定物理步或prefill值16；显式物理步大于S须拒绝，prefill缺省派生min(16,S)、显式值不得超过该值；每owner帧/token缺省14400/10000，不因N变化缩放。S、max_new_tokens或预算改变时 MUST 校验支持范围及单段可容纳性，说明可按预算拆prefill；全服务PCM256段/256MiB另列且不复制。各默认、有效值、重启语义与类型约束 MUST 同步loader、宿主/Docker模板及文档。
@@ -383,3 +383,33 @@ CAM++和emo最终交付数组数量 MUST 按2026-11-24用户选择采用CAM4/emo
 #### Scenario: 选择最终增强池数量
 - **WHEN** 最终N4/CAM4/emo1完成B4共驻标定及同a1～a4增强驻留纯A4验证
 - **THEN** 交付模板与loader采用同一冻结组合，记录完整/警告/资源与正常关闭；纯A约200秒目标单列，B4无200秒硬门槛。N4为用户批准的替代最终范围，不声称原N6共驻已通过
+
+### Requirement: 构建资源归属和缓存清理可核验
+构建 MUST 记录本轮拥有的中间镜像、构建缓存、辅助容器/镜像及临时资源，失败期间保留缓存并定位原因重试。B4、镜像内容及正常关闭均通过后 MUST 清理本轮全部可独立移除的中间镜像和缓存；基础/最终镜像及其必需共享层、原有镜像和服务、日志报告 MUST 保留。禁止全局 prune 或依赖模糊名称归属删除。
+
+#### Scenario: 构建失败后重试
+- **WHEN** 构建步骤失败
+- **THEN** 保存实际构建进程状态及完整错误，修正根因后复用同一任务缓存；不因 SSH 断开误判失败，不在重试前删除缓存，也不同时启动竞争构建
+
+#### Scenario: 成功验收后清理
+- **WHEN** 同一候选 image ID 完成全部验收且测试资源正常退出
+- **THEN** 按事先登记清单及引用检查逐项清理本轮缓存和临时构建资源，记录剩余资源；最终和基础镜像身份不变，共享服务保持，用户原有镜像不被删除
+
+#### Scenario: 验收失败或归属不明
+- **WHEN** 完整音频、正常退出或内容审计失败，或待删资源归属/引用无法确认
+- **THEN** 保留失败证据及可复用缓存，继续诊断；归属不明项不删除，不宣称镜像可用或清理完成
+
+### Requirement: 本版源码镜像必须完成真实B4验收
+候选镜像 MUST 经真实 HTTP 接口同时处理四条独立完整 WAV，启用 showSpk/showEmotion，全部 Qwen owner 在正式计时前完成真实前向覆盖。报告 MUST 给出逐文件状态、完成率与严格无警告率、客户端 P50/P95、墙钟、HBM、增强真实调用/skip 和段级异常；仅导入、短片、离线段测试或 HTTP200 不能替代验收。结束后 MUST 正常回收本轮服务及 worker。
+
+#### Scenario: 四完整音频完成
+- **WHEN** 四条已校验 SHA256 的 canonical a1～a4 同时从宿主向候选容器 v3 接口发送双增强请求
+- **THEN** 保存四份完整 JSON、逐请求耗时及配置/镜像证据，核对四份 Qwen 和 CAM4/emo1 实际工作，分开统计警告与不可恢复段；4/4完整处理不等于4/4严格无警告或人工准确率达标
+
+#### Scenario: 出现慢请求或真实故障
+- **WHEN** 任一完整请求超过336秒，或出现真实 OOM、设备/服务故障
+- **THEN** 停止该轮并有界取证及正常收尾，列出未完成/失败，不只统计成功快请求；修复原因后可重验，保留原轮证据，B4不设200秒硬门槛
+
+#### Scenario: 验收结束释放服务
+- **WHEN** 测试结束或被中止
+- **THEN** 按拥有的容器及 PID/出生身份核对正常退出、无孤儿、私有音频缓存为空和测试端口连续空闲至少5秒，保留共享服务；强制关闭或非零退出不计正常收尾通过
