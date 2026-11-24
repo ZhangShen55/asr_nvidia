@@ -1,0 +1,120 @@
+{
+  "change": {
+    "items": [
+      {
+        "id": "2026-11-24-simplify-enhancement-config",
+        "type": "change",
+        "valid": true,
+        "issues": [],
+        "durationMs": 90
+      }
+    ],
+    "summary": {
+      "totals": {
+        "items": 1,
+        "passed": 1,
+        "failed": 0
+      },
+      "byType": {
+        "change": {
+          "items": 1,
+          "passed": 1,
+          "failed": 0
+        }
+      }
+    },
+    "version": "1.0",
+    "root": {
+      "path": "/home/zhangs/asr_nvidia",
+      "source": "nearest"
+    }
+  },
+  "main_spec_preview": {
+    "items": [
+      {
+        "id": "container-model-packaging",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 27
+      },
+      {
+        "id": "local-model-inference-backends",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 10
+      },
+      {
+        "id": "local-model-runtime",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 7
+      },
+      {
+        "id": "local-qwen-asr-inference",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 5
+      },
+      {
+        "id": "npu-910b-runtime",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 2
+      },
+      {
+        "id": "offline-asr-service",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 1
+      },
+      {
+        "id": "qwen-asr-v2-adapter",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 16
+      },
+      {
+        "id": "resource-pressure-diagnostics",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 7
+      },
+      {
+        "id": "service-operations",
+        "type": "spec",
+        "valid": true,
+        "issues": [],
+        "durationMs": 4
+      }
+    ],
+    "summary": {
+      "totals": {
+        "items": 9,
+        "passed": 9,
+        "failed": 0
+      },
+      "byType": {
+        "spec": {
+          "items": 9,
+          "passed": 9,
+          "failed": 0
+        }
+      }
+    },
+    "version": "1.0",
+    "root": {
+      "path": "/tmp/enhancement-config-spec-preview-20261124-oa2umrvn",
+      "source": "nearest"
+    }
+  },
+  "scope": "planning only; no source/config modifications, model startup or runtime tests",
+  "user_config_sha256_preserved": "8371128a30611422a6301eb24adbf18a318673381d67689de45c6e9107985397"
+}
