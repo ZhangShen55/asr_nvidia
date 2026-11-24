@@ -16,9 +16,11 @@ RUN --mount=type=bind,from=runtime_env,source=.,target=/input \
 FROM ${BASE_IMAGE} AS runtime
 ENV DEBIAN_FRONTEND=noninteractive
 # 仅补运行库；本版不安装编译器、Cython、Nginx或保护构建工具。
-RUN apt-get update \
+RUN sed -i 's|http://ports.ubuntu.com|https://ports.ubuntu.com|g' /etc/apt/sources.list \
+    && apt-get -o Acquire::Retries=3 update \
     && apt-get install -y --no-install-recommends ffmpeg libsndfile1 libgomp1 ca-certificates \
-    && apt-get clean
+    && apt-get clean \
+    && find /var/lib/apt/lists -type f -delete
 COPY --from=environment /opt/asr /opt/asr
 ENV PATH=/opt/asr/bin:$PATH \
     PYTHONNOUSERSITE=1 \
