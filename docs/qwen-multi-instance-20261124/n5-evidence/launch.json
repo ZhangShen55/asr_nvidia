@@ -1,0 +1,17 @@
+{
+  "output": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1",
+  "controller": {
+    "pid": 3787096,
+    "birth": 1795484632.43,
+    "command": [
+      "bash",
+      "-c",
+      "set +u; source /usr/local/Ascend/ascend-toolkit/set_env.sh; exec /home/zhangs/conda-envs/asr/bin/python scripts/benchmark_qwen_multi_instance.py --instance-count 5 --config /tmp/qwen-n5-followup-20261124-1wdymzw8/config.n5.toml --output /home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1"
+    ]
+  },
+  "candidate_config": "/tmp/qwen-n5-followup-20261124-1wdymzw8/config.n5.toml",
+  "root_config_sha256": "ea371bf1611de8f3f70806b44f3c4b73afa0d63ca71045e5bba1c5c8d1114656",
+  "controller_source_sha256": "aad9272468908e2148dd78a6c059b1abd28e651df2f133b6b5ec73d8cfba6414",
+  "preflight": "source148/protected148 passed; all CPU owned exited; actual40SO imports; formal runtime unchanged; config only N6->5; shared original identity present; test port free",
+  "launch_monotonic": 7572306.43847063
+}

@@ -1,0 +1,119 @@
+{
+  "returncode": 0,
+  "elapsed_s": 27.641587889753282,
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "device_weight_guard_records": [
+    "2834505 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834505 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834505 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834505 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834505 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834505 CPU_LOOPBACK_BIND ('127.0.0.1', 0)"
+  ],
+  "cache_mutation_intercepts": [],
+  "isolation": {
+    "TMPDIR": "/tmp/asr-cpu-1kpsqbdz",
+    "cache_dir": "/tmp/asr-cpu-1kpsqbdz/seacraft_asr",
+    "creator_pid": 2834382,
+    "creator_create_time": 1795484488.23,
+    "r4_guard": "/tmp/asr-cam-full-v9-cpu-guard-v4-cicpsxhw/sitecustomize.py",
+    "r4_guard_sha256": "8cbc95bd47e620c25fcb92735038084361c1c57b63404cc2e3b3ff1655c08863",
+    "guard_path": "/tmp/asr-cpu-1kpsqbdz/guard",
+    "guard_sha256": "5f112116ccb993275a8c940239d5f699c87da00d17ae7e4b78e96e3fa2b5b121",
+    "plugin_path": "/tmp/asr-cpu-1kpsqbdz/plugin",
+    "plugin_sha256": "9de93ba600d9d2b9dd21a1cc283aef46cc658da7a8779d5ac5eedceb62201543",
+    "mode": "protected",
+    "source_root": "/home/zhangs/asr_nvidia",
+    "protected_root": "/tmp/qwen-multi-protected-20261124-ah3u4jrq",
+    "scope": "private short TMPDIR before tested Python imports; shared production cache mutation prohibited; metadata reads allowed"
+  },
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/tmp/qwen-multi-protected-20261124-ah3u4jrq/tests/test_qwen_multi_controller.py",
+    "/tmp/qwen-multi-protected-20261124-ah3u4jrq/tests/test_throughput_harness.py",
+    "/tmp/qwen-multi-protected-20261124-ah3u4jrq/tests/test_qwen_multi_config.py"
+  ],
+  "passed": true,
+  "source_changes": [],
+  "remaining_owned": [],
+  "observed_children": [
+    {
+      "pid": 2834515,
+      "birth": 1795484492.58
+    },
+    {
+      "pid": 2834516,
+      "birth": 1795484492.58
+    },
+    {
+      "pid": 2834519,
+      "birth": 1795484496.1
+    },
+    {
+      "pid": 2834529,
+      "birth": 1795484496.54
+    },
+    {
+      "pid": 2834556,
+      "birth": 1795484497.6
+    },
+    {
+      "pid": 2834563,
+      "birth": 1795484506.21
+    },
+    {
+      "pid": 2834572,
+      "birth": 1795484514.95
+    }
+  ],
+  "source_sha256": {
+    "core/segment_pipeline.cpython-310-aarch64-linux-gnu.so": "04a6eaa7ff5b7c9be9b9a5ac94e96c0b0595c520a3fd95476c9f4389b098575c",
+    "core/request_telemetry.cpython-310-aarch64-linux-gnu.so": "fc3ac911c56ee1df07dab67b02dcdfee3820e498f0bf771e56ca9331b89c79a5",
+    "core/qwen_continuous_process.cpython-310-aarch64-linux-gnu.so": "d683d9d9780cb0761f43329cba45948d3d6575d7c914248b9a191c1d14a02e56",
+    "core/qwen_asr_queue.cpython-310-aarch64-linux-gnu.so": "428947386dc744bc10d4bdb39d983ba659ab11707d3c72cdfbc3fde350036ac5",
+    "core/qwen_asr_process.cpython-310-aarch64-linux-gnu.so": "356c1159d6b9d2d3d04e73654e9d9a9474bc117564a79f624882ac96b81f76ed",
+    "core/qwen_asr_client.cpython-310-aarch64-linux-gnu.so": "b0e8c90dde6f03ff321ebae82ff5466e0e3e1b66e6817dab53c4cf9ea701d77a",
+    "core/models.cpython-310-aarch64-linux-gnu.so": "ad7e8f1bbe591e0642d57c3bdae90ede845e5677d5a4ebd8208e803e795dfd74",
+    "core/config.cpython-310-aarch64-linux-gnu.so": "6ce272a9ab2bbbf2a8c638ee72ed1d5fd59f6b40157742cd48b6e8c10c2b5d90",
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "core/cam_process.cpython-310-aarch64-linux-gnu.so": "7baed51daf7755112c6394f9b859f88ed64da149011d42a860544250ca314900",
+    "core/qwen_batch_scheduler.cpython-310-aarch64-linux-gnu.so": "123dbff3053487ffebfba4661e2dea588a42a239bd36dd189d4e5145ca122944",
+    "core/vad_pool.cpython-310-aarch64-linux-gnu.so": "ffe9068982743cc4c7c13a881fb8ef723f66d287beb175c9f429d6038886b1f1",
+    "core/local_inference.cpython-310-aarch64-linux-gnu.so": "815b177efe5592ab3a8576f2c8561d79446f4a4338188e7da97f50a961b62bf8",
+    "core/resource_diagnostics.cpython-310-aarch64-linux-gnu.so": "b67b0542586fe8d6533e68dde320874a325216c1be34f68ad42ef08f9aed3a0e",
+    "core/qwen_asr_runtime.cpython-310-aarch64-linux-gnu.so": "82a176cc8548eb2a941993fd3e8e492ca30ecb40ba5dcd7cea3ce03a6c495e56",
+    "core/qwen_continuous_scheduler.cpython-310-aarch64-linux-gnu.so": "dffdfccf2c5a332fc320d20de51a843978c3a49f0929a9599dd502924d1f4fbe",
+    "core/status.cpython-310-aarch64-linux-gnu.so": "52f7c963e62661ce233d9127a761797321ed99643c1bd596a9710a9efdee09bd",
+    "core/qwen_continuous_runtime.cpython-310-aarch64-linux-gnu.so": "17beb9f5bdeb7f4a8123693314893f63cb2db41772bc19c8562753517631c3bb",
+    "core/performance_watchdog.cpython-310-aarch64-linux-gnu.so": "ee81c77573dffdf1ddfc53b265fed522577801cb5fdb84396159e3d7a531cfb2",
+    "core/logging.cpython-310-aarch64-linux-gnu.so": "37fa48ee1c88c28b2e97c02ca30e235857e5bdb14cc3e02da4de2ac0b393f9c7",
+    "core/npu_resource_status.cpython-310-aarch64-linux-gnu.so": "5ebf132182f91c46e3e43412ce6b8d781dd23f8713a814848708887c03f2561e",
+    "core/vad.cpython-310-aarch64-linux-gnu.so": "2d10985a801cbd059232fedf75d2367632b4416b7d642080a82678fafde0f28c",
+    "core/async_utils.cpython-310-aarch64-linux-gnu.so": "835b6774ab48a85d83019bea3c31f60bcc9abced166d23003ce49bfc8385211a",
+    "core/model_loading.cpython-310-aarch64-linux-gnu.so": "943ecb56e1b21cb7aa6bf847223a478e8ed6f1c08d1addbd0d31526924b36f6b",
+    "core/deployment.cpython-310-aarch64-linux-gnu.so": "b0079a4bdc375f20cdf4b704ead7516dee585cca00032f660a9a01d48ed45000",
+    "core/progress.cpython-310-aarch64-linux-gnu.so": "43d9c6cd2d2efeb49af691c6e0640625a1a40bbf1dcfbfd7d81ce975f9e959a1",
+    "core/vad_volume.cpython-310-aarch64-linux-gnu.so": "7ad4ba945b4e76eab2e64882f4c6ac096bf6244b9873d0b13652ce29b1ef0cab",
+    "api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/asr_v3.cpython-310-aarch64-linux-gnu.so": "76b3e86097ce229a1c3af91242f1558527b34382898243311d79e31bf6253da9",
+    "api/routes/asr_qwen_common.cpython-310-aarch64-linux-gnu.so": "f8a2ffded79bfd8c1e587634b382868478e62fd1c348247bea6bcd64358d0e36",
+    "api/routes/asr_common.cpython-310-aarch64-linux-gnu.so": "f66626c3cc4447c09c9b30377202f009986f4b668f780fd8deb4c6a64d5b2c66",
+    "api/routes/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/status.cpython-310-aarch64-linux-gnu.so": "da5b019ca9d5a7878dfd1893d5fb91c4c33b9facc4f680c78a81c3ff56c793c1",
+    "utils/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utils/qwen_segment_recovery.cpython-310-aarch64-linux-gnu.so": "55a6b022491d8d267c5a43d5f75958422bf115b7a4ddae7cb82beea97d3abf90",
+    "utils/repetition.cpython-310-aarch64-linux-gnu.so": "cf5f9fc500c390bea6f47388e88dc5d708ca14bac09ada75d3038a0dbe402e68",
+    "utils/text_postprocess.cpython-310-aarch64-linux-gnu.so": "05c54e06e88d2f5ff4770643e14f1aec4b3bc08b76c90a19b5b015dc3eafdd47",
+    "utils/asr_stats.cpython-310-aarch64-linux-gnu.so": "67889b211acddd332a63a35da47de4093f223413904b35d63faf5c14ccf3041e",
+    "utils/audio_utils.cpython-310-aarch64-linux-gnu.so": "b297bfcc34368576828e386b02c34cb5dacb07c932bc43231ea4bcfbf80337c0",
+    "utils/feature_utils.cpython-310-aarch64-linux-gnu.so": "8ff15612957ff8b40d7d9c4abcd96396ee6b2008c37338d5d80ffd6860d22416",
+    "utils/incremental_repetition.cpython-310-aarch64-linux-gnu.so": "4f450e62f1e8dca6f3116fbfcd2a58b3440c640e87c5a5575ca0e23fecdb3015",
+    "utils/qwen_response.cpython-310-aarch64-linux-gnu.so": "83181acb9d7201898e8d1b372cc4eb0ae16247e4fbf90343a79fd3fe73eed995",
+    "utils/itn.cpython-310-aarch64-linux-gnu.so": "fdd5cfa47edb5ca19cb9425de62b555275af64389414edec613080d3e3c5de67",
+    "entity/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "entity/data.cpython-310-aarch64-linux-gnu.so": "d129c0f715acbacabd47fb9e5d039946ea72310abac7abf8ad2dd842cbd33ee4"
+  }
+}

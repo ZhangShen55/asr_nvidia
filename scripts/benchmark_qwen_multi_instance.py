@@ -59,7 +59,7 @@ class ExecutionProgress:
         return now - self.last_progress >= 120
 
 
-def window_observation(status):
+def window_observation(status, *, owner_count=6):
     q, unknown, values = status.get("qwenModel", {}), [], []
     for item in q.get("instances", []):
         value = item.get("continuous", {}).get("active_sequences")
@@ -73,9 +73,10 @@ def window_observation(status):
     if not q.get("instances"):
         unknown.append("owners")
     violation = ("qwen_owner_active_limit" if any(value > 16 for value in values) else
-                 "qwen_global_active_limit" if sum(values) > 96 or type(running) is int and running > 96 else None)
+                 "qwen_global_active_limit" if sum(values) > owner_count * 16 or type(running) is int and running > owner_count * 16 else None)
     return {"status": "unknown" if unknown else "observed", "unknown": unknown,
-            "active_sequences_observed": values, "global_running": running, "violation": violation}
+            "active_sequences_observed": values, "global_running": running, "violation": violation,
+            "limits": {"owner_count": owner_count, "segments_per_owner": 16, "global_segments": owner_count * 16}}
 
 
 def load_inputs(manifest):
@@ -122,12 +123,13 @@ def summarize(rows, wall_s, trigger=None, *, target_s=None):
 
 class Safety:
     # HBM剩余值只记录，用户已取消提前停止线；不换一个free阈值。
-    def __init__(self):
+    def __init__(self, *, owner_count=6):
+        self.owner_count = owner_count
         self.stamp = self.swap = None
         self.swap_streak = 0
 
     def check(self, status):
-        self.window = window_observation(status)
+        self.window = window_observation(status, owner_count=self.owner_count)
         if self.window["violation"]:
             return self.window["violation"]
         q = status.get("qwenModel", {})
@@ -170,8 +172,10 @@ def covered_owners(status):
     return result
 
 
-def deployment_contract(config_bytes):
+def deployment_contract(config_bytes, *, instance_count=6):
     import tomli
+    if type(instance_count) is not int or instance_count not in (5, 6):
+        raise ValueError("本控制器只支持原N6验收或用户明确授权的N5补充验证")
     cfg = tomli.loads(config_bytes.decode())
     q, pools = cfg.get("qwen_asr", {}), cfg.get("model_device_pool", {})
     expected = {"generation_mode": q.get("generation_mode"), "execution_mode": q.get("execution_mode"),
@@ -179,8 +183,8 @@ def deployment_contract(config_bytes):
                 "device": q.get("local_device"), "B": q.get("audio_spk_emo_concurrency", 4),
                 "pools": {name: pools.get(name + "_devices") for name in ("speech_campplus", "emotion2vec")}}
     if (expected["generation_mode"], expected["execution_mode"], expected["N"], expected["S"], expected["device"], expected["B"]) != (
-            "continuous", "process", 6, 16, "npu:7", 4):
-        raise ValueError("本控制器正式验收仅接受continuous/process/N6/S16/npu7/B4")
+            "continuous", "process", instance_count, 16, "npu:7", 4):
+        raise ValueError(f"控制器配置必须明确匹配continuous/process/N{instance_count}/S16/npu7/B4")
     if any(not isinstance(devices, list) or not devices for devices in expected["pools"].values()):
         raise ValueError("正式B4需明确独立增强设备数组，不能猜测池规模")
     if cfg.get("instance_count", 1) != 1:
@@ -196,17 +200,17 @@ def service_validation(status, expected, *, baseline=None, idle=False, resident=
     checks = [(q.get("generation_mode"), "continuous", "generation_mode"),
               (q.get("execution_mode"), "process", "execution_mode"),
               (q.get("device"), expected["device"], "qwen_device"),
-              (owners.get("configured"), 6, "configured_owners"),
-              (owners.get("healthy"), 6, "healthy_owners"),
+              (owners.get("configured"), expected["N"], "configured_owners"),
+              (owners.get("healthy"), expected["N"], "healthy_owners"),
               (owners.get("segment_capacity_per_owner"), 16, "S"),
-              (owners.get("configured_global_segments"), 96, "global_segments"),
-              (q.get("batch_scheduler", {}).get("capacity"), 96, "global_scheduler"),
-              (status.get("audioConcurrency", {}).get("configured_total"), 6, "audio_total"),
+              (owners.get("configured_global_segments"), expected["global"], "global_segments"),
+              (q.get("batch_scheduler", {}).get("capacity"), expected["global"], "global_scheduler"),
+              (status.get("audioConcurrency", {}).get("configured_total"), expected["N"], "audio_total"),
               (status.get("spkEmoConcurrency", {}).get("configured"), 4, "B_configured"),
               (status.get("spkEmoConcurrency", {}).get("effective"), 4, "B_effective")]
     errors.extend(f"{name}: expected={want!r}, observed={got!r}" for got, want, name in checks if got != want)
-    if len(q.get("instances", [])) != 6:
-        errors.append("six instance records required")
+    if len(q.get("instances", [])) != expected["N"]:
+        errors.append(f"{expected['N']} instance records required")
     for item in q.get("instances", []):
         worker = item.get("model_worker", {})
         entry = worker.get("worker_entry_module_file")
@@ -224,8 +228,8 @@ def service_validation(status, expected, *, baseline=None, idle=False, resident=
         peak = q.get("batch_scheduler", {}).get("peak_inflight")
         if type(peak) is not int or peak < 0:
             unknown.append("global.peak_inflight")
-        elif peak > 96:
-            errors.append("global peak_inflight exceeds 96")
+        elif peak > expected["global"]:
+            errors.append(f"global peak_inflight exceeds {expected['global']}")
         for item in q.get("instances", []):
             peak = item.get("continuous", {}).get("peak_active")
             if type(peak) is not int or peak < 0:
@@ -336,12 +340,12 @@ async def get_status(client):
     return response.json()
 
 
-async def batch(client, samples, mode, output, owner, *, hard_s=HARD_S, target_s=None):
+async def batch(client, samples, mode, output, owner, *, hard_s=HARD_S, target_s=None, owner_count=6):
     output.mkdir(exist_ok=False)
     if not 0 < hard_s <= HARD_S:
         raise ValueError("不能放宽336秒")
     rows = [dict(sample_id=s["sample_id"], sha256=s.get("sha256"), status="not_submitted") for s in samples]
-    safety = Safety()
+    safety = Safety(owner_count=owner_count)
     started = time.monotonic()
     progress = ExecutionProgress(started)
     trigger, snapshot = None, {}
@@ -406,7 +410,7 @@ async def batch(client, samples, mode, output, owner, *, hard_s=HARD_S, target_s
                 with (output / "status.jsonl").open("a") as stream:
                     stream.write(json.dumps({"elapsed_s": now - started, "status": snapshot,
                         "step_progress_observation": progress.step_observation,
-                        "window_observation": window_observation(snapshot)}, ensure_ascii=True) + "\n")
+                        "window_observation": window_observation(snapshot, owner_count=owner_count)}, ensure_ascii=True) + "\n")
                 status_task = None
                 if trigger:
                     break
@@ -437,11 +441,11 @@ async def batch(client, samples, mode, output, owner, *, hard_s=HARD_S, target_s
     return summary
 
 
-async def admission_probes(client, clip, output, owner):
+async def admission_probes(client, clip, output, owner, *, owner_count=6):
     """仅真实8.01秒HTTP请求创造活动窗口；窗口未观测就报inconclusive，不fake hold。"""
     output.mkdir(exist_ok=False)
     prefix, rows, tasks = uuid.uuid4().hex, {}, []
-    started, gate = time.monotonic(), Safety()
+    started, gate = time.monotonic(), Safety(owner_count=owner_count)
     observed = []
     async def submit(label, mode):
         row = rows[label] = {"mode": mode, "started": time.monotonic()}
@@ -488,12 +492,12 @@ async def admission_probes(client, clip, output, owner):
             result["reason"] = "fifthB_not_4017; capacity may have changed during HTTP admission"
             return result
         if not await active(4, 4):
-            result["reason"] = "4B_window_released_before_two_A"
+            result["reason"] = "4B_window_released_before_A"
             return result
-        for i in range(2):
+        for i in range(owner_count - 4):
             launch(f"A{i}", "A")
-        if not await active(6, 4):
-            result["reason"] = "4B_plus_2A_activity_window_not_observed"
+        if not await active(owner_count, 4):
+            result["reason"] = f"4B_plus_{owner_count - 4}A_activity_window_not_observed"
             return result
         rejected = await asyncio.wait_for(asyncio.gather(launch("fullA", "A"), launch("fullB", "B")),
                                            min(15, HARD_S - (time.monotonic() - started)))
@@ -514,7 +518,7 @@ async def admission_probes(client, clip, output, owner):
                 break
             await asyncio.wait(pending, timeout=.1)
         await asyncio.gather(*tasks)
-        accepted_ok = all(rows[label].get("business_complete") for label in [*(f"B{i}" for i in range(4)), "A0", "A1"])
+        accepted_ok = all(rows[label].get("business_complete") for label in [*(f"B{i}" for i in range(4)), *(f"A{i}" for i in range(owner_count - 4))])
         result.update(passed=accepted_ok, status="passed" if accepted_ok else "failed", reason=None if accepted_ok else "accepted_request_failed")
     except asyncio.CancelledError:
         result.update(status="cancelled", reason="controller_cancelled")
@@ -650,16 +654,29 @@ def integrity_result(before, after, original_config, final_config, shared_before
     return result
 
 
+def phase_plan(instance_count, phases=None):
+    if type(instance_count) is not int or instance_count not in (5, 6):
+        raise ValueError("only explicitly selected N5 follow-up or original N6 matrix is supported")
+    primary = f"A{instance_count}"
+    resident = primary + "-resident"
+    phases = list(phases) if phases is not None else [primary, "A4", "B4", resident]
+    if (not phases or len(set(phases)) != len(phases)
+            or any(phase not in (primary, "A4", "B4", resident) for phase in phases)
+            or (resident in phases and ("B4" not in phases or phases.index("B4") > phases.index(resident)))):
+        raise ValueError("阶段必须匹配实例数，且共驻复测必须在同服务B4之后")
+    return phases
+
+
 async def execute(args):
     import httpx
-    phases = list(args.phases)
-    if len(set(phases)) != len(phases) or ("A6-resident" in phases and ("B4" not in phases or phases.index("B4") > phases.index("A6-resident"))):
-        raise ValueError("阶段不得重复，A6-resident必须在同服务B4之后")
+    instance_count = getattr(args, "instance_count", 6)
+    phases = phase_plan(instance_count, args.phases)
+    primary, resident = f"A{instance_count}", f"A{instance_count}-resident"
     out = Path(args.output).resolve()
     out.mkdir(exist_ok=False)
     config = Path(args.config).resolve()
     original_config = config.read_bytes()
-    expected = deployment_contract(original_config)
+    expected = deployment_contract(original_config, instance_count=instance_count)
     before = source_identity()
     controller_sha = hashlib.sha256(Path(__file__).read_bytes()).hexdigest()
     write_json(out / "source-before.json", before)
@@ -695,11 +712,14 @@ async def execute(args):
         reports["resource_recovery"] = hbm_recovery_evidence(background_before, background_after,
             owned_pids=getattr(owner, "identities", {}), owned_normal_exit=reports.get("shutdown", {}).get("passed"))
         hbm_observed = reports["resource_recovery"]["hbm_observed"]
-        formal = (all(reports.get(name, {}).get("passed", False) for name in ("A6", "A4", "B4", "A6-resident", "admission_probes", "shutdown", "integrity", "resource_recovery")))
+        formal = (instance_count == 6 and all(reports.get(name, {}).get("passed", False) for name in ("A6", "A4", "B4", "A6-resident", "admission_probes", "shutdown", "integrity", "resource_recovery")))
+        requested_complete = all(reports.get(name, {}).get("passed", False) for name in ["warmup", *phases, "shutdown", "integrity"])
         write_json(out / "run.json", {"phases": reports, "integrity": integrity,
                    "requested_phases": phases, "hbm_free_stop_enabled": False,
                    "admission_probes_requested": not getattr(args, "skip_admission_probes", False),
-                   "formal_matrix_complete": formal,
+                   "formal_matrix_complete": formal, "requested_phases_complete": requested_complete,
+                   "instance_count": instance_count, "deployment_contract": expected,
+                   "test_scope": "original N6 acceptance" if instance_count == 6 else "user-authorized N5 follow-up; does not satisfy original N6 acceptance",
                    "target_s": TARGET_S, "hard_s": HARD_S,
                    "background_hbm_scope": "physical NPU7 before/after actual MB values; shared load may change, no replacement free threshold",
                    "background_hbm_observed": hbm_observed})
@@ -724,38 +744,38 @@ async def execute(args):
                     raise RuntimeError("正式服务启动失败，查看service.log")
                 try:
                     status = await get_status(client)
-                    if status.get("qwenModel", {}).get("capacity") == 6:
+                    if status.get("qwenModel", {}).get("capacity") == instance_count:
                         break
                 except (httpx.HTTPError, ValueError):
                     pass
                 if time.monotonic() >= deadline:
-                    raise TimeoutError("六owner启动未在420秒内就绪")
+                    raise TimeoutError(f"{instance_count} owner启动未在420秒内就绪")
                 await asyncio.sleep(1)
             write_json(out / "startup-status.json", status)
             check = service_validation(status, expected, idle=True)
             if not check["passed"]:
                 raise RuntimeError("正式配置/初态未通过: " + repr(check))
             clip = str(Path(args.warmup_clip).resolve())
-            warm = [{"sample_id": f"warm{i}", "path": clip} for i in range(6)]
-            reports["warmup"] = await batch(client, warm, "A", out / "warmup", owner)
+            warm = [{"sample_id": f"warm{i}", "path": clip} for i in range(instance_count)]
+            reports["warmup"] = await batch(client, warm, "A", out / "warmup", owner, owner_count=instance_count)
             if not reports["warmup"]["complete"]:
                 return reports
             status = await get_status(client)
             covered = covered_owners(status)
             write_json(out / "warmup-final-status.json", status)
             write_json(out / "owner-coverage.json", covered)
-            if len(covered) != 6 or not service_validation(status, expected, baseline=covered, idle=True)["passed"]:
-                raise RuntimeError("暖身未证明六owner真实执行及归零")
+            if len(covered) != instance_count or not service_validation(status, expected, baseline=covered, idle=True)["passed"]:
+                raise RuntimeError(f"暖身未证明{instance_count} owner真实执行及归零")
             for phase in phases:
                 pre = await get_status(client)
-                check = service_validation(pre, expected, baseline=covered, idle=True, resident=phase == "A6-resident")
+                check = service_validation(pre, expected, baseline=covered, idle=True, resident=phase == resident)
                 write_json(out / f"{phase}-pre-status.json", pre)
                 if not check["passed"]:
                     reports[phase] = {"passed": False, "complete": False, "validation": check}
                     break
                 if phase == "B4":
                     cold_before = pre
-                    warmb = await batch(client, warm[:4], "B", out / "B-cold-warmup", owner)
+                    warmb = await batch(client, warm[:4], "B", out / "B-cold-warmup", owner, owner_count=instance_count)
                     pre = await get_status(client)
                     warmb["enhancement_validation"] = enhancement_validation(cold_before, pre, warmb["records"])
                     warmb["passed"] = warmb["complete"] and warmb["enhancement_validation"]["passed"]
@@ -764,12 +784,12 @@ async def execute(args):
                     write_json(out / "B-cold-warmup/summary.json", warmb)
                     if not warmb["passed"]:
                         break
-                chosen = samples if phase in ("A6", "A6-resident") else samples[:4]
+                chosen = samples[:instance_count] if phase in (primary, resident) else samples[:4]
                 report = await batch(client, chosen, "B" if phase == "B4" else "A", out / phase, owner,
-                                     target_s=TARGET_S if phase in ("A6", "A6-resident") else None)
+                                     target_s=TARGET_S if phase in (primary, resident) else None, owner_count=instance_count)
                 post = await get_status(client)
                 report["validation"] = service_validation(post, expected, baseline=covered, idle=True,
-                                                          resident=phase in ("B4", "A6-resident"))
+                                                          resident=phase in ("B4", resident))
                 if phase == "B4":
                     report["enhancement_validation"] = enhancement_validation(pre, post, report["records"])
                 report["stage_validation"] = stage_evidence(pre, post, report["records"], "B" if phase == "B4" else "A")
@@ -782,7 +802,7 @@ async def execute(args):
                 if not report["passed"]:
                     break
                 if phase == "B4" and not getattr(args, "skip_admission_probes", False):
-                    reports["admission_probes"] = await admission_probes(client, clip, out / "admission-probes", owner)
+                    reports["admission_probes"] = await admission_probes(client, clip, out / "admission-probes", owner, owner_count=instance_count)
                     if not reports["admission_probes"]["passed"]:
                         break
     except BaseException as exc:
@@ -799,7 +819,8 @@ def main():
     parser.add_argument("--config", default=str(ROOT / "config.toml"))
     parser.add_argument("--output", required=True)
     parser.add_argument("--warmup-clip", default="/tmp/qc-warmup.wav")
-    parser.add_argument("--phases", nargs="+", choices=("A6", "A4", "B4", "A6-resident"), default=["A6", "A4", "B4", "A6-resident"])
+    parser.add_argument("--instance-count", type=int, choices=(5, 6), default=6, help="N5仅为用户授权补充验证，不替代原N6验收")
+    parser.add_argument("--phases", nargs="+", choices=("A5", "A6", "A4", "B4", "A5-resident", "A6-resident"), default=None)
     parser.add_argument("--skip-admission-probes", action="store_true", help="仅用于独立标定轮；不代表准入探针通过")
     args = parser.parse_args()
     result = asyncio.run(execute(args))

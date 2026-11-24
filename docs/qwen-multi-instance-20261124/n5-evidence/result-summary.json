@@ -1,0 +1,125 @@
+{
+  "instance_count": 5,
+  "segment_per_owner": 16,
+  "global": 80,
+  "all_requested_complete": true,
+  "all_four_phases_passed": true,
+  "phases": {
+    "A5": {
+      "expected": 5,
+      "completed": 5,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 5,
+        "p50_s": 173.70150745939463,
+        "p95_s": 183.17608019784092
+      },
+      "wall_s": 183.82883604988456,
+      "warning_free": 3,
+      "warning_segments": 16,
+      "discarded_segments": 14,
+      "trigger": null
+    },
+    "A4": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 181.3091384647414,
+        "p95_s": 194.16459888704122
+      },
+      "wall_s": 195.43959016073495,
+      "warning_free": 1,
+      "warning_segments": 14,
+      "discarded_segments": 10,
+      "trigger": null
+    },
+    "B4": {
+      "expected": 4,
+      "completed": 4,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 4,
+        "p50_s": 284.9117664853111,
+        "p95_s": 296.2360109240748
+      },
+      "wall_s": 296.9611797099933,
+      "warning_free": 2,
+      "warning_segments": 13,
+      "discarded_segments": 11,
+      "trigger": null
+    },
+    "A5-resident": {
+      "expected": 5,
+      "completed": 5,
+      "complete": true,
+      "passed": true,
+      "all_request_latency": {
+        "n": 5,
+        "p50_s": 173.3234251299873,
+        "p95_s": 203.22877930775286
+      },
+      "wall_s": 206.11911410931498,
+      "warning_free": 3,
+      "warning_segments": 14,
+      "discarded_segments": 11,
+      "trigger": null
+    }
+  },
+  "shutdown": {
+    "passed": true,
+    "exit_code": 0,
+    "forced": false,
+    "term_to_parent_exit_s": 32.90770045015961,
+    "remaining_pids": [],
+    "remaining_cache_files": []
+  },
+  "resource_recovery": {
+    "passed": null,
+    "observation_complete": true,
+    "hbm_observed": true,
+    "status": "unknown",
+    "before": {
+      "index": 7,
+      "available": true,
+      "status": "observed",
+      "hbm_used_mb": 15908,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 49628,
+      "chip": 0,
+      "bus_id": "0000:42:00.0"
+    },
+    "after": {
+      "index": 7,
+      "available": true,
+      "status": "observed",
+      "hbm_used_mb": 15910,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 49626,
+      "chip": 0,
+      "bus_id": "0000:42:00.0"
+    },
+    "used_delta_mb": 2,
+    "free_delta_mb": -2,
+    "external_process_changes": [
+      {
+        "pid": 1601397,
+        "chip": 0,
+        "before_mb": 12417,
+        "after_mb": 12417,
+        "delta_mb": 0
+      }
+    ],
+    "owned_normal_exit": true,
+    "near_background": null,
+    "scope": "physical NPU7 actual MB evidence plus owned exit; nonzero aggregate delta requires shared-load review, no replacement free threshold",
+    "reason": "recovery not verified: inspect NPU7 numeric evidence, external changes and owned cleanup; unknown is not zero"
+  },
+  "admission_probe_passed": true,
+  "formal_N6_matrix_complete": false,
+  "original_change_progress": "27/29; N5 does not replace N6 required acceptance"
+}

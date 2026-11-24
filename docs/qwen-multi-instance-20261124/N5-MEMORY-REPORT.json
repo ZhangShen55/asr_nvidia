@@ -1,0 +1,3600 @@
+{
+  "scope": "N5 followup only, no inference/device/test work; large JSONL read only after run.json shutdown.passed=true and no remaining owned PID",
+  "sources": [
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A5/summary.json",
+      "sha256": "7caa6017a032ec40a2d72f5f3d906ce3b55edd679cd1a1e3b74726f841523b74"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A4/summary.json",
+      "sha256": "22d084c2c75e6b364a9795606dc08ecc7f832b7308b1d930a3abf756de172158"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/B4/summary.json",
+      "sha256": "66bf9b40f6672f1f9dab625f75f58873273d2540041b134de7e4d8ded5bb8e0c"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A5-resident/summary.json",
+      "sha256": "c7382e24acb621ca8a3fd10d607a336d401bff81fd23574d9be781cc378c3754"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/warmup-final-status.json",
+      "sha256": "26d7cd168b6caeaaad20771a8258e14949bc6409014811945fb47683efafca40"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A5-final-status.json",
+      "sha256": "bbead6ce4f227b5dcd98a492c62c9c36f672a55794bcfbe5ba487b9d57edb645"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A4-final-status.json",
+      "sha256": "6ce0025fce608226ba4e772b4a5402cf4fb55cf7e5ee5e0b6138aee6c6e0225b"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/B-warm-status.json",
+      "sha256": "d8b1f7f5edd7ec8f91e1e55838fab32b8d7e5535ae26f86f190bbdfc7e0b502a"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/B4-final-status.json",
+      "sha256": "300e12d77f8f54fda01f7407337277ff8d8b44efa696cb0190a6804821253c84"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A5-resident-pre-status.json",
+      "sha256": "e4a861616811289c8d8fd8a59ce65c5a79ea81bb220611f504c1b7bb4cfcab9a"
+    },
+    {
+      "path": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A5-resident-final-status.json",
+      "sha256": "41004080397e55c01e140721a07abeb43e6958457203340136d92be4b1af0f38"
+    }
+  ],
+  "phases": {
+    "A5": {
+      "result": {
+        "expected": 5,
+        "completed": 5,
+        "complete": true,
+        "passed": true,
+        "all_request_latency": {
+          "n": 5,
+          "p50_s": 173.70150745939463,
+          "p95_s": 183.17608019784092
+        },
+        "completion_subset_latency": {
+          "n": 5,
+          "p50_s": 173.70150745939463,
+          "p95_s": 183.17608019784092
+        },
+        "wall_s": 183.82883604988456,
+        "observation_wall_s": 184.10423003975302,
+        "wall_scope": "first_send_to_last_response",
+        "trigger": null,
+        "warning_free": 3,
+        "warning_segments": 16,
+        "discarded_segments": 14,
+        "target_s": 200.0,
+        "target_200s_met": true,
+        "hbm_free_stop_enabled": false,
+        "validation": {
+          "passed": true,
+          "errors": [],
+          "unknown": []
+        },
+        "stage_validation": {
+          "passed": true,
+          "errors": []
+        }
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "d221b3e6c0894f169182898a9f4b74e9-0.wav",
+          "started": 7572449.88578404,
+          "response_received": 7572604.21118792,
+          "elapsed_s": 154.32540387939662,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 729,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "3a77d028-ed3e-49b2-8d23-a2bd517896b9",
+            "filename": "d221b3e6c0894f169182898a9f4b74e9-0.wav",
+            "started_monotonic": 7572452.42471422,
+            "ended_monotonic": 7572604.16835281,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 24416559.435,
+              "qwen_ms": 1955630.798,
+              "qwen_calls": 753.0,
+              "vad_ms": 23800.134,
+              "cut_sum_ms": 7179.135,
+              "cut_wall_ms": 121787.867,
+              "segment_ms": 123675.933,
+              "cluster_ms": 0.0,
+              "itn_ms": 3530.728,
+              "cleanup_ms": 21.066,
+              "audio_wait_ms": 19.304,
+              "cut_cpu_ms": 2992.154,
+              "cut_dispatch_wait_ms": 4161.683,
+              "pending_wait_ms": 25.622,
+              "vad_wait_ms": 2.523,
+              "vad_worker_ms": 23792.236,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.044
+            }
+          }
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "d221b3e6c0894f169182898a9f4b74e9-1.wav",
+          "started": 7572449.88729695,
+          "response_received": 7572623.58880441,
+          "elapsed_s": 173.70150745939463,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 4,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 568,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "131c3af8-dba4-4527-8871-1b6b5f0eba20",
+            "filename": "d221b3e6c0894f169182898a9f4b74e9-1.wav",
+            "started_monotonic": 7572452.56894086,
+            "ended_monotonic": 7572623.32007786,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 24088057.974,
+              "qwen_ms": 2109527.569,
+              "qwen_calls": 615.0,
+              "vad_ms": 24601.122,
+              "cut_sum_ms": 7219.361,
+              "cut_wall_ms": 129814.94,
+              "segment_ms": 145424.259,
+              "cluster_ms": 0.0,
+              "itn_ms": 39.818,
+              "cleanup_ms": 21.768,
+              "audio_wait_ms": 20.437,
+              "cut_cpu_ms": 2536.064,
+              "cut_dispatch_wait_ms": 4661.558,
+              "pending_wait_ms": 22.007,
+              "vad_wait_ms": 1.816,
+              "vad_worker_ms": 24595.611,
+              "low_volume_filter_ms": 0.047,
+              "model_load_lock_wait_ms": 0.012
+            }
+          }
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "d221b3e6c0894f169182898a9f4b74e9-2.wav",
+          "started": 7572449.88850608,
+          "response_received": 7572630.46905747,
+          "elapsed_s": 180.5805513896048,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 658,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "bb45d418-e32b-4243-bf14-9b607438fe0a",
+            "filename": "d221b3e6c0894f169182898a9f4b74e9-2.wav",
+            "started_monotonic": 7572452.59514186,
+            "ended_monotonic": 7572630.42947,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 27708678.7,
+              "qwen_ms": 2309426.048,
+              "qwen_calls": 706.0,
+              "vad_ms": 25576.238,
+              "cut_sum_ms": 8297.394,
+              "cut_wall_ms": 142877.761,
+              "segment_ms": 146905.78,
+              "cluster_ms": 0.0,
+              "itn_ms": 4551.472,
+              "cleanup_ms": 22.611,
+              "audio_wait_ms": 24.063,
+              "cut_cpu_ms": 2814.954,
+              "cut_dispatch_wait_ms": 5458.308,
+              "pending_wait_ms": 24.442,
+              "vad_wait_ms": 1.765,
+              "vad_worker_ms": 25571.332,
+              "low_volume_filter_ms": 0.036,
+              "model_load_lock_wait_ms": 0.009
+            }
+          }
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "d221b3e6c0894f169182898a9f4b74e9-3.wav",
+          "started": 7572449.88965769,
+          "response_received": 7572633.71462009,
+          "elapsed_s": 183.82496239989996,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 12,
+          "discarded": 12,
+          "processing_status": "completed_with_warnings",
+          "segments": 614,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "7e36ab69-7d44-40fc-8150-a28194f52232",
+            "filename": "d221b3e6c0894f169182898a9f4b74e9-3.wav",
+            "started_monotonic": 7572452.62369824,
+            "ended_monotonic": 7572633.67628526,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 27374571.069,
+              "qwen_ms": 2326340.737,
+              "qwen_calls": 701.0,
+              "vad_ms": 23583.591,
+              "cut_sum_ms": 8270.408,
+              "cut_wall_ms": 141666.768,
+              "segment_ms": 153568.93,
+              "cluster_ms": 0.0,
+              "itn_ms": 3090.41,
+              "cleanup_ms": 21.008,
+              "audio_wait_ms": 19.429,
+              "cut_cpu_ms": 3162.678,
+              "cut_dispatch_wait_ms": 5083.904,
+              "pending_wait_ms": 24.128,
+              "vad_wait_ms": 1.599,
+              "vad_worker_ms": 23575.721,
+              "low_volume_filter_ms": 0.04,
+              "model_load_lock_wait_ms": 0.009
+            }
+          }
+        },
+        {
+          "sample_id": "a5",
+          "sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+          "status": "completed",
+          "upload_filename": "d221b3e6c0894f169182898a9f4b74e9-4.wav",
+          "started": 7572449.89079892,
+          "response_received": 7572566.44962456,
+          "elapsed_s": 116.55882564000785,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 431,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "70048160-90ac-4c80-bb44-4cc4d34bf4eb",
+            "filename": "d221b3e6c0894f169182898a9f4b74e9-4.wav",
+            "started_monotonic": 7572452.27092842,
+            "ended_monotonic": 7572566.41134693,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 15242132.45,
+              "qwen_ms": 1350407.889,
+              "qwen_calls": 457.0,
+              "vad_ms": 22942.458,
+              "cut_sum_ms": 2807.292,
+              "cut_wall_ms": 83762.259,
+              "segment_ms": 85988.208,
+              "cluster_ms": 0.0,
+              "itn_ms": 4465.256,
+              "cleanup_ms": 20.398,
+              "audio_wait_ms": 22.391,
+              "cut_cpu_ms": 1539.452,
+              "cut_dispatch_wait_ms": 1251.467,
+              "pending_wait_ms": 16.57,
+              "vad_wait_ms": 2.523,
+              "vad_worker_ms": 22936.991,
+              "low_volume_filter_ms": 0.045,
+              "model_load_lock_wait_ms": 0.008
+            }
+          }
+        }
+      ],
+      "status_source": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A5/status.jsonl",
+      "status_sha256": "7212fea1948b2a1113ad0e63216451c096304cdaedcf0230085a2556df653a80",
+      "poll_count": 216,
+      "missing_hbm_poll_count": 0,
+      "distinct_resource_samples": 37,
+      "resource_gap_s": {
+        "n": 36,
+        "min": 4.046,
+        "p50": 4.694,
+        "p95": 6.0695,
+        "max": 9.261
+      },
+      "poll_gap_s": {
+        "n": 215,
+        "min": 0.7676060097292066,
+        "p50": 0.7828056802973151,
+        "p95": 0.7941327490843832,
+        "max": 5.382445230148733
+      },
+      "memory": {
+        "hbm_free_mb": {
+          "n": 37,
+          "min": 13398,
+          "p50": 16336.0,
+          "p95": 26628.0,
+          "max": 27578
+        },
+        "hbm_used_mb": {
+          "n": 37,
+          "min": 37958,
+          "p50": 49200.0,
+          "p95": 52138.0,
+          "max": 52138
+        },
+        "host_available_bytes": {
+          "n": 37,
+          "min": 1872568524800,
+          "p50": 1874688532480.0,
+          "p95": 1875891467878.4,
+          "max": 1877755707392
+        },
+        "host_swap_used_bytes": {
+          "n": 37,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "cache_age_s": {
+          "n": 37,
+          "min": 3.357302710413933,
+          "p50": 4.516263259574771,
+          "p95": 6.8885828580707305,
+          "max": 9.205580219626427
+        },
+        "swap_in_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        },
+        "swap_out_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        }
+      },
+      "queues": {
+        "CAM_waiting": {
+          "n": 216,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "EMO_waiting": {
+          "n": 216,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_active": {
+          "n": 216,
+          "min": 0,
+          "p50": 64.0,
+          "p95": 80.0,
+          "max": 80
+        },
+        "PCM_waiting": {
+          "n": 216,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_bytes": {
+          "n": 216,
+          "min": 0,
+          "p50": 30239104.0,
+          "p95": 43559360.0,
+          "max": 47032640
+        }
+      },
+      "PCM_full_poll_count": 0,
+      "sampled_points_are_not_time_weighted": true
+    },
+    "A4": {
+      "result": {
+        "expected": 4,
+        "completed": 4,
+        "complete": true,
+        "passed": true,
+        "all_request_latency": {
+          "n": 4,
+          "p50_s": 181.3091384647414,
+          "p95_s": 194.16459888704122
+        },
+        "completion_subset_latency": {
+          "n": 4,
+          "p50_s": 181.3091384647414,
+          "p95_s": 194.16459888704122
+        },
+        "wall_s": 195.43959016073495,
+        "observation_wall_s": 195.71271666977555,
+        "wall_scope": "first_send_to_last_response",
+        "trigger": null,
+        "warning_free": 1,
+        "warning_segments": 14,
+        "discarded_segments": 10,
+        "target_s": null,
+        "target_200s_met": null,
+        "hbm_free_stop_enabled": false,
+        "validation": {
+          "passed": true,
+          "errors": [],
+          "unknown": []
+        },
+        "stage_validation": {
+          "passed": true,
+          "errors": []
+        }
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "46717e6b5a734be7987494877ada41e9-0.wav",
+          "started": 7572634.20360114,
+          "response_received": 7572793.33316319,
+          "elapsed_s": 159.12956205010414,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 729,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "d8b19599-e4e1-46f9-b08e-5bf0776145b7",
+            "filename": "46717e6b5a734be7987494877ada41e9-0.wav",
+            "started_monotonic": 7572636.16406272,
+            "ended_monotonic": 7572793.06351207,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 26181702.466,
+              "qwen_ms": 2063366.852,
+              "qwen_calls": 753.0,
+              "vad_ms": 22204.459,
+              "cut_sum_ms": 4115.887,
+              "cut_wall_ms": 127945.055,
+              "segment_ms": 130429.222,
+              "cluster_ms": 0.0,
+              "itn_ms": 3365.143,
+              "cleanup_ms": 16.128,
+              "audio_wait_ms": 155.339,
+              "cut_cpu_ms": 2239.024,
+              "cut_dispatch_wait_ms": 1851.989,
+              "pending_wait_ms": 25.218,
+              "vad_wait_ms": 1.753,
+              "vad_worker_ms": 22199.224,
+              "low_volume_filter_ms": 0.066,
+              "model_load_lock_wait_ms": 0.006
+            }
+          }
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "46717e6b5a734be7987494877ada41e9-1.wav",
+          "started": 7572634.20508785,
+          "response_received": 7572809.86332545,
+          "elapsed_s": 175.65823759976774,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 3,
+          "discarded": 1,
+          "processing_status": "completed_with_warnings",
+          "segments": 569,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "e8a5f773-1fa4-42f2-a155-b6d70771e091",
+            "filename": "46717e6b5a734be7987494877ada41e9-1.wav",
+            "started_monotonic": 7572636.44804753,
+            "ended_monotonic": 7572809.55086129,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 24748929.562,
+              "qwen_ms": 2145474.442,
+              "qwen_calls": 615.0,
+              "vad_ms": 24345.07,
+              "cut_sum_ms": 11516.645,
+              "cut_wall_ms": 131649.887,
+              "segment_ms": 147968.445,
+              "cluster_ms": 0.0,
+              "itn_ms": 39.07,
+              "cleanup_ms": 16.825,
+              "audio_wait_ms": 155.079,
+              "cut_cpu_ms": 1965.236,
+              "cut_dispatch_wait_ms": 9529.867,
+              "pending_wait_ms": 21.822,
+              "vad_wait_ms": 3.374,
+              "vad_worker_ms": 24338.538,
+              "low_volume_filter_ms": 0.04,
+              "model_load_lock_wait_ms": 0.007
+            }
+          }
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "46717e6b5a734be7987494877ada41e9-2.wav",
+          "started": 7572634.20616607,
+          "response_received": 7572821.1662054,
+          "elapsed_s": 186.96003932971507,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 1,
+          "discarded": 0,
+          "processing_status": "completed_with_warnings",
+          "segments": 659,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "c9354e16-ef99-4f2f-aa02-a563a7d94543",
+            "filename": "46717e6b5a734be7987494877ada41e9-2.wav",
+            "started_monotonic": 7572636.91452282,
+            "ended_monotonic": 7572821.12601636,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 28076504.164,
+              "qwen_ms": 2349334.804,
+              "qwen_calls": 706.0,
+              "vad_ms": 23960.526,
+              "cut_sum_ms": 5762.888,
+              "cut_wall_ms": 144951.123,
+              "segment_ms": 154872.871,
+              "cluster_ms": 0.0,
+              "itn_ms": 4565.875,
+              "cleanup_ms": 17.935,
+              "audio_wait_ms": 155.535,
+              "cut_cpu_ms": 2196.154,
+              "cut_dispatch_wait_ms": 3543.095,
+              "pending_wait_ms": 23.948,
+              "vad_wait_ms": 0.993,
+              "vad_worker_ms": 23954.035,
+              "low_volume_filter_ms": 0.041,
+              "model_load_lock_wait_ms": 0.006
+            }
+          }
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "46717e6b5a734be7987494877ada41e9-3.wav",
+          "started": 7572634.20719955,
+          "response_received": 7572829.6431913,
+          "elapsed_s": 195.43599175009876,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 10,
+          "discarded": 9,
+          "processing_status": "completed_with_warnings",
+          "segments": 617,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "35b51bd2-391f-49ce-ad4c-8219dd3b0eea",
+            "filename": "46717e6b5a734be7987494877ada41e9-3.wav",
+            "started_monotonic": 7572636.73939001,
+            "ended_monotonic": 7572829.60707772,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 27823753.994,
+              "qwen_ms": 2367511.057,
+              "qwen_calls": 701.0,
+              "vad_ms": 23887.501,
+              "cut_sum_ms": 4967.717,
+              "cut_wall_ms": 144457.002,
+              "segment_ms": 164928.855,
+              "cluster_ms": 0.0,
+              "itn_ms": 3114.793,
+              "cleanup_ms": 16.454,
+              "audio_wait_ms": 155.67,
+              "cut_cpu_ms": 2181.041,
+              "cut_dispatch_wait_ms": 2763.039,
+              "pending_wait_ms": 23.948,
+              "vad_wait_ms": 2.463,
+              "vad_worker_ms": 23881.924,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.006
+            }
+          }
+        }
+      ],
+      "status_source": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A4/status.jsonl",
+      "status_sha256": "d7ab974cadb92f7950cffb878dcafb8bbe2da5b88cdd4eec25208a5f846e88a2",
+      "poll_count": 238,
+      "missing_hbm_poll_count": 0,
+      "distinct_resource_samples": 40,
+      "resource_gap_s": {
+        "n": 39,
+        "min": 3.936,
+        "p50": 4.718,
+        "p95": 6.005900000000001,
+        "max": 9.412
+      },
+      "poll_gap_s": {
+        "n": 237,
+        "min": 0.7687384393066168,
+        "p50": 0.7842262098565698,
+        "p95": 0.7949612537398935,
+        "max": 4.62422995083034
+      },
+      "memory": {
+        "hbm_free_mb": {
+          "n": 40,
+          "min": 11426,
+          "p50": 11446.0,
+          "p95": 13398.0,
+          "max": 13398
+        },
+        "hbm_used_mb": {
+          "n": 40,
+          "min": 52138,
+          "p50": 54090.0,
+          "p95": 54110.0,
+          "max": 54110
+        },
+        "host_available_bytes": {
+          "n": 40,
+          "min": 1873571938304,
+          "p50": 1875011801088.0,
+          "p95": 1876050781184.0,
+          "max": 1878106869760
+        },
+        "host_swap_used_bytes": {
+          "n": 40,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "cache_age_s": {
+          "n": 40,
+          "min": 2.368202719837427,
+          "p50": 4.0249100951477885,
+          "p95": 5.711967698903752,
+          "max": 8.641971389763057
+        },
+        "swap_in_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        },
+        "swap_out_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        }
+      },
+      "queues": {
+        "CAM_waiting": {
+          "n": 238,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "EMO_waiting": {
+          "n": 238,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_active": {
+          "n": 238,
+          "min": 0,
+          "p50": 64.0,
+          "p95": 64.0,
+          "max": 68
+        },
+        "PCM_waiting": {
+          "n": 238,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_bytes": {
+          "n": 238,
+          "min": 0,
+          "p50": 27341344.0,
+          "p95": 33611200.0,
+          "max": 37001344
+        }
+      },
+      "PCM_full_poll_count": 0,
+      "sampled_points_are_not_time_weighted": true
+    },
+    "B4": {
+      "result": {
+        "expected": 4,
+        "completed": 4,
+        "complete": true,
+        "passed": true,
+        "all_request_latency": {
+          "n": 4,
+          "p50_s": 284.9117664853111,
+          "p95_s": 296.2360109240748
+        },
+        "completion_subset_latency": {
+          "n": 4,
+          "p50_s": 284.9117664853111,
+          "p95_s": 296.2360109240748
+        },
+        "wall_s": 296.9611797099933,
+        "observation_wall_s": 297.27658437006176,
+        "wall_scope": "first_send_to_last_response",
+        "trigger": null,
+        "warning_free": 2,
+        "warning_segments": 13,
+        "discarded_segments": 11,
+        "target_s": null,
+        "target_200s_met": null,
+        "hbm_free_stop_enabled": false,
+        "validation": {
+          "passed": true,
+          "errors": [],
+          "unknown": []
+        },
+        "enhancement_validation": {
+          "passed": true,
+          "errors": [],
+          "pools": {
+            "speech_campplus": {
+              "instance_call_deltas": {
+                "0": 2775
+              },
+              "outcome_deltas": {
+                "success": 2775,
+                "empty": 0,
+                "failed": 0,
+                "cancelled": 0
+              },
+              "duration_skip_delta": 0
+            },
+            "emotion2vec": {
+              "instance_call_deltas": {
+                "0": 2226
+              },
+              "outcome_deltas": {
+                "success": 2226,
+                "empty": 0,
+                "failed": 0,
+                "cancelled": 0
+              },
+              "duration_skip_delta": 549
+            }
+          },
+          "scope": "real NN/skip/field evidence, not human-labelled accuracy"
+        },
+        "stage_validation": {
+          "passed": true,
+          "errors": []
+        }
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "4ff44cbe66234f2e90a88185c6efd31e-0.wav",
+          "started": 7572871.2892665,
+          "response_received": 7573148.96543393,
+          "elapsed_s": 277.67616743035614,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 728,
+          "role_nonnull": 728,
+          "emotion_nonnull": 728,
+          "request_stages": {
+            "request_id": "0a305d56-c6c2-469d-93cc-ac0c85c0c238",
+            "filename": "4ff44cbe66234f2e90a88185c6efd31e-0.wav",
+            "started_monotonic": 7572873.35875599,
+            "ended_monotonic": 7573148.92256926,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 15930381.071,
+              "spk_ms": 67266.398,
+              "spk_calls": 753.0,
+              "emo_wait_ms": 22560.491,
+              "emo_ms": 21518.476,
+              "emo_calls": 556.0,
+              "qwen_wait_ms": 36290763.158,
+              "qwen_ms": 2031773.589,
+              "qwen_calls": 753.0,
+              "vad_ms": 22712.886,
+              "cut_sum_ms": 1579883.487,
+              "cut_wall_ms": 225129.312,
+              "segment_ms": 248174.056,
+              "cluster_ms": 745.43,
+              "itn_ms": 3028.958,
+              "cleanup_ms": 15.468,
+              "audio_wait_ms": 156.586,
+              "cut_cpu_ms": 1906.543,
+              "cut_dispatch_wait_ms": 2823.267,
+              "pending_wait_ms": 1575153.726,
+              "vad_wait_ms": 2.07,
+              "vad_worker_ms": 22707.165,
+              "low_volume_filter_ms": 0.043,
+              "model_load_lock_wait_ms": 0.011,
+              "emo_duration_skips": 197.0,
+              "emo_nn_calls": 556.0,
+              "emo_nn_success": 556.0,
+              "spk_nn_calls": 753.0,
+              "spk_nn_success": 753.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "4ff44cbe66234f2e90a88185c6efd31e-1.wav",
+          "started": 7572871.29075219,
+          "response_received": 7573139.18978951,
+          "elapsed_s": 267.8990373201668,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 4,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 569,
+          "role_nonnull": 569,
+          "emotion_nonnull": 569,
+          "request_stages": {
+            "request_id": "5a02f6b5-6546-4f8d-a7b0-e4df3ebe98f6",
+            "filename": "4ff44cbe66234f2e90a88185c6efd31e-1.wav",
+            "started_monotonic": 7572873.66112853,
+            "ended_monotonic": 7573138.95709855,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 13237195.025,
+              "spk_ms": 56347.163,
+              "spk_calls": 615.0,
+              "emo_wait_ms": 21995.677,
+              "emo_ms": 18961.221,
+              "emo_calls": 508.0,
+              "qwen_wait_ms": 33804324.717,
+              "qwen_ms": 2124603.47,
+              "qwen_calls": 615.0,
+              "vad_ms": 24025.337,
+              "cut_sum_ms": 1361154.695,
+              "cut_wall_ms": 217320.667,
+              "segment_ms": 240101.048,
+              "cluster_ms": 292.712,
+              "itn_ms": 39.208,
+              "cleanup_ms": 16.53,
+              "audio_wait_ms": 160.685,
+              "cut_cpu_ms": 1775.962,
+              "cut_dispatch_wait_ms": 1797.79,
+              "pending_wait_ms": 1357580.96,
+              "vad_wait_ms": 1.453,
+              "vad_worker_ms": 24020.25,
+              "low_volume_filter_ms": 0.04,
+              "model_load_lock_wait_ms": 0.01,
+              "spk_nn_calls": 615.0,
+              "spk_nn_success": 615.0,
+              "emo_nn_calls": 508.0,
+              "emo_nn_success": 508.0,
+              "emo_duration_skips": 107.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "4ff44cbe66234f2e90a88185c6efd31e-2.wav",
+          "started": 7572871.2918339,
+          "response_received": 7573163.43919944,
+          "elapsed_s": 292.14736554026604,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 657,
+          "role_nonnull": 657,
+          "emotion_nonnull": 657,
+          "request_stages": {
+            "request_id": "866e84bc-14ed-4568-ab8c-001ba685eb46",
+            "filename": "4ff44cbe66234f2e90a88185c6efd31e-2.wav",
+            "started_monotonic": 7572873.9520544,
+            "ended_monotonic": 7573163.38509064,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 14927134.069,
+              "spk_ms": 67287.431,
+              "spk_calls": 706.0,
+              "emo_wait_ms": 21989.737,
+              "emo_ms": 21215.401,
+              "emo_calls": 579.0,
+              "qwen_wait_ms": 39374837.259,
+              "qwen_ms": 2443415.224,
+              "qwen_calls": 706.0,
+              "vad_ms": 23970.879,
+              "cut_sum_ms": 1323634.667,
+              "cut_wall_ms": 233576.358,
+              "segment_ms": 259664.375,
+              "cluster_ms": 479.587,
+              "itn_ms": 4370.896,
+              "cleanup_ms": 16.572,
+              "audio_wait_ms": 158.552,
+              "cut_cpu_ms": 2136.022,
+              "cut_dispatch_wait_ms": 2179.221,
+              "pending_wait_ms": 1319319.497,
+              "vad_wait_ms": 1.945,
+              "vad_worker_ms": 23964.402,
+              "low_volume_filter_ms": 0.044,
+              "model_load_lock_wait_ms": 0.011,
+              "emo_duration_skips": 127.0,
+              "emo_nn_calls": 579.0,
+              "emo_nn_success": 579.0,
+              "spk_nn_calls": 706.0,
+              "spk_nn_success": 706.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "4ff44cbe66234f2e90a88185c6efd31e-3.wav",
+          "started": 7572871.29290963,
+          "response_received": 7573168.25044621,
+          "elapsed_s": 296.95753658004105,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 9,
+          "discarded": 9,
+          "processing_status": "completed_with_warnings",
+          "segments": 619,
+          "role_nonnull": 619,
+          "emotion_nonnull": 619,
+          "request_stages": {
+            "request_id": "29318815-ea06-473d-9fe3-3717ed850ce3",
+            "filename": "4ff44cbe66234f2e90a88185c6efd31e-3.wav",
+            "started_monotonic": 7572874.14065322,
+            "ended_monotonic": 7573168.01363703,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 15345160.207,
+              "spk_ms": 68683.391,
+              "spk_calls": 701.0,
+              "emo_wait_ms": 29568.103,
+              "emo_ms": 21217.222,
+              "emo_calls": 583.0,
+              "qwen_wait_ms": 39625517.509,
+              "qwen_ms": 2400024.475,
+              "qwen_calls": 701.0,
+              "vad_ms": 24020.038,
+              "cut_sum_ms": 1429453.557,
+              "cut_wall_ms": 235591.945,
+              "segment_ms": 265493.725,
+              "cluster_ms": 388.995,
+              "itn_ms": 3193.57,
+              "cleanup_ms": 16.321,
+              "audio_wait_ms": 157.676,
+              "cut_cpu_ms": 1914.935,
+              "cut_dispatch_wait_ms": 1843.843,
+              "pending_wait_ms": 1425694.821,
+              "vad_wait_ms": 1.791,
+              "vad_worker_ms": 24012.899,
+              "low_volume_filter_ms": 0.04,
+              "model_load_lock_wait_ms": 0.011,
+              "emo_duration_skips": 118.0,
+              "emo_nn_calls": 583.0,
+              "emo_nn_success": 583.0,
+              "spk_nn_calls": 701.0,
+              "spk_nn_success": 701.0
+            }
+          },
+          "real_dual_nn_success": true,
+          "emotion_duration_only": false
+        }
+      ],
+      "status_source": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/B4/status.jsonl",
+      "status_sha256": "fb3864f56bae9ee4e171bb8f1be075230c01cc61ffc0affa8704a3a1bc75c09c",
+      "poll_count": 348,
+      "missing_hbm_poll_count": 0,
+      "distinct_resource_samples": 59,
+      "resource_gap_s": {
+        "n": 58,
+        "min": 4.059,
+        "p50": 4.9535,
+        "p95": 5.5967,
+        "max": 6.731
+      },
+      "poll_gap_s": {
+        "n": 347,
+        "min": 0.8016167394816875,
+        "p50": 0.8209765804931521,
+        "p95": 0.8340612770989537,
+        "max": 5.581229849718511
+      },
+      "memory": {
+        "hbm_free_mb": {
+          "n": 59,
+          "min": 9191,
+          "p50": 9254.0,
+          "p95": 10165.0,
+          "max": 10229
+        },
+        "hbm_used_mb": {
+          "n": 59,
+          "min": 55307,
+          "p50": 56282.0,
+          "p95": 56344.0,
+          "max": 56345
+        },
+        "host_available_bytes": {
+          "n": 59,
+          "min": 1860167749632,
+          "p50": 1861798436864.0,
+          "p95": 1863681712128.0,
+          "max": 1864720408576
+        },
+        "host_swap_used_bytes": {
+          "n": 59,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "cache_age_s": {
+          "n": 59,
+          "min": 0.9000442400574684,
+          "p50": 4.502038139849901,
+          "p95": 5.394559699855744,
+          "max": 8.93903184030205
+        },
+        "swap_in_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        },
+        "swap_out_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        }
+      },
+      "queues": {
+        "CAM_waiting": {
+          "n": 348,
+          "min": 0,
+          "p50": 254.0,
+          "p95": 255.0,
+          "max": 255
+        },
+        "EMO_waiting": {
+          "n": 348,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 1.0,
+          "max": 34
+        },
+        "PCM_active": {
+          "n": 348,
+          "min": 0,
+          "p50": 256.0,
+          "p95": 256.0,
+          "max": 256
+        },
+        "PCM_waiting": {
+          "n": 348,
+          "min": 0,
+          "p50": 26.0,
+          "p95": 37.0,
+          "max": 41
+        },
+        "PCM_bytes": {
+          "n": 348,
+          "min": 0,
+          "p50": 82469056.0,
+          "p95": 101002144.0,
+          "max": 104940736
+        }
+      },
+      "PCM_full_poll_count": 240,
+      "sampled_points_are_not_time_weighted": true
+    },
+    "A5-resident": {
+      "result": {
+        "expected": 5,
+        "completed": 5,
+        "complete": true,
+        "passed": true,
+        "all_request_latency": {
+          "n": 5,
+          "p50_s": 173.3234251299873,
+          "p95_s": 203.22877930775286
+        },
+        "completion_subset_latency": {
+          "n": 5,
+          "p50_s": 173.3234251299873,
+          "p95_s": 203.22877930775286
+        },
+        "wall_s": 206.11911410931498,
+        "observation_wall_s": 206.4258443005383,
+        "wall_scope": "first_send_to_last_response",
+        "trigger": null,
+        "warning_free": 3,
+        "warning_segments": 14,
+        "discarded_segments": 11,
+        "target_s": 200.0,
+        "target_200s_met": false,
+        "hbm_free_stop_enabled": false,
+        "validation": {
+          "passed": true,
+          "errors": [],
+          "unknown": []
+        },
+        "stage_validation": {
+          "passed": true,
+          "errors": []
+        }
+      },
+      "requests": [
+        {
+          "sample_id": "a1",
+          "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+          "status": "completed",
+          "upload_filename": "0c5dec0acf80425e94df196851224528-0.wav",
+          "started": 7573173.81296928,
+          "response_received": 7573338.36196334,
+          "elapsed_s": 164.54899405967444,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 728,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "ded1d90d-4cce-4f53-82f2-e01136e9db30",
+            "filename": "0c5dec0acf80425e94df196851224528-0.wav",
+            "started_monotonic": 7573176.63020478,
+            "ended_monotonic": 7573338.32047313,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 26773903.885,
+              "qwen_ms": 2110071.68,
+              "qwen_calls": 753.0,
+              "vad_ms": 23793.946,
+              "cut_sum_ms": 6516.904,
+              "cut_wall_ms": 131383.121,
+              "segment_ms": 133363.265,
+              "cluster_ms": 0.0,
+              "itn_ms": 3580.967,
+              "cleanup_ms": 15.542,
+              "audio_wait_ms": 163.53,
+              "cut_cpu_ms": 2528.057,
+              "cut_dispatch_wait_ms": 3962.731,
+              "pending_wait_ms": 26.434,
+              "vad_wait_ms": 2.685,
+              "vad_worker_ms": 23786.627,
+              "low_volume_filter_ms": 0.041,
+              "model_load_lock_wait_ms": 0.004
+            }
+          }
+        },
+        {
+          "sample_id": "a2",
+          "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+          "status": "completed",
+          "upload_filename": "0c5dec0acf80425e94df196851224528-1.wav",
+          "started": 7573173.81452664,
+          "response_received": 7573347.13795177,
+          "elapsed_s": 173.3234251299873,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 4,
+          "discarded": 2,
+          "processing_status": "completed_with_warnings",
+          "segments": 568,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "a190e6bf-cf96-4c03-8479-a191f7465c60",
+            "filename": "0c5dec0acf80425e94df196851224528-1.wav",
+            "started_monotonic": 7573176.96034429,
+            "ended_monotonic": 7573347.10409024,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 26933126.944,
+              "qwen_ms": 2266841.811,
+              "qwen_calls": 615.0,
+              "vad_ms": 24188.887,
+              "cut_sum_ms": 7111.883,
+              "cut_wall_ms": 140323.335,
+              "segment_ms": 144946.388,
+              "cluster_ms": 0.0,
+              "itn_ms": 40.24,
+              "cleanup_ms": 16.406,
+              "audio_wait_ms": 158.302,
+              "cut_cpu_ms": 2210.291,
+              "cut_dispatch_wait_ms": 4879.131,
+              "pending_wait_ms": 22.715,
+              "vad_wait_ms": 1.156,
+              "vad_worker_ms": 24182.452,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.013
+            }
+          }
+        },
+        {
+          "sample_id": "a3",
+          "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+          "status": "completed",
+          "upload_filename": "0c5dec0acf80425e94df196851224528-2.wav",
+          "started": 7573173.81576394,
+          "response_received": 7573365.49922032,
+          "elapsed_s": 191.68345637992024,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 658,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "a077b37a-9890-4554-9331-fad2d396b7c5",
+            "filename": "0c5dec0acf80425e94df196851224528-2.wav",
+            "started_monotonic": 7573177.43107201,
+            "ended_monotonic": 7573365.38783441,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 30830818.473,
+              "qwen_ms": 2496146.972,
+              "qwen_calls": 706.0,
+              "vad_ms": 23803.921,
+              "cut_sum_ms": 8110.491,
+              "cut_wall_ms": 154763.627,
+              "segment_ms": 158407.139,
+              "cluster_ms": 0.0,
+              "itn_ms": 4889.767,
+              "cleanup_ms": 16.97,
+              "audio_wait_ms": 159.064,
+              "cut_cpu_ms": 2721.177,
+              "cut_dispatch_wait_ms": 5364.719,
+              "pending_wait_ms": 24.894,
+              "vad_wait_ms": 5.29,
+              "vad_worker_ms": 23795.322,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.016
+            }
+          }
+        },
+        {
+          "sample_id": "a4",
+          "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+          "status": "completed",
+          "upload_filename": "0c5dec0acf80425e94df196851224528-3.wav",
+          "started": 7573173.81697335,
+          "response_received": 7573379.93208339,
+          "elapsed_s": 206.115110039711,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 10,
+          "discarded": 9,
+          "processing_status": "completed_with_warnings",
+          "segments": 618,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "8456e765-c362-4ab8-a03a-ce97026b8528",
+            "filename": "0c5dec0acf80425e94df196851224528-3.wav",
+            "started_monotonic": 7573177.19830791,
+            "ended_monotonic": 7573379.88641508,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 31089898.945,
+              "qwen_ms": 2556175.704,
+              "qwen_calls": 701.0,
+              "vad_ms": 23817.192,
+              "cut_sum_ms": 8069.459,
+              "cut_wall_ms": 154802.041,
+              "segment_ms": 174871.401,
+              "cluster_ms": 0.0,
+              "itn_ms": 2970.718,
+              "cleanup_ms": 16.457,
+              "audio_wait_ms": 160.605,
+              "cut_cpu_ms": 2672.844,
+              "cut_dispatch_wait_ms": 5372.509,
+              "pending_wait_ms": 24.407,
+              "vad_wait_ms": 2.285,
+              "vad_worker_ms": 23810.431,
+              "low_volume_filter_ms": 0.039,
+              "model_load_lock_wait_ms": 0.01
+            }
+          }
+        },
+        {
+          "sample_id": "a5",
+          "sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+          "status": "completed",
+          "upload_filename": "0c5dec0acf80425e94df196851224528-4.wav",
+          "started": 7573173.81814321,
+          "response_received": 7573297.25399129,
+          "elapsed_s": 123.43584807962179,
+          "http_status": 200,
+          "code": null,
+          "warning_count": 0,
+          "discarded": 0,
+          "processing_status": "complete",
+          "segments": 431,
+          "role_nonnull": 0,
+          "emotion_nonnull": 0,
+          "request_stages": {
+            "request_id": "4e8ca608-bd81-4d87-a284-bb8869ad3c80",
+            "filename": "0c5dec0acf80425e94df196851224528-4.wav",
+            "started_monotonic": 7573176.41351748,
+            "ended_monotonic": 7573297.22425464,
+            "status": "completed",
+            "phases": {
+              "spk_wait_ms": 0.0,
+              "spk_ms": 0.0,
+              "spk_calls": 0.0,
+              "emo_wait_ms": 0.0,
+              "emo_ms": 0.0,
+              "emo_calls": 0.0,
+              "qwen_wait_ms": 16729280.373,
+              "qwen_ms": 1456762.761,
+              "qwen_calls": 457.0,
+              "vad_ms": 21659.894,
+              "cut_sum_ms": 3173.405,
+              "cut_wall_ms": 90361.453,
+              "segment_ms": 92663.816,
+              "cluster_ms": 0.0,
+              "itn_ms": 5299.872,
+              "cleanup_ms": 18.37,
+              "audio_wait_ms": 156.132,
+              "cut_cpu_ms": 1487.334,
+              "cut_dispatch_wait_ms": 1669.425,
+              "pending_wait_ms": 16.841,
+              "vad_wait_ms": 2.731,
+              "vad_worker_ms": 21654.146,
+              "low_volume_filter_ms": 0.038,
+              "model_load_lock_wait_ms": 0.013
+            }
+          }
+        }
+      ],
+      "status_source": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/A5-resident/status.jsonl",
+      "status_sha256": "666cceadeb960f4a07360b3ac12030d3d31140a951946a56b43df38e97e869a8",
+      "poll_count": 231,
+      "missing_hbm_poll_count": 1,
+      "distinct_resource_samples": 41,
+      "resource_gap_s": {
+        "n": 40,
+        "min": 4.01,
+        "p50": 4.8725000000000005,
+        "p95": 7.672699999999997,
+        "max": 9.647
+      },
+      "poll_gap_s": {
+        "n": 230,
+        "min": 0.7979497304186225,
+        "p50": 0.8232950349338353,
+        "p95": 0.8452931873966009,
+        "max": 5.636151960119605
+      },
+      "memory": {
+        "hbm_free_mb": {
+          "n": 41,
+          "min": 5131,
+          "p50": 7351.0,
+          "p95": 9192.0,
+          "max": 9192
+        },
+        "hbm_used_mb": {
+          "n": 41,
+          "min": 56344,
+          "p50": 58185.0,
+          "p95": 60405.0,
+          "max": 60405
+        },
+        "host_available_bytes": {
+          "n": 41,
+          "min": 1858660802560,
+          "p50": 1860799782912.0,
+          "p95": 1864504348672.0,
+          "max": 1865190207488
+        },
+        "host_swap_used_bytes": {
+          "n": 41,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "cache_age_s": {
+          "n": 41,
+          "min": 1.8511140998452902,
+          "p50": 4.252056299708784,
+          "p95": 5.102770489640534,
+          "max": 7.9573242999613285
+        },
+        "swap_in_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        },
+        "swap_out_bytes": {
+          "first": 0,
+          "last": 0,
+          "delta": 0
+        }
+      },
+      "queues": {
+        "CAM_waiting": {
+          "n": 230,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "EMO_waiting": {
+          "n": 230,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_active": {
+          "n": 230,
+          "min": 0,
+          "p50": 64.0,
+          "p95": 80.0,
+          "max": 80
+        },
+        "PCM_waiting": {
+          "n": 230,
+          "min": 0,
+          "p50": 0.0,
+          "p95": 0.0,
+          "max": 0
+        },
+        "PCM_bytes": {
+          "n": 230,
+          "min": 0,
+          "p50": 30100384.0,
+          "p95": 43005679.99999999,
+          "max": 46785920
+        }
+      },
+      "PCM_full_poll_count": 0,
+      "sampled_points_are_not_time_weighted": true
+    }
+  },
+  "allocator_snapshots": {
+    "warmup-final-status": [
+      {
+        "owner": 0,
+        "pid": 4034033,
+        "birth": 1795484652.29,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.11865234375,
+        "current_reserved_mb": 4390.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 0.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 101806,
+        "birth": 1795484675.91,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3905.89990234375,
+        "current_reserved_mb": 4390.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 0.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 249830,
+        "birth": 1795484699.48,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.11865234375,
+        "current_reserved_mb": 4390.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 0.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 379863,
+        "birth": 1795484722.35,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3905.89990234375,
+        "current_reserved_mb": 4390.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 0.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 4,
+        "pid": 478865,
+        "birth": 1795484745.56,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.00927734375,
+        "current_reserved_mb": 4390.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 0.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "A5-final-status": [
+      {
+        "owner": 0,
+        "pid": 4034033,
+        "birth": 1795484652.29,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3898.5712890625,
+        "current_reserved_mb": 5672.0,
+        "allocated_change_from_warmup_mb": -7.54736328125,
+        "reserved_change_from_warmup_mb": 1282.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 101806,
+        "birth": 1795484675.91,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3967.22412109375,
+        "current_reserved_mb": 5558.0,
+        "allocated_change_from_warmup_mb": 61.32421875,
+        "reserved_change_from_warmup_mb": 1168.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 249830,
+        "birth": 1795484699.48,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3930.1826171875,
+        "current_reserved_mb": 7186.0,
+        "allocated_change_from_warmup_mb": 24.06396484375,
+        "reserved_change_from_warmup_mb": 2796.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 379863,
+        "birth": 1795484722.35,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3920.99462890625,
+        "current_reserved_mb": 6418.0,
+        "allocated_change_from_warmup_mb": 15.0947265625,
+        "reserved_change_from_warmup_mb": 2028.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 4,
+        "pid": 478865,
+        "birth": 1795484745.56,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3913.556640625,
+        "current_reserved_mb": 7580.0,
+        "allocated_change_from_warmup_mb": 7.54736328125,
+        "reserved_change_from_warmup_mb": 3190.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "A4-final-status": [
+      {
+        "owner": 0,
+        "pid": 4034033,
+        "birth": 1795484652.29,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3889.24560546875,
+        "current_reserved_mb": 5690.0,
+        "allocated_change_from_warmup_mb": -16.873046875,
+        "reserved_change_from_warmup_mb": 1300.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 101806,
+        "birth": 1795484675.91,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3929.1982421875,
+        "current_reserved_mb": 6284.0,
+        "allocated_change_from_warmup_mb": 23.29833984375,
+        "reserved_change_from_warmup_mb": 1894.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 249830,
+        "birth": 1795484699.48,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3930.0732421875,
+        "current_reserved_mb": 7770.0,
+        "allocated_change_from_warmup_mb": 23.95458984375,
+        "reserved_change_from_warmup_mb": 3380.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 379863,
+        "birth": 1795484722.35,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3914.759765625,
+        "current_reserved_mb": 6418.0,
+        "allocated_change_from_warmup_mb": 8.85986328125,
+        "reserved_change_from_warmup_mb": 2028.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 4,
+        "pid": 478865,
+        "birth": 1795484745.56,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3913.556640625,
+        "current_reserved_mb": 7580.0,
+        "allocated_change_from_warmup_mb": 7.54736328125,
+        "reserved_change_from_warmup_mb": 3190.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "B-warm-status": [
+      {
+        "owner": 0,
+        "pid": 4034033,
+        "birth": 1795484652.29,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 5690.0,
+        "allocated_change_from_warmup_mb": 0.328125,
+        "reserved_change_from_warmup_mb": 1300.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 101806,
+        "birth": 1795484675.91,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.33740234375,
+        "current_reserved_mb": 6284.0,
+        "allocated_change_from_warmup_mb": 0.4375,
+        "reserved_change_from_warmup_mb": 1894.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 249830,
+        "birth": 1795484699.48,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.33740234375,
+        "current_reserved_mb": 7770.0,
+        "allocated_change_from_warmup_mb": 0.21875,
+        "reserved_change_from_warmup_mb": 3380.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 379863,
+        "birth": 1795484722.35,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3905.89990234375,
+        "current_reserved_mb": 6418.0,
+        "allocated_change_from_warmup_mb": 0.0,
+        "reserved_change_from_warmup_mb": 2028.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 4,
+        "pid": 478865,
+        "birth": 1795484745.56,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3913.556640625,
+        "current_reserved_mb": 7580.0,
+        "allocated_change_from_warmup_mb": 7.54736328125,
+        "reserved_change_from_warmup_mb": 3190.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "B4-final-status": [
+      {
+        "owner": 0,
+        "pid": 4034033,
+        "birth": 1795484652.29,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3897.2587890625,
+        "current_reserved_mb": 5790.0,
+        "allocated_change_from_warmup_mb": -8.85986328125,
+        "reserved_change_from_warmup_mb": 1400.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 101806,
+        "birth": 1795484675.91,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3928.9794921875,
+        "current_reserved_mb": 6478.0,
+        "allocated_change_from_warmup_mb": 23.07958984375,
+        "reserved_change_from_warmup_mb": 2088.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 249830,
+        "birth": 1795484699.48,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3905.35302734375,
+        "current_reserved_mb": 7886.0,
+        "allocated_change_from_warmup_mb": -0.765625,
+        "reserved_change_from_warmup_mb": 3496.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 379863,
+        "birth": 1795484722.35,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3913.556640625,
+        "current_reserved_mb": 6758.0,
+        "allocated_change_from_warmup_mb": 7.65673828125,
+        "reserved_change_from_warmup_mb": 2368.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 4,
+        "pid": 478865,
+        "birth": 1795484745.56,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3913.556640625,
+        "current_reserved_mb": 7580.0,
+        "allocated_change_from_warmup_mb": 7.54736328125,
+        "reserved_change_from_warmup_mb": 3190.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "A5-resident-pre-status": [
+      {
+        "owner": 0,
+        "pid": 4034033,
+        "birth": 1795484652.29,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.44677734375,
+        "current_reserved_mb": 5790.0,
+        "allocated_change_from_warmup_mb": 0.328125,
+        "reserved_change_from_warmup_mb": 1400.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 101806,
+        "birth": 1795484675.91,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3889.24560546875,
+        "current_reserved_mb": 6478.0,
+        "allocated_change_from_warmup_mb": -16.654296875,
+        "reserved_change_from_warmup_mb": 2088.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 249830,
+        "birth": 1795484699.48,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.22802734375,
+        "current_reserved_mb": 7886.0,
+        "allocated_change_from_warmup_mb": 0.109375,
+        "reserved_change_from_warmup_mb": 3496.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 379863,
+        "birth": 1795484722.35,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.11865234375,
+        "current_reserved_mb": 6758.0,
+        "allocated_change_from_warmup_mb": 0.21875,
+        "reserved_change_from_warmup_mb": 2368.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 4,
+        "pid": 478865,
+        "birth": 1795484745.56,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3906.22802734375,
+        "current_reserved_mb": 7580.0,
+        "allocated_change_from_warmup_mb": 0.21875,
+        "reserved_change_from_warmup_mb": 3190.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ],
+    "A5-resident-final-status": [
+      {
+        "owner": 0,
+        "pid": 4034033,
+        "birth": 1795484652.29,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3898.5712890625,
+        "current_reserved_mb": 5790.0,
+        "allocated_change_from_warmup_mb": -7.54736328125,
+        "reserved_change_from_warmup_mb": 1400.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 1,
+        "pid": 101806,
+        "birth": 1795484675.91,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3942.10546875,
+        "current_reserved_mb": 6478.0,
+        "allocated_change_from_warmup_mb": 36.20556640625,
+        "reserved_change_from_warmup_mb": 2088.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 2,
+        "pid": 249830,
+        "birth": 1795484699.48,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3916.181640625,
+        "current_reserved_mb": 8574.0,
+        "allocated_change_from_warmup_mb": 10.06298828125,
+        "reserved_change_from_warmup_mb": 4184.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 3,
+        "pid": 379863,
+        "birth": 1795484722.35,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3923.61962890625,
+        "current_reserved_mb": 7982.0,
+        "allocated_change_from_warmup_mb": 17.7197265625,
+        "reserved_change_from_warmup_mb": 3592.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      },
+      {
+        "owner": 4,
+        "pid": 478865,
+        "birth": 1795484745.56,
+        "identity_same_as_warmup": true,
+        "current_allocated_mb": 3921.21337890625,
+        "current_reserved_mb": 8372.0,
+        "allocated_change_from_warmup_mb": 15.2041015625,
+        "reserved_change_from_warmup_mb": 3982.0,
+        "allocator_peak_scope": "not_reset_unknown_or_includes_load",
+        "active_sequences": 0,
+        "kv_bytes": 0,
+        "kv_storage_bytes": 0
+      }
+    ]
+  },
+  "B4_pool_deltas": {
+    "speech_campplus": {
+      "calls": 2775,
+      "wait_total_ms": 59438662.550000004,
+      "inference_total_ms": 259584.38,
+      "duration_skips": 0,
+      "outcome_deltas": {
+        "success": 2775,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "mean_wait_ms": 21419.337855855858,
+      "mean_inference_envelope_ms": 93.54392072072072
+    },
+    "emotion2vec": {
+      "calls": 2226,
+      "wait_total_ms": 95330.31,
+      "inference_total_ms": 82912.31999999999,
+      "duration_skips": 549,
+      "outcome_deltas": {
+        "success": 2226,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "mean_wait_ms": 42.82583557951482,
+      "mean_inference_envelope_ms": 37.24722371967655
+    }
+  },
+  "shutdown": {
+    "owned": true,
+    "identities": [
+      [
+        3840658,
+        1795484636.4
+      ],
+      [
+        3906545,
+        1795484642.0
+      ],
+      [
+        3906547,
+        1795484642.0
+      ],
+      [
+        3906566,
+        1795484642.0
+      ],
+      [
+        3906591,
+        1795484642.0
+      ],
+      [
+        3906615,
+        1795484642.01
+      ],
+      [
+        3906642,
+        1795484642.01
+      ],
+      [
+        3906668,
+        1795484642.01
+      ],
+      [
+        3906674,
+        1795484642.01
+      ],
+      [
+        3906675,
+        1795484642.01
+      ],
+      [
+        4034033,
+        1795484652.29
+      ],
+      [
+        4142636,
+        1795484661.17
+      ],
+      [
+        4186100,
+        1795484666.2
+      ],
+      [
+        4186706,
+        1795484666.26
+      ],
+      [
+        4186707,
+        1795484666.26
+      ],
+      [
+        4186708,
+        1795484666.26
+      ],
+      [
+        4186709,
+        1795484666.26
+      ],
+      [
+        4186722,
+        1795484666.27
+      ],
+      [
+        4186753,
+        1795484666.27
+      ],
+      [
+        4186790,
+        1795484666.27
+      ],
+      [
+        4186823,
+        1795484666.27
+      ],
+      [
+        4186854,
+        1795484666.27
+      ],
+      [
+        4189014,
+        1795484666.53
+      ],
+      [
+        4189016,
+        1795484666.53
+      ],
+      [
+        4189017,
+        1795484666.53
+      ],
+      [
+        4189020,
+        1795484666.54
+      ],
+      [
+        4189047,
+        1795484666.54
+      ],
+      [
+        4189071,
+        1795484666.54
+      ],
+      [
+        4189094,
+        1795484666.54
+      ],
+      [
+        4189120,
+        1795484666.54
+      ],
+      [
+        101806,
+        1795484675.91
+      ],
+      [
+        164678,
+        1795484684.66
+      ],
+      [
+        192917,
+        1795484689.86
+      ],
+      [
+        193250,
+        1795484689.92
+      ],
+      [
+        193272,
+        1795484689.92
+      ],
+      [
+        193284,
+        1795484689.92
+      ],
+      [
+        193285,
+        1795484689.92
+      ],
+      [
+        193286,
+        1795484689.93
+      ],
+      [
+        193287,
+        1795484689.93
+      ],
+      [
+        193288,
+        1795484689.93
+      ],
+      [
+        193289,
+        1795484689.93
+      ],
+      [
+        193290,
+        1795484689.93
+      ],
+      [
+        194985,
+        1795484690.2
+      ],
+      [
+        194986,
+        1795484690.2
+      ],
+      [
+        194987,
+        1795484690.2
+      ],
+      [
+        194988,
+        1795484690.2
+      ],
+      [
+        195002,
+        1795484690.21
+      ],
+      [
+        195030,
+        1795484690.21
+      ],
+      [
+        195060,
+        1795484690.21
+      ],
+      [
+        195089,
+        1795484690.21
+      ],
+      [
+        249830,
+        1795484699.48
+      ],
+      [
+        306234,
+        1795484707.99
+      ],
+      [
+        339816,
+        1795484712.91
+      ],
+      [
+        340181,
+        1795484712.97
+      ],
+      [
+        340182,
+        1795484712.98
+      ],
+      [
+        340188,
+        1795484712.98
+      ],
+      [
+        340206,
+        1795484712.98
+      ],
+      [
+        340225,
+        1795484712.98
+      ],
+      [
+        340244,
+        1795484712.98
+      ],
+      [
+        340262,
+        1795484712.98
+      ],
+      [
+        340281,
+        1795484712.98
+      ],
+      [
+        340296,
+        1795484712.99
+      ],
+      [
+        341713,
+        1795484713.26
+      ],
+      [
+        341765,
+        1795484713.26
+      ],
+      [
+        341806,
+        1795484713.26
+      ],
+      [
+        341842,
+        1795484713.26
+      ],
+      [
+        341887,
+        1795484713.27
+      ],
+      [
+        341888,
+        1795484713.27
+      ],
+      [
+        341889,
+        1795484713.27
+      ],
+      [
+        341890,
+        1795484713.27
+      ],
+      [
+        379863,
+        1795484722.35
+      ],
+      [
+        416404,
+        1795484730.92
+      ],
+      [
+        433766,
+        1795484735.94
+      ],
+      [
+        433888,
+        1795484736.0
+      ],
+      [
+        433889,
+        1795484736.0
+      ],
+      [
+        433890,
+        1795484736.01
+      ],
+      [
+        433904,
+        1795484736.01
+      ],
+      [
+        433927,
+        1795484736.01
+      ],
+      [
+        433947,
+        1795484736.01
+      ],
+      [
+        433967,
+        1795484736.01
+      ],
+      [
+        433992,
+        1795484736.01
+      ],
+      [
+        434011,
+        1795484736.01
+      ],
+      [
+        435177,
+        1795484736.27
+      ],
+      [
+        435203,
+        1795484736.27
+      ],
+      [
+        435232,
+        1795484736.27
+      ],
+      [
+        435254,
+        1795484736.28
+      ],
+      [
+        435277,
+        1795484736.28
+      ],
+      [
+        435301,
+        1795484736.28
+      ],
+      [
+        435303,
+        1795484736.28
+      ],
+      [
+        435304,
+        1795484736.28
+      ],
+      [
+        478865,
+        1795484745.56
+      ],
+      [
+        526196,
+        1795484754.49
+      ],
+      [
+        569106,
+        1795484759.56
+      ],
+      [
+        569593,
+        1795484759.62
+      ],
+      [
+        569594,
+        1795484759.62
+      ],
+      [
+        569595,
+        1795484759.62
+      ],
+      [
+        569598,
+        1795484759.62
+      ],
+      [
+        569616,
+        1795484759.62
+      ],
+      [
+        569636,
+        1795484759.63
+      ],
+      [
+        569653,
+        1795484759.63
+      ],
+      [
+        569670,
+        1795484759.63
+      ],
+      [
+        569688,
+        1795484759.63
+      ],
+      [
+        571418,
+        1795484759.85
+      ],
+      [
+        571423,
+        1795484759.85
+      ],
+      [
+        571459,
+        1795484759.85
+      ],
+      [
+        571491,
+        1795484759.85
+      ],
+      [
+        571519,
+        1795484759.85
+      ],
+      [
+        571543,
+        1795484759.85
+      ],
+      [
+        571545,
+        1795484759.86
+      ],
+      [
+        571546,
+        1795484759.86
+      ],
+      [
+        689722,
+        1795484771.18
+      ],
+      [
+        767738,
+        1795484776.76
+      ],
+      [
+        813733,
+        1795484781.12
+      ],
+      [
+        855348,
+        1795484785.87
+      ],
+      [
+        907045,
+        1795484790.5
+      ],
+      [
+        939091,
+        1795484794.41
+      ],
+      [
+        987080,
+        1795484799.08
+      ],
+      [
+        1036130,
+        1795484803.84
+      ],
+      [
+        1074197,
+        1795484808.53
+      ],
+      [
+        1122500,
+        1795484813.27
+      ],
+      [
+        1171146,
+        1795484817.96
+      ],
+      [
+        1207452,
+        1795484822.56
+      ],
+      [
+        1259002,
+        1795484827.3
+      ],
+      [
+        1316399,
+        1795484832.33
+      ],
+      [
+        1352813,
+        1795484836.67
+      ],
+      [
+        1408417,
+        1795484841.38
+      ],
+      [
+        1462426,
+        1795484846.08
+      ],
+      [
+        1505431,
+        1795484850.78
+      ],
+      [
+        1559841,
+        1795484855.55
+      ],
+      [
+        1629056,
+        1795484860.28
+      ],
+      [
+        1674891,
+        1795484864.95
+      ],
+      [
+        1732230,
+        1795484869.69
+      ],
+      [
+        1788764,
+        1795484874.39
+      ],
+      [
+        1825915,
+        1795484879.07
+      ],
+      [
+        1866126,
+        1795484883.82
+      ],
+      [
+        1960509,
+        1795484893.06
+      ],
+      [
+        1998968,
+        1795484897.8
+      ],
+      [
+        2034795,
+        1795484902.5
+      ],
+      [
+        2067805,
+        1795484907.19
+      ],
+      [
+        2105645,
+        1795484911.89
+      ],
+      [
+        2124150,
+        1795484916.63
+      ],
+      [
+        2151780,
+        1795484921.3
+      ],
+      [
+        2175057,
+        1795484925.98
+      ],
+      [
+        2218801,
+        1795484932.91
+      ],
+      [
+        2251138,
+        1795484937.65
+      ],
+      [
+        2280221,
+        1795484942.34
+      ],
+      [
+        2308352,
+        1795484947.05
+      ],
+      [
+        2341548,
+        1795484951.7
+      ],
+      [
+        2420296,
+        1795484963.45
+      ],
+      [
+        2447465,
+        1795484967.76
+      ],
+      [
+        2473460,
+        1795484972.44
+      ],
+      [
+        2492785,
+        1795484977.09
+      ],
+      [
+        2507855,
+        1795484980.96
+      ],
+      [
+        2527304,
+        1795484985.64
+      ],
+      [
+        2548157,
+        1795484990.36
+      ],
+      [
+        2566600,
+        1795484995.04
+      ],
+      [
+        2605661,
+        1795484999.77
+      ],
+      [
+        2633958,
+        1795485004.48
+      ],
+      [
+        2657214,
+        1795485009.17
+      ],
+      [
+        2691189,
+        1795485013.88
+      ],
+      [
+        2725592,
+        1795485018.6
+      ],
+      [
+        2743717,
+        1795485023.29
+      ],
+      [
+        2766916,
+        1795485028.05
+      ],
+      [
+        2785518,
+        1795485032.72
+      ],
+      [
+        2802914,
+        1795485037.4
+      ],
+      [
+        2833364,
+        1795485042.25
+      ],
+      [
+        2855301,
+        1795485046.82
+      ],
+      [
+        2884834,
+        1795485051.52
+      ],
+      [
+        2916390,
+        1795485056.23
+      ],
+      [
+        2964374,
+        1795485060.95
+      ],
+      [
+        3012496,
+        1795485065.69
+      ],
+      [
+        3055908,
+        1795485070.63
+      ],
+      [
+        3097071,
+        1795485075.14
+      ],
+      [
+        3142616,
+        1795485079.89
+      ],
+      [
+        3195563,
+        1795485084.62
+      ],
+      [
+        3241441,
+        1795485089.33
+      ],
+      [
+        3288251,
+        1795485094.06
+      ],
+      [
+        3344653,
+        1795485098.78
+      ],
+      [
+        3398683,
+        1795485103.55
+      ],
+      [
+        3443691,
+        1795485108.25
+      ],
+      [
+        3482872,
+        1795485112.95
+      ],
+      [
+        3543321,
+        1795485119.71
+      ],
+      [
+        3588474,
+        1795485123.9
+      ],
+      [
+        3637480,
+        1795485128.65
+      ],
+      [
+        3674876,
+        1795485133.3
+      ],
+      [
+        3711830,
+        1795485138.04
+      ],
+      [
+        3781764,
+        1795485147.45
+      ],
+      [
+        3819497,
+        1795485152.06
+      ],
+      [
+        3843387,
+        1795485157.01
+      ],
+      [
+        3853437,
+        1795485159.04
+      ],
+      [
+        3878979,
+        1795485163.73
+      ],
+      [
+        3889201,
+        1795485165.66
+      ],
+      [
+        3909407,
+        1795485168.44
+      ],
+      [
+        3926625,
+        1795485170.84
+      ],
+      [
+        3926626,
+        1795485170.9
+      ],
+      [
+        3926627,
+        1795485170.9
+      ],
+      [
+        3926628,
+        1795485170.9
+      ],
+      [
+        3926629,
+        1795485170.9
+      ],
+      [
+        3926630,
+        1795485170.9
+      ],
+      [
+        3926631,
+        1795485170.9
+      ],
+      [
+        3926632,
+        1795485170.91
+      ],
+      [
+        3926633,
+        1795485170.91
+      ],
+      [
+        3926634,
+        1795485170.91
+      ],
+      [
+        3926635,
+        1795485171.11
+      ],
+      [
+        3926636,
+        1795485171.12
+      ],
+      [
+        3926637,
+        1795485171.12
+      ],
+      [
+        3926638,
+        1795485171.12
+      ],
+      [
+        3926639,
+        1795485171.12
+      ],
+      [
+        3926640,
+        1795485171.12
+      ],
+      [
+        3926641,
+        1795485171.12
+      ],
+      [
+        3926656,
+        1795485171.12
+      ],
+      [
+        3930635,
+        1795485173.22
+      ],
+      [
+        3946061,
+        1795485177.98
+      ],
+      [
+        3960246,
+        1795485182.02
+      ],
+      [
+        3960302,
+        1795485182.07
+      ],
+      [
+        3960666,
+        1795485182.13
+      ],
+      [
+        3960667,
+        1795485182.13
+      ],
+      [
+        3960668,
+        1795485182.13
+      ],
+      [
+        3960669,
+        1795485182.13
+      ],
+      [
+        3960670,
+        1795485182.13
+      ],
+      [
+        3960671,
+        1795485182.14
+      ],
+      [
+        3960672,
+        1795485182.14
+      ],
+      [
+        3960673,
+        1795485182.14
+      ],
+      [
+        3960674,
+        1795485182.14
+      ],
+      [
+        3961958,
+        1795485182.5
+      ],
+      [
+        3961959,
+        1795485182.5
+      ],
+      [
+        3961960,
+        1795485182.5
+      ],
+      [
+        3961961,
+        1795485182.5
+      ],
+      [
+        3961962,
+        1795485182.5
+      ],
+      [
+        3961963,
+        1795485182.5
+      ],
+      [
+        3961964,
+        1795485182.5
+      ],
+      [
+        3961965,
+        1795485182.51
+      ],
+      [
+        3965945,
+        1795485183.59
+      ],
+      [
+        4000237,
+        1795485189.86
+      ],
+      [
+        4020580,
+        1795485194.24
+      ],
+      [
+        4056858,
+        1795485200.33
+      ],
+      [
+        4077331,
+        1795485204.43
+      ],
+      [
+        4097219,
+        1795485208.52
+      ],
+      [
+        4111859,
+        1795485212.61
+      ],
+      [
+        4130963,
+        1795485216.69
+      ],
+      [
+        4161679,
+        1795485220.79
+      ],
+      [
+        4181343,
+        1795485225.6
+      ],
+      [
+        7925,
+        1795485231.31
+      ],
+      [
+        25899,
+        1795485236.02
+      ],
+      [
+        47360,
+        1795485241.15
+      ],
+      [
+        75258,
+        1795485246.11
+      ],
+      [
+        115795,
+        1795485252.0
+      ],
+      [
+        153019,
+        1795485257.4
+      ],
+      [
+        193874,
+        1795485262.19
+      ],
+      [
+        239979,
+        1795485267.32
+      ],
+      [
+        283355,
+        1795485272.15
+      ],
+      [
+        332377,
+        1795485276.95
+      ],
+      [
+        376982,
+        1795485281.85
+      ],
+      [
+        432786,
+        1795485286.84
+      ],
+      [
+        486841,
+        1795485291.92
+      ],
+      [
+        545935,
+        1795485296.82
+      ],
+      [
+        605162,
+        1795485301.77
+      ],
+      [
+        682009,
+        1795485307.49
+      ],
+      [
+        740192,
+        1795485312.45
+      ],
+      [
+        798394,
+        1795485317.38
+      ],
+      [
+        864950,
+        1795485322.38
+      ],
+      [
+        929527,
+        1795485327.31
+      ],
+      [
+        992284,
+        1795485332.26
+      ],
+      [
+        1055693,
+        1795485337.34
+      ],
+      [
+        1113630,
+        1795485342.24
+      ],
+      [
+        1166822,
+        1795485346.88
+      ],
+      [
+        1230877,
+        1795485352.75
+      ],
+      [
+        1285332,
+        1795485357.76
+      ],
+      [
+        1347789,
+        1795485362.72
+      ],
+      [
+        1406679,
+        1795485368.06
+      ],
+      [
+        1466741,
+        1795485373.58
+      ],
+      [
+        1525024,
+        1795485378.38
+      ],
+      [
+        1563449,
+        1795485383.23
+      ],
+      [
+        1610175,
+        1795485388.22
+      ],
+      [
+        1652869,
+        1795485393.26
+      ],
+      [
+        1696541,
+        1795485398.25
+      ],
+      [
+        1739036,
+        1795485403.14
+      ],
+      [
+        1775517,
+        1795485408.03
+      ],
+      [
+        1805018,
+        1795485412.99
+      ],
+      [
+        1834295,
+        1795485417.88
+      ],
+      [
+        1855694,
+        1795485422.58
+      ],
+      [
+        1872579,
+        1795485427.6
+      ],
+      [
+        1905384,
+        1795485432.95
+      ],
+      [
+        1923803,
+        1795485437.51
+      ],
+      [
+        1956805,
+        1795485442.45
+      ],
+      [
+        1979072,
+        1795485447.23
+      ],
+      [
+        1995694,
+        1795485452.35
+      ],
+      [
+        2012145,
+        1795485457.17
+      ],
+      [
+        2027726,
+        1795485461.82
+      ],
+      [
+        2044403,
+        1795485466.71
+      ],
+      [
+        2063233,
+        1795485471.62
+      ],
+      [
+        2089333,
+        1795485477.96
+      ],
+      [
+        2107209,
+        1795485482.02
+      ],
+      [
+        2176219,
+        1795485494.62
+      ],
+      [
+        2207379,
+        1795485499.66
+      ],
+      [
+        2239723,
+        1795485504.52
+      ],
+      [
+        2268400,
+        1795485508.67
+      ],
+      [
+        2323276,
+        1795485513.65
+      ],
+      [
+        2356011,
+        1795485517.82
+      ],
+      [
+        2391035,
+        1795485522.01
+      ],
+      [
+        2428566,
+        1795485526.22
+      ],
+      [
+        2470041,
+        1795485531.29
+      ],
+      [
+        2529025,
+        1795485536.26
+      ],
+      [
+        2584944,
+        1795485541.56
+      ],
+      [
+        2636280,
+        1795485546.16
+      ],
+      [
+        2698706,
+        1795485551.12
+      ],
+      [
+        2762223,
+        1795485556.07
+      ],
+      [
+        2816157,
+        1795485560.94
+      ],
+      [
+        2878962,
+        1795485565.9
+      ],
+      [
+        2950868,
+        1795485570.86
+      ],
+      [
+        3021723,
+        1795485575.87
+      ],
+      [
+        3079040,
+        1795485580.79
+      ],
+      [
+        3135430,
+        1795485585.76
+      ],
+      [
+        3193592,
+        1795485590.7
+      ],
+      [
+        3257647,
+        1795485595.66
+      ],
+      [
+        3316648,
+        1795485600.61
+      ],
+      [
+        3375333,
+        1795485605.55
+      ],
+      [
+        3437595,
+        1795485610.51
+      ],
+      [
+        3504719,
+        1795485615.48
+      ],
+      [
+        3625708,
+        1795485625.18
+      ],
+      [
+        3687592,
+        1795485630.15
+      ],
+      [
+        3734823,
+        1795485635.02
+      ],
+      [
+        3786201,
+        1795485639.99
+      ],
+      [
+        3836586,
+        1795485645.0
+      ],
+      [
+        3877044,
+        1795485649.91
+      ],
+      [
+        3915802,
+        1795485654.83
+      ],
+      [
+        3954166,
+        1795485659.78
+      ],
+      [
+        3993989,
+        1795485667.04
+      ],
+      [
+        4019680,
+        1795485671.94
+      ],
+      [
+        4033557,
+        1795485676.79
+      ],
+      [
+        4055284,
+        1795485680.87
+      ],
+      [
+        4080767,
+        1795485685.76
+      ],
+      [
+        4102447,
+        1795485693.74
+      ],
+      [
+        4102516,
+        1795485697.77
+      ],
+      [
+        4102589,
+        1795485701.79
+      ]
+    ],
+    "forced": false,
+    "temp_dir": "/tmp/asr-svc-5ca4co76",
+    "cache_dir": "/tmp/asr-svc-5ca4co76/seacraft_asr",
+    "temp_dir_retained": true,
+    "remaining_cache_files": [],
+    "cache_scan_error": null,
+    "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "exit_code_ok": true,
+    "remaining_pids": [],
+    "port_observations": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "observe_s": 5,
+    "orphan_cleanup": false,
+    "term_sent_monotonic": 7573380.49412449,
+    "parent_exit_observed_monotonic": 7573413.40182494,
+    "term_to_parent_exit_s": 32.90770045015961,
+    "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+    "passed": true
+  },
+  "resource_recovery": {
+    "passed": null,
+    "observation_complete": true,
+    "hbm_observed": true,
+    "status": "unknown",
+    "before": {
+      "index": 7,
+      "available": true,
+      "status": "observed",
+      "hbm_used_mb": 15908,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 49628,
+      "chip": 0,
+      "bus_id": "0000:42:00.0"
+    },
+    "after": {
+      "index": 7,
+      "available": true,
+      "status": "observed",
+      "hbm_used_mb": 15910,
+      "hbm_total_mb": 65536,
+      "hbm_free_mb": 49626,
+      "chip": 0,
+      "bus_id": "0000:42:00.0"
+    },
+    "used_delta_mb": 2,
+    "free_delta_mb": -2,
+    "external_process_changes": [
+      {
+        "pid": 1601397,
+        "chip": 0,
+        "before_mb": 12417,
+        "after_mb": 12417,
+        "delta_mb": 0
+      }
+    ],
+    "owned_normal_exit": true,
+    "near_background": null,
+    "scope": "physical NPU7 actual MB evidence plus owned exit; nonzero aggregate delta requires shared-load review, no replacement free threshold",
+    "reason": "recovery not verified: inspect NPU7 numeric evidence, external changes and owned cleanup; unknown is not zero"
+  },
+  "integrity": {
+    "source_changes": [],
+    "config_changed": false,
+    "source_identity_complete": true,
+    "shared_service_preserved": true,
+    "shared_before": {
+      "available": true,
+      "pid": 1601397,
+      "birth": 1791963491.5,
+      "listening_ports": [
+        [
+          "127.0.0.1",
+          8007
+        ]
+      ],
+      "alive": true,
+      "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+    },
+    "shared_after": {
+      "available": true,
+      "pid": 1601397,
+      "birth": 1791963491.5,
+      "listening_ports": [
+        [
+          "127.0.0.1",
+          8007
+        ]
+      ],
+      "alive": true,
+      "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+    },
+    "passed": true,
+    "controller_sha256": "aad9272468908e2148dd78a6c059b1abd28e651df2f133b6b5ec73d8cfba6414",
+    "controller_unchanged": true
+  },
+  "formal_matrix_complete": false,
+  "limits": [
+    "N5 cannot replace N6 resident acceptance and is not long-term stability proof.",
+    "HBM raw MB snapshots contain TTL repeats; resource timestamps deduplicated, gaps not interpolated.",
+    "Allocator current values may reflect last worker status/RPC, not a synchronized global atomic snapshot.",
+    "Different owner maxima are not summed; reserved-allocated is not all immediately releasable.",
+    "Pool wait/inference are accumulated host envelopes, not additive end-to-end latency or kernel time.",
+    "Host/swap system counters include external shared load and do not uniquely attribute pressure to this service."
+  ]
+}

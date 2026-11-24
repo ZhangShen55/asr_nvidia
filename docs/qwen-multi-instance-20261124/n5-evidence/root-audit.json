@@ -1,0 +1,41 @@
+{
+  "utc": "2026-11-24T02:03:26.375512+00:00",
+  "remaining_owned": [],
+  "controller_original_identity_alive": false,
+  "shared_pid": 1601397,
+  "shared_birth": 1791963491.5,
+  "shared_listening_ports": [
+    8007
+  ],
+  "test_port_observation_s": 5.275705789215863,
+  "test_port_listening": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false
+  ],
+  "cache_files": [],
+  "root_configuration_unchanged": true,
+  "candidate_only_N6_to_N5": true,
+  "business_sources_unchanged": true,
+  "raw_integrity_passed": true,
+  "shutdown_exit_code": 0,
+  "shutdown_forced": false
+}

@@ -327,8 +327,9 @@ class ProbeResponse:
         return {"segments": [{"segment_text": "fixture"}], "processing_status": "complete", "segment_warnings": []}
 
 
+@pytest.mark.parametrize("owner_count", [5, 6])
 @async_test
-async def test_admission_probe_requires_observed_real_capacity_windows(tmp_path):
+async def test_admission_probe_requires_observed_real_capacity_windows(tmp_path, owner_count):
     # 仅测试controller时序的CPU替身；生产函数始终发送真实HTTP，不注入假hold服务。
     clip = tmp_path / "clip.wav"
     clip.write_bytes(b"fixture")
@@ -341,7 +342,7 @@ async def test_admission_probe_requires_observed_real_capacity_windows(tmp_path)
         async def post(self, *args, **kwargs):
             nonlocal active, enhanced, rejected
             is_b = kwargs["data"]["showSpk"] == "true"
-            if active == 6:
+            if active == owner_count:
                 rejected += 1
                 if rejected == 2:
                     finish.set()
@@ -357,10 +358,10 @@ async def test_admission_probe_requires_observed_real_capacity_windows(tmp_path)
                 active -= 1
                 enhanced -= int(is_b)
     owner = SimpleNamespace(process=SimpleNamespace(poll=lambda: None), register=lambda: None)
-    result = await controller.admission_probes(Client(), clip, tmp_path / "probe", owner)
+    result = await controller.admission_probes(Client(), clip, tmp_path / "probe", owner, owner_count=owner_count)
     assert result["passed"] and result["records"]["fifthB"]["code"] == 4017
     assert result["records"]["fullA"]["code"] == result["records"]["fullB"]["code"] == 4013
-    assert any(row["audio"]["active_total"] == 6 and row["B"]["active"] == 4 for row in result["observations"])
+    assert any(row["audio"]["active_total"] == owner_count and row["B"]["active"] == 4 for row in result["observations"])
     assert active == enhanced == 0
 
 
@@ -481,3 +482,60 @@ def test_namespace_socket_probe_matches_only_target_owned_inodes(tmp_path):
     (process / "net/tcp6").write_text(header +
         "0: 00000000000000000000000001000000:1F48 00000000000000000000000000000000:0000 0A 0:0 0:0 0 0 0 888\n")
     assert controller.namespace_listening_ports(123, proc_root=tmp_path) == [("127.0.0.1", 8007), ("::1", 8008)]
+
+
+@pytest.mark.parametrize("count", [5, 6])
+def test_phase_plan_matches_explicit_instance_count_without_silent_fallback(count):
+    assert controller.phase_plan(count) == [f"A{count}", "A4", "B4", f"A{count}-resident"]
+    with pytest.raises(ValueError):
+        controller.phase_plan(count, [f"A{count}-resident"])
+    with pytest.raises(ValueError):
+        controller.phase_plan(count, ["A5" if count == 6 else "A6"])
+
+
+def five_owner_status():
+    status = good_status()
+    q = status["qwenModel"]
+    q["instances"] = q["instances"][:5]
+    q["capacity"] = 5
+    q["owner_pool"].update(configured=5, healthy=5, configured_global_segments=80)
+    q["batch_scheduler"].update(capacity=80, peak_inflight=80)
+    status["audioConcurrency"]["configured_total"] = 5
+    return status
+
+
+def test_n5_requires_explicit_selection_exact_owner_evidence_and_eighty_limit():
+    config = config_bytes().replace(b"local_instance_count=6", b"local_instance_count=5")
+    with pytest.raises(ValueError):
+        controller.deployment_contract(config)
+    expected = controller.deployment_contract(config, instance_count=5)
+    assert expected["N"] == 5 and expected["global"] == 80
+    with pytest.raises(ValueError):
+        controller.deployment_contract(config_bytes(), instance_count=5)
+    status = five_owner_status()
+    covered = covered_owners(status)
+    assert controller.service_validation(status, expected, baseline=covered, idle=True, resident=True)["passed"]
+    assert not controller.service_validation(good_status(), expected)["passed"]
+    status["qwenModel"]["batch_scheduler"]["running_members"] = 81
+    assert Safety(owner_count=5).check(status) == "qwen_global_active_limit"
+    status["qwenModel"]["batch_scheduler"]["running_members"] = 0
+    status["qwenModel"]["batch_scheduler"]["peak_inflight"] = 81
+    assert not controller.service_validation(status, expected, baseline=covered)["passed"]
+
+
+@async_test
+async def test_n5_batch_stops_at_eighty_not_the_old_ninety_six(tmp_path):
+    clip = tmp_path / "clip.wav"
+    clip.write_bytes(b"fixture")
+    status = five_owner_status()
+    status["qwenModel"]["batch_scheduler"]["running_members"] = 81
+    class Client:
+        async def post(self, *args, **kwargs):
+            await asyncio.Event().wait()
+        async def get(self, *args, **kwargs):
+            return SimpleNamespace(raise_for_status=lambda: None, json=lambda: status)
+    owner = SimpleNamespace(process=SimpleNamespace(poll=lambda: None), register=lambda: None)
+    result = await batch(Client(), [{"sample_id": "a1", "path": str(clip)}], "A", tmp_path / "n5", owner,
+                         hard_s=3, owner_count=5)
+    assert result["trigger"] == "qwen_global_active_limit"
+    assert result["all_request_latency"] is None

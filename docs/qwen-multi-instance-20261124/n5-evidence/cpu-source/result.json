@@ -1,0 +1,107 @@
+{
+  "returncode": 0,
+  "elapsed_s": 27.438602020032704,
+  "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+  "device_weight_guard_records": [
+    "2834506 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834506 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834506 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834506 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834506 CPU_LOOPBACK_BIND ('127.0.0.1', 0)",
+    "2834506 CPU_LOOPBACK_BIND ('127.0.0.1', 0)"
+  ],
+  "cache_mutation_intercepts": [],
+  "isolation": {
+    "TMPDIR": "/tmp/asr-cpu-jkvllw8n",
+    "cache_dir": "/tmp/asr-cpu-jkvllw8n/seacraft_asr",
+    "creator_pid": 2834381,
+    "creator_create_time": 1795484488.23,
+    "r4_guard": "/tmp/asr-cam-full-v9-cpu-guard-v4-cicpsxhw/sitecustomize.py",
+    "r4_guard_sha256": "8cbc95bd47e620c25fcb92735038084361c1c57b63404cc2e3b3ff1655c08863",
+    "guard_path": "/tmp/asr-cpu-jkvllw8n/guard",
+    "guard_sha256": "5f112116ccb993275a8c940239d5f699c87da00d17ae7e4b78e96e3fa2b5b121",
+    "plugin_path": "/tmp/asr-cpu-jkvllw8n/plugin",
+    "plugin_sha256": "9de93ba600d9d2b9dd21a1cc283aef46cc658da7a8779d5ac5eedceb62201543",
+    "mode": "source",
+    "source_root": "/home/zhangs/asr_nvidia",
+    "protected_root": "/tmp/qwen-continuous-protected-20261121-tx99hzp0",
+    "scope": "private short TMPDIR before tested Python imports; shared production cache mutation prohibited; metadata reads allowed"
+  },
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "-m",
+    "pytest",
+    "-q",
+    "/home/zhangs/asr_nvidia/tests/test_qwen_multi_controller.py",
+    "/home/zhangs/asr_nvidia/tests/test_throughput_harness.py",
+    "/home/zhangs/asr_nvidia/tests/test_qwen_multi_config.py"
+  ],
+  "passed": true,
+  "source_changes": [],
+  "remaining_owned": [],
+  "observed_children": [
+    {
+      "pid": 2834513,
+      "birth": 1795484492.15
+    },
+    {
+      "pid": 2834514,
+      "birth": 1795484492.15
+    },
+    {
+      "pid": 2834518,
+      "birth": 1795484495.7
+    },
+    {
+      "pid": 2834520,
+      "birth": 1795484496.14
+    },
+    {
+      "pid": 2834547,
+      "birth": 1795484497.13
+    },
+    {
+      "pid": 2834561,
+      "birth": 1795484505.88
+    },
+    {
+      "pid": 2834571,
+      "birth": 1795484514.8
+    }
+  ],
+  "source_sha256": {
+    "core/request_telemetry.py": "7c7c0a41e25e8d356bf29f4bfa4fba22a992f74a70e63bd0880976640e3084e7",
+    "core/qwen_continuous_process.py": "13d08cb2774898300066ce69dfeb8813901732d9ae7b645b7453244e0f6d39c7",
+    "core/vad_volume.py": "e97dfdf5cc4dc5a38fc5a5938dc3c20a70e81e09d6c2b50a2212295de624e6a4",
+    "core/progress.py": "8969e793015b8175e2990f5221b6e69e0b8c5072b64ccfa77e55b19e6a67bfb8",
+    "core/models.py": "2d8078998d8b866d35cc011f93acfc32556219adb2e5aed4e82b8502104534a0",
+    "core/qwen_asr_process.py": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e",
+    "core/deployment.py": "107b7c00dd0469c97acadcab34c32182a0321b67bd7e39ee740d1c89feb65966",
+    "core/model_loading.py": "eaabd44ad9234cd2e335a2309cca07f22f1fc91f4e6d5417bfdbcfc047995d9c",
+    "core/async_utils.py": "bbf61919dc7a5b986450c9b00ffed7df0980c99e94c5f16c4f2dca1f35abe5c6",
+    "core/config.py": "f15e65b9a1e4901e199c271957cfe48e2f9fc3e7fcfc5de94f1a10c3fe563a68",
+    "core/qwen_asr_client.py": "48de1329467d9cb279074f2e013c718e06a146a49a772fadb96e4d959890d731",
+    "core/segment_pipeline.py": "90214f5e1e7f95aef77fde336ef971dac8a9fdc703f2fb21273fdeec094eb32a",
+    "core/vad.py": "5977c424850ded7cd67d76708a52fa5750b01461723d6d35b1b5a0fe4a08edb1",
+    "core/npu_resource_status.py": "38dce7800a4e1bbc0fc11a7f4a50a545be3df9aa2e150359b36cb3a6ccc34bb6",
+    "core/logging.py": "30e309f26c3e8ec5ccde044bbb53cf0d1a9084fca4fd8773ae9c2018ff0c64fa",
+    "core/performance_watchdog.py": "6a8bad32fa704c9ccc0cb31a33e485577568393aa3ea2bfff4405b7513231db0",
+    "core/qwen_continuous_runtime.py": "54566e37e25930100d61883d055f19f2aea7637a5ded051113d82dec070fb955",
+    "core/qwen_asr_queue.py": "8e5fb766b31689484076c8b6c1764b2d9120455f4a9e07732d0e02facf636e06",
+    "core/status.py": "4ac95ee0355e1c984dce09132e88d8003eaec0502095cde0c39cda0b4d3f223f",
+    "core/qwen_continuous_scheduler.py": "a4954d5e1b00d54a166ca7c1959aafac3de432c9d7b246340b487bd7abf4db4d",
+    "core/qwen_asr_runtime.py": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe",
+    "core/resource_diagnostics.py": "51b93a8193596e9a1c9b2cfab9a2f162d30cdaaa53f19a10ecee667870e18ae5",
+    "core/local_inference.py": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01",
+    "core/vad_pool.py": "196a4fff84c2b25d156f9840fba6d8e0c1162b4a7a23ef65ac6d4533902505fa",
+    "core/qwen_batch_scheduler.py": "399ffb0e4d8f282b597320c8acd6a0de9cae472d0442a625c37b265bff1ffbfc",
+    "core/cam_process.py": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3",
+    "core/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "api/routes/asr_v3.py": "cc27724909893179022a6be4b603e9a6945ba3050b41297a2fb2ece89ac626d0",
+    "api/routes/asr_qwen_common.py": "e3b6ce2cbcf04c61fffc07e59e587ef768dac369aa871665f9a0d67af8c279ec",
+    "api/routes/status.py": "492598502f0707775be7ae5a3b502f829bc6b6d31ff9790d6d6fd4db83f15394",
+    "api/routes/asr_common.py": "5a04bac9bca03c62de15605966c23ae4cc84cd20fe1b44520c43e60152ed29b6",
+    "api/routes/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+  }
+}

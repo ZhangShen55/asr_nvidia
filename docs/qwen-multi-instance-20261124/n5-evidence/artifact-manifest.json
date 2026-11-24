@@ -1,0 +1,191 @@
+{
+  "generated_utc": "2026-11-24T02:06:51.257822+00:00",
+  "scope": "N5 report and copied evidence; self excluded; original larger traces preserved at followup-m5-s16-v1",
+  "files": [
+    {
+      "path": "docs/qwen-multi-instance-20261124/N5-MEMORY-REPORT.json",
+      "bytes": 92996,
+      "sha256": "69e1070bdafcc3d5bdf12adbca8957b8d012a7a07b1c95e876623eafa6734e2e"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/N5-MEMORY-REPORT.md",
+      "bytes": 5133,
+      "sha256": "10d7b12deb143072a93f7455edc85d0d6d1ee4ee9a3f2e35a4c083dc58d9c2e8"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/N5-REPORT.md",
+      "bytes": 5090,
+      "sha256": "b6f1a4beb55051f0e51f356f01bf80d5b246713de81c52a9072705e61df77167"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/A4/summary.json",
+      "bytes": 7447,
+      "sha256": "22d084c2c75e6b364a9795606dc08ecc7f832b7308b1d930a3abf756de172158"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/A5/summary.json",
+      "bytes": 9083,
+      "sha256": "7caa6017a032ec40a2d72f5f3d906ce3b55edd679cd1a1e3b74726f841523b74"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/A5-resident/summary.json",
+      "bytes": 9088,
+      "sha256": "c7382e24acb621ca8a3fd10d607a336d401bff81fd23574d9be781cc378c3754"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/B-cold-warmup/summary.json",
+      "bytes": 8772,
+      "sha256": "ab5def656017888d0a1ca1c697548157f83af611269c7aa1568d6fce92a4d4db"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/B4/summary.json",
+      "bytes": 9306,
+      "sha256": "66bf9b40f6672f1f9dab625f75f58873273d2540041b134de7e4d8ded5bb8e0c"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/admission-probes/summary.json",
+      "bytes": 3714,
+      "sha256": "c88363ff8505a1f5ee6ba2bad0e1149f2688f39d2020afc13ec2a5b3cca72e97"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/background-after.json",
+      "bytes": 34635,
+      "sha256": "e2aec45e1d3b96b69b047e551c116f1c89ff3cc8ab9c71150ef0451bc4d4c8d3"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/background-before.json",
+      "bytes": 34638,
+      "sha256": "35359b749446bdfd7f71c58bf68f30768545daf34bb00c7ac43431ab519e482f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/change-validation.json",
+      "bytes": 482,
+      "sha256": "318467fbf93caf8ac24a76460c10f79a6bf6b3d2d249a3f3a38899c3e9ffb801"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/config.toml",
+      "bytes": 7481,
+      "sha256": "1705c175bda4e3304421bbf2f64630d67f883dcf9102565dd6df2864620ca5eb"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-protected/owner.json",
+      "bytes": 40,
+      "sha256": "30949b06d0715af9738294f48d7610b2fc42fc160f2ba345312c4b5bc3e28684"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-protected/pytest-summary.txt",
+      "bytes": 21,
+      "sha256": "71872a6d6495b38d079d2c5b79257ccd5ed652f3c6d6e5f9bcfb0e9719341499"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-protected/result.json",
+      "bytes": 7923,
+      "sha256": "f09a4fa22a93b74f236825651cd107935bb1936bef56f613f6def4816bad8401"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-protected-audit/owner.json",
+      "bytes": 40,
+      "sha256": "181b04d926c369d58b6d9f2849160edbfeee771952fd6f55ec9839e005df396f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-protected-audit/pytest-summary.txt",
+      "bytes": 21,
+      "sha256": "7aba507ab2db8165c894a27e1876d5b2917750fc70d6d219c50eabaf12cb8186"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-protected-audit/required-node-evidence.json",
+      "bytes": 5119,
+      "sha256": "f58c09a37cb9c3e2ca845262737cb2c5f71a5909100448118f0038aba9f83181"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-protected-audit/result.json",
+      "bytes": 7964,
+      "sha256": "f8cbb05fce00daec6e63e28243d80c1591a1b9d8804be17cc5f6df7239197d7c"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-source/owner.json",
+      "bytes": 40,
+      "sha256": "7480be638818058aa73549aa39c55f04712cafef89d479deb76eefae0c8a4b3a"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-source/pytest-summary.txt",
+      "bytes": 21,
+      "sha256": "c4f7001cb026d25b2eb117f8b6dc51d23f25f8c080a5b328f05c1215bea26d30"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/cpu-source/result.json",
+      "bytes": 5505,
+      "sha256": "7f6ec30bfdb3c260e78230f0ecc080ba81c7cf263f17cdabd84320d35892c3bf"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/inputs.json",
+      "bytes": 3458,
+      "sha256": "876a4c3cd710c7043863e9ade4d4006fc0a3e247862fd2c0f4d74513cfdf5327"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/launch.json",
+      "bytes": 1031,
+      "sha256": "f9926aed082dbbf5506ef7bb65ea33f27a097ce7038c5d25472513d17b5a10ea"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/main-validation.json",
+      "bytes": 1553,
+      "sha256": "6c20e8f864db74d4b6be89fa25dd003be481634bbf9ebe6f587b16083971dfba"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/owner-coverage.json",
+      "bytes": 9444,
+      "sha256": "c5ce5ad21b8289c2b6aa6927964a1730f08b323215a9e678ff7025f60ca61ca3"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/result-summary.json",
+      "bytes": 3179,
+      "sha256": "17d0fc98bdb157ad3dc56d039bfacbec0a362f922464d318e5cbd0b328dd8c11"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/root-audit.json",
+      "bytes": 752,
+      "sha256": "71e73dc2bf72c89ca19f1b5c09a33126d684b49ffa8796f679a3333e04e2a43c"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/root-minimum-hbm-check.json",
+      "bytes": 143,
+      "sha256": "1e62c4c33823cbf9570d1d97f967fb731ba052b0968499c3e0f16fe112375c3f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/run.json",
+      "bytes": 83836,
+      "sha256": "4f03c5c6220df7c4986369db457a126003a772b9b7409d68ed3d8f9df9dbdb98"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/service-launch.json",
+      "bytes": 454,
+      "sha256": "5f333e19e0bed693ba9460670ae8f97e7f98ff1c78c3286a5b3037286fb967d9"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/setup.json",
+      "bytes": 656,
+      "sha256": "81a6eeb4d6fcb2909038db09c968e92317014d895d4957824129d0c9cf9aefb0"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/shutdown.json",
+      "bytes": 17009,
+      "sha256": "2ed0d3cf613a89bd021c8e6eedb0fcb23d90741c911744d8e4677daf47b9d7b0"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/source-after.json",
+      "bytes": 10824,
+      "sha256": "fbfe60efd102eb0fd0812d98614e8b540ed66aa3beb1b075520d759e392d270f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/source-before.json",
+      "bytes": 10824,
+      "sha256": "fbfe60efd102eb0fd0812d98614e8b540ed66aa3beb1b075520d759e392d270f"
+    },
+    {
+      "path": "docs/qwen-multi-instance-20261124/n5-evidence/warmup/summary.json",
+      "bytes": 3027,
+      "sha256": "2e154534c544bc4d93e85ac812def89131cfe3e3ec14e2115a7353dca5a6ffad"
+    }
+  ]
+}

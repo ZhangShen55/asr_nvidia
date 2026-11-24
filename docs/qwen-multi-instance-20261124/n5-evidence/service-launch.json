@@ -1,0 +1,17 @@
+{
+  "command": [
+    "/home/zhangs/conda-envs/asr/bin/python",
+    "/home/zhangs/asr_nvidia/main.py",
+    "--host",
+    "127.0.0.1",
+    "--port",
+    "18083",
+    "--workers",
+    "1",
+    "--timeout-graceful-shutdown",
+    "30"
+  ],
+  "cwd": "/home/zhangs/asr_nvidia/logs/qwen-multi-instance-20261124/followup-m5-s16-v1/service-cwd",
+  "CONFIG_PATH": "/tmp/qwen-n5-followup-20261124-1wdymzw8/config.n5.toml",
+  "runtime_configuration_changed": false
+}

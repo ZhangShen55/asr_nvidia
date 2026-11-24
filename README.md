@@ -596,3 +596,7 @@ CAM++和emotion2vec数组独立，各1为本轮测试候选，实际B4已4/4完�
 continuous保留已批准并用于noHBM参考的在线复读保护 `online_repetition_enabled=true` 与 `continuous_admission_drain_ms=3`（收到提交后的有界IPC交接），不改变检测阈值或max_new_tokens；显式legacy缺省仍false/0。3ms不是重新等待凑整批或续期长等待，不影响无新段的decode周期。本次默认迁移不另行更换prefill/KV算法。
 
 本轮仅宿主根配置实测，Docker未构建/上线；模板保留原有VAD过滤和CAM thread模式等环境差异，不能套用宿主成绩。原始计时配置与当前根配置解析值完全相等，测试后只补充验收注释。
+
+### 2026-11-24用户授权N5补充验证
+
+根配置副本仅N6→5，正式默认和业务代码保持不变。原完整a1～a5纯A5 5/5，P50/P95/墙钟173.70/183.18/183.83秒；A4 4/4墙钟195.44秒；双增强B4 4/4，284.91/296.24/296.96秒；增强驻留A5 5/5，173.32/203.23/206.12秒，严格200目标超约3.06%。本轮未复现OOM，最低HBM采样free5131原始MB（约5.01GiB），CAM排队/PCM反压及allocator缓存增长仍在。正常exit0、owned/端口/PCM回收、共享1601397/8007保留；N5不能替代原N6必需验收，change仍27/29/open。详见docs/qwen-multi-instance-20261124/N5-REPORT.md。

@@ -1,0 +1,21 @@
+{
+  "root": "/tmp/qwen-n5-followup-20261124-1wdymzw8",
+  "configuration": "formal root copy, only qwen_asr.local_instance_count6->5",
+  "root_config_sha256": "ea371bf1611de8f3f70806b44f3c4b73afa0d63ca71045e5bba1c5c8d1114656",
+  "candidate_config": "/tmp/qwen-n5-followup-20261124-1wdymzw8/config.n5.toml",
+  "baseline_head": "cd0ae1b863067acca636b55ba2ddfbb40cb17139",
+  "protected_stage": "/tmp/qwen-multi-protected-20261124-ah3u4jrq",
+  "selected_samples": [
+    "a1",
+    "a2",
+    "a3",
+    "a4",
+    "a5"
+  ],
+  "omitted_sample": "a6",
+  "owners": 5,
+  "segment_per_owner": 16,
+  "global": 80,
+  "shared_pid": 1601397,
+  "shared_birth": 1791963491.5
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "sample_id": "a1",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lgqjog73lrabmnK/oi7Hor60t5aSa5Lq677yI5Lit6Iux77yJLndhdg==",
+    "sha256": "16cdf4a725788a2d46594fa4d9aaac5e75f8d19e0303e04a894109d365b96b70",
+    "audio_seconds": 3117.312,
+    "display_path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u50a8\u80fd\u5b66\u672f\u82f1\u8bed-\u591a\u4eba\uff08\u4e2d\u82f1\uff09.wav",
+    "path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u50a8\u80fd\u5b66\u672f\u82f1\u8bed-\u591a\u4eba\uff08\u4e2d\u82f1\uff09.wav"
+  },
+  {
+    "sample_id": "a2",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lj43luLjnp6/liIbkuI7nuqfmlbDvvIjkuK3ms5XvvIkud2F2",
+    "sha256": "ce5a4529cd1ce7ac3780d70b6c8bed8a7fc7a1ee277ee589476e95c1b4416f79",
+    "audio_seconds": 3287.296,
+    "display_path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u53cd\u5e38\u79ef\u5206\u4e0e\u7ea7\u6570\uff08\u4e2d\u6cd5\uff09.wav",
+    "path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u53cd\u5e38\u79ef\u5206\u4e0e\u7ea7\u6570\uff08\u4e2d\u6cd5\uff09.wav"
+  },
+  {
+    "sample_id": "a3",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lpJrmqKHmgIHmnLrlmajlrabkuaAx77yI5Lit6Iux77yJLndhdg==",
+    "sha256": "4e9afbb6c8855a180c95de41c03ff33aedb51fe4acc81f1879bb6f7d728c5a1d",
+    "audio_seconds": 3306.048,
+    "display_path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u591a\u6a21\u6001\u673a\u5668\u5b66\u4e601\uff08\u4e2d\u82f1\uff09.wav",
+    "path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u591a\u6a21\u6001\u673a\u5668\u5b66\u4e601\uff08\u4e2d\u82f1\uff09.wav"
+  },
+  {
+    "sample_id": "a4",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lpJrmqKHmgIHmnLrlmajlrabkuaAyKOS4reiLsSkud2F2",
+    "sha256": "d937eba336cd8efaae80dfad526bd7ef0f80b116102ab961e5e1de541d19a305",
+    "audio_seconds": 3284.416,
+    "display_path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u591a\u6a21\u6001\u673a\u5668\u5b66\u4e602(\u4e2d\u82f1).wav",
+    "path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u591a\u6a21\u6001\u673a\u5668\u5b66\u4e602(\u4e2d\u82f1).wav"
+  },
+  {
+    "sample_id": "a5",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/lpJrmqKHmgIHmnLrlmajlrabkuaAz77yI5Lit6Iux77yJLndhdg==",
+    "sha256": "f393c3e6152a027e82ebbdb1fe1c8bb91ef4e52ff919994fc0369ed62b88900f",
+    "audio_seconds": 2981.12,
+    "display_path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u591a\u6a21\u6001\u673a\u5668\u5b66\u4e603\uff08\u4e2d\u82f1\uff09.wav",
+    "path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u591a\u6a21\u6001\u673a\u5668\u5b66\u4e603\uff08\u4e2d\u82f1\uff09.wav"
+  },
+  {
+    "sample_id": "a6",
+    "path_bytes_b64": "L2hvbWUvemhhbmdzL2Fzcl9udmlkaWEvdGVzdC90ZXN0X2F1ZGlvL+ivvueoiy/nur/mgKfku6PmlbDkuI7op6PmnpDlh6DkvZXvvIjkuK3mlofvvIkud2F2",
+    "sha256": "d2485c6e64bba4285458b8c442191349ccbff581c14d9ba0d8d206627f93fab6",
+    "audio_seconds": 3121.1306875,
+    "display_path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u7ebf\u6027\u4ee3\u6570\u4e0e\u89e3\u6790\u51e0\u4f55\uff08\u4e2d\u6587\uff09.wav",
+    "path": "/home/zhangs/asr_nvidia/test/test_audio/\u8bfe\u7a0b/\u7ebf\u6027\u4ee3\u6570\u4e0e\u89e3\u6790\u51e0\u4f55\uff08\u4e2d\u6587\uff09.wav"
+  }
+]
