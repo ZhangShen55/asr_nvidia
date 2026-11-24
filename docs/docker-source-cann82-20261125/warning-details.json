@@ -1,0 +1,162 @@
+[
+  {
+    "sample_id": "a2",
+    "segment_index": 8,
+    "bg": "64.08",
+    "ed": "72.09",
+    "reason": "repetition_stop",
+    "action": "discard_unrecoverable",
+    "recovered": false,
+    "retained_text": null
+  },
+  {
+    "sample_id": "a2",
+    "segment_index": 445,
+    "bg": "2364.42",
+    "ed": "2371.43",
+    "reason": "repetition_stop",
+    "action": "repetition_collapsed",
+    "recovered": true,
+    "retained_text": "C'est quoi la question de l'exercice? Trouvez un équivalent simple. Donc, ici"
+  },
+  {
+    "sample_id": "a2",
+    "segment_index": 544,
+    "bg": "2886.43",
+    "ed": "2894.44",
+    "reason": "repetition_stop",
+    "action": "repetition_collapsed",
+    "recovered": true,
+    "retained_text": "不，还要给我的，给我"
+  },
+  {
+    "sample_id": "a2",
+    "segment_index": 581,
+    "bg": "3131.32",
+    "ed": "3139.33",
+    "reason": "length_limit",
+    "action": "repetition_collapsed",
+    "recovered": true,
+    "retained_text": "我这，稍微把它改一下，嗯"
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 29,
+    "bg": "148.49",
+    "ed": "156.50",
+    "reason": "repetition_stop",
+    "action": "discard_unrecoverable",
+    "recovered": false,
+    "retained_text": null
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 262,
+    "bg": "1394.97",
+    "ed": "1398.24",
+    "reason": "repetition_stop",
+    "action": "discard_unrecoverable",
+    "recovered": false,
+    "retained_text": null
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 268,
+    "bg": "1411.07",
+    "ed": "1412.74",
+    "reason": "repetition_stop",
+    "action": "discard_unrecoverable",
+    "recovered": false,
+    "retained_text": null
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 515,
+    "bg": "2415.56",
+    "ed": "2421.26",
+    "reason": "repetition_stop",
+    "action": "repetition_collapsed",
+    "recovered": true,
+    "retained_text": "十六还是多少？一二十六，"
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 545,
+    "bg": "2571.64",
+    "ed": "2579.65",
+    "reason": "repetition_stop",
+    "action": "repetition_collapsed",
+    "recovered": true,
+    "retained_text": "没事，没事，来，来，就拍吧，"
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 547,
+    "bg": "2582.98",
+    "ed": "2589.87",
+    "reason": "repetition_stop",
+    "action": "discard_unrecoverable",
+    "recovered": false,
+    "retained_text": null
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 560,
+    "bg": "2644.88",
+    "ed": "2648.92",
+    "reason": "repetition_stop",
+    "action": "discard_unrecoverable",
+    "recovered": false,
+    "retained_text": null
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 573,
+    "bg": "2706.99",
+    "ed": "2711.42",
+    "reason": "repetition_stop",
+    "action": "repetition_collapsed",
+    "recovered": true,
+    "retained_text": "没事"
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 581,
+    "bg": "2739.08",
+    "ed": "2742.88",
+    "reason": "repetition_stop",
+    "action": "repetition_collapsed",
+    "recovered": true,
+    "retained_text": "我们边是送"
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 620,
+    "bg": "2937.87",
+    "ed": "2941.61",
+    "reason": "repetition_stop",
+    "action": "discard_unrecoverable",
+    "recovered": false,
+    "retained_text": null
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 622,
+    "bg": "2948.70",
+    "ed": "2954.40",
+    "reason": "repetition_stop",
+    "action": "repetition_collapsed",
+    "recovered": true,
+    "retained_text": "他他，不是，"
+  },
+  {
+    "sample_id": "a4",
+    "segment_index": 667,
+    "bg": "3136.77",
+    "ed": "3144.78",
+    "reason": "repetition_stop",
+    "action": "repetition_collapsed",
+    "recovered": true,
+    "retained_text": "我"
+  }
+]

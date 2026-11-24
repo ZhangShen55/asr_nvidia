@@ -226,3 +226,7 @@ docker image inspect "$FINAL_IMAGE" --format '{{.Id}}'
 ```
 
 清理前按本次资源登记逐项列出镜像/container/volume/builder、核对出生归属及容器引用。移除本次独立builder及其cache、registry/底座和frontend传输alias、候选多余tag、无引用的本次新增helperimage（含frontend源镜像）和临时构建材料。保留最终及基础镜像和它们必需的共享层、所有原有镜像/共享服务、日志报告。失败阶段保留缓存用于继续修复；不得执行全局docker system/image/builder prune或按名称批量kill。具体本次清理ID及前后核验写入验收报告，不让通用命令误删其它项目。
+
+## 2026-11-25实测交付
+
+镜像`asr_offline_910b:v3_20261125`（ID `sha256:ef7b8add6a42c0297dc66eaa58718a67df8fba688d1738f1c314fe59b8565c5a`）已通过真实完整B4和正常退出。冷加载至HTTP就绪约416～419秒，四路短clip暖身30秒单列；up -d返回不表示模型就绪，以状态/health确认。B4完成4/4，P50/P95/墙钟182.44/196.25/198.65秒，严格无警告2/4；16警告含9恢复/7丢弃，非人工准确率认证。详见[报告](../docs/docker-source-cann82-20261125/REPORT.md)。本轮中间镜像、私有构建缓存及辅助资源已清，测试容器已释放。
