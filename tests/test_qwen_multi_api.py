@@ -234,6 +234,8 @@ def test_lifespan_binds_same_preloaded_pool_before_ready(monkeypatch, tmp_path):
     async def get_client():
         events.append(('client',))
         return client
+    async def preload_enhancements(): pass
+    monkeypatch.setattr(main, 'preload_v3_model_pools', preload_enhancements)
     monkeypatch.setattr(main, 'start_vad_pool', vad)
     monkeypatch.setattr(main, 'preload_qwen_client', preload)
     monkeypatch.setattr(main, 'get_qwen_client', get_client)

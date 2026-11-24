@@ -30,7 +30,7 @@
 **SeaCraftASR**：面向课堂录音的离线语音转写服务（FastAPI）。
 
 - 当前**只有 v3 一条链路**：`POST /v3/seacraft_asr`。v1.1.8（SeACo-Paraformer + PUNC + Whisper）和 v2 路由已下线，代码与模型均已清理，不要"顺手恢复"。
-- FSMN-VAD是固定spawn进程池；CAM++懒加载池可选thread/process（loader兼容缺省thread，当前模板process4实例），emotion2vec保持主进程runner。
+- FSMN-VAD是固定spawn进程池；CAM++启动预加载池可选thread/process（loader兼容缺省thread，当前模板process4实例），emotion2vec保持主进程runner。
 - **Qwen3-ASR使用本地原始权重**，BF16 / npu:7；当前continuous/process、顺序预加载4份owner，每请求独占一份、每份窗口16、全局64，HTTP仍1；CAM++4个process实例、emo1。用户已采用该最终配置，宿主B4与增强驻留A4已完成4/4验收（200.10/183.47秒）。历史N6/N5结果及失败保留，详见文末检查点。
 - 对外只有三个接口：`POST /v3/seacraft_asr`、`GET /get_status`、`DELETE /clear_tasks_list`。
 
@@ -118,7 +118,7 @@ Qwen完成即还自身名额，增强队列/汇合受段数和PCM字节预算反
 | `core/qwen_asr_process.py` | 单Qwen spawn模型进程、READY/RPC归属、独立资源与显式关闭grace；CPU状态不触发加载 |
 | `core/qwen_batch_scheduler.py` | 公平共享队列、长度分桶、有限等待及估算帧/token预算 |
 | `core/segment_pipeline.py`    | 每音频有限元worker、独立全局段数/PCM预算、取消安全汇合及异常链脱离 |
-| `core/models.py`               | CAM++/emo懒加载、共享有界预取、FIFO反压、即时交接、HBM/忙闲状态 |
+| `core/models.py`               | CAM++/emo启动预加载、共享有界预取、FIFO反压、即时交接、HBM/忙闲状态 |
 | `core/cam_process.py` | CAM原生FP32模型spawn worker、READY/RPC出生归属、Tensor[1,192]与显式关闭 |
 | `core/local_inference.py`      | 设备 → 后端映射（`pytorch_cpu` / `torch_npu`） |
 | `core/deployment.py`           | 昇腾 profile 启动前环境与资产校验                                 |
@@ -513,3 +513,8 @@ continuous模式对三类段生成异常做保守恢复/无法恢复警告并继
 本change完成后仅同步其六份delta并归档；旧N6共驻OOM、N5补测及三个旧open change任务不改。没有更改KV/allocator/阈值/生成策略或依赖/权重，没有Docker构建/上线，质量未认证。报告docs/qwen-multi-instance-20261124/FINAL4-REPORT.md，实际大原始日志final-m4-cam4-emo1-v1保留；上方“待验收/27of29/正式默认6”仅属此前历史检查点。测试控制器稳定清单在docs/.../test-inputs.json，active change归档不再使CLI路径失效。
 
 2026-11-24：`2026-11-23-qwen-multi-instance-serving`已29/29完成，六能力主规格已同步并严格校验，归档于`openspec/changes/archive/2026-11-23-qwen-multi-instance-serving`。当前正式默认Qwen4/CAM4/emo1；旧N6 OOM/N5结果和三个旧open change保留，不外推长期稳定/人工质量或Docker上线。所有测试服务已释放。
+
+
+### 增强模型启动预加载（2026-11-24）
+
+功能开启且设备数组非空的 CAM++、emotion2vec 在 HTTP 就绪前，按数组顺序完成全部实例的加载尝试；当前配置为 CAM4/emo1。关闭功能或空数组跳过，部分失败使用健康实例，某池全部失败仍允许其他能力服务，所需能力请求沿用原不可用错误。状态显示实际健康数及失败原因，GET 不触发加载；请求开关仅决定本次推理分支，后续请求复用已加载实例。启动耗时及权重内存占用提前发生，需重启服务生效；此步骤不执行语音 forward 暖身，首个推理仍可能有编译开销。无需新增配置或修改设备/实例数。历史懒加载描述代表此前版本。

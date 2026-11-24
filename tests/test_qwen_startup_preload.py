@@ -198,6 +198,9 @@ def patch_lifespan(monkeypatch, *, enabled=True, preload=True, fail=False, block
         events.append('qwen_closed')
     monkeypatch.setattr(main, 'start_vad_pool', start)
     monkeypatch.setattr(main, 'preload_qwen_client', load)
+    async def enhancements():
+        pass
+    monkeypatch.setattr(main, 'preload_v3_model_pools', enhancements)
     monkeypatch.setattr(main, 'stop_vad_pool', stop)
     monkeypatch.setattr(main, 'close_v3_model_pools', models)
     monkeypatch.setattr(main, 'close_qwen_client', qwen)

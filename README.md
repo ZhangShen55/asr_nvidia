@@ -31,7 +31,7 @@ FastAPI 自动文档位于 `/docs`、`/redoc` 和 `/openapi.json`。
 ├── core/
 │   ├── config.py
 │   ├── logging.py              # 日志按天 + 按大小双轮转
-│   ├── models.py               # CAM++ / emotion2vec 懒加载、共享有界预取与资源归属
+│   ├── models.py               # CAM++ / emotion2vec 启动预加载、共享有界预取与资源归属
 │   ├── vad.py                  # v3 链路的本地 VAD 切分
 │   ├── qwen_asr_client.py      # Qwen本地异步客户端（实例租约 / 批执行 / 重试）
 │   ├── qwen_asr_runtime.py     # 独立音频列表、有效mask、逐成员结果与阶段计时
@@ -85,7 +85,7 @@ CONFIG_PATH=./config.toml OMP_NUM_THREADS=4 MKL_NUM_THREADS=4 \
 ```
 
 正式入口为 `python main.py`（支持 --host/--port/--workers 1）。关闭时向本次父进程发送 TERM，先完成 lifespan 再走 Python atexit；当前 NPU 运行时可能接管 INT，不能仅以 Ctrl+C 判断退出。等待 NPU 工作及 VAD worker 退出。测试必须记录自身 PID/进程树和端口，统一 finally 收尾并核对端口解除监听；不要按名称或端口批量终止既有服务。
-启动预检校验依赖、设备及三个小模型资产，VAD 固定进程池预热后才就绪；Qwen、CAM++、emotion2vec 在首次需要时加载。Qwen 目录默认 `/home/model/Qwen3-ASR-1.7B-hf`，不再依赖外部 HTTP 服务。
+启动预检校验依赖、设备及三个小模型资产，VAD 固定进程池预热后才就绪；Qwen 按自身 preload_on_startup 策略加载；已开启且设备数组非空的 CAM++、emotion2vec 在 HTTP 就绪前完成全部实例加载尝试并常驻复用。Qwen 目录默认 `/home/model/Qwen3-ASR-1.7B-hf`，不再依赖外部 HTTP 服务。
 
 运行依赖统一为 `requirements.txt`，仅面向昇腾 910B；开发测试使用 `requirements-dev.txt`，独立构建工具使用 `requirements-build.txt`。完整 Conda/pip 参考锁位于 `environment/910b/`。环境重建使用 `scripts/rebuild_npu_env.sh` 的独立前缀，不原地升级当前 `asr`；av/pynini 仍由 Conda 提供。
 
@@ -609,3 +609,8 @@ continuous保留已批准并用于noHBM参考的在线复读保护 `online_repet
 测试控制器默认清单已移至稳定docs/qwen-multi-instance-20261124/test-inputs.json，归档后测试控制器仍可显式选择`--instance-count 4`，输出目录必须是新目录；仍需按独立端口/PID归属及故障停止流程执行，不自动重跑。
 
 2026-11-24：`2026-11-23-qwen-multi-instance-serving`已29/29完成，六能力主规格已同步并严格校验，归档于`openspec/changes/archive/2026-11-23-qwen-multi-instance-serving`。当前正式默认Qwen4/CAM4/emo1；旧N6 OOM/N5结果和三个旧open change保留，不外推长期稳定/人工质量或Docker上线。所有测试服务已释放。
+
+
+### 增强模型启动预加载（2026-11-24）
+
+功能开启且设备数组非空的 CAM++、emotion2vec 在 HTTP 就绪前，按数组顺序完成全部实例的加载尝试；当前配置为 CAM4/emo1。关闭功能或空数组跳过，部分失败使用健康实例，某池全部失败仍允许其他能力服务，所需能力请求沿用原不可用错误。状态显示实际健康数及失败原因，GET 不触发加载；请求开关仅决定本次推理分支，后续请求复用已加载实例。启动耗时及权重内存占用提前发生，需重启服务生效；此步骤不执行语音 forward 暖身，首个推理仍可能有编译开销。无需新增配置或修改设备/实例数。历史懒加载描述代表此前版本。

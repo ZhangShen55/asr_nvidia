@@ -145,7 +145,7 @@ def test_main_lifespan_has_no_collector_io_without_get_and_closes_owned_sampler(
             stack.enter_context(patch.object(main, "validate_npu_runtime", return_value={}))
             for name in ("_set_process_name", "setup_logging", "cleanup_stale_service_cache", "reset_stats"):
                 stack.enter_context(patch.object(main, name))
-            for name in ("start_vad_pool", "stop_vad_pool", "preload_qwen_client", "close_v3_model_pools", "close_qwen_client"):
+            for name in ("start_vad_pool", "stop_vad_pool", "preload_v3_model_pools", "preload_qwen_client", "close_v3_model_pools", "close_qwen_client"):
                 stack.enter_context(patch.object(main, name, AsyncMock()))
             collector = stack.enter_context(patch("core.resource_diagnostics.status_snapshot", side_effect=AssertionError("idle app did I/O")))
             app = main.create_app()
@@ -266,7 +266,7 @@ def test_shutdown_publishes_sampler_closing_but_models_close_while_collector_is_
                 stack.enter_context(patch.object(main, "validate_npu_runtime", return_value={}))
                 for name in ("_set_process_name", "setup_logging", "cleanup_stale_service_cache", "reset_stats"):
                     stack.enter_context(patch.object(main, name))
-                for name in ("start_vad_pool", "stop_vad_pool", "preload_qwen_client", "close_qwen_client"):
+                for name in ("start_vad_pool", "stop_vad_pool", "preload_v3_model_pools", "preload_qwen_client", "close_qwen_client"):
                     stack.enter_context(patch.object(main, name, AsyncMock()))
                 stack.enter_context(patch.object(main, "close_v3_model_pools", model_close))
                 stack.enter_context(patch("core.resource_diagnostics.status_snapshot", side_effect=collect))

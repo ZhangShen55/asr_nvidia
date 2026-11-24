@@ -922,8 +922,19 @@ _MODEL_POOLS = {
 }
 
 
+async def preload_v3_model_pools() -> None:
+    # 就绪前完成增强池加载尝试；健康容量与失败仍沿用各池的降级契约。
+    async with _model_lock:
+        for pool in _MODEL_POOLS.values():
+            if not pool.enabled_getter() or not pool.configured_instances:
+                continue
+            # ensure_loaded逐实例登记失败，不因一个池全失败而跳过另一池。
+            # 取消/意外异常不吞掉，由lifespan finally回收已创建的资源。
+            await pool.ensure_loaded()
+
+
 async def load_v3_models_if_needed(need_role: bool = False, need_emotion: bool = False):
-    """按请求开关懒加载对应模型池。"""
+    """按请求校验并复用对应模型池，兼容直接调用时尚未加载的情况。"""
     global _model_spk_v3, _model_emotion_v3
     validate_v3_capabilities(need_role, need_emotion)
     lock_started = time.perf_counter()

@@ -7,7 +7,7 @@ from datetime import datetime
 from core.config import settings
 from core.logging import setup_logging
 from core.qwen_asr_client import close_qwen_client, preload_qwen_client, get_qwen_client
-from core.models import close_v3_model_pools
+from core.models import close_v3_model_pools, preload_v3_model_pools
 from core.qwen_asr_queue import get_slot_manager
 from core.vad_pool import start_vad_pool, stop_vad_pool
 from core.deployment import validate_npu_runtime
@@ -103,6 +103,7 @@ async def lifespan(app: FastAPI):
             await preload_qwen_client()
             if settings.qwen_generation_mode == "continuous":
                 get_slot_manager().bind_owner_pool(await get_qwen_client())
+        await preload_v3_model_pools()
         yield
     finally:
         # 启动部分失败同样回收；调用方重复取消也不能遗弃正在关闭的资源。

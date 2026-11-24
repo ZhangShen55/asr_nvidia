@@ -11,7 +11,7 @@
 
 loader及根/Docker模板默认N=4、S=16、process、continuous、preload=true；HTTP仍1。总音频N/全局段N×S由loader派生，删除旧audio_concurrency/request_concurrency显式赋值；相等值提示迁移，冲突及非法类型启动前报错。显式legacy保留原独立容量配置。physical步缺省S、prefill缺省min(16,S)，模板不固定；每owner frame/token=14400/10000，PCM全服务256段/256MiB。每owner线程owner_threads=1；父进程OMP/MKL=4。所有更改需重启生效。
 
-宿主只用物理npu:7，单卡容器使用逻辑npu:0；不能直接复制宿主编号。VAD八CPU保持不变；最终选择Qwen4/CAM++4/emo1，CAM采用process，两个增强数组独立，N变化不复制增强池。总音频4、全局段64由loader派生。本轮宿主B4与增强驻留A4已完成4/4验收。B配置上限4，有效值不超过健康owner数。预加载失败须阻止ready并回滚本次资源；懒加载可显式preload=false，状态查询不得触发模型加载。
+宿主只用物理npu:7，单卡容器使用逻辑npu:0；不能直接复制宿主编号。VAD八CPU保持不变；最终选择Qwen4/CAM++4/emo1，CAM采用process，两个增强数组独立，N变化不复制增强池。总音频4、全局段64由loader派生。本轮宿主B4与增强驻留A4已完成4/4验收。B配置上限4，有效值不超过健康owner数。Qwen预加载失败须阻止ready并回滚本次资源；Qwen懒加载可显式preload=false。已开启且设备数组非空的CAM++、emotion2vec在HTTP就绪前完成全部配置实例加载尝试并常驻；关闭功能或空数组跳过，加载失败按增强池既有规则降级。此步骤不执行语音forward暖身，状态查询不得触发模型加载。
 
 先完成正式源码及保护回归，再由root独占NPU7执行本轮B4与增强驻留A4验证。当前配置落地不表示性能/质量或Docker上线已验收。实际正常close/PID出生身份/端口释放证据必须保留，强制清理不计正常关闭通过。
 

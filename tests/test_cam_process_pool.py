@@ -280,6 +280,7 @@ def test_lifespan_starts_process_pool_close_before_waiting_for_vad_shutdown(monk
         for name in ['_set_process_name','reset_stats','setup_logging','cleanup_stale_service_cache']:
             monkeypatch.setattr(main,name,lambda *args:None)
         monkeypatch.setattr(main,'ResourceSnapshotSampler',Sampler)
+        monkeypatch.setattr(main,'preload_v3_model_pools',noop)
         monkeypatch.setattr(main,'start_vad_pool',noop);monkeypatch.setattr(main,'stop_vad_pool',vad)
         monkeypatch.setattr(main,'close_v3_model_pools',pools);monkeypatch.setattr(main,'close_qwen_client',noop)
         async def application():

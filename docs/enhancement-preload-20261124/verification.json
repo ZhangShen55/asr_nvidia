@@ -1,0 +1,1281 @@
+{
+  "shared_before": {
+    "available": true,
+    "pid": 1601397,
+    "birth": 1791963491.5,
+    "listening_ports": [
+      [
+        "127.0.0.1",
+        8007
+      ]
+    ],
+    "alive": true,
+    "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+  },
+  "clip": "/tmp/qc-warmup.wav",
+  "clip_sha256": "d290c5bb7ac2d10153243444320f904a491b8af1979701e7c70f2ac02870792b",
+  "config_sha256": "86648ce29bb65a9a74c239b4cfe24557a619a3364d36f4bfac36770979d5089d",
+  "controller": {
+    "pid": 309037,
+    "birth": 1795492211.56
+  },
+  "source_sha256": {
+    "main.py": "bbcd8f9ea95318b134a785c10750de996a34306326e7d6796ee9d361c8e57b18",
+    "core/models.py": "24bf2cf23f4f04239622d4c9fa0da16e54593641fd7f6538d291c6c52b39c554"
+  },
+  "startup_load_only_s": 208.67004051990807,
+  "initial": {
+    "speech_campplus": {
+      "loaded": true,
+      "instances": 4,
+      "configured_instances": 4,
+      "available_instances": 4,
+      "failed_instances": 0,
+      "busy": 0,
+      "waiting": 0,
+      "calls": 0,
+      "load_total_ms": 85079.483,
+      "instance_metrics": [
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 21547.699980437756,
+          "load_work_ms": 21547.057359479368,
+          "load_dispatch_wait_ms": 0.6426209583878517,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 0
+        },
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 21240.259460173547,
+          "load_work_ms": 21239.385140128434,
+          "load_dispatch_wait_ms": 0.8743200451135635,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 1
+        },
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 21171.939839608967,
+          "load_work_ms": 21171.235759742558,
+          "load_dispatch_wait_ms": 0.7040798664093018,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 2
+        },
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 21119.584100320935,
+          "load_work_ms": 21118.888520635664,
+          "load_dispatch_wait_ms": 0.6955796852707863,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 3
+        }
+      ],
+      "inference_outcomes": {
+        "success": 0,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0
+      }
+    },
+    "emotion2vec": {
+      "loaded": true,
+      "instances": 1,
+      "configured_instances": 1,
+      "available_instances": 1,
+      "failed_instances": 0,
+      "busy": 0,
+      "waiting": 0,
+      "calls": 0,
+      "load_total_ms": 13305.356,
+      "instance_metrics": [
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 13305.355599150062,
+          "load_work_ms": 13304.491760209203,
+          "load_dispatch_wait_ms": 0.8638389408588409,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 0
+        }
+      ],
+      "inference_outcomes": {
+        "success": 0,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0
+      }
+    }
+  },
+  "cam_workers": [
+    {
+      "pid": 1381111,
+      "start_ticks": "757999696",
+      "create_time": 1795492322.96,
+      "sid": 318613
+    },
+    {
+      "pid": 1537513,
+      "start_ticks": "758001844",
+      "create_time": 1795492344.44,
+      "sid": 318613
+    },
+    {
+      "pid": 1607830,
+      "start_ticks": "758003969",
+      "create_time": 1795492365.69,
+      "sid": 318613
+    },
+    {
+      "pid": 1689537,
+      "start_ticks": "758006086",
+      "create_time": 1795492386.86,
+      "sid": 318613
+    }
+  ],
+  "functional_passed": true,
+  "shutdown": {
+    "owned": true,
+    "identities": [
+      [
+        318613,
+        1795492212.56
+      ],
+      [
+        363130,
+        1795492217.91
+      ],
+      [
+        363132,
+        1795492217.91
+      ],
+      [
+        363133,
+        1795492217.92
+      ],
+      [
+        363134,
+        1795492217.92
+      ],
+      [
+        363135,
+        1795492217.92
+      ],
+      [
+        363136,
+        1795492217.92
+      ],
+      [
+        363171,
+        1795492217.93
+      ],
+      [
+        363208,
+        1795492217.93
+      ],
+      [
+        363250,
+        1795492217.93
+      ],
+      [
+        432553,
+        1795492227.81
+      ],
+      [
+        512068,
+        1795492236.58
+      ],
+      [
+        565716,
+        1795492241.69
+      ],
+      [
+        566531,
+        1795492241.76
+      ],
+      [
+        566532,
+        1795492241.76
+      ],
+      [
+        566533,
+        1795492241.77
+      ],
+      [
+        566534,
+        1795492241.77
+      ],
+      [
+        566535,
+        1795492241.77
+      ],
+      [
+        566536,
+        1795492241.77
+      ],
+      [
+        566548,
+        1795492241.77
+      ],
+      [
+        566568,
+        1795492241.78
+      ],
+      [
+        566603,
+        1795492241.78
+      ],
+      [
+        569874,
+        1795492242.06
+      ],
+      [
+        569875,
+        1795492242.07
+      ],
+      [
+        569892,
+        1795492242.07
+      ],
+      [
+        569918,
+        1795492242.07
+      ],
+      [
+        569971,
+        1795492242.07
+      ],
+      [
+        570018,
+        1795492242.07
+      ],
+      [
+        570063,
+        1795492242.07
+      ],
+      [
+        570108,
+        1795492242.07
+      ],
+      [
+        652344,
+        1795492251.55
+      ],
+      [
+        741576,
+        1795492260.18
+      ],
+      [
+        785762,
+        1795492265.13
+      ],
+      [
+        786394,
+        1795492265.19
+      ],
+      [
+        786415,
+        1795492265.2
+      ],
+      [
+        786432,
+        1795492265.2
+      ],
+      [
+        786450,
+        1795492265.2
+      ],
+      [
+        786466,
+        1795492265.2
+      ],
+      [
+        786484,
+        1795492265.2
+      ],
+      [
+        786495,
+        1795492265.2
+      ],
+      [
+        786496,
+        1795492265.21
+      ],
+      [
+        786497,
+        1795492265.21
+      ],
+      [
+        788675,
+        1795492265.46
+      ],
+      [
+        788677,
+        1795492265.46
+      ],
+      [
+        788690,
+        1795492265.47
+      ],
+      [
+        788709,
+        1795492265.47
+      ],
+      [
+        788729,
+        1795492265.47
+      ],
+      [
+        788748,
+        1795492265.47
+      ],
+      [
+        788771,
+        1795492265.47
+      ],
+      [
+        788791,
+        1795492265.47
+      ],
+      [
+        878409,
+        1795492274.59
+      ],
+      [
+        961779,
+        1795492283.65
+      ],
+      [
+        1012755,
+        1795492288.72
+      ],
+      [
+        1013500,
+        1795492288.78
+      ],
+      [
+        1013564,
+        1795492288.78
+      ],
+      [
+        1013592,
+        1795492288.78
+      ],
+      [
+        1013602,
+        1795492288.78
+      ],
+      [
+        1013603,
+        1795492288.79
+      ],
+      [
+        1013604,
+        1795492288.79
+      ],
+      [
+        1013605,
+        1795492288.79
+      ],
+      [
+        1013606,
+        1795492288.79
+      ],
+      [
+        1013607,
+        1795492288.79
+      ],
+      [
+        1016396,
+        1795492289.06
+      ],
+      [
+        1016397,
+        1795492289.06
+      ],
+      [
+        1016398,
+        1795492289.06
+      ],
+      [
+        1016399,
+        1795492289.06
+      ],
+      [
+        1016417,
+        1795492289.06
+      ],
+      [
+        1016439,
+        1795492289.06
+      ],
+      [
+        1016465,
+        1795492289.06
+      ],
+      [
+        1016502,
+        1795492289.07
+      ],
+      [
+        1113866,
+        1795492298.54
+      ],
+      [
+        1203329,
+        1795492307.58
+      ],
+      [
+        1273068,
+        1795492313.01
+      ],
+      [
+        1273425,
+        1795492313.07
+      ],
+      [
+        1273435,
+        1795492313.08
+      ],
+      [
+        1273436,
+        1795492313.09
+      ],
+      [
+        1273437,
+        1795492313.09
+      ],
+      [
+        1273438,
+        1795492313.09
+      ],
+      [
+        1273439,
+        1795492313.09
+      ],
+      [
+        1273440,
+        1795492313.09
+      ],
+      [
+        1273441,
+        1795492313.09
+      ],
+      [
+        1273443,
+        1795492313.1
+      ],
+      [
+        1274276,
+        1795492313.35
+      ],
+      [
+        1274291,
+        1795492313.35
+      ],
+      [
+        1274292,
+        1795492313.35
+      ],
+      [
+        1274293,
+        1795492313.35
+      ],
+      [
+        1274294,
+        1795492313.35
+      ],
+      [
+        1274295,
+        1795492313.36
+      ],
+      [
+        1274296,
+        1795492313.36
+      ],
+      [
+        1274297,
+        1795492313.36
+      ],
+      [
+        1381111,
+        1795492322.96
+      ],
+      [
+        1470955,
+        1795492331.8
+      ],
+      [
+        1512180,
+        1795492336.95
+      ],
+      [
+        1512603,
+        1795492337.02
+      ],
+      [
+        1512605,
+        1795492337.02
+      ],
+      [
+        1512622,
+        1795492337.02
+      ],
+      [
+        1512639,
+        1795492337.02
+      ],
+      [
+        1512658,
+        1795492337.02
+      ],
+      [
+        1512676,
+        1795492337.02
+      ],
+      [
+        1512693,
+        1795492337.02
+      ],
+      [
+        1512711,
+        1795492337.02
+      ],
+      [
+        1512726,
+        1795492337.03
+      ],
+      [
+        1514081,
+        1795492337.25
+      ],
+      [
+        1514085,
+        1795492337.25
+      ],
+      [
+        1514086,
+        1795492337.25
+      ],
+      [
+        1514089,
+        1795492337.25
+      ],
+      [
+        1514091,
+        1795492337.25
+      ],
+      [
+        1514093,
+        1795492337.26
+      ],
+      [
+        1514096,
+        1795492337.26
+      ],
+      [
+        1514098,
+        1795492337.26
+      ],
+      [
+        1537513,
+        1795492344.44
+      ],
+      [
+        1567138,
+        1795492353.24
+      ],
+      [
+        1582603,
+        1795492358.24
+      ],
+      [
+        1582905,
+        1795492358.3
+      ],
+      [
+        1582921,
+        1795492358.3
+      ],
+      [
+        1582935,
+        1795492358.3
+      ],
+      [
+        1582954,
+        1795492358.31
+      ],
+      [
+        1582971,
+        1795492358.31
+      ],
+      [
+        1582972,
+        1795492358.31
+      ],
+      [
+        1582973,
+        1795492358.31
+      ],
+      [
+        1582974,
+        1795492358.31
+      ],
+      [
+        1582975,
+        1795492358.31
+      ],
+      [
+        1583581,
+        1795492358.52
+      ],
+      [
+        1583582,
+        1795492358.52
+      ],
+      [
+        1583583,
+        1795492358.53
+      ],
+      [
+        1583590,
+        1795492358.53
+      ],
+      [
+        1583607,
+        1795492358.53
+      ],
+      [
+        1583629,
+        1795492358.53
+      ],
+      [
+        1583649,
+        1795492358.53
+      ],
+      [
+        1583674,
+        1795492358.53
+      ],
+      [
+        1607830,
+        1795492365.69
+      ],
+      [
+        1639160,
+        1795492374.41
+      ],
+      [
+        1657216,
+        1795492379.38
+      ],
+      [
+        1657459,
+        1795492379.44
+      ],
+      [
+        1657460,
+        1795492379.45
+      ],
+      [
+        1657461,
+        1795492379.45
+      ],
+      [
+        1657463,
+        1795492379.45
+      ],
+      [
+        1657479,
+        1795492379.45
+      ],
+      [
+        1657496,
+        1795492379.45
+      ],
+      [
+        1657513,
+        1795492379.45
+      ],
+      [
+        1657532,
+        1795492379.45
+      ],
+      [
+        1657548,
+        1795492379.46
+      ],
+      [
+        1658382,
+        1795492379.67
+      ],
+      [
+        1658383,
+        1795492379.67
+      ],
+      [
+        1658384,
+        1795492379.67
+      ],
+      [
+        1658385,
+        1795492379.67
+      ],
+      [
+        1658386,
+        1795492379.67
+      ],
+      [
+        1658387,
+        1795492379.67
+      ],
+      [
+        1658388,
+        1795492379.67
+      ],
+      [
+        1658398,
+        1795492379.68
+      ],
+      [
+        1689537,
+        1795492386.86
+      ],
+      [
+        1725029,
+        1795492395.47
+      ],
+      [
+        1751484,
+        1795492400.48
+      ],
+      [
+        1751912,
+        1795492400.54
+      ],
+      [
+        1751913,
+        1795492400.54
+      ],
+      [
+        1751921,
+        1795492400.55
+      ],
+      [
+        1751938,
+        1795492400.55
+      ],
+      [
+        1751957,
+        1795492400.55
+      ],
+      [
+        1751974,
+        1795492400.55
+      ],
+      [
+        1751979,
+        1795492400.55
+      ],
+      [
+        1751980,
+        1795492400.55
+      ],
+      [
+        1751981,
+        1795492400.55
+      ],
+      [
+        1753243,
+        1795492400.76
+      ],
+      [
+        1753261,
+        1795492400.76
+      ],
+      [
+        1753279,
+        1795492400.76
+      ],
+      [
+        1753296,
+        1795492400.76
+      ],
+      [
+        1753302,
+        1795492400.76
+      ],
+      [
+        1753303,
+        1795492400.77
+      ],
+      [
+        1753304,
+        1795492400.77
+      ],
+      [
+        1753305,
+        1795492400.77
+      ],
+      [
+        1810951,
+        1795492411.69
+      ],
+      [
+        1811007,
+        1795492411.73
+      ],
+      [
+        1811129,
+        1795492411.8
+      ],
+      [
+        1811130,
+        1795492411.8
+      ],
+      [
+        1811131,
+        1795492411.8
+      ],
+      [
+        1811132,
+        1795492411.8
+      ],
+      [
+        1811133,
+        1795492411.8
+      ],
+      [
+        1811134,
+        1795492411.8
+      ],
+      [
+        1811135,
+        1795492411.8
+      ],
+      [
+        1811136,
+        1795492411.81
+      ],
+      [
+        1811137,
+        1795492411.81
+      ],
+      [
+        1811622,
+        1795492412.1
+      ],
+      [
+        1811665,
+        1795492412.11
+      ],
+      [
+        1811705,
+        1795492412.11
+      ],
+      [
+        1811744,
+        1795492412.11
+      ],
+      [
+        1811780,
+        1795492412.11
+      ],
+      [
+        1811815,
+        1795492412.12
+      ],
+      [
+        1811816,
+        1795492412.13
+      ],
+      [
+        1811817,
+        1795492412.13
+      ]
+    ],
+    "forced": false,
+    "temp_dir": "/tmp/asr-svc-gnu59j28",
+    "cache_dir": "/tmp/asr-svc-gnu59j28/seacraft_asr",
+    "temp_dir_retained": true,
+    "remaining_cache_files": [],
+    "cache_scan_error": null,
+    "cache_scan_scope": "owned service audio cache only, after process/port cleanup; read-only, no deletion",
+    "exit_code": 0,
+    "expected_exit_codes": [
+      0
+    ],
+    "exit_code_ok": true,
+    "remaining_pids": [],
+    "port_observations": [
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false,
+      false
+    ],
+    "observe_s": 5,
+    "orphan_cleanup": false,
+    "term_sent_monotonic": 7580107.03297252,
+    "parent_exit_observed_monotonic": 7580137.36988782,
+    "term_to_parent_exit_s": 30.3369153002277,
+    "exit_timing_scope": "parent process poll observation, not device/kernel time; None when no TERM was sent",
+    "passed": true
+  },
+  "shared_after": {
+    "available": true,
+    "pid": 1601397,
+    "birth": 1791963491.5,
+    "listening_ports": [
+      [
+        "127.0.0.1",
+        8007
+      ]
+    ],
+    "alive": true,
+    "listening_scope": "target /proc/PID/net tcp tables filtered by owned fd socket inodes"
+  },
+  "shared_preserved": true,
+  "config_unchanged": true,
+  "passed": true,
+  "request_1": {
+    "http": 200,
+    "elapsed_s": 4.654512169770896,
+    "segments": 1,
+    "status": {
+      "speech_campplus": {
+        "loaded": true,
+        "instances": 4,
+        "configured_instances": 4,
+        "available_instances": 4,
+        "failed_instances": 0,
+        "busy": 0,
+        "waiting": 0,
+        "calls": 1,
+        "load_total_ms": 85079.483,
+        "instance_metrics": [
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21547.699980437756,
+            "load_work_ms": 21547.057359479368,
+            "load_dispatch_wait_ms": 0.6426209583878517,
+            "leases": 1,
+            "wait_ms": 1.0557593777775764,
+            "calls": 1,
+            "inference_ms": 4205.674040131271,
+            "success": 1,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 0
+          },
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21240.259460173547,
+            "load_work_ms": 21239.385140128434,
+            "load_dispatch_wait_ms": 0.8743200451135635,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 1
+          },
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21171.939839608967,
+            "load_work_ms": 21171.235759742558,
+            "load_dispatch_wait_ms": 0.7040798664093018,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 2
+          },
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21119.584100320935,
+            "load_work_ms": 21118.888520635664,
+            "load_dispatch_wait_ms": 0.6955796852707863,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 3
+          }
+        ],
+        "inference_outcomes": {
+          "success": 1,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        }
+      },
+      "emotion2vec": {
+        "loaded": true,
+        "instances": 1,
+        "configured_instances": 1,
+        "available_instances": 1,
+        "failed_instances": 0,
+        "busy": 0,
+        "waiting": 0,
+        "calls": 1,
+        "load_total_ms": 13305.356,
+        "instance_metrics": [
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 13305.355599150062,
+            "load_work_ms": 13304.491760209203,
+            "load_dispatch_wait_ms": 0.8638389408588409,
+            "leases": 1,
+            "wait_ms": 0.11412985622882843,
+            "calls": 1,
+            "inference_ms": 2964.349679648876,
+            "success": 1,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 0
+          }
+        ],
+        "inference_outcomes": {
+          "success": 1,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        }
+      }
+    },
+    "processing_status": "complete",
+    "warning_count": 0
+  },
+  "request_2": {
+    "http": 200,
+    "elapsed_s": 4.282365640625358,
+    "segments": 1,
+    "status": {
+      "speech_campplus": {
+        "loaded": true,
+        "instances": 4,
+        "configured_instances": 4,
+        "available_instances": 4,
+        "failed_instances": 0,
+        "busy": 0,
+        "waiting": 0,
+        "calls": 2,
+        "load_total_ms": 85079.483,
+        "instance_metrics": [
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21547.699980437756,
+            "load_work_ms": 21547.057359479368,
+            "load_dispatch_wait_ms": 0.6426209583878517,
+            "leases": 1,
+            "wait_ms": 1.0557593777775764,
+            "calls": 1,
+            "inference_ms": 4205.674040131271,
+            "success": 1,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 0
+          },
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21240.259460173547,
+            "load_work_ms": 21239.385140128434,
+            "load_dispatch_wait_ms": 0.8743200451135635,
+            "leases": 1,
+            "wait_ms": 0.7594302296638489,
+            "calls": 1,
+            "inference_ms": 4096.445839852095,
+            "success": 1,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 1
+          },
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21171.939839608967,
+            "load_work_ms": 21171.235759742558,
+            "load_dispatch_wait_ms": 0.7040798664093018,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 2
+          },
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21119.584100320935,
+            "load_work_ms": 21118.888520635664,
+            "load_dispatch_wait_ms": 0.6955796852707863,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 3
+          }
+        ],
+        "inference_outcomes": {
+          "success": 2,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        }
+      },
+      "emotion2vec": {
+        "loaded": true,
+        "instances": 1,
+        "configured_instances": 1,
+        "available_instances": 1,
+        "failed_instances": 0,
+        "busy": 0,
+        "waiting": 0,
+        "calls": 2,
+        "load_total_ms": 13305.356,
+        "instance_metrics": [
+          {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 13305.355599150062,
+            "load_work_ms": 13304.491760209203,
+            "load_dispatch_wait_ms": 0.8638389408588409,
+            "leases": 2,
+            "wait_ms": 0.2289898693561554,
+            "calls": 2,
+            "inference_ms": 2990.1833897456527,
+            "success": 2,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0,
+            "instance_index": 0
+          }
+        ],
+        "inference_outcomes": {
+          "success": 2,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        }
+      }
+    },
+    "processing_status": "complete",
+    "warning_count": 0
+  },
+  "cpu": {
+    "returncode": 0,
+    "elapsed_s": 261.57621376030147,
+    "guard_sha256": "b92fc56dd1406609e44029734c15fd314994b0f8cbaa69837f2f475bda977164",
+    "passed": true,
+    "source_changes": [],
+    "remaining_owned": [],
+    "command": [
+      "/home/zhangs/conda-envs/asr/bin/python",
+      "-m",
+      "pytest",
+      "-q",
+      "/home/zhangs/asr_nvidia/tests",
+      "--ignore=/home/zhangs/asr_nvidia/tests/test_validate_npu_models.py",
+      "-k",
+      "not test_status_snapshot_marks_health_as_skipped",
+      "-vv",
+      "-o",
+      "faulthandler_timeout=30"
+    ],
+    "pytest_summary": "= 1301 passed, 2 skipped, 1 deselected, 2 warnings, 379 subtests passed in 258.64s (0:04:18) ="
+  },
+  "raw_evidence": {
+    "cpu": "/tmp/enhancement-preload-cpu-final-20261124",
+    "npu": "/home/zhangs/asr_nvidia/logs/enhancement-preload-20261124-v2",
+    "cpu_result_sha256": "dd898c094cc108c97de11593833920e04c2f7fda0a1bb75171c6f57af012169d",
+    "npu_summary_sha256": "bbe738b3e88159fd8191c8060b3d337b731018f065b486866347f47449489e76"
+  }
+}

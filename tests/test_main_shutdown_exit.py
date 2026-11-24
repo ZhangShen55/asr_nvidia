@@ -23,6 +23,7 @@ async def start():event('start')
 async def stop_vad():
     event('stop_vad')
     if mode=='failed':raise RuntimeError('synthetic CPU shutdown failure')
+async def preload_models():pass
 async def close_models():event('close_models')
 async def close_qwen():event('close_qwen')
 main.settings=SimpleNamespace(resource_sample_interval_s=1.0,qwen_execution_mode="thread",qwen_audio_spk_emo_concurrency=1,validate_model_backends=lambda:None,log_path=str(output/'unused.log'))
@@ -31,6 +32,7 @@ main._set_process_name=lambda:None
 main.setup_logging=lambda *_:None
 main.cleanup_stale_service_cache=lambda:None
 main.reset_stats=lambda:None
+main.preload_v3_model_pools=preload_models
 main.start_vad_pool=start;main.stop_vad_pool=stop_vad
 main.close_v3_model_pools=close_models;main.close_qwen_client=close_qwen
 try:main.run_server(['--host','127.0.0.1','--port',port,'--workers','1','--timeout-graceful-shutdown','2'])

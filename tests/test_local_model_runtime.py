@@ -30,6 +30,8 @@ class StatusContractTests(unittest.TestCase):
             binding = Mock()
             with patch("main.start_vad_pool", new=AsyncMock()), \
                     patch("main.stop_vad_pool", new=AsyncMock()), \
+                    patch("main.preload_v3_model_pools", new=AsyncMock()), \
+                    patch("main.close_v3_model_pools", new=AsyncMock()), \
                     patch("main.preload_qwen_client", new=AsyncMock(return_value="cpu-fixture")) as preload, \
                     patch("main.get_qwen_client", new=AsyncMock(return_value=fake_client)) as get_client, \
                     patch("main.get_slot_manager", return_value=SimpleNamespace(bind_owner_pool=binding)), \
