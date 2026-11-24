@@ -34,7 +34,7 @@ class AdmissionStatusTests(unittest.IsolatedAsyncioTestCase):
 
     async def test_before_first_request_and_disabled_rejection_preserve_zero_counts(self):
         manager = AudioSlotManager(2, spk_emo_capacity=4)
-        with patch.dict(settings._cfg, {"features": {"open_v2_role": False, "open_v2_emotion": False}}):
+        with patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": [], "emotion2vec_devices": []})}):
             before = self.payload(manager)
             with self.assertRaises(ModelUnavailableError) as error:
                 validate_v3_capabilities(True, True)

@@ -1,0 +1,4309 @@
+{
+  "id_engine": "1",
+  "pid": 1599766,
+  "status": "living",
+  "appVersion": "latest",
+  "nowTime": "2026-11-24 15:09:23",
+  "runTime": "0\u5929 0\u5c0f\u65f6 3\u5206 23\u79d2",
+  "totalHaveDoneProcessTasks": 0,
+  "totalFailedTasks": 0,
+  "offlineDone": 0,
+  "processingTaskList": [],
+  "audioConcurrency": {
+    "configured_total": 4,
+    "active_total": 0,
+    "waiting_total": 0,
+    "effective_total": 4,
+    "healthy_owners": 4,
+    "leased_owners": 0,
+    "available_owners": 4
+  },
+  "spkEmoConcurrency": {
+    "configured": 4,
+    "active": 0,
+    "waiting": 0,
+    "effective": 4
+  },
+  "localModels": {
+    "speech_campplus": {
+      "loaded": true,
+      "device": "npu:7",
+      "allocated_mb": null,
+      "instances": 4,
+      "configured_instances": 4,
+      "devices": [
+        "npu:7",
+        "npu:7",
+        "npu:7",
+        "npu:7"
+      ],
+      "available_instances": 4,
+      "failed_instances": 0,
+      "busy": 0,
+      "waiting": 0,
+      "failure": null,
+      "wait_total_ms": 0.0,
+      "inference_total_ms": 0.0,
+      "calls": 0,
+      "last_wait_ms": 0.0,
+      "waiting_summary": {
+        "current": 0,
+        "total_ms": 0.0,
+        "average_ms": 0.0
+      },
+      "telemetry_scope": "since_last_close; host elapsed includes dispatch/device wait, not kernel time",
+      "instance_metrics": [
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 20677.58443020284,
+          "load_work_ms": 20676.772530190647,
+          "load_dispatch_wait_ms": 0.8119000121951103,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 0
+        },
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 20907.91382919997,
+          "load_work_ms": 20907.293119467795,
+          "load_dispatch_wait_ms": 0.6207097321748734,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 1
+        },
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 21097.831619903445,
+          "load_work_ms": 21097.06335980445,
+          "load_dispatch_wait_ms": 0.7682600989937782,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 2
+        },
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 21369.001970626414,
+          "load_work_ms": 21368.21531970054,
+          "load_dispatch_wait_ms": 0.7866509258747101,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 3
+        }
+      ],
+      "called_instances": 0,
+      "unattributed_calls": 0,
+      "inference_outcomes": {
+        "success": 0,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "unclassified_calls": 0,
+      "duration_skips": 0,
+      "load_total_ms": 84052.332,
+      "execution_mode": "process",
+      "model_workers": [
+        {
+          "execution_mode": "process",
+          "runtime_kind": "original_torch_npu_fp32_cam",
+          "worker_identity": {
+            "pid": 2620206,
+            "start_ticks": "759173808",
+            "create_time": 1795504064.08,
+            "sid": 1599766
+          },
+          "worker_alive": true,
+          "birth_in_progress": false,
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "active": false,
+          "loaded": true,
+          "closing": false,
+          "closed": false,
+          "healthy": true,
+          "failure": null,
+          "close_deadline_monotonic_s": null,
+          "abnormal_reasons": [],
+          "ready": {
+            "kind": "READY",
+            "launch": "888c94b6d7ef46a1881dea273645f389",
+            "identity": {
+              "pid": 2620206,
+              "start_ticks": "759173808",
+              "create_time": 1795504064.08,
+              "sid": 1599766
+            },
+            "device": "npu:7",
+            "factory_identity": {
+              "module": "core.local_inference",
+              "qualname": "TorchNpuRunner",
+              "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+              "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+            },
+            "worker_entry_identity": {
+              "module": "core.cam_process",
+              "qualname": "_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+              "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+            },
+            "model_identity": {
+              "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+              "sha256": {
+                "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+                "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+              },
+              "hash_scope": "full original CAM config and weight bytes"
+            },
+            "precision": "fp32",
+            "math_mode": "fp32_ops_hf32_disabled",
+            "storage_identity": {
+              "available": true,
+              "dtype_device_counts": {
+                "parameter": {
+                  "torch.float32@npu:7": 571
+                },
+                "buffer": {
+                  "torch.float32@npu:7": 244,
+                  "torch.int64@npu:7": 122
+                }
+              },
+              "floating_tensor_count": 815,
+              "parameter_tensor_count": 571,
+              "all_floating_fp32": true,
+              "all_parameters_on_device": true,
+              "all_floating_buffers_on_device": true,
+              "scope": "storage metadata only; no weights read and no new tensor computation"
+            },
+            "actor": {
+              "available": true,
+              "pid": 2620206,
+              "native_thread_id": 2620206,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187651507074400,
+              "test_double": false,
+              "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+            },
+            "operator_adaptations": {
+              "campplus_segment_pooling": true,
+              "emotion2vec_exact_gelu_modules": 0,
+              "emotion2vec_fp32_bias_factories": 0
+            },
+            "test_double": false,
+            "allocator": {
+              "worker_pid": 2620206,
+              "worker_rss_mb": 1964.34765625,
+              "source": "worker_torch_npu_allocator",
+              "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_bytes": 28135936,
+              "memory_reserved_bytes": 46137344,
+              "max_memory_allocated_bytes": 28135936,
+              "max_memory_reserved_bytes": 46137344
+            }
+          },
+          "allocator": {
+            "worker_pid": 2620206,
+            "worker_rss_mb": 1964.34765625,
+            "source": "worker_torch_npu_allocator",
+            "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_bytes": 28135936,
+            "memory_reserved_bytes": 46137344,
+            "max_memory_allocated_bytes": 28135936,
+            "max_memory_reserved_bytes": 46137344
+          },
+          "last_done": null,
+          "last_close_ack": null,
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "last_request_wire_bytes": null,
+          "last_response_wire_bytes": 2056,
+          "last_audio_bytes": null,
+          "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+          "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+          "parent_rss_mb": 3027.2734375,
+          "pool_instance_index": 0,
+          "configured_device": "npu:7",
+          "close_error": null
+        },
+        {
+          "execution_mode": "process",
+          "runtime_kind": "original_torch_npu_fp32_cam",
+          "worker_identity": {
+            "pid": 2773365,
+            "start_ticks": "759175871",
+            "create_time": 1795504084.71,
+            "sid": 1599766
+          },
+          "worker_alive": true,
+          "birth_in_progress": false,
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "active": false,
+          "loaded": true,
+          "closing": false,
+          "closed": false,
+          "healthy": true,
+          "failure": null,
+          "close_deadline_monotonic_s": null,
+          "abnormal_reasons": [],
+          "ready": {
+            "kind": "READY",
+            "launch": "7a6a40c537da4dcda9cb3a0af9289537",
+            "identity": {
+              "pid": 2773365,
+              "start_ticks": "759175871",
+              "create_time": 1795504084.71,
+              "sid": 1599766
+            },
+            "device": "npu:7",
+            "factory_identity": {
+              "module": "core.local_inference",
+              "qualname": "TorchNpuRunner",
+              "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+              "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+            },
+            "worker_entry_identity": {
+              "module": "core.cam_process",
+              "qualname": "_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+              "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+            },
+            "model_identity": {
+              "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+              "sha256": {
+                "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+                "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+              },
+              "hash_scope": "full original CAM config and weight bytes"
+            },
+            "precision": "fp32",
+            "math_mode": "fp32_ops_hf32_disabled",
+            "storage_identity": {
+              "available": true,
+              "dtype_device_counts": {
+                "parameter": {
+                  "torch.float32@npu:7": 571
+                },
+                "buffer": {
+                  "torch.float32@npu:7": 244,
+                  "torch.int64@npu:7": 122
+                }
+              },
+              "floating_tensor_count": 815,
+              "parameter_tensor_count": 571,
+              "all_floating_fp32": true,
+              "all_parameters_on_device": true,
+              "all_floating_buffers_on_device": true,
+              "scope": "storage metadata only; no weights read and no new tensor computation"
+            },
+            "actor": {
+              "available": true,
+              "pid": 2773365,
+              "native_thread_id": 2773365,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187652408924832,
+              "test_double": false,
+              "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+            },
+            "operator_adaptations": {
+              "campplus_segment_pooling": true,
+              "emotion2vec_exact_gelu_modules": 0,
+              "emotion2vec_fp32_bias_factories": 0
+            },
+            "test_double": false,
+            "allocator": {
+              "worker_pid": 2773365,
+              "worker_rss_mb": 1960.62890625,
+              "source": "worker_torch_npu_allocator",
+              "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_bytes": 28135936,
+              "memory_reserved_bytes": 46137344,
+              "max_memory_allocated_bytes": 28135936,
+              "max_memory_reserved_bytes": 46137344
+            }
+          },
+          "allocator": {
+            "worker_pid": 2773365,
+            "worker_rss_mb": 1960.62890625,
+            "source": "worker_torch_npu_allocator",
+            "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_bytes": 28135936,
+            "memory_reserved_bytes": 46137344,
+            "max_memory_allocated_bytes": 28135936,
+            "max_memory_reserved_bytes": 46137344
+          },
+          "last_done": null,
+          "last_close_ack": null,
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "last_request_wire_bytes": null,
+          "last_response_wire_bytes": 2056,
+          "last_audio_bytes": null,
+          "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+          "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+          "parent_rss_mb": 3027.2734375,
+          "pool_instance_index": 1,
+          "configured_device": "npu:7",
+          "close_error": null
+        },
+        {
+          "execution_mode": "process",
+          "runtime_kind": "original_torch_npu_fp32_cam",
+          "worker_identity": {
+            "pid": 2925193,
+            "start_ticks": "759177961",
+            "create_time": 1795504105.61,
+            "sid": 1599766
+          },
+          "worker_alive": true,
+          "birth_in_progress": false,
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "active": false,
+          "loaded": true,
+          "closing": false,
+          "closed": false,
+          "healthy": true,
+          "failure": null,
+          "close_deadline_monotonic_s": null,
+          "abnormal_reasons": [],
+          "ready": {
+            "kind": "READY",
+            "launch": "4f708f7edca94412916f5e8ea3eaed38",
+            "identity": {
+              "pid": 2925193,
+              "start_ticks": "759177961",
+              "create_time": 1795504105.61,
+              "sid": 1599766
+            },
+            "device": "npu:7",
+            "factory_identity": {
+              "module": "core.local_inference",
+              "qualname": "TorchNpuRunner",
+              "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+              "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+            },
+            "worker_entry_identity": {
+              "module": "core.cam_process",
+              "qualname": "_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+              "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+            },
+            "model_identity": {
+              "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+              "sha256": {
+                "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+                "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+              },
+              "hash_scope": "full original CAM config and weight bytes"
+            },
+            "precision": "fp32",
+            "math_mode": "fp32_ops_hf32_disabled",
+            "storage_identity": {
+              "available": true,
+              "dtype_device_counts": {
+                "parameter": {
+                  "torch.float32@npu:7": 571
+                },
+                "buffer": {
+                  "torch.float32@npu:7": 244,
+                  "torch.int64@npu:7": 122
+                }
+              },
+              "floating_tensor_count": 815,
+              "parameter_tensor_count": 571,
+              "all_floating_fp32": true,
+              "all_parameters_on_device": true,
+              "all_floating_buffers_on_device": true,
+              "scope": "storage metadata only; no weights read and no new tensor computation"
+            },
+            "actor": {
+              "available": true,
+              "pid": 2925193,
+              "native_thread_id": 2925193,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187651300428624,
+              "test_double": false,
+              "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+            },
+            "operator_adaptations": {
+              "campplus_segment_pooling": true,
+              "emotion2vec_exact_gelu_modules": 0,
+              "emotion2vec_fp32_bias_factories": 0
+            },
+            "test_double": false,
+            "allocator": {
+              "worker_pid": 2925193,
+              "worker_rss_mb": 1961.7109375,
+              "source": "worker_torch_npu_allocator",
+              "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_bytes": 28135936,
+              "memory_reserved_bytes": 46137344,
+              "max_memory_allocated_bytes": 28135936,
+              "max_memory_reserved_bytes": 46137344
+            }
+          },
+          "allocator": {
+            "worker_pid": 2925193,
+            "worker_rss_mb": 1961.7109375,
+            "source": "worker_torch_npu_allocator",
+            "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_bytes": 28135936,
+            "memory_reserved_bytes": 46137344,
+            "max_memory_allocated_bytes": 28135936,
+            "max_memory_reserved_bytes": 46137344
+          },
+          "last_done": null,
+          "last_close_ack": null,
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "last_request_wire_bytes": null,
+          "last_response_wire_bytes": 2056,
+          "last_audio_bytes": null,
+          "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+          "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+          "parent_rss_mb": 3027.2734375,
+          "pool_instance_index": 2,
+          "configured_device": "npu:7",
+          "close_error": null
+        },
+        {
+          "execution_mode": "process",
+          "runtime_kind": "original_torch_npu_fp32_cam",
+          "worker_identity": {
+            "pid": 3058961,
+            "start_ticks": "759180071",
+            "create_time": 1795504126.71,
+            "sid": 1599766
+          },
+          "worker_alive": true,
+          "birth_in_progress": false,
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "active": false,
+          "loaded": true,
+          "closing": false,
+          "closed": false,
+          "healthy": true,
+          "failure": null,
+          "close_deadline_monotonic_s": null,
+          "abnormal_reasons": [],
+          "ready": {
+            "kind": "READY",
+            "launch": "e479c2f93922482b9ec88fbaa974ff96",
+            "identity": {
+              "pid": 3058961,
+              "start_ticks": "759180071",
+              "create_time": 1795504126.71,
+              "sid": 1599766
+            },
+            "device": "npu:7",
+            "factory_identity": {
+              "module": "core.local_inference",
+              "qualname": "TorchNpuRunner",
+              "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+              "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+            },
+            "worker_entry_identity": {
+              "module": "core.cam_process",
+              "qualname": "_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+              "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+            },
+            "model_identity": {
+              "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+              "sha256": {
+                "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+                "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+              },
+              "hash_scope": "full original CAM config and weight bytes"
+            },
+            "precision": "fp32",
+            "math_mode": "fp32_ops_hf32_disabled",
+            "storage_identity": {
+              "available": true,
+              "dtype_device_counts": {
+                "parameter": {
+                  "torch.float32@npu:7": 571
+                },
+                "buffer": {
+                  "torch.float32@npu:7": 244,
+                  "torch.int64@npu:7": 122
+                }
+              },
+              "floating_tensor_count": 815,
+              "parameter_tensor_count": 571,
+              "all_floating_fp32": true,
+              "all_parameters_on_device": true,
+              "all_floating_buffers_on_device": true,
+              "scope": "storage metadata only; no weights read and no new tensor computation"
+            },
+            "actor": {
+              "available": true,
+              "pid": 3058961,
+              "native_thread_id": 3058961,
+              "device_index": 7,
+              "stream_id": 0,
+              "npu_stream_handle": 187651917643728,
+              "test_double": false,
+              "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+            },
+            "operator_adaptations": {
+              "campplus_segment_pooling": true,
+              "emotion2vec_exact_gelu_modules": 0,
+              "emotion2vec_fp32_bias_factories": 0
+            },
+            "test_double": false,
+            "allocator": {
+              "worker_pid": 3058961,
+              "worker_rss_mb": 1964.21484375,
+              "source": "worker_torch_npu_allocator",
+              "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_bytes": 28135936,
+              "memory_reserved_bytes": 46137344,
+              "max_memory_allocated_bytes": 28135936,
+              "max_memory_reserved_bytes": 46137344
+            }
+          },
+          "allocator": {
+            "worker_pid": 3058961,
+            "worker_rss_mb": 1964.21484375,
+            "source": "worker_torch_npu_allocator",
+            "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_bytes": 28135936,
+            "memory_reserved_bytes": 46137344,
+            "max_memory_allocated_bytes": 28135936,
+            "max_memory_reserved_bytes": 46137344
+          },
+          "last_done": null,
+          "last_close_ack": null,
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "last_request_wire_bytes": null,
+          "last_response_wire_bytes": 2056,
+          "last_audio_bytes": null,
+          "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+          "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+          "parent_rss_mb": 3027.2734375,
+          "pool_instance_index": 3,
+          "configured_device": "npu:7",
+          "close_error": null
+        }
+      ],
+      "torch_allocated_mb": null,
+      "runtime_hbm_mb": null,
+      "allocated_mb_scope": "PyTorch allocator delta at load; excludes runtime/non-PyTorch HBM and other processes",
+      "instance_details": [
+        {
+          "instance_index": 0,
+          "telemetry": {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 20677.58443020284,
+            "load_work_ms": 20676.772530190647,
+            "load_dispatch_wait_ms": 0.8119000121951103,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "configured_device": "npu:7",
+          "configured_backend": "torch_npu",
+          "busy": false,
+          "execution_mode": "process",
+          "effective_backend": "torch_npu",
+          "actual_precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "health": "healthy",
+          "failure": null,
+          "memory": {
+            "execution_mode": "process",
+            "runtime_kind": "original_torch_npu_fp32_cam",
+            "worker_identity": {
+              "pid": 2620206,
+              "start_ticks": "759173808",
+              "create_time": 1795504064.08,
+              "sid": 1599766
+            },
+            "worker_alive": true,
+            "birth_in_progress": false,
+            "resource_reaped": false,
+            "normal_exit_ok": null,
+            "forced_cleanup": false,
+            "active": false,
+            "loaded": true,
+            "closing": false,
+            "closed": false,
+            "healthy": true,
+            "failure": null,
+            "close_deadline_monotonic_s": null,
+            "abnormal_reasons": [],
+            "ready": {
+              "kind": "READY",
+              "launch": "888c94b6d7ef46a1881dea273645f389",
+              "identity": {
+                "pid": 2620206,
+                "start_ticks": "759173808",
+                "create_time": 1795504064.08,
+                "sid": 1599766
+              },
+              "device": "npu:7",
+              "factory_identity": {
+                "module": "core.local_inference",
+                "qualname": "TorchNpuRunner",
+                "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+                "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+              },
+              "worker_entry_identity": {
+                "module": "core.cam_process",
+                "qualname": "_worker",
+                "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+                "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+              },
+              "model_identity": {
+                "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+                "sha256": {
+                  "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+                  "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+                },
+                "hash_scope": "full original CAM config and weight bytes"
+              },
+              "precision": "fp32",
+              "math_mode": "fp32_ops_hf32_disabled",
+              "storage_identity": {
+                "available": true,
+                "dtype_device_counts": {
+                  "parameter": {
+                    "torch.float32@npu:7": 571
+                  },
+                  "buffer": {
+                    "torch.float32@npu:7": 244,
+                    "torch.int64@npu:7": 122
+                  }
+                },
+                "floating_tensor_count": 815,
+                "parameter_tensor_count": 571,
+                "all_floating_fp32": true,
+                "all_parameters_on_device": true,
+                "all_floating_buffers_on_device": true,
+                "scope": "storage metadata only; no weights read and no new tensor computation"
+              },
+              "actor": {
+                "available": true,
+                "pid": 2620206,
+                "native_thread_id": 2620206,
+                "device_index": 7,
+                "stream_id": 0,
+                "npu_stream_handle": 187651507074400,
+                "test_double": false,
+                "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+              },
+              "operator_adaptations": {
+                "campplus_segment_pooling": true,
+                "emotion2vec_exact_gelu_modules": 0,
+                "emotion2vec_fp32_bias_factories": 0
+              },
+              "test_double": false,
+              "allocator": {
+                "worker_pid": 2620206,
+                "worker_rss_mb": 1964.34765625,
+                "source": "worker_torch_npu_allocator",
+                "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+                "peak_scope": "not_reset_unknown_or_includes_load",
+                "memory_allocated_bytes": 28135936,
+                "memory_reserved_bytes": 46137344,
+                "max_memory_allocated_bytes": 28135936,
+                "max_memory_reserved_bytes": 46137344
+              }
+            },
+            "allocator": {
+              "worker_pid": 2620206,
+              "worker_rss_mb": 1964.34765625,
+              "source": "worker_torch_npu_allocator",
+              "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_bytes": 28135936,
+              "memory_reserved_bytes": 46137344,
+              "max_memory_allocated_bytes": 28135936,
+              "max_memory_reserved_bytes": 46137344
+            },
+            "last_done": null,
+            "last_close_ack": null,
+            "operator_adaptations": {
+              "campplus_segment_pooling": true,
+              "emotion2vec_exact_gelu_modules": 0,
+              "emotion2vec_fp32_bias_factories": 0
+            },
+            "last_request_wire_bytes": null,
+            "last_response_wire_bytes": 2056,
+            "last_audio_bytes": null,
+            "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+            "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+            "parent_rss_mb": 3027.2734375
+          }
+        },
+        {
+          "instance_index": 1,
+          "telemetry": {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 20907.91382919997,
+            "load_work_ms": 20907.293119467795,
+            "load_dispatch_wait_ms": 0.6207097321748734,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "configured_device": "npu:7",
+          "configured_backend": "torch_npu",
+          "busy": false,
+          "execution_mode": "process",
+          "effective_backend": "torch_npu",
+          "actual_precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "health": "healthy",
+          "failure": null,
+          "memory": {
+            "execution_mode": "process",
+            "runtime_kind": "original_torch_npu_fp32_cam",
+            "worker_identity": {
+              "pid": 2773365,
+              "start_ticks": "759175871",
+              "create_time": 1795504084.71,
+              "sid": 1599766
+            },
+            "worker_alive": true,
+            "birth_in_progress": false,
+            "resource_reaped": false,
+            "normal_exit_ok": null,
+            "forced_cleanup": false,
+            "active": false,
+            "loaded": true,
+            "closing": false,
+            "closed": false,
+            "healthy": true,
+            "failure": null,
+            "close_deadline_monotonic_s": null,
+            "abnormal_reasons": [],
+            "ready": {
+              "kind": "READY",
+              "launch": "7a6a40c537da4dcda9cb3a0af9289537",
+              "identity": {
+                "pid": 2773365,
+                "start_ticks": "759175871",
+                "create_time": 1795504084.71,
+                "sid": 1599766
+              },
+              "device": "npu:7",
+              "factory_identity": {
+                "module": "core.local_inference",
+                "qualname": "TorchNpuRunner",
+                "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+                "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+              },
+              "worker_entry_identity": {
+                "module": "core.cam_process",
+                "qualname": "_worker",
+                "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+                "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+              },
+              "model_identity": {
+                "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+                "sha256": {
+                  "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+                  "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+                },
+                "hash_scope": "full original CAM config and weight bytes"
+              },
+              "precision": "fp32",
+              "math_mode": "fp32_ops_hf32_disabled",
+              "storage_identity": {
+                "available": true,
+                "dtype_device_counts": {
+                  "parameter": {
+                    "torch.float32@npu:7": 571
+                  },
+                  "buffer": {
+                    "torch.float32@npu:7": 244,
+                    "torch.int64@npu:7": 122
+                  }
+                },
+                "floating_tensor_count": 815,
+                "parameter_tensor_count": 571,
+                "all_floating_fp32": true,
+                "all_parameters_on_device": true,
+                "all_floating_buffers_on_device": true,
+                "scope": "storage metadata only; no weights read and no new tensor computation"
+              },
+              "actor": {
+                "available": true,
+                "pid": 2773365,
+                "native_thread_id": 2773365,
+                "device_index": 7,
+                "stream_id": 0,
+                "npu_stream_handle": 187652408924832,
+                "test_double": false,
+                "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+              },
+              "operator_adaptations": {
+                "campplus_segment_pooling": true,
+                "emotion2vec_exact_gelu_modules": 0,
+                "emotion2vec_fp32_bias_factories": 0
+              },
+              "test_double": false,
+              "allocator": {
+                "worker_pid": 2773365,
+                "worker_rss_mb": 1960.62890625,
+                "source": "worker_torch_npu_allocator",
+                "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+                "peak_scope": "not_reset_unknown_or_includes_load",
+                "memory_allocated_bytes": 28135936,
+                "memory_reserved_bytes": 46137344,
+                "max_memory_allocated_bytes": 28135936,
+                "max_memory_reserved_bytes": 46137344
+              }
+            },
+            "allocator": {
+              "worker_pid": 2773365,
+              "worker_rss_mb": 1960.62890625,
+              "source": "worker_torch_npu_allocator",
+              "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_bytes": 28135936,
+              "memory_reserved_bytes": 46137344,
+              "max_memory_allocated_bytes": 28135936,
+              "max_memory_reserved_bytes": 46137344
+            },
+            "last_done": null,
+            "last_close_ack": null,
+            "operator_adaptations": {
+              "campplus_segment_pooling": true,
+              "emotion2vec_exact_gelu_modules": 0,
+              "emotion2vec_fp32_bias_factories": 0
+            },
+            "last_request_wire_bytes": null,
+            "last_response_wire_bytes": 2056,
+            "last_audio_bytes": null,
+            "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+            "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+            "parent_rss_mb": 3027.2734375
+          }
+        },
+        {
+          "instance_index": 2,
+          "telemetry": {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21097.831619903445,
+            "load_work_ms": 21097.06335980445,
+            "load_dispatch_wait_ms": 0.7682600989937782,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "configured_device": "npu:7",
+          "configured_backend": "torch_npu",
+          "busy": false,
+          "execution_mode": "process",
+          "effective_backend": "torch_npu",
+          "actual_precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "health": "healthy",
+          "failure": null,
+          "memory": {
+            "execution_mode": "process",
+            "runtime_kind": "original_torch_npu_fp32_cam",
+            "worker_identity": {
+              "pid": 2925193,
+              "start_ticks": "759177961",
+              "create_time": 1795504105.61,
+              "sid": 1599766
+            },
+            "worker_alive": true,
+            "birth_in_progress": false,
+            "resource_reaped": false,
+            "normal_exit_ok": null,
+            "forced_cleanup": false,
+            "active": false,
+            "loaded": true,
+            "closing": false,
+            "closed": false,
+            "healthy": true,
+            "failure": null,
+            "close_deadline_monotonic_s": null,
+            "abnormal_reasons": [],
+            "ready": {
+              "kind": "READY",
+              "launch": "4f708f7edca94412916f5e8ea3eaed38",
+              "identity": {
+                "pid": 2925193,
+                "start_ticks": "759177961",
+                "create_time": 1795504105.61,
+                "sid": 1599766
+              },
+              "device": "npu:7",
+              "factory_identity": {
+                "module": "core.local_inference",
+                "qualname": "TorchNpuRunner",
+                "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+                "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+              },
+              "worker_entry_identity": {
+                "module": "core.cam_process",
+                "qualname": "_worker",
+                "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+                "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+              },
+              "model_identity": {
+                "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+                "sha256": {
+                  "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+                  "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+                },
+                "hash_scope": "full original CAM config and weight bytes"
+              },
+              "precision": "fp32",
+              "math_mode": "fp32_ops_hf32_disabled",
+              "storage_identity": {
+                "available": true,
+                "dtype_device_counts": {
+                  "parameter": {
+                    "torch.float32@npu:7": 571
+                  },
+                  "buffer": {
+                    "torch.float32@npu:7": 244,
+                    "torch.int64@npu:7": 122
+                  }
+                },
+                "floating_tensor_count": 815,
+                "parameter_tensor_count": 571,
+                "all_floating_fp32": true,
+                "all_parameters_on_device": true,
+                "all_floating_buffers_on_device": true,
+                "scope": "storage metadata only; no weights read and no new tensor computation"
+              },
+              "actor": {
+                "available": true,
+                "pid": 2925193,
+                "native_thread_id": 2925193,
+                "device_index": 7,
+                "stream_id": 0,
+                "npu_stream_handle": 187651300428624,
+                "test_double": false,
+                "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+              },
+              "operator_adaptations": {
+                "campplus_segment_pooling": true,
+                "emotion2vec_exact_gelu_modules": 0,
+                "emotion2vec_fp32_bias_factories": 0
+              },
+              "test_double": false,
+              "allocator": {
+                "worker_pid": 2925193,
+                "worker_rss_mb": 1961.7109375,
+                "source": "worker_torch_npu_allocator",
+                "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+                "peak_scope": "not_reset_unknown_or_includes_load",
+                "memory_allocated_bytes": 28135936,
+                "memory_reserved_bytes": 46137344,
+                "max_memory_allocated_bytes": 28135936,
+                "max_memory_reserved_bytes": 46137344
+              }
+            },
+            "allocator": {
+              "worker_pid": 2925193,
+              "worker_rss_mb": 1961.7109375,
+              "source": "worker_torch_npu_allocator",
+              "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_bytes": 28135936,
+              "memory_reserved_bytes": 46137344,
+              "max_memory_allocated_bytes": 28135936,
+              "max_memory_reserved_bytes": 46137344
+            },
+            "last_done": null,
+            "last_close_ack": null,
+            "operator_adaptations": {
+              "campplus_segment_pooling": true,
+              "emotion2vec_exact_gelu_modules": 0,
+              "emotion2vec_fp32_bias_factories": 0
+            },
+            "last_request_wire_bytes": null,
+            "last_response_wire_bytes": 2056,
+            "last_audio_bytes": null,
+            "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+            "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+            "parent_rss_mb": 3027.2734375
+          }
+        },
+        {
+          "instance_index": 3,
+          "telemetry": {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 21369.001970626414,
+            "load_work_ms": 21368.21531970054,
+            "load_dispatch_wait_ms": 0.7866509258747101,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "configured_device": "npu:7",
+          "configured_backend": "torch_npu",
+          "busy": false,
+          "execution_mode": "process",
+          "effective_backend": "torch_npu",
+          "actual_precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "health": "healthy",
+          "failure": null,
+          "memory": {
+            "execution_mode": "process",
+            "runtime_kind": "original_torch_npu_fp32_cam",
+            "worker_identity": {
+              "pid": 3058961,
+              "start_ticks": "759180071",
+              "create_time": 1795504126.71,
+              "sid": 1599766
+            },
+            "worker_alive": true,
+            "birth_in_progress": false,
+            "resource_reaped": false,
+            "normal_exit_ok": null,
+            "forced_cleanup": false,
+            "active": false,
+            "loaded": true,
+            "closing": false,
+            "closed": false,
+            "healthy": true,
+            "failure": null,
+            "close_deadline_monotonic_s": null,
+            "abnormal_reasons": [],
+            "ready": {
+              "kind": "READY",
+              "launch": "e479c2f93922482b9ec88fbaa974ff96",
+              "identity": {
+                "pid": 3058961,
+                "start_ticks": "759180071",
+                "create_time": 1795504126.71,
+                "sid": 1599766
+              },
+              "device": "npu:7",
+              "factory_identity": {
+                "module": "core.local_inference",
+                "qualname": "TorchNpuRunner",
+                "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+                "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+              },
+              "worker_entry_identity": {
+                "module": "core.cam_process",
+                "qualname": "_worker",
+                "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+                "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+              },
+              "model_identity": {
+                "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+                "sha256": {
+                  "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+                  "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+                },
+                "hash_scope": "full original CAM config and weight bytes"
+              },
+              "precision": "fp32",
+              "math_mode": "fp32_ops_hf32_disabled",
+              "storage_identity": {
+                "available": true,
+                "dtype_device_counts": {
+                  "parameter": {
+                    "torch.float32@npu:7": 571
+                  },
+                  "buffer": {
+                    "torch.float32@npu:7": 244,
+                    "torch.int64@npu:7": 122
+                  }
+                },
+                "floating_tensor_count": 815,
+                "parameter_tensor_count": 571,
+                "all_floating_fp32": true,
+                "all_parameters_on_device": true,
+                "all_floating_buffers_on_device": true,
+                "scope": "storage metadata only; no weights read and no new tensor computation"
+              },
+              "actor": {
+                "available": true,
+                "pid": 3058961,
+                "native_thread_id": 3058961,
+                "device_index": 7,
+                "stream_id": 0,
+                "npu_stream_handle": 187651917643728,
+                "test_double": false,
+                "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+              },
+              "operator_adaptations": {
+                "campplus_segment_pooling": true,
+                "emotion2vec_exact_gelu_modules": 0,
+                "emotion2vec_fp32_bias_factories": 0
+              },
+              "test_double": false,
+              "allocator": {
+                "worker_pid": 3058961,
+                "worker_rss_mb": 1964.21484375,
+                "source": "worker_torch_npu_allocator",
+                "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+                "peak_scope": "not_reset_unknown_or_includes_load",
+                "memory_allocated_bytes": 28135936,
+                "memory_reserved_bytes": 46137344,
+                "max_memory_allocated_bytes": 28135936,
+                "max_memory_reserved_bytes": 46137344
+              }
+            },
+            "allocator": {
+              "worker_pid": 3058961,
+              "worker_rss_mb": 1964.21484375,
+              "source": "worker_torch_npu_allocator",
+              "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_bytes": 28135936,
+              "memory_reserved_bytes": 46137344,
+              "max_memory_allocated_bytes": 28135936,
+              "max_memory_reserved_bytes": 46137344
+            },
+            "last_done": null,
+            "last_close_ack": null,
+            "operator_adaptations": {
+              "campplus_segment_pooling": true,
+              "emotion2vec_exact_gelu_modules": 0,
+              "emotion2vec_fp32_bias_factories": 0
+            },
+            "last_request_wire_bytes": null,
+            "last_response_wire_bytes": 2056,
+            "last_audio_bytes": null,
+            "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+            "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+            "parent_rss_mb": 3027.2734375
+          }
+        }
+      ],
+      "closing": false,
+      "pending_close_instances": 0,
+      "prefetch_waiting": 0,
+      "prefetch_queue_depth": 0,
+      "waiting_capacity": 0,
+      "backpressure_waiting": 0,
+      "oldest_wait_ms": 0.0,
+      "actual_batch_size": 1,
+      "handoff_count": 0,
+      "last_handoff_ms": 0.0,
+      "handoff_total_ms": 0.0
+    },
+    "emotion2vec": {
+      "loaded": true,
+      "device": "npu:7",
+      "allocated_mb": 627.82,
+      "instances": 1,
+      "configured_instances": 1,
+      "devices": [
+        "npu:7"
+      ],
+      "available_instances": 1,
+      "failed_instances": 0,
+      "busy": 0,
+      "waiting": 0,
+      "failure": null,
+      "wait_total_ms": 0.0,
+      "inference_total_ms": 0.0,
+      "calls": 0,
+      "last_wait_ms": 0.0,
+      "waiting_summary": {
+        "current": 0,
+        "total_ms": 0.0,
+        "average_ms": 0.0
+      },
+      "telemetry_scope": "since_last_close; host elapsed includes dispatch/device wait, not kernel time",
+      "instance_metrics": [
+        {
+          "load_attempts": 1,
+          "load_failures": 0,
+          "load_ms": 13144.40231025219,
+          "load_work_ms": 13143.70269048959,
+          "load_dispatch_wait_ms": 0.6996197625994682,
+          "leases": 0,
+          "wait_ms": 0,
+          "calls": 0,
+          "inference_ms": 0,
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0,
+          "instance_index": 0
+        }
+      ],
+      "called_instances": 0,
+      "unattributed_calls": 0,
+      "inference_outcomes": {
+        "success": 0,
+        "empty": 0,
+        "failed": 0,
+        "cancelled": 0
+      },
+      "unclassified_calls": 0,
+      "duration_skips": 0,
+      "load_total_ms": 13144.402,
+      "execution_mode": "thread",
+      "model_workers": [],
+      "torch_allocated_mb": 627.82,
+      "runtime_hbm_mb": null,
+      "allocated_mb_scope": "PyTorch allocator delta at load; excludes runtime/non-PyTorch HBM and other processes",
+      "instance_details": [
+        {
+          "instance_index": 0,
+          "telemetry": {
+            "load_attempts": 1,
+            "load_failures": 0,
+            "load_ms": 13144.40231025219,
+            "load_work_ms": 13143.70269048959,
+            "load_dispatch_wait_ms": 0.6996197625994682,
+            "leases": 0,
+            "wait_ms": 0,
+            "calls": 0,
+            "inference_ms": 0,
+            "success": 0,
+            "empty": 0,
+            "failed": 0,
+            "cancelled": 0
+          },
+          "configured_device": "npu:7",
+          "configured_backend": "torch_npu",
+          "busy": false,
+          "execution_mode": "thread",
+          "effective_backend": "torch_npu",
+          "actual_precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "operator_adaptations": {
+            "campplus_segment_pooling": false,
+            "emotion2vec_exact_gelu_modules": 28,
+            "emotion2vec_fp32_bias_factories": 1
+          },
+          "health": "healthy",
+          "failure": null,
+          "memory": null
+        }
+      ],
+      "closing": false,
+      "pending_close_instances": 0,
+      "prefetch_waiting": 0,
+      "prefetch_queue_depth": 0,
+      "waiting_capacity": 0,
+      "backpressure_waiting": 0,
+      "oldest_wait_ms": 0.0,
+      "actual_batch_size": 1,
+      "handoff_count": 0,
+      "last_handoff_ms": 0.0,
+      "handoff_total_ms": 0.0
+    }
+  },
+  "qwenModel": {
+    "owner_pool": {
+      "configured": 4,
+      "healthy": 4,
+      "leased": 0,
+      "available": 4,
+      "segment_capacity_per_owner": 16,
+      "configured_global_segments": 64,
+      "initialized": true,
+      "startup_failed": false,
+      "rollback_errors": [],
+      "owners": [
+        {
+          "index": 0,
+          "healthy": true,
+          "loaded": true,
+          "request_id": null,
+          "leased": false,
+          "releasing": false,
+          "available": true,
+          "failure": null,
+          "device": "npu:7",
+          "closing": false,
+          "segment_capacity": 16,
+          "active_sequences": null,
+          "model_worker": {
+            "started": true,
+            "worker_pid": 1741250,
+            "worker_create_time": 1795503970.29,
+            "worker_alive": true,
+            "closed": false,
+            "closing": false,
+            "birth_in_progress": false,
+            "cleanup_status": "pending",
+            "resource_reaped": false,
+            "normal_exit_ok": null,
+            "forced_cleanup": false,
+            "runtime_kind": "original_hf_runtime",
+            "start_method": "spawn",
+            "cann_environment_inherited": true,
+            "launch_id": "3a6da6cbf2504998a1b4ef101eaaf529",
+            "device_scope": "configured logical device; physical mapping follows deployment",
+            "launch_config": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "device": "npu:7",
+              "dtype": "bfloat16",
+              "max_new_tokens": 256,
+              "factory_identity": {
+                "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+                "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+                "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+              },
+              "model_identity": {
+                "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+                "metadata_sha256": {
+                  "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+                },
+                "weight_hash_scope": "metadata_only_not_full_weights"
+              },
+              "worker_entry_identity": {
+                "factory": "core.qwen_asr_process:_worker",
+                "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+                "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+              },
+              "continuous_options": {
+                "max_active": 16,
+                "max_batch_size": 16,
+                "online_repetition_enabled": true,
+                "online_repetition_config": {
+                  "enabled": true,
+                  "min_generated_tokens": 32,
+                  "min_chars": 120,
+                  "max_chars_per_second": 40,
+                  "min_repeats": 8,
+                  "min_repeat_chars": 64,
+                  "max_unit_chars": 32,
+                  "tail_chars": 512,
+                  "confirmations": 2,
+                  "strong_tail_min_chars": 96,
+                  "strong_tail_min_ratio": 95,
+                  "strong_tail_repeats_per_second": 4
+                },
+                "prefill_batch_size": 16,
+                "max_batch_tokens": 10000,
+                "max_batch_audio_frames": 14400,
+                "transport_drain_s": 0.003,
+                "owner_threads": 1
+              }
+            },
+            "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+            "worker_start_ticks": "759164429",
+            "ready_wire_payload_bytes": 2552,
+            "ready_verified": true,
+            "worker_ready_identity": {
+              "pid": 1741250,
+              "start_ticks": "759164429",
+              "create_time": 1795503970.29
+            },
+            "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "ready_preload_observation": {
+              "omp_num_threads": "1",
+              "mkl_num_threads": "1",
+              "torch_num_threads": 1,
+              "torch_num_interop_threads": 1,
+              "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "torch_imported": true,
+              "torch_npu_imported": true,
+              "runtime_api_present": true,
+              "loaded": true,
+              "npu_initialization_observation": "not_queried"
+            },
+            "worker_allocator": {
+              "source": "worker_torch_npu_allocator",
+              "worker_pid": 1741250,
+              "worker_rss_mb": 2123.83203125,
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_mb": 3889.24560546875,
+              "memory_reserved_mb": 4296.0,
+              "max_memory_allocated_mb": 3889.24560546875,
+              "max_memory_reserved_mb": 4296.0
+            },
+            "parent_rss_mb": 453.2890625
+          }
+        },
+        {
+          "index": 1,
+          "healthy": true,
+          "loaded": true,
+          "request_id": null,
+          "leased": false,
+          "releasing": false,
+          "available": true,
+          "failure": null,
+          "device": "npu:7",
+          "closing": false,
+          "segment_capacity": 16,
+          "active_sequences": null,
+          "model_worker": {
+            "started": true,
+            "worker_pid": 1923084,
+            "worker_create_time": 1795503993.53,
+            "worker_alive": true,
+            "closed": false,
+            "closing": false,
+            "birth_in_progress": false,
+            "cleanup_status": "pending",
+            "resource_reaped": false,
+            "normal_exit_ok": null,
+            "forced_cleanup": false,
+            "runtime_kind": "original_hf_runtime",
+            "start_method": "spawn",
+            "cann_environment_inherited": true,
+            "launch_id": "efc161212199400cb8188ac900c679b5",
+            "device_scope": "configured logical device; physical mapping follows deployment",
+            "launch_config": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "device": "npu:7",
+              "dtype": "bfloat16",
+              "max_new_tokens": 256,
+              "factory_identity": {
+                "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+                "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+                "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+              },
+              "model_identity": {
+                "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+                "metadata_sha256": {
+                  "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+                },
+                "weight_hash_scope": "metadata_only_not_full_weights"
+              },
+              "worker_entry_identity": {
+                "factory": "core.qwen_asr_process:_worker",
+                "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+                "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+              },
+              "continuous_options": {
+                "max_active": 16,
+                "max_batch_size": 16,
+                "online_repetition_enabled": true,
+                "online_repetition_config": {
+                  "enabled": true,
+                  "min_generated_tokens": 32,
+                  "min_chars": 120,
+                  "max_chars_per_second": 40,
+                  "min_repeats": 8,
+                  "min_repeat_chars": 64,
+                  "max_unit_chars": 32,
+                  "tail_chars": 512,
+                  "confirmations": 2,
+                  "strong_tail_min_chars": 96,
+                  "strong_tail_min_ratio": 95,
+                  "strong_tail_repeats_per_second": 4
+                },
+                "prefill_batch_size": 16,
+                "max_batch_tokens": 10000,
+                "max_batch_audio_frames": 14400,
+                "transport_drain_s": 0.003,
+                "owner_threads": 1
+              }
+            },
+            "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+            "worker_start_ticks": "759166753",
+            "ready_wire_payload_bytes": 2552,
+            "ready_verified": true,
+            "worker_ready_identity": {
+              "pid": 1923084,
+              "start_ticks": "759166753",
+              "create_time": 1795503993.53
+            },
+            "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "ready_preload_observation": {
+              "omp_num_threads": "1",
+              "mkl_num_threads": "1",
+              "torch_num_threads": 1,
+              "torch_num_interop_threads": 1,
+              "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "torch_imported": true,
+              "torch_npu_imported": true,
+              "runtime_api_present": true,
+              "loaded": true,
+              "npu_initialization_observation": "not_queried"
+            },
+            "worker_allocator": {
+              "source": "worker_torch_npu_allocator",
+              "worker_pid": 1923084,
+              "worker_rss_mb": 2123.875,
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_mb": 3889.24560546875,
+              "memory_reserved_mb": 4296.0,
+              "max_memory_allocated_mb": 3889.24560546875,
+              "max_memory_reserved_mb": 4296.0
+            },
+            "parent_rss_mb": 453.2890625
+          }
+        },
+        {
+          "index": 2,
+          "healthy": true,
+          "loaded": true,
+          "request_id": null,
+          "leased": false,
+          "releasing": false,
+          "available": true,
+          "failure": null,
+          "device": "npu:7",
+          "closing": false,
+          "segment_capacity": 16,
+          "active_sequences": null,
+          "model_worker": {
+            "started": true,
+            "worker_pid": 2145571,
+            "worker_create_time": 1795504016.81,
+            "worker_alive": true,
+            "closed": false,
+            "closing": false,
+            "birth_in_progress": false,
+            "cleanup_status": "pending",
+            "resource_reaped": false,
+            "normal_exit_ok": null,
+            "forced_cleanup": false,
+            "runtime_kind": "original_hf_runtime",
+            "start_method": "spawn",
+            "cann_environment_inherited": true,
+            "launch_id": "6fe7547aa96b489ca5e84f3b8c6ee2e1",
+            "device_scope": "configured logical device; physical mapping follows deployment",
+            "launch_config": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "device": "npu:7",
+              "dtype": "bfloat16",
+              "max_new_tokens": 256,
+              "factory_identity": {
+                "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+                "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+                "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+              },
+              "model_identity": {
+                "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+                "metadata_sha256": {
+                  "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+                },
+                "weight_hash_scope": "metadata_only_not_full_weights"
+              },
+              "worker_entry_identity": {
+                "factory": "core.qwen_asr_process:_worker",
+                "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+                "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+              },
+              "continuous_options": {
+                "max_active": 16,
+                "max_batch_size": 16,
+                "online_repetition_enabled": true,
+                "online_repetition_config": {
+                  "enabled": true,
+                  "min_generated_tokens": 32,
+                  "min_chars": 120,
+                  "max_chars_per_second": 40,
+                  "min_repeats": 8,
+                  "min_repeat_chars": 64,
+                  "max_unit_chars": 32,
+                  "tail_chars": 512,
+                  "confirmations": 2,
+                  "strong_tail_min_chars": 96,
+                  "strong_tail_min_ratio": 95,
+                  "strong_tail_repeats_per_second": 4
+                },
+                "prefill_batch_size": 16,
+                "max_batch_tokens": 10000,
+                "max_batch_audio_frames": 14400,
+                "transport_drain_s": 0.003,
+                "owner_threads": 1
+              }
+            },
+            "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+            "worker_start_ticks": "759169081",
+            "ready_wire_payload_bytes": 2552,
+            "ready_verified": true,
+            "worker_ready_identity": {
+              "pid": 2145571,
+              "start_ticks": "759169081",
+              "create_time": 1795504016.81
+            },
+            "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "ready_preload_observation": {
+              "omp_num_threads": "1",
+              "mkl_num_threads": "1",
+              "torch_num_threads": 1,
+              "torch_num_interop_threads": 1,
+              "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "torch_imported": true,
+              "torch_npu_imported": true,
+              "runtime_api_present": true,
+              "loaded": true,
+              "npu_initialization_observation": "not_queried"
+            },
+            "worker_allocator": {
+              "source": "worker_torch_npu_allocator",
+              "worker_pid": 2145571,
+              "worker_rss_mb": 2118.8359375,
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_mb": 3889.24560546875,
+              "memory_reserved_mb": 4296.0,
+              "max_memory_allocated_mb": 3889.24560546875,
+              "max_memory_reserved_mb": 4296.0
+            },
+            "parent_rss_mb": 453.2890625
+          }
+        },
+        {
+          "index": 3,
+          "healthy": true,
+          "loaded": true,
+          "request_id": null,
+          "leased": false,
+          "releasing": false,
+          "available": true,
+          "failure": null,
+          "device": "npu:7",
+          "closing": false,
+          "segment_capacity": 16,
+          "active_sequences": null,
+          "model_worker": {
+            "started": true,
+            "worker_pid": 2389942,
+            "worker_create_time": 1795504039.96,
+            "worker_alive": true,
+            "closed": false,
+            "closing": false,
+            "birth_in_progress": false,
+            "cleanup_status": "pending",
+            "resource_reaped": false,
+            "normal_exit_ok": null,
+            "forced_cleanup": false,
+            "runtime_kind": "original_hf_runtime",
+            "start_method": "spawn",
+            "cann_environment_inherited": true,
+            "launch_id": "acd51b57b4754d6baa8bb67cfce8d236",
+            "device_scope": "configured logical device; physical mapping follows deployment",
+            "launch_config": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "device": "npu:7",
+              "dtype": "bfloat16",
+              "max_new_tokens": 256,
+              "factory_identity": {
+                "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+                "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+                "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+              },
+              "model_identity": {
+                "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+                "metadata_sha256": {
+                  "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+                },
+                "weight_hash_scope": "metadata_only_not_full_weights"
+              },
+              "worker_entry_identity": {
+                "factory": "core.qwen_asr_process:_worker",
+                "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+                "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+              },
+              "continuous_options": {
+                "max_active": 16,
+                "max_batch_size": 16,
+                "online_repetition_enabled": true,
+                "online_repetition_config": {
+                  "enabled": true,
+                  "min_generated_tokens": 32,
+                  "min_chars": 120,
+                  "max_chars_per_second": 40,
+                  "min_repeats": 8,
+                  "min_repeat_chars": 64,
+                  "max_unit_chars": 32,
+                  "tail_chars": 512,
+                  "confirmations": 2,
+                  "strong_tail_min_chars": 96,
+                  "strong_tail_min_ratio": 95,
+                  "strong_tail_repeats_per_second": 4
+                },
+                "prefill_batch_size": 16,
+                "max_batch_tokens": 10000,
+                "max_batch_audio_frames": 14400,
+                "transport_drain_s": 0.003,
+                "owner_threads": 1
+              }
+            },
+            "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+            "worker_start_ticks": "759171396",
+            "ready_wire_payload_bytes": 2552,
+            "ready_verified": true,
+            "worker_ready_identity": {
+              "pid": 2389942,
+              "start_ticks": "759171396",
+              "create_time": 1795504039.96
+            },
+            "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "ready_preload_observation": {
+              "omp_num_threads": "1",
+              "mkl_num_threads": "1",
+              "torch_num_threads": 1,
+              "torch_num_interop_threads": 1,
+              "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "torch_imported": true,
+              "torch_npu_imported": true,
+              "runtime_api_present": true,
+              "loaded": true,
+              "npu_initialization_observation": "not_queried"
+            },
+            "worker_allocator": {
+              "source": "worker_torch_npu_allocator",
+              "worker_pid": 2389942,
+              "worker_rss_mb": 2113.390625,
+              "peak_scope": "not_reset_unknown_or_includes_load",
+              "memory_allocated_mb": 3889.24560546875,
+              "memory_reserved_mb": 4296.0,
+              "max_memory_allocated_mb": 3889.24560546875,
+              "max_memory_reserved_mb": 4296.0
+            },
+            "parent_rss_mb": 453.2890625
+          }
+        }
+      ]
+    },
+    "generation_mode": "continuous",
+    "execution_mode": "process",
+    "memory_process_scope": "model_worker",
+    "configured_model_workers": 4,
+    "model_workers": [
+      {
+        "started": true,
+        "worker_pid": 1741250,
+        "worker_create_time": 1795503970.29,
+        "worker_alive": true,
+        "closed": false,
+        "closing": false,
+        "birth_in_progress": false,
+        "cleanup_status": "pending",
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "3a6da6cbf2504998a1b4ef101eaaf529",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": true,
+            "online_repetition_config": {
+              "enabled": true,
+              "min_generated_tokens": 32,
+              "min_chars": 120,
+              "max_chars_per_second": 40,
+              "min_repeats": 8,
+              "min_repeat_chars": 64,
+              "max_unit_chars": 32,
+              "tail_chars": 512,
+              "confirmations": 2,
+              "strong_tail_min_chars": 96,
+              "strong_tail_min_ratio": 95,
+              "strong_tail_repeats_per_second": 4
+            },
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 10000,
+            "max_batch_audio_frames": 14400,
+            "transport_drain_s": 0.003,
+            "owner_threads": 1
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "759164429",
+        "ready_wire_payload_bytes": 2552,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 1741250,
+          "start_ticks": "759164429",
+          "create_time": 1795503970.29
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "omp_num_threads": "1",
+          "mkl_num_threads": "1",
+          "torch_num_threads": 1,
+          "torch_num_interop_threads": 1,
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 1741250,
+          "worker_rss_mb": 2123.83203125,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 3889.24560546875,
+          "memory_reserved_mb": 4296.0,
+          "max_memory_allocated_mb": 3889.24560546875,
+          "max_memory_reserved_mb": 4296.0
+        },
+        "parent_rss_mb": 453.2890625,
+        "index": 0
+      },
+      {
+        "started": true,
+        "worker_pid": 1923084,
+        "worker_create_time": 1795503993.53,
+        "worker_alive": true,
+        "closed": false,
+        "closing": false,
+        "birth_in_progress": false,
+        "cleanup_status": "pending",
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "efc161212199400cb8188ac900c679b5",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": true,
+            "online_repetition_config": {
+              "enabled": true,
+              "min_generated_tokens": 32,
+              "min_chars": 120,
+              "max_chars_per_second": 40,
+              "min_repeats": 8,
+              "min_repeat_chars": 64,
+              "max_unit_chars": 32,
+              "tail_chars": 512,
+              "confirmations": 2,
+              "strong_tail_min_chars": 96,
+              "strong_tail_min_ratio": 95,
+              "strong_tail_repeats_per_second": 4
+            },
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 10000,
+            "max_batch_audio_frames": 14400,
+            "transport_drain_s": 0.003,
+            "owner_threads": 1
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "759166753",
+        "ready_wire_payload_bytes": 2552,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 1923084,
+          "start_ticks": "759166753",
+          "create_time": 1795503993.53
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "omp_num_threads": "1",
+          "mkl_num_threads": "1",
+          "torch_num_threads": 1,
+          "torch_num_interop_threads": 1,
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 1923084,
+          "worker_rss_mb": 2123.875,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 3889.24560546875,
+          "memory_reserved_mb": 4296.0,
+          "max_memory_allocated_mb": 3889.24560546875,
+          "max_memory_reserved_mb": 4296.0
+        },
+        "parent_rss_mb": 453.2890625,
+        "index": 1
+      },
+      {
+        "started": true,
+        "worker_pid": 2145571,
+        "worker_create_time": 1795504016.81,
+        "worker_alive": true,
+        "closed": false,
+        "closing": false,
+        "birth_in_progress": false,
+        "cleanup_status": "pending",
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "6fe7547aa96b489ca5e84f3b8c6ee2e1",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": true,
+            "online_repetition_config": {
+              "enabled": true,
+              "min_generated_tokens": 32,
+              "min_chars": 120,
+              "max_chars_per_second": 40,
+              "min_repeats": 8,
+              "min_repeat_chars": 64,
+              "max_unit_chars": 32,
+              "tail_chars": 512,
+              "confirmations": 2,
+              "strong_tail_min_chars": 96,
+              "strong_tail_min_ratio": 95,
+              "strong_tail_repeats_per_second": 4
+            },
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 10000,
+            "max_batch_audio_frames": 14400,
+            "transport_drain_s": 0.003,
+            "owner_threads": 1
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "759169081",
+        "ready_wire_payload_bytes": 2552,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 2145571,
+          "start_ticks": "759169081",
+          "create_time": 1795504016.81
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "omp_num_threads": "1",
+          "mkl_num_threads": "1",
+          "torch_num_threads": 1,
+          "torch_num_interop_threads": 1,
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 2145571,
+          "worker_rss_mb": 2118.8359375,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 3889.24560546875,
+          "memory_reserved_mb": 4296.0,
+          "max_memory_allocated_mb": 3889.24560546875,
+          "max_memory_reserved_mb": 4296.0
+        },
+        "parent_rss_mb": 453.2890625,
+        "index": 2
+      },
+      {
+        "started": true,
+        "worker_pid": 2389942,
+        "worker_create_time": 1795504039.96,
+        "worker_alive": true,
+        "closed": false,
+        "closing": false,
+        "birth_in_progress": false,
+        "cleanup_status": "pending",
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "acd51b57b4754d6baa8bb67cfce8d236",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": true,
+            "online_repetition_config": {
+              "enabled": true,
+              "min_generated_tokens": 32,
+              "min_chars": 120,
+              "max_chars_per_second": 40,
+              "min_repeats": 8,
+              "min_repeat_chars": 64,
+              "max_unit_chars": 32,
+              "tail_chars": 512,
+              "confirmations": 2,
+              "strong_tail_min_chars": 96,
+              "strong_tail_min_ratio": 95,
+              "strong_tail_repeats_per_second": 4
+            },
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 10000,
+            "max_batch_audio_frames": 14400,
+            "transport_drain_s": 0.003,
+            "owner_threads": 1
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "759171396",
+        "ready_wire_payload_bytes": 2552,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 2389942,
+          "start_ticks": "759171396",
+          "create_time": 1795504039.96
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "omp_num_threads": "1",
+          "mkl_num_threads": "1",
+          "torch_num_threads": 1,
+          "torch_num_interop_threads": 1,
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 2389942,
+          "worker_rss_mb": 2113.390625,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 3889.24560546875,
+          "memory_reserved_mb": 4296.0,
+          "max_memory_allocated_mb": 3889.24560546875,
+          "max_memory_reserved_mb": 4296.0
+        },
+        "parent_rss_mb": 453.2890625,
+        "index": 3
+      }
+    ],
+    "shutdown": {
+      "phase": "open",
+      "forced_cleanup": false
+    },
+    "backend": "transformers_torch_npu",
+    "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+    "device": "npu:7",
+    "dtype": "bfloat16",
+    "loaded": true,
+    "loading": false,
+    "configured_instances": 4,
+    "capacity": 4,
+    "busy": 0,
+    "waiting": 0,
+    "batch_scheduler": {
+      "mode": "continuous",
+      "configured_batch_size": null,
+      "capacity": 64,
+      "waiting": 0,
+      "running_members": 0,
+      "inflight": 0,
+      "peak_inflight": 0,
+      "batch_count": 0,
+      "batch_sizes": {},
+      "recent_batches": [],
+      "closing": false,
+      "wait_ms": 0,
+      "physical_batch_source": "worker continuous execution steps; sequence records are not physical batches"
+    },
+    "failed_instances": 0,
+    "execution_failures": 0,
+    "closing": false,
+    "memory_allocated_mb": 15556.982421875,
+    "memory_reserved_mb": 17184.0,
+    "memory_source": "pytorch_load_delta_estimate",
+    "instances": [
+      {
+        "device": "npu:7",
+        "dtype": "bfloat16",
+        "loaded": true,
+        "loading": false,
+        "failure": null,
+        "memory_allocated_mb": 3889.24560546875,
+        "memory_reserved_mb": 4296.0,
+        "model_worker": {
+          "started": true,
+          "worker_pid": 1741250,
+          "worker_create_time": 1795503970.29,
+          "worker_alive": true,
+          "closed": false,
+          "closing": false,
+          "birth_in_progress": false,
+          "cleanup_status": "pending",
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "runtime_kind": "original_hf_runtime",
+          "start_method": "spawn",
+          "cann_environment_inherited": true,
+          "launch_id": "3a6da6cbf2504998a1b4ef101eaaf529",
+          "device_scope": "configured logical device; physical mapping follows deployment",
+          "launch_config": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "device": "npu:7",
+            "dtype": "bfloat16",
+            "max_new_tokens": 256,
+            "factory_identity": {
+              "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+            },
+            "model_identity": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "metadata_sha256": {
+                "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+              },
+              "weight_hash_scope": "metadata_only_not_full_weights"
+            },
+            "worker_entry_identity": {
+              "factory": "core.qwen_asr_process:_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+              "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+            },
+            "continuous_options": {
+              "max_active": 16,
+              "max_batch_size": 16,
+              "online_repetition_enabled": true,
+              "online_repetition_config": {
+                "enabled": true,
+                "min_generated_tokens": 32,
+                "min_chars": 120,
+                "max_chars_per_second": 40,
+                "min_repeats": 8,
+                "min_repeat_chars": 64,
+                "max_unit_chars": 32,
+                "tail_chars": 512,
+                "confirmations": 2,
+                "strong_tail_min_chars": 96,
+                "strong_tail_min_ratio": 95,
+                "strong_tail_repeats_per_second": 4
+              },
+              "prefill_batch_size": 16,
+              "max_batch_tokens": 10000,
+              "max_batch_audio_frames": 14400,
+              "transport_drain_s": 0.003,
+              "owner_threads": 1
+            }
+          },
+          "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+          "worker_start_ticks": "759164429",
+          "ready_wire_payload_bytes": 2552,
+          "ready_verified": true,
+          "worker_ready_identity": {
+            "pid": 1741250,
+            "start_ticks": "759164429",
+            "create_time": 1795503970.29
+          },
+          "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+          "ready_preload_observation": {
+            "omp_num_threads": "1",
+            "mkl_num_threads": "1",
+            "torch_num_threads": 1,
+            "torch_num_interop_threads": 1,
+            "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "torch_imported": true,
+            "torch_npu_imported": true,
+            "runtime_api_present": true,
+            "loaded": true,
+            "npu_initialization_observation": "not_queried"
+          },
+          "worker_allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 1741250,
+            "worker_rss_mb": 2123.83203125,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3889.24560546875,
+            "memory_reserved_mb": 4296.0,
+            "max_memory_allocated_mb": 3889.24560546875,
+            "max_memory_reserved_mb": 4296.0
+          },
+          "parent_rss_mb": 453.2890625
+        },
+        "last_batch_timings": null,
+        "precision_policy": {
+          "mode": "fp32_ops_hf32_disabled",
+          "conv_allow_hf32": false,
+          "matmul_allow_hf32": false
+        },
+        "parameter_dtype_check": {
+          "expected_dtype": "torch.bfloat16",
+          "floating_parameter_dtype_counts": {
+            "torch.bfloat16": 707
+          },
+          "nonfloating_parameter_count": 0,
+          "buffers_cast_or_checked": false
+        },
+        "memory_source": "pytorch_load_delta_estimate",
+        "transport_sender": {
+          "pending_send_count": 0,
+          "oldest_pending_s": 0.0,
+          "cumulative_submit_send_s": 0.0,
+          "max_submit_send_s": 0.0
+        },
+        "index": 0,
+        "busy": false,
+        "request_id": null,
+        "leased": false
+      },
+      {
+        "device": "npu:7",
+        "dtype": "bfloat16",
+        "loaded": true,
+        "loading": false,
+        "failure": null,
+        "memory_allocated_mb": 3889.24560546875,
+        "memory_reserved_mb": 4296.0,
+        "model_worker": {
+          "started": true,
+          "worker_pid": 1923084,
+          "worker_create_time": 1795503993.53,
+          "worker_alive": true,
+          "closed": false,
+          "closing": false,
+          "birth_in_progress": false,
+          "cleanup_status": "pending",
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "runtime_kind": "original_hf_runtime",
+          "start_method": "spawn",
+          "cann_environment_inherited": true,
+          "launch_id": "efc161212199400cb8188ac900c679b5",
+          "device_scope": "configured logical device; physical mapping follows deployment",
+          "launch_config": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "device": "npu:7",
+            "dtype": "bfloat16",
+            "max_new_tokens": 256,
+            "factory_identity": {
+              "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+            },
+            "model_identity": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "metadata_sha256": {
+                "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+              },
+              "weight_hash_scope": "metadata_only_not_full_weights"
+            },
+            "worker_entry_identity": {
+              "factory": "core.qwen_asr_process:_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+              "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+            },
+            "continuous_options": {
+              "max_active": 16,
+              "max_batch_size": 16,
+              "online_repetition_enabled": true,
+              "online_repetition_config": {
+                "enabled": true,
+                "min_generated_tokens": 32,
+                "min_chars": 120,
+                "max_chars_per_second": 40,
+                "min_repeats": 8,
+                "min_repeat_chars": 64,
+                "max_unit_chars": 32,
+                "tail_chars": 512,
+                "confirmations": 2,
+                "strong_tail_min_chars": 96,
+                "strong_tail_min_ratio": 95,
+                "strong_tail_repeats_per_second": 4
+              },
+              "prefill_batch_size": 16,
+              "max_batch_tokens": 10000,
+              "max_batch_audio_frames": 14400,
+              "transport_drain_s": 0.003,
+              "owner_threads": 1
+            }
+          },
+          "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+          "worker_start_ticks": "759166753",
+          "ready_wire_payload_bytes": 2552,
+          "ready_verified": true,
+          "worker_ready_identity": {
+            "pid": 1923084,
+            "start_ticks": "759166753",
+            "create_time": 1795503993.53
+          },
+          "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+          "ready_preload_observation": {
+            "omp_num_threads": "1",
+            "mkl_num_threads": "1",
+            "torch_num_threads": 1,
+            "torch_num_interop_threads": 1,
+            "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "torch_imported": true,
+            "torch_npu_imported": true,
+            "runtime_api_present": true,
+            "loaded": true,
+            "npu_initialization_observation": "not_queried"
+          },
+          "worker_allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 1923084,
+            "worker_rss_mb": 2123.875,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3889.24560546875,
+            "memory_reserved_mb": 4296.0,
+            "max_memory_allocated_mb": 3889.24560546875,
+            "max_memory_reserved_mb": 4296.0
+          },
+          "parent_rss_mb": 453.2890625
+        },
+        "last_batch_timings": null,
+        "precision_policy": {
+          "mode": "fp32_ops_hf32_disabled",
+          "conv_allow_hf32": false,
+          "matmul_allow_hf32": false
+        },
+        "parameter_dtype_check": {
+          "expected_dtype": "torch.bfloat16",
+          "floating_parameter_dtype_counts": {
+            "torch.bfloat16": 707
+          },
+          "nonfloating_parameter_count": 0,
+          "buffers_cast_or_checked": false
+        },
+        "memory_source": "pytorch_load_delta_estimate",
+        "transport_sender": {
+          "pending_send_count": 0,
+          "oldest_pending_s": 0.0,
+          "cumulative_submit_send_s": 0.0,
+          "max_submit_send_s": 0.0
+        },
+        "index": 1,
+        "busy": false,
+        "request_id": null,
+        "leased": false
+      },
+      {
+        "device": "npu:7",
+        "dtype": "bfloat16",
+        "loaded": true,
+        "loading": false,
+        "failure": null,
+        "memory_allocated_mb": 3889.24560546875,
+        "memory_reserved_mb": 4296.0,
+        "model_worker": {
+          "started": true,
+          "worker_pid": 2145571,
+          "worker_create_time": 1795504016.81,
+          "worker_alive": true,
+          "closed": false,
+          "closing": false,
+          "birth_in_progress": false,
+          "cleanup_status": "pending",
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "runtime_kind": "original_hf_runtime",
+          "start_method": "spawn",
+          "cann_environment_inherited": true,
+          "launch_id": "6fe7547aa96b489ca5e84f3b8c6ee2e1",
+          "device_scope": "configured logical device; physical mapping follows deployment",
+          "launch_config": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "device": "npu:7",
+            "dtype": "bfloat16",
+            "max_new_tokens": 256,
+            "factory_identity": {
+              "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+            },
+            "model_identity": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "metadata_sha256": {
+                "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+              },
+              "weight_hash_scope": "metadata_only_not_full_weights"
+            },
+            "worker_entry_identity": {
+              "factory": "core.qwen_asr_process:_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+              "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+            },
+            "continuous_options": {
+              "max_active": 16,
+              "max_batch_size": 16,
+              "online_repetition_enabled": true,
+              "online_repetition_config": {
+                "enabled": true,
+                "min_generated_tokens": 32,
+                "min_chars": 120,
+                "max_chars_per_second": 40,
+                "min_repeats": 8,
+                "min_repeat_chars": 64,
+                "max_unit_chars": 32,
+                "tail_chars": 512,
+                "confirmations": 2,
+                "strong_tail_min_chars": 96,
+                "strong_tail_min_ratio": 95,
+                "strong_tail_repeats_per_second": 4
+              },
+              "prefill_batch_size": 16,
+              "max_batch_tokens": 10000,
+              "max_batch_audio_frames": 14400,
+              "transport_drain_s": 0.003,
+              "owner_threads": 1
+            }
+          },
+          "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+          "worker_start_ticks": "759169081",
+          "ready_wire_payload_bytes": 2552,
+          "ready_verified": true,
+          "worker_ready_identity": {
+            "pid": 2145571,
+            "start_ticks": "759169081",
+            "create_time": 1795504016.81
+          },
+          "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+          "ready_preload_observation": {
+            "omp_num_threads": "1",
+            "mkl_num_threads": "1",
+            "torch_num_threads": 1,
+            "torch_num_interop_threads": 1,
+            "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "torch_imported": true,
+            "torch_npu_imported": true,
+            "runtime_api_present": true,
+            "loaded": true,
+            "npu_initialization_observation": "not_queried"
+          },
+          "worker_allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 2145571,
+            "worker_rss_mb": 2118.8359375,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3889.24560546875,
+            "memory_reserved_mb": 4296.0,
+            "max_memory_allocated_mb": 3889.24560546875,
+            "max_memory_reserved_mb": 4296.0
+          },
+          "parent_rss_mb": 453.2890625
+        },
+        "last_batch_timings": null,
+        "precision_policy": {
+          "mode": "fp32_ops_hf32_disabled",
+          "conv_allow_hf32": false,
+          "matmul_allow_hf32": false
+        },
+        "parameter_dtype_check": {
+          "expected_dtype": "torch.bfloat16",
+          "floating_parameter_dtype_counts": {
+            "torch.bfloat16": 707
+          },
+          "nonfloating_parameter_count": 0,
+          "buffers_cast_or_checked": false
+        },
+        "memory_source": "pytorch_load_delta_estimate",
+        "transport_sender": {
+          "pending_send_count": 0,
+          "oldest_pending_s": 0.0,
+          "cumulative_submit_send_s": 0.0,
+          "max_submit_send_s": 0.0
+        },
+        "index": 2,
+        "busy": false,
+        "request_id": null,
+        "leased": false
+      },
+      {
+        "device": "npu:7",
+        "dtype": "bfloat16",
+        "loaded": true,
+        "loading": false,
+        "failure": null,
+        "memory_allocated_mb": 3889.24560546875,
+        "memory_reserved_mb": 4296.0,
+        "model_worker": {
+          "started": true,
+          "worker_pid": 2389942,
+          "worker_create_time": 1795504039.96,
+          "worker_alive": true,
+          "closed": false,
+          "closing": false,
+          "birth_in_progress": false,
+          "cleanup_status": "pending",
+          "resource_reaped": false,
+          "normal_exit_ok": null,
+          "forced_cleanup": false,
+          "runtime_kind": "original_hf_runtime",
+          "start_method": "spawn",
+          "cann_environment_inherited": true,
+          "launch_id": "acd51b57b4754d6baa8bb67cfce8d236",
+          "device_scope": "configured logical device; physical mapping follows deployment",
+          "launch_config": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "device": "npu:7",
+            "dtype": "bfloat16",
+            "max_new_tokens": 256,
+            "factory_identity": {
+              "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+              "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+            },
+            "model_identity": {
+              "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+              "metadata_sha256": {
+                "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+              },
+              "weight_hash_scope": "metadata_only_not_full_weights"
+            },
+            "worker_entry_identity": {
+              "factory": "core.qwen_asr_process:_worker",
+              "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+              "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+            },
+            "continuous_options": {
+              "max_active": 16,
+              "max_batch_size": 16,
+              "online_repetition_enabled": true,
+              "online_repetition_config": {
+                "enabled": true,
+                "min_generated_tokens": 32,
+                "min_chars": 120,
+                "max_chars_per_second": 40,
+                "min_repeats": 8,
+                "min_repeat_chars": 64,
+                "max_unit_chars": 32,
+                "tail_chars": 512,
+                "confirmations": 2,
+                "strong_tail_min_chars": 96,
+                "strong_tail_min_ratio": 95,
+                "strong_tail_repeats_per_second": 4
+              },
+              "prefill_batch_size": 16,
+              "max_batch_tokens": 10000,
+              "max_batch_audio_frames": 14400,
+              "transport_drain_s": 0.003,
+              "owner_threads": 1
+            }
+          },
+          "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+          "worker_start_ticks": "759171396",
+          "ready_wire_payload_bytes": 2552,
+          "ready_verified": true,
+          "worker_ready_identity": {
+            "pid": 2389942,
+            "start_ticks": "759171396",
+            "create_time": 1795504039.96
+          },
+          "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+          "ready_preload_observation": {
+            "omp_num_threads": "1",
+            "mkl_num_threads": "1",
+            "torch_num_threads": 1,
+            "torch_num_interop_threads": 1,
+            "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "torch_imported": true,
+            "torch_npu_imported": true,
+            "runtime_api_present": true,
+            "loaded": true,
+            "npu_initialization_observation": "not_queried"
+          },
+          "worker_allocator": {
+            "source": "worker_torch_npu_allocator",
+            "worker_pid": 2389942,
+            "worker_rss_mb": 2113.390625,
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_mb": 3889.24560546875,
+            "memory_reserved_mb": 4296.0,
+            "max_memory_allocated_mb": 3889.24560546875,
+            "max_memory_reserved_mb": 4296.0
+          },
+          "parent_rss_mb": 453.2890625
+        },
+        "last_batch_timings": null,
+        "precision_policy": {
+          "mode": "fp32_ops_hf32_disabled",
+          "conv_allow_hf32": false,
+          "matmul_allow_hf32": false
+        },
+        "parameter_dtype_check": {
+          "expected_dtype": "torch.bfloat16",
+          "floating_parameter_dtype_counts": {
+            "torch.bfloat16": 707
+          },
+          "nonfloating_parameter_count": 0,
+          "buffers_cast_or_checked": false
+        },
+        "memory_source": "pytorch_load_delta_estimate",
+        "transport_sender": {
+          "pending_send_count": 0,
+          "oldest_pending_s": 0.0,
+          "cumulative_submit_send_s": 0.0,
+          "max_submit_send_s": 0.0
+        },
+        "index": 3,
+        "busy": false,
+        "request_id": null,
+        "leased": false
+      }
+    ]
+  },
+  "vadPool": {
+    "loaded": true,
+    "device": "cpu",
+    "devices": [
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu"
+    ],
+    "configured_instances": 8,
+    "loaded_instances": 8,
+    "available_instances": 8,
+    "allocated_mb": 0.0,
+    "allocated_mb_scope": "VAD worker PyTorch NPU allocator; excludes runtime/other processes",
+    "failed_instances": 0,
+    "failures": [],
+    "busy": 0,
+    "waiting": 0,
+    "oldest_wait_s": 0.0,
+    "worker_details": [
+      {
+        "worker_id": 0,
+        "pid": 1654732,
+        "device": "cpu",
+        "ready": true,
+        "busy": false,
+        "effective_options": {
+          "available": true,
+          "source": "loaded_model.model.vad_opts",
+          "values": {
+            "max_single_segment_time": 8000,
+            "max_end_silence_time": 800,
+            "speech_noise_thres": 0.6,
+            "decibel_thres": -100.0,
+            "snr_thres": -100.0
+          }
+        }
+      },
+      {
+        "worker_id": 1,
+        "pid": 1654763,
+        "device": "cpu",
+        "ready": true,
+        "busy": false,
+        "effective_options": {
+          "available": true,
+          "source": "loaded_model.model.vad_opts",
+          "values": {
+            "max_single_segment_time": 8000,
+            "max_end_silence_time": 800,
+            "speech_noise_thres": 0.6,
+            "decibel_thres": -100.0,
+            "snr_thres": -100.0
+          }
+        }
+      },
+      {
+        "worker_id": 2,
+        "pid": 1654791,
+        "device": "cpu",
+        "ready": true,
+        "busy": false,
+        "effective_options": {
+          "available": true,
+          "source": "loaded_model.model.vad_opts",
+          "values": {
+            "max_single_segment_time": 8000,
+            "max_end_silence_time": 800,
+            "speech_noise_thres": 0.6,
+            "decibel_thres": -100.0,
+            "snr_thres": -100.0
+          }
+        }
+      },
+      {
+        "worker_id": 3,
+        "pid": 1654820,
+        "device": "cpu",
+        "ready": true,
+        "busy": false,
+        "effective_options": {
+          "available": true,
+          "source": "loaded_model.model.vad_opts",
+          "values": {
+            "max_single_segment_time": 8000,
+            "max_end_silence_time": 800,
+            "speech_noise_thres": 0.6,
+            "decibel_thres": -100.0,
+            "snr_thres": -100.0
+          }
+        }
+      },
+      {
+        "worker_id": 4,
+        "pid": 1654867,
+        "device": "cpu",
+        "ready": true,
+        "busy": false,
+        "effective_options": {
+          "available": true,
+          "source": "loaded_model.model.vad_opts",
+          "values": {
+            "max_single_segment_time": 8000,
+            "max_end_silence_time": 800,
+            "speech_noise_thres": 0.6,
+            "decibel_thres": -100.0,
+            "snr_thres": -100.0
+          }
+        }
+      },
+      {
+        "worker_id": 5,
+        "pid": 1654908,
+        "device": "cpu",
+        "ready": true,
+        "busy": false,
+        "effective_options": {
+          "available": true,
+          "source": "loaded_model.model.vad_opts",
+          "values": {
+            "max_single_segment_time": 8000,
+            "max_end_silence_time": 800,
+            "speech_noise_thres": 0.6,
+            "decibel_thres": -100.0,
+            "snr_thres": -100.0
+          }
+        }
+      },
+      {
+        "worker_id": 6,
+        "pid": 1654950,
+        "device": "cpu",
+        "ready": true,
+        "busy": false,
+        "effective_options": {
+          "available": true,
+          "source": "loaded_model.model.vad_opts",
+          "values": {
+            "max_single_segment_time": 8000,
+            "max_end_silence_time": 800,
+            "speech_noise_thres": 0.6,
+            "decibel_thres": -100.0,
+            "snr_thres": -100.0
+          }
+        }
+      },
+      {
+        "worker_id": 7,
+        "pid": 1654961,
+        "device": "cpu",
+        "ready": true,
+        "busy": false,
+        "effective_options": {
+          "available": true,
+          "source": "loaded_model.model.vad_opts",
+          "values": {
+            "max_single_segment_time": 8000,
+            "max_end_silence_time": 800,
+            "speech_noise_thres": 0.6,
+            "decibel_thres": -100.0,
+            "snr_thres": -100.0
+          }
+        }
+      }
+    ]
+  },
+  "resourceDiagnostics": {
+    "available": false,
+    "timestamp": null,
+    "host": {
+      "available": false,
+      "reason": "\u672a\u91c7\u96c6"
+    },
+    "vmstat": {
+      "available": false,
+      "reason": "\u672a\u91c7\u96c6"
+    },
+    "backend": {
+      "available": false,
+      "reason": "\u672a\u91c7\u96c6",
+      "npu_allocator": {
+        "available": true,
+        "device": "npu:7",
+        "pid": 1599766,
+        "timestamp": "2026-11-24T07:09:23.780145+00:00",
+        "initialized": true,
+        "torch_default_dtype": "torch.float32",
+        "scope": "current_service_process_configured_device_pytorch_allocator",
+        "excludes": "runtime/non-PyTorch HBM, other processes; not per-model attribution",
+        "peak_scope": "process/device allocator peak since initialization or external peak reset",
+        "sampling": "sequential counters; concurrent inference may change values between reads",
+        "allocated_bytes": 658319360,
+        "reserved_bytes": 771751936,
+        "peak_allocated_bytes": 658319360,
+        "peak_reserved_bytes": 771751936,
+        "allocated_mb": 627.822265625,
+        "reserved_mb": 736.0,
+        "peak_allocated_mb": 627.822265625,
+        "peak_reserved_mb": 736.0
+      }
+    },
+    "npu": {
+      "available": false,
+      "reason": "\u672a\u91c7\u96c6",
+      "service_compute_apps": [],
+      "other_compute_apps": [],
+      "unverified_compute_apps": [],
+      "backend_compute_apps": [],
+      "qwen_compute_apps": [],
+      "cam_compute_apps": [],
+      "ownership_scope": "cached resource sample PID/birth identity matched to current backend and registered model workers; not fresh OS sampling"
+    },
+    "qwen_execution": "process",
+    "qwen_memory_process_scope": "model_worker",
+    "model_workers": [
+      {
+        "started": true,
+        "worker_pid": 1741250,
+        "worker_create_time": 1795503970.29,
+        "worker_alive": true,
+        "closed": false,
+        "closing": false,
+        "birth_in_progress": false,
+        "cleanup_status": "pending",
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "3a6da6cbf2504998a1b4ef101eaaf529",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": true,
+            "online_repetition_config": {
+              "enabled": true,
+              "min_generated_tokens": 32,
+              "min_chars": 120,
+              "max_chars_per_second": 40,
+              "min_repeats": 8,
+              "min_repeat_chars": 64,
+              "max_unit_chars": 32,
+              "tail_chars": 512,
+              "confirmations": 2,
+              "strong_tail_min_chars": 96,
+              "strong_tail_min_ratio": 95,
+              "strong_tail_repeats_per_second": 4
+            },
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 10000,
+            "max_batch_audio_frames": 14400,
+            "transport_drain_s": 0.003,
+            "owner_threads": 1
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "759164429",
+        "ready_wire_payload_bytes": 2552,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 1741250,
+          "start_ticks": "759164429",
+          "create_time": 1795503970.29
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "omp_num_threads": "1",
+          "mkl_num_threads": "1",
+          "torch_num_threads": 1,
+          "torch_num_interop_threads": 1,
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 1741250,
+          "worker_rss_mb": 2123.83203125,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 3889.24560546875,
+          "memory_reserved_mb": 4296.0,
+          "max_memory_allocated_mb": 3889.24560546875,
+          "max_memory_reserved_mb": 4296.0
+        },
+        "parent_rss_mb": 453.2890625,
+        "index": 0
+      },
+      {
+        "started": true,
+        "worker_pid": 1923084,
+        "worker_create_time": 1795503993.53,
+        "worker_alive": true,
+        "closed": false,
+        "closing": false,
+        "birth_in_progress": false,
+        "cleanup_status": "pending",
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "efc161212199400cb8188ac900c679b5",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": true,
+            "online_repetition_config": {
+              "enabled": true,
+              "min_generated_tokens": 32,
+              "min_chars": 120,
+              "max_chars_per_second": 40,
+              "min_repeats": 8,
+              "min_repeat_chars": 64,
+              "max_unit_chars": 32,
+              "tail_chars": 512,
+              "confirmations": 2,
+              "strong_tail_min_chars": 96,
+              "strong_tail_min_ratio": 95,
+              "strong_tail_repeats_per_second": 4
+            },
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 10000,
+            "max_batch_audio_frames": 14400,
+            "transport_drain_s": 0.003,
+            "owner_threads": 1
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "759166753",
+        "ready_wire_payload_bytes": 2552,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 1923084,
+          "start_ticks": "759166753",
+          "create_time": 1795503993.53
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "omp_num_threads": "1",
+          "mkl_num_threads": "1",
+          "torch_num_threads": 1,
+          "torch_num_interop_threads": 1,
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 1923084,
+          "worker_rss_mb": 2123.875,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 3889.24560546875,
+          "memory_reserved_mb": 4296.0,
+          "max_memory_allocated_mb": 3889.24560546875,
+          "max_memory_reserved_mb": 4296.0
+        },
+        "parent_rss_mb": 453.2890625,
+        "index": 1
+      },
+      {
+        "started": true,
+        "worker_pid": 2145571,
+        "worker_create_time": 1795504016.81,
+        "worker_alive": true,
+        "closed": false,
+        "closing": false,
+        "birth_in_progress": false,
+        "cleanup_status": "pending",
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "6fe7547aa96b489ca5e84f3b8c6ee2e1",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": true,
+            "online_repetition_config": {
+              "enabled": true,
+              "min_generated_tokens": 32,
+              "min_chars": 120,
+              "max_chars_per_second": 40,
+              "min_repeats": 8,
+              "min_repeat_chars": 64,
+              "max_unit_chars": 32,
+              "tail_chars": 512,
+              "confirmations": 2,
+              "strong_tail_min_chars": 96,
+              "strong_tail_min_ratio": 95,
+              "strong_tail_repeats_per_second": 4
+            },
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 10000,
+            "max_batch_audio_frames": 14400,
+            "transport_drain_s": 0.003,
+            "owner_threads": 1
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "759169081",
+        "ready_wire_payload_bytes": 2552,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 2145571,
+          "start_ticks": "759169081",
+          "create_time": 1795504016.81
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "omp_num_threads": "1",
+          "mkl_num_threads": "1",
+          "torch_num_threads": 1,
+          "torch_num_interop_threads": 1,
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 2145571,
+          "worker_rss_mb": 2118.8359375,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 3889.24560546875,
+          "memory_reserved_mb": 4296.0,
+          "max_memory_allocated_mb": 3889.24560546875,
+          "max_memory_reserved_mb": 4296.0
+        },
+        "parent_rss_mb": 453.2890625,
+        "index": 2
+      },
+      {
+        "started": true,
+        "worker_pid": 2389942,
+        "worker_create_time": 1795504039.96,
+        "worker_alive": true,
+        "closed": false,
+        "closing": false,
+        "birth_in_progress": false,
+        "cleanup_status": "pending",
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "runtime_kind": "original_hf_runtime",
+        "start_method": "spawn",
+        "cann_environment_inherited": true,
+        "launch_id": "acd51b57b4754d6baa8bb67cfce8d236",
+        "device_scope": "configured logical device; physical mapping follows deployment",
+        "launch_config": {
+          "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+          "device": "npu:7",
+          "dtype": "bfloat16",
+          "max_new_tokens": 256,
+          "factory_identity": {
+            "factory": "core.qwen_asr_runtime:LocalQwenRuntime",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+            "module_sha256": "120924885e4ed8cb11947edf77911a57aa8ed46775e54d9883759f9ad3797abe"
+          },
+          "model_identity": {
+            "model_dir": "/home/model/Qwen3-ASR-1.7B-hf",
+            "metadata_sha256": {
+              "config.json": "117ac8e63e2af7cae3665e5a632d6eb03f5f384915519ceb6403c15ec6533f63"
+            },
+            "weight_hash_scope": "metadata_only_not_full_weights"
+          },
+          "worker_entry_identity": {
+            "factory": "core.qwen_asr_process:_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+            "module_sha256": "5d0e398e70fea119c2c61cb3157878cf7373f7d5b17cb19ddf63042ffb34ba7e"
+          },
+          "continuous_options": {
+            "max_active": 16,
+            "max_batch_size": 16,
+            "online_repetition_enabled": true,
+            "online_repetition_config": {
+              "enabled": true,
+              "min_generated_tokens": 32,
+              "min_chars": 120,
+              "max_chars_per_second": 40,
+              "min_repeats": 8,
+              "min_repeat_chars": 64,
+              "max_unit_chars": 32,
+              "tail_chars": 512,
+              "confirmations": 2,
+              "strong_tail_min_chars": 96,
+              "strong_tail_min_ratio": 95,
+              "strong_tail_repeats_per_second": 4
+            },
+            "prefill_batch_size": 16,
+            "max_batch_tokens": 10000,
+            "max_batch_audio_frames": 14400,
+            "transport_drain_s": 0.003,
+            "owner_threads": 1
+          }
+        },
+        "ipc_memory_scope": "wire_payload_bytes_and_process_RSS_are_additional_to_main_PCM_budget",
+        "worker_start_ticks": "759171396",
+        "ready_wire_payload_bytes": 2552,
+        "ready_verified": true,
+        "worker_ready_identity": {
+          "pid": 2389942,
+          "start_ticks": "759171396",
+          "create_time": 1795504039.96
+        },
+        "worker_entry_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_process.py",
+        "ready_preload_observation": {
+          "omp_num_threads": "1",
+          "mkl_num_threads": "1",
+          "torch_num_threads": 1,
+          "torch_num_interop_threads": 1,
+          "runtime_module_file": "/home/zhangs/asr_nvidia/core/qwen_asr_runtime.py",
+          "torch_imported": true,
+          "torch_npu_imported": true,
+          "runtime_api_present": true,
+          "loaded": true,
+          "npu_initialization_observation": "not_queried"
+        },
+        "worker_allocator": {
+          "source": "worker_torch_npu_allocator",
+          "worker_pid": 2389942,
+          "worker_rss_mb": 2113.390625,
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_mb": 3889.24560546875,
+          "memory_reserved_mb": 4296.0,
+          "max_memory_allocated_mb": 3889.24560546875,
+          "max_memory_reserved_mb": 4296.0
+        },
+        "parent_rss_mb": 453.2890625,
+        "index": 3
+      }
+    ],
+    "cam_execution": "process",
+    "cam_model_workers": [
+      {
+        "execution_mode": "process",
+        "runtime_kind": "original_torch_npu_fp32_cam",
+        "worker_identity": {
+          "pid": 2620206,
+          "start_ticks": "759173808",
+          "create_time": 1795504064.08,
+          "sid": 1599766
+        },
+        "worker_alive": true,
+        "birth_in_progress": false,
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "active": false,
+        "loaded": true,
+        "closing": false,
+        "closed": false,
+        "healthy": true,
+        "failure": null,
+        "close_deadline_monotonic_s": null,
+        "abnormal_reasons": [],
+        "ready": {
+          "kind": "READY",
+          "launch": "888c94b6d7ef46a1881dea273645f389",
+          "identity": {
+            "pid": 2620206,
+            "start_ticks": "759173808",
+            "create_time": 1795504064.08,
+            "sid": 1599766
+          },
+          "device": "npu:7",
+          "factory_identity": {
+            "module": "core.local_inference",
+            "qualname": "TorchNpuRunner",
+            "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+            "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+          },
+          "worker_entry_identity": {
+            "module": "core.cam_process",
+            "qualname": "_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+            "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+          },
+          "model_identity": {
+            "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+            "sha256": {
+              "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+              "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+            },
+            "hash_scope": "full original CAM config and weight bytes"
+          },
+          "precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "storage_identity": {
+            "available": true,
+            "dtype_device_counts": {
+              "parameter": {
+                "torch.float32@npu:7": 571
+              },
+              "buffer": {
+                "torch.float32@npu:7": 244,
+                "torch.int64@npu:7": 122
+              }
+            },
+            "floating_tensor_count": 815,
+            "parameter_tensor_count": 571,
+            "all_floating_fp32": true,
+            "all_parameters_on_device": true,
+            "all_floating_buffers_on_device": true,
+            "scope": "storage metadata only; no weights read and no new tensor computation"
+          },
+          "actor": {
+            "available": true,
+            "pid": 2620206,
+            "native_thread_id": 2620206,
+            "device_index": 7,
+            "stream_id": 0,
+            "npu_stream_handle": 187651507074400,
+            "test_double": false,
+            "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+          },
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "test_double": false,
+          "allocator": {
+            "worker_pid": 2620206,
+            "worker_rss_mb": 1964.34765625,
+            "source": "worker_torch_npu_allocator",
+            "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_bytes": 28135936,
+            "memory_reserved_bytes": 46137344,
+            "max_memory_allocated_bytes": 28135936,
+            "max_memory_reserved_bytes": 46137344
+          }
+        },
+        "allocator": {
+          "worker_pid": 2620206,
+          "worker_rss_mb": 1964.34765625,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_done": null,
+        "last_close_ack": null,
+        "operator_adaptations": {
+          "campplus_segment_pooling": true,
+          "emotion2vec_exact_gelu_modules": 0,
+          "emotion2vec_fp32_bias_factories": 0
+        },
+        "last_request_wire_bytes": null,
+        "last_response_wire_bytes": 2056,
+        "last_audio_bytes": null,
+        "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+        "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+        "parent_rss_mb": 3027.2734375,
+        "pool_instance_index": 0,
+        "configured_device": "npu:7",
+        "close_error": null
+      },
+      {
+        "execution_mode": "process",
+        "runtime_kind": "original_torch_npu_fp32_cam",
+        "worker_identity": {
+          "pid": 2773365,
+          "start_ticks": "759175871",
+          "create_time": 1795504084.71,
+          "sid": 1599766
+        },
+        "worker_alive": true,
+        "birth_in_progress": false,
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "active": false,
+        "loaded": true,
+        "closing": false,
+        "closed": false,
+        "healthy": true,
+        "failure": null,
+        "close_deadline_monotonic_s": null,
+        "abnormal_reasons": [],
+        "ready": {
+          "kind": "READY",
+          "launch": "7a6a40c537da4dcda9cb3a0af9289537",
+          "identity": {
+            "pid": 2773365,
+            "start_ticks": "759175871",
+            "create_time": 1795504084.71,
+            "sid": 1599766
+          },
+          "device": "npu:7",
+          "factory_identity": {
+            "module": "core.local_inference",
+            "qualname": "TorchNpuRunner",
+            "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+            "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+          },
+          "worker_entry_identity": {
+            "module": "core.cam_process",
+            "qualname": "_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+            "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+          },
+          "model_identity": {
+            "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+            "sha256": {
+              "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+              "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+            },
+            "hash_scope": "full original CAM config and weight bytes"
+          },
+          "precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "storage_identity": {
+            "available": true,
+            "dtype_device_counts": {
+              "parameter": {
+                "torch.float32@npu:7": 571
+              },
+              "buffer": {
+                "torch.float32@npu:7": 244,
+                "torch.int64@npu:7": 122
+              }
+            },
+            "floating_tensor_count": 815,
+            "parameter_tensor_count": 571,
+            "all_floating_fp32": true,
+            "all_parameters_on_device": true,
+            "all_floating_buffers_on_device": true,
+            "scope": "storage metadata only; no weights read and no new tensor computation"
+          },
+          "actor": {
+            "available": true,
+            "pid": 2773365,
+            "native_thread_id": 2773365,
+            "device_index": 7,
+            "stream_id": 0,
+            "npu_stream_handle": 187652408924832,
+            "test_double": false,
+            "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+          },
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "test_double": false,
+          "allocator": {
+            "worker_pid": 2773365,
+            "worker_rss_mb": 1960.62890625,
+            "source": "worker_torch_npu_allocator",
+            "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_bytes": 28135936,
+            "memory_reserved_bytes": 46137344,
+            "max_memory_allocated_bytes": 28135936,
+            "max_memory_reserved_bytes": 46137344
+          }
+        },
+        "allocator": {
+          "worker_pid": 2773365,
+          "worker_rss_mb": 1960.62890625,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_done": null,
+        "last_close_ack": null,
+        "operator_adaptations": {
+          "campplus_segment_pooling": true,
+          "emotion2vec_exact_gelu_modules": 0,
+          "emotion2vec_fp32_bias_factories": 0
+        },
+        "last_request_wire_bytes": null,
+        "last_response_wire_bytes": 2056,
+        "last_audio_bytes": null,
+        "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+        "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+        "parent_rss_mb": 3027.2734375,
+        "pool_instance_index": 1,
+        "configured_device": "npu:7",
+        "close_error": null
+      },
+      {
+        "execution_mode": "process",
+        "runtime_kind": "original_torch_npu_fp32_cam",
+        "worker_identity": {
+          "pid": 2925193,
+          "start_ticks": "759177961",
+          "create_time": 1795504105.61,
+          "sid": 1599766
+        },
+        "worker_alive": true,
+        "birth_in_progress": false,
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "active": false,
+        "loaded": true,
+        "closing": false,
+        "closed": false,
+        "healthy": true,
+        "failure": null,
+        "close_deadline_monotonic_s": null,
+        "abnormal_reasons": [],
+        "ready": {
+          "kind": "READY",
+          "launch": "4f708f7edca94412916f5e8ea3eaed38",
+          "identity": {
+            "pid": 2925193,
+            "start_ticks": "759177961",
+            "create_time": 1795504105.61,
+            "sid": 1599766
+          },
+          "device": "npu:7",
+          "factory_identity": {
+            "module": "core.local_inference",
+            "qualname": "TorchNpuRunner",
+            "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+            "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+          },
+          "worker_entry_identity": {
+            "module": "core.cam_process",
+            "qualname": "_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+            "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+          },
+          "model_identity": {
+            "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+            "sha256": {
+              "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+              "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+            },
+            "hash_scope": "full original CAM config and weight bytes"
+          },
+          "precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "storage_identity": {
+            "available": true,
+            "dtype_device_counts": {
+              "parameter": {
+                "torch.float32@npu:7": 571
+              },
+              "buffer": {
+                "torch.float32@npu:7": 244,
+                "torch.int64@npu:7": 122
+              }
+            },
+            "floating_tensor_count": 815,
+            "parameter_tensor_count": 571,
+            "all_floating_fp32": true,
+            "all_parameters_on_device": true,
+            "all_floating_buffers_on_device": true,
+            "scope": "storage metadata only; no weights read and no new tensor computation"
+          },
+          "actor": {
+            "available": true,
+            "pid": 2925193,
+            "native_thread_id": 2925193,
+            "device_index": 7,
+            "stream_id": 0,
+            "npu_stream_handle": 187651300428624,
+            "test_double": false,
+            "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+          },
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "test_double": false,
+          "allocator": {
+            "worker_pid": 2925193,
+            "worker_rss_mb": 1961.7109375,
+            "source": "worker_torch_npu_allocator",
+            "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_bytes": 28135936,
+            "memory_reserved_bytes": 46137344,
+            "max_memory_allocated_bytes": 28135936,
+            "max_memory_reserved_bytes": 46137344
+          }
+        },
+        "allocator": {
+          "worker_pid": 2925193,
+          "worker_rss_mb": 1961.7109375,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_done": null,
+        "last_close_ack": null,
+        "operator_adaptations": {
+          "campplus_segment_pooling": true,
+          "emotion2vec_exact_gelu_modules": 0,
+          "emotion2vec_fp32_bias_factories": 0
+        },
+        "last_request_wire_bytes": null,
+        "last_response_wire_bytes": 2056,
+        "last_audio_bytes": null,
+        "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+        "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+        "parent_rss_mb": 3027.2734375,
+        "pool_instance_index": 2,
+        "configured_device": "npu:7",
+        "close_error": null
+      },
+      {
+        "execution_mode": "process",
+        "runtime_kind": "original_torch_npu_fp32_cam",
+        "worker_identity": {
+          "pid": 3058961,
+          "start_ticks": "759180071",
+          "create_time": 1795504126.71,
+          "sid": 1599766
+        },
+        "worker_alive": true,
+        "birth_in_progress": false,
+        "resource_reaped": false,
+        "normal_exit_ok": null,
+        "forced_cleanup": false,
+        "active": false,
+        "loaded": true,
+        "closing": false,
+        "closed": false,
+        "healthy": true,
+        "failure": null,
+        "close_deadline_monotonic_s": null,
+        "abnormal_reasons": [],
+        "ready": {
+          "kind": "READY",
+          "launch": "e479c2f93922482b9ec88fbaa974ff96",
+          "identity": {
+            "pid": 3058961,
+            "start_ticks": "759180071",
+            "create_time": 1795504126.71,
+            "sid": 1599766
+          },
+          "device": "npu:7",
+          "factory_identity": {
+            "module": "core.local_inference",
+            "qualname": "TorchNpuRunner",
+            "module_origin": "/home/zhangs/asr_nvidia/core/local_inference.py",
+            "module_sha256": "c676b25b4abb86d9e4a589c7da88acd28430ede98925541fa07689c317d4bc01"
+          },
+          "worker_entry_identity": {
+            "module": "core.cam_process",
+            "qualname": "_worker",
+            "module_origin": "/home/zhangs/asr_nvidia/core/cam_process.py",
+            "module_sha256": "366075a50def2b332f3046fc10b7f70f5ce6db6d69e3e9f14846024b1be3eae3"
+          },
+          "model_identity": {
+            "model_dir": "/home/zhangs/asr_nvidia/model/speech_campplus_sv_zh_en_16k-common_advanced",
+            "sha256": {
+              "config.yaml": "17342041bd5b22f6fd7e32f6e7a267b0bf65f018c0a721bada6547e3d28fbfc9",
+              "campplus_cn_en_common.pt": "92f29b94e6948786a26778c9e302525d185bb08c8b9f5252ed98776902840199"
+            },
+            "hash_scope": "full original CAM config and weight bytes"
+          },
+          "precision": "fp32",
+          "math_mode": "fp32_ops_hf32_disabled",
+          "storage_identity": {
+            "available": true,
+            "dtype_device_counts": {
+              "parameter": {
+                "torch.float32@npu:7": 571
+              },
+              "buffer": {
+                "torch.float32@npu:7": 244,
+                "torch.int64@npu:7": 122
+              }
+            },
+            "floating_tensor_count": 815,
+            "parameter_tensor_count": 571,
+            "all_floating_fp32": true,
+            "all_parameters_on_device": true,
+            "all_floating_buffers_on_device": true,
+            "scope": "storage metadata only; no weights read and no new tensor computation"
+          },
+          "actor": {
+            "available": true,
+            "pid": 3058961,
+            "native_thread_id": 3058961,
+            "device_index": 7,
+            "stream_id": 0,
+            "npu_stream_handle": 187651917643728,
+            "test_double": false,
+            "scope": "child process/device namespace; bare handles are not comparable across PIDs"
+          },
+          "operator_adaptations": {
+            "campplus_segment_pooling": true,
+            "emotion2vec_exact_gelu_modules": 0,
+            "emotion2vec_fp32_bias_factories": 0
+          },
+          "test_double": false,
+          "allocator": {
+            "worker_pid": 3058961,
+            "worker_rss_mb": 1964.21484375,
+            "source": "worker_torch_npu_allocator",
+            "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+            "peak_scope": "not_reset_unknown_or_includes_load",
+            "memory_allocated_bytes": 28135936,
+            "memory_reserved_bytes": 46137344,
+            "max_memory_allocated_bytes": 28135936,
+            "max_memory_reserved_bytes": 46137344
+          }
+        },
+        "allocator": {
+          "worker_pid": 3058961,
+          "worker_rss_mb": 1964.21484375,
+          "source": "worker_torch_npu_allocator",
+          "scope": "this CAM child allocator; excludes CANN/runtime/non-PyTorch allocations",
+          "peak_scope": "not_reset_unknown_or_includes_load",
+          "memory_allocated_bytes": 28135936,
+          "memory_reserved_bytes": 46137344,
+          "max_memory_allocated_bytes": 28135936,
+          "max_memory_reserved_bytes": 46137344
+        },
+        "last_done": null,
+        "last_close_ack": null,
+        "operator_adaptations": {
+          "campplus_segment_pooling": true,
+          "emotion2vec_exact_gelu_modules": 0,
+          "emotion2vec_fp32_bias_factories": 0
+        },
+        "last_request_wire_bytes": null,
+        "last_response_wire_bytes": 2056,
+        "last_audio_bytes": null,
+        "IPC_scope": "PCM input copy and 768-byte embedding; child/IPC RSS is additional to pipeline PCM budget",
+        "allocation_scope": "parent allocator excludes CAM child; unavailable is not zero",
+        "parent_rss_mb": 3027.2734375,
+        "pool_instance_index": 3,
+        "configured_device": "npu:7",
+        "close_error": null
+      }
+    ],
+    "cam_memory_process_scope": "each CAM worker cached allocator/last RPC and OS-sampled RSS/HBM separate from parent; no cross-time peak sums",
+    "sampling": {
+      "mode": "on_demand_ttl_singleflight",
+      "interval_s": 1.0,
+      "has_snapshot": false,
+      "age_s": null,
+      "in_progress": true,
+      "last_error": null,
+      "attempts": 1,
+      "closing": false,
+      "closed": false,
+      "last_started_monotonic_s": 7591837.12465296,
+      "last_finished_monotonic_s": null,
+      "last_elapsed_s": null,
+      "last_attempt_timing_scope": "refresh submission through collector/cache completion; includes thread dispatch, not device kernel time",
+      "freshness_scope": "last completed resource collection; live model/admission counts assembled separately"
+    },
+    "cache": {
+      "available": false,
+      "reason": "\u672a\u91c7\u96c6"
+    },
+    "processes": {
+      "qwen_model_worker": {
+        "count": 4,
+        "pids": [
+          1741250,
+          1923084,
+          2145571,
+          2389942
+        ],
+        "unknown_liveness_count": 0,
+        "identities": [
+          {
+            "worker_pid": 1741250,
+            "worker_create_time": 1795503970.29,
+            "worker_start_ticks": "759164429",
+            "worker_alive": true
+          },
+          {
+            "worker_pid": 1923084,
+            "worker_create_time": 1795503993.53,
+            "worker_start_ticks": "759166753",
+            "worker_alive": true
+          },
+          {
+            "worker_pid": 2145571,
+            "worker_create_time": 1795504016.81,
+            "worker_start_ticks": "759169081",
+            "worker_alive": true
+          },
+          {
+            "worker_pid": 2389942,
+            "worker_create_time": 1795504039.96,
+            "worker_start_ticks": "759171396",
+            "worker_alive": true
+          }
+        ],
+        "source": "cached model-worker liveness/registered identities; resource sample may be older"
+      },
+      "cam_model_worker": {
+        "count": 4,
+        "pids": [
+          2620206,
+          2773365,
+          2925193,
+          3058961
+        ],
+        "registered_not_reaped_count": 4,
+        "unknown_liveness_count": 0,
+        "identities": [
+          {
+            "worker_identity": {
+              "pid": 2620206,
+              "start_ticks": "759173808",
+              "create_time": 1795504064.08,
+              "sid": 1599766
+            },
+            "worker_alive": true,
+            "resource_reaped": false,
+            "birth_in_progress": false
+          },
+          {
+            "worker_identity": {
+              "pid": 2773365,
+              "start_ticks": "759175871",
+              "create_time": 1795504084.71,
+              "sid": 1599766
+            },
+            "worker_alive": true,
+            "resource_reaped": false,
+            "birth_in_progress": false
+          },
+          {
+            "worker_identity": {
+              "pid": 2925193,
+              "start_ticks": "759177961",
+              "create_time": 1795504105.61,
+              "sid": 1599766
+            },
+            "worker_alive": true,
+            "resource_reaped": false,
+            "birth_in_progress": false
+          },
+          {
+            "worker_identity": {
+              "pid": 3058961,
+              "start_ticks": "759180071",
+              "create_time": 1795504126.71,
+              "sid": 1599766
+            },
+            "worker_alive": true,
+            "resource_reaped": false,
+            "birth_in_progress": false
+          }
+        ],
+        "source": "cached model-worker liveness/registered identities; resource sample may be older; unknown is not zero"
+      }
+    },
+    "requestTelemetry": {
+      "available": true,
+      "buffer_limit": 4096,
+      "events": 0,
+      "active": {
+        "limit": 256,
+        "count": 0,
+        "requests": []
+      },
+      "completed": 0,
+      "failed": 0,
+      "duration_ms": {
+        "p50_ms": null,
+        "p95_ms": null,
+        "max_ms": null
+      },
+      "phases_ms": {
+        "audio_wait_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "vad_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "cut_sum_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "cut_wall_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "segment_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "qwen_wait_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "qwen_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "spk_wait_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "spk_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "emo_wait_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "emo_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "cluster_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "itn_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "cleanup_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "cut_cpu_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "cut_dispatch_wait_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "pending_wait_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "vad_wait_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "vad_worker_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        },
+        "low_volume_filter_ms": {
+          "p50_ms": null,
+          "p95_ms": null,
+          "max_ms": null
+        }
+      },
+      "last_error": null,
+      "enhancements": {
+        "spk": {
+          "requests_observed": 0,
+          "counts": {
+            "nn_calls": 0,
+            "nn_success": 0,
+            "nn_empty": 0,
+            "nn_failed": 0,
+            "nn_cancelled": 0,
+            "duration_skips": 0,
+            "load_failures": 0
+          },
+          "timings_ms": {
+            "load_ms": {
+              "p50_ms": null,
+              "p95_ms": null,
+              "max_ms": null
+            },
+            "load_work_ms": {
+              "p50_ms": null,
+              "p95_ms": null,
+              "max_ms": null
+            },
+            "load_dispatch_wait_ms": {
+              "p50_ms": null,
+              "p95_ms": null,
+              "max_ms": null
+            },
+            "load_lock_wait_ms": {
+              "p50_ms": null,
+              "p95_ms": null,
+              "max_ms": null
+            }
+          }
+        },
+        "emo": {
+          "requests_observed": 0,
+          "counts": {
+            "nn_calls": 0,
+            "nn_success": 0,
+            "nn_empty": 0,
+            "nn_failed": 0,
+            "nn_cancelled": 0,
+            "duration_skips": 0,
+            "load_failures": 0
+          },
+          "timings_ms": {
+            "load_ms": {
+              "p50_ms": null,
+              "p95_ms": null,
+              "max_ms": null
+            },
+            "load_work_ms": {
+              "p50_ms": null,
+              "p95_ms": null,
+              "max_ms": null
+            },
+            "load_dispatch_wait_ms": {
+              "p50_ms": null,
+              "p95_ms": null,
+              "max_ms": null
+            },
+            "load_lock_wait_ms": {
+              "p50_ms": null,
+              "p95_ms": null,
+              "max_ms": null
+            }
+          }
+        }
+      },
+      "recent_stages": [],
+      "admission": {
+        "window": "retained_events",
+        "by_class": {
+          "A": 0,
+          "B": 0
+        },
+        "rejections_by_reason": {
+          "total_full": 0,
+          "spk_emo_full": 0,
+          "waiting_full": 0,
+          "wait_timeout": 0,
+          "role_disabled": 0,
+          "emotion_disabled": 0,
+          "both_disabled": 0,
+          "cancelled": 0,
+          "qwen_disabled": 0
+        }
+      }
+    },
+    "segmentPipeline": {
+      "active": 0,
+      "audio_bytes": 0,
+      "waiting": 0
+    },
+    "reason": "\u8d44\u6e90\u5feb\u7167\u5c1a\u672a\u5b8c\u6210"
+  },
+  "deployment": {
+    "profile": "npu-910b",
+    "config_path": "/home/zhangs/asr_nvidia/config.toml",
+    "backend": "torch_npu",
+    "qwen_device": "npu:7",
+    "vad_devices": [
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu",
+      "cpu"
+    ]
+  }
+}

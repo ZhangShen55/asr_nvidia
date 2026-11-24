@@ -128,9 +128,9 @@ class ConfigDefaultsTests(unittest.TestCase):
         config.write_text("", encoding="utf-8")
         self.defaults = Settings(config_path=str(config))
 
-    def test_v2_switches_default_true(self):
-        self.assertTrue(self.defaults.open_v2_role)
-        self.assertTrue(self.defaults.open_v2_emotion)
+    def test_empty_default_arrays_disable_enhancements(self):
+        self.assertFalse(self.defaults.speech_campplus_enabled)
+        self.assertFalse(self.defaults.emotion2vec_enabled)
 
     def test_instance_count_default_is_one(self):
         self.assertEqual(self.defaults.instance_count, 1)
@@ -151,7 +151,7 @@ class ConfigFileStructureTests(unittest.TestCase):
         host = self._load("config.toml")
         docker = self._load("docker/config.toml")
         self.assertEqual(set(host.keys()), set(docker.keys()))
-        sections = ("log", "model_paths", "speech_rate", "features", "itn", "qwen_asr", "model_device_pool")
+        sections = ("log", "model_paths", "speech_rate", "itn", "qwen_asr", "model_device_pool")
         for section in sections:
             self.assertTrue(set(host[section].keys()).issuperset(set(docker[section].keys())), section)
 
@@ -162,8 +162,8 @@ class ConfigFileStructureTests(unittest.TestCase):
                        "concurrency", "hotword_path", "audio_chunk")
             for key in removed:
                 self.assertNotIn(key, cfg, f"{name} 不应再包含 {key}")
-            features = cfg["features"]
-            for key in ("open_spk", "open_emotion", "ban_hotword", "open_mul_lang"):
+            features = cfg.get("features", {})
+            for key in ("open_spk", "open_emotion", "ban_hotword", "open_mul_lang", "open_v2_role", "open_v2_emotion"):
                 self.assertNotIn(key, features, f"{name} 不应再包含 features.{key}")
             paths = cfg["model_paths"]
             for key in ("asr_model_dir", "punc_model_dir", "whisper_model_dir"):

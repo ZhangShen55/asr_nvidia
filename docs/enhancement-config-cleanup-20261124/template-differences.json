@@ -1,0 +1,140 @@
+{
+  "records": [
+    {
+      "path": "config.toml",
+      "changes": {
+        "features.open_v2_emotion": {
+          "before": true,
+          "after": null
+        },
+        "qwen_asr.batch_max_duration_ratio": {
+          "before": 32.0,
+          "after": null
+        },
+        "model_device_pool.emotion2vec_batch_size": {
+          "before": 1,
+          "after": null
+        },
+        "qwen_asr.batch_wait_timeout_ms": {
+          "before": 100,
+          "after": null
+        },
+        "features.open_v2_role": {
+          "before": true,
+          "after": null
+        },
+        "model_device_pool.speech_campplus_batch_size": {
+          "before": 1,
+          "after": null
+        }
+      },
+      "prior_sha256": "8371128a30611422a6301eb24adbf18a318673381d67689de45c6e9107985397",
+      "after_sha256": "28cfe37dcbf45bf19c2b4f2c00521fc955968f083252d0da9c30b92d251118bc"
+    },
+    {
+      "path": "docker/config.toml",
+      "changes": {
+        "features.open_v2_emotion": {
+          "before": true,
+          "after": null
+        },
+        "qwen_asr.batch_max_duration_ratio": {
+          "before": 4.0,
+          "after": null
+        },
+        "qwen_asr.batch_wait_timeout_ms": {
+          "before": 10,
+          "after": null
+        },
+        "features.open_v2_role": {
+          "before": true,
+          "after": null
+        }
+      },
+      "prior_sha256": "dea7ae8542f23f55f2e972356da726e6fa978bd36c7154ffe4ead9e620a50141",
+      "after_sha256": "9d0502c4443c80c261adcdc090c83f204b5d1402b1e153ebf0e28d98eee35720"
+    },
+    {
+      "path": "test/config.qwen-continuous128.toml",
+      "changes": {
+        "features.open_v2_emotion": {
+          "before": true,
+          "after": null
+        },
+        "features.open_v2_role": {
+          "before": true,
+          "after": null
+        }
+      },
+      "prior_sha256": "8261a68ff598d6fd39f5ec907d61d3b6a3f1add7cc6d7bb2d2cfc7a46266e4ff",
+      "after_sha256": "cb512ce707acfb688c76214e0798fbf1892820f11072a04fa4fc5fcb7d2b884e"
+    },
+    {
+      "path": "test/config.qwen128-b8.toml",
+      "changes": {
+        "features.open_v2_emotion": {
+          "before": true,
+          "after": null
+        },
+        "features.open_v2_role": {
+          "before": true,
+          "after": null
+        }
+      },
+      "prior_sha256": "f658ca0f502822cc847ea77b4c43bfbe66b574f10dd27fa1f653a3b6ccafbd5e",
+      "after_sha256": "133ab69af43a222aa22f03a0f0492e00ccade8a74046296400e738f52f6bd415"
+    },
+    {
+      "path": "test/config.qwen128.toml",
+      "changes": {
+        "features.open_v2_emotion": {
+          "before": true,
+          "after": null
+        },
+        "features.open_v2_role": {
+          "before": true,
+          "after": null
+        }
+      },
+      "prior_sha256": "6d301b9cb4d20a29fa344af1c98c1721f4bafc86b46cdb48f9ab20d9e075c947",
+      "after_sha256": "434dc9a4e9b8bbc1c901090f6ab1d6eb78dd71f7b496d55beebbcb19f7cac2f3"
+    },
+    {
+      "path": "test/config.qwen384-b8.toml",
+      "changes": {
+        "features.open_v2_emotion": {
+          "before": true,
+          "after": null
+        },
+        "features.open_v2_role": {
+          "before": true,
+          "after": null
+        }
+      },
+      "prior_sha256": "0a4487c0e2a5d07cbcb113e4fdd74cfa3a9e5ee4ee61566b862695882e5ca74a",
+      "after_sha256": "474e7ecdb3cc904537091f3238896a062c23abdbdfec118faceb67076e16d219"
+    },
+    {
+      "path": "test/config.qwen384.toml",
+      "changes": {
+        "features.open_v2_emotion": {
+          "before": true,
+          "after": null
+        },
+        "features.open_v2_role": {
+          "before": true,
+          "after": null
+        }
+      },
+      "prior_sha256": "b4016c01d9ae54637874d36ddc81e94edd3151fcc6add5598f7e5a65b69b97f5",
+      "after_sha256": "9ba4acdfd881cd8ee1646cffc9f83145ccef2fea638658967b6bb3c2c6cb06e8"
+    }
+  ],
+  "root_vad_preserved": true,
+  "docs": [
+    "README.md",
+    "AGENT.md",
+    "docs/DEPLOYMENT.md",
+    "docker/README.md"
+  ]
+}

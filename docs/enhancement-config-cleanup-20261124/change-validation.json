@@ -1,0 +1,30 @@
+{
+  "items": [
+    {
+      "id": "2026-11-24-simplify-enhancement-config",
+      "type": "change",
+      "valid": true,
+      "issues": [],
+      "durationMs": 77
+    }
+  ],
+  "summary": {
+    "totals": {
+      "items": 1,
+      "passed": 1,
+      "failed": 0
+    },
+    "byType": {
+      "change": {
+        "items": 1,
+        "passed": 1,
+        "failed": 0
+      }
+    }
+  },
+  "version": "1.0",
+  "root": {
+    "path": "/home/zhangs/asr_nvidia",
+    "source": "nearest"
+  }
+}

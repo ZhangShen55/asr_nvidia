@@ -1,0 +1,58 @@
+{
+  "npu-910b-runtime": {
+    "modified_requirements": [],
+    "base_sha256": "5e82e77ee5c0e72bdad40f59574048c92315133ebd21c0be7cf9afc631dd822a"
+  },
+  "service-operations": {
+    "modified_requirements": [
+      "### Requirement: 维护配置项清单",
+      "### Requirement: 默认配置体现有效并发来源",
+      "### Requirement: 增强音频并发配置具有确定默认值",
+      "### Requirement: 明确实例设备与 TensorRT 配置的优先级",
+      "### Requirement: 文档明确分类限制与能力错误",
+      "### Requirement: 启动前校验部署前置条件"
+    ],
+    "base_sha256": "9c994da71b9cc0bf8a7ae3177286f1267da5a54261f734a7c6a44cb4ad4803b5"
+  },
+  "offline-asr-service": {
+    "modified_requirements": [],
+    "base_sha256": "3bdb4e84f74e4799da5e5f47967db325fe03db270e24dc2b6c7c4b45ab4182b8"
+  },
+  "local-model-inference-backends": {
+    "modified_requirements": [
+      "### Requirement: 后端选择不得改变能力开关和模型池容量"
+    ],
+    "base_sha256": "c4ce9dbbdb0184359e32bafd801931d7850897ab8b1c01d54ca67c0c6e68000b"
+  },
+  "resource-pressure-diagnostics": {
+    "modified_requirements": [],
+    "base_sha256": "c4893007962fabcdc6071b6bddb85b262b8b6d42a772fc1ca733875765da68e0"
+  },
+  "local-qwen-asr-inference": {
+    "modified_requirements": [],
+    "base_sha256": "36148993f7a37e9d1a8f3c3d1a2a496972c6e11fa4ff614c31b92ae07f0a29b5"
+  },
+  "qwen-asr-v2-adapter": {
+    "modified_requirements": [
+      "### Requirement: 异步并行计算真实角色与情绪",
+      "### Requirement: 本地后端切换保持音频准入和取消契约",
+      "### Requirement: 关闭能力在准入之前拒绝"
+    ],
+    "base_sha256": "3bf792f539ed12fcc508decc2a4ba366d751b5834330f32da9d4ca7c1f3f73ad"
+  },
+  "local-model-runtime": {
+    "modified_requirements": [
+      "### Requirement: 本地模型按需懒加载",
+      "### Requirement: 暴露本地模型的加载状态与显存明细",
+      "### Requirement: 本地增强模型池按设备数组建立固定实例",
+      "### Requirement: 模型池配置只使用新配置结构",
+      "### Requirement: 功能开关不能被设备配置或推理入口绕过",
+      "### Requirement: 主服务与固定 VAD worker 分工承载模型"
+    ],
+    "base_sha256": "c0f3c3326209e1d4a328b7eadfa17dabc812356c747ac018dd828cb878e0fe99"
+  },
+  "container-model-packaging": {
+    "modified_requirements": [],
+    "base_sha256": "4adfcdc5df66bb44ca2fdfd12f887abd3ed6e31e9aa17822c150f52983d0e447"
+  }
+}

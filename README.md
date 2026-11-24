@@ -174,7 +174,7 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 | `4015` | 请求的 CAM++ 说话人/角色识别能力未启用或没有可用实例 |
 | `4016` | 请求的 emotion2vec 情绪能力未启用或没有可用实例 |
 | `4017` | 仅 B 类增强容量满，消息包含 `spk_emo` 和当前增强活动数/上限 |
-| `4018` | 同时请求说话人与情绪能力，但两个功能开关均关闭 |
+| `4018` | 同时请求说话人与情绪能力，但两个设备数组均为空 |
 
 > 默认 `queue_wait_timeout_s = 0`：总容量满立即返回 `4013`；总容量有余量但 B 容量满返回 `4017`。
 > 两项容量同时满时优先返回 `4013`。能力开关校验早于容量检查。
@@ -190,7 +190,6 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 | `[log]` | 日志保留策略：`max_days`（默认 7）、`max_size_mb`（默认 100） |
 | `[model_paths]` | 三个模型目录 |
 | `[speech_rate]` | 单句语速修正系数 |
-| `[features]` | `open_v2_role`、`open_v2_emotion` |
 | `[itn]` | 文本规范化开关与失败策略 |
 | `[qwen_asr]` | v3 链路的 本地 Qwen 目录、设备、并发度和队列 |
 | `[vad]` | FSMN-VAD worker、切分参数、全局 VAD 阈值和段级过滤参数 |
@@ -225,8 +224,6 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 | `execution_mode` | `process` | continuous必须process；显式legacy缺省thread |
 | `process_shutdown_grace_s` | `120` | continuous模型关闭宽限；legacy缺省30，超期回收仍记关闭失败 |
 | `max_inference_batch_size` | `S=16` | continuous每owner物理步上限，显式不得超过S；legacy缺省1 |
-| `batch_wait_timeout_ms` | `10` | 凑批等待上限，毫秒，0～1000；尾批不无限等待 |
-| `batch_max_duration_ratio` | `4.0` | 同一物理批最长/最短有效STFT帧数比，有限数1～64；按至少8000样本后的帧数计算，32.0仅为独立候选，不改变批大小或实例数 |
 | `max_batch_audio_frames` | `14400` | continuous每owner帧预算，不随N放大；legacy缺省102400 |
 | `max_batch_tokens` | `10000` | continuous每owner估算token预算，含生成预留；legacy缺省78336 |
 | `pending_segment_limit` | `256` | 全局实际开工且尚未汇合的段预算，1～4096；同时作为每音频元任务worker上限，两个计数独立 |
@@ -249,6 +246,8 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 Qwen逻辑credit在PCM裁剪前按每音频/全局顺序取得，避免先完成VAD的文件占满全局PCM后让其余文件无法供给；转写分支完成即归还，裁剪失败、EOF短段与取消幂等兜底。credit已预留但还在等PCM不是实际模型执行，真实PCM预算耗尽时仍会反压。
 
 仅扩大`request_concurrency`不会形成真实批计算。每音频16、全局128时，1/2/4/8条音频最多分别提供16/32/64/128个逻辑在途段，调度在等待截止内处理已有成员，不凑满128才开始。`local_instance_count`表示权重份数；`max_inference_batch_size`表示一次物理计算成员上限；二者都不改变总音频/B准入规则。
+
+正式continuous模板不再显示 `batch_wait_timeout_ms`、`batch_max_duration_ratio`；二者只在显式legacy模式按原类型/范围及调度语义使用。两个增强模型实际计算固定batch1，模板省略 `speech_campplus_batch_size`、`emotion2vec_batch_size`；既有非1值拒绝约束保留。预取深度不改变实际batch。
 
 ### `[vad]` 配置项
 
@@ -284,7 +283,7 @@ CPU原始AutoModel与原生NPU保持同一既有行为；服务段级过滤独�
 上述配置均在重启后生效，每个服务实例独立限流。旧配置缺少新增的
 `audio_spk_emo_concurrency` 时同样采用 **4**，升级后增强音频并发会受此上限限制。
 B 上限允许大于总上限，实际 B 并发至多为 `min(audio_concurrency, audio_spk_emo_concurrency)`；
-配置值不会被静默截断。0 不能用于关闭增强能力，应使用 `[features]` 开关。
+配置值不会被静默截断。0 不能用于关闭增强能力；关闭CAM++或emotion2vec应把对应设备数组设为 `[]`。
 
 三个参数 `showSpk`、`showEmotion`、`showRoleIdentify` 全为 false 的音频称为 A；
 任一个为 true 称为 B。每个 B 同时占用一个总音频名额和一个增强名额，即使开启多项也只计一个 B。
@@ -350,8 +349,6 @@ A 的活动数和等待数分别用总数减去 B 数。这里的 B 等待按完
 | `speech_campplus_process_shutdown_grace_s` | `30` | 仅显式关闭后的独立grace，有限正数≤300秒；不将普通取消改为kill |
 | `speech_campplus_prefetch_queue_depth` | `0` | 每健康CAM++实例的预取等待深度，0～64，不含运行任务；0为无预取 |
 | `emotion2vec_prefetch_queue_depth` | `0` | 每健康emo实例的预取等待深度，0～64，不含运行任务；0为无预取 |
-| `speech_campplus_batch_size` | `1` | 当前仅支持实际计算batch1；大于1在就绪前报错 |
-| `emotion2vec_batch_size` | `1` | 当前仅支持实际计算batch1；不因预取深度增大而自动变成批计算 |
 
 当前最终选择 CAM++ 4 个process实例、emotion2vec 1 个实例；本轮宿主B4与增强驻留A4已完成4/4验收（200.10秒/183.47秒）：
 
@@ -390,18 +387,18 @@ python scripts/vad_reference.py --output /tmp/vad-reference.json
 
 v3 链路的真实 `role` 与 `emotion` 由本机模型给出，加载与计算条件是两回事：
 
-- **加载**：CAM++ 与 emotion2vec **各自独立**，分别由 `[features].open_v2_role` 与
-  `[features].open_v2_emotion` 控制（默认均为 `true`）。关闭任一个，另一个仍可正常加载。
+- **加载**：CAM++ 与 emotion2vec **各自独立**，分别由 `speech_campplus_devices` 与
+  `emotion2vec_devices` 数组是否非空决定启用；非空数组按元素数量在HTTP就绪前加载，空数组关闭，另一池独立运行。
   emotion2vec 使用禁用 HF32 的原生 FP32 正确性基线；低精度/编译候选独立测量后再决定是否采用。
 - **计算**：`showSpk` 或 `showRoleIdentify` 请求说话人能力，`showEmotion` 请求情绪能力，
-  三个参数默认均为 `false`。未请求的能力对应字段为 `null`，不触发其模型加载。
-- **配置拒绝**：请求要求的能力被 `[features]` 关闭时，在音频准入前返回 CAM++ `4015` 或
-  emotion2vec `4016`；同时请求两项且两项都关闭返回 `4018`。设备数组非空也不能覆盖功能开关。
+  三个参数默认均为 `false`。未请求的能力对应字段为 `null`，不执行其推理；非空数组的模型已按启动预加载契约驻留。
+- **配置拒绝**：请求要求的能力设备数组为空时，在音频准入前返回 CAM++ `4015` 或
+  emotion2vec `4016`；同时请求两项且两个数组都为空返回 `4018`，优先于总容量/B容量错误，拒绝不增加活动、等待或owner租约。
   请求整体失败，不开始转写，不以 `null` 字段成功返回；仅请求已开启的另一项能力可正常处理。
-  两个功能开关均关闭且三个请求参数均为 `false` 时，仍可普通转写。
+  两个设备数组均为空且三个请求参数均为 `false` 时，仍可普通转写。
 - **并行**：role / emotion与Qwen各自独立排队、执行及释放阶段名额，再按原段汇合。增强等待在预算有余时不占住已完成Qwen的名额；段数/PCM预算耗尽时明确反压，不能无限堆积。
   已开启且有健康实例的模型在某个分段推理失败时，该段对应字段回退为 `null`，转写照常返回；
-  模型池为空或全部加载失败则返回对应的 `4015` / `4016`，不使用组合关闭码。
+  设备数组非空但模型全部加载失败则返回对应的 `4015` / `4016`，不能当成数组关闭返回 `4018`。
 
 ### 短段与增强计算边界
 
@@ -416,7 +413,7 @@ v3 链路的真实 `role` 与 `emotion` 由本机模型给出，加载与计算�
 | 1～10秒（含边界） | 正常转写 | 实际推理及聚类 | 实际分类及既有映射 |
 | 超过10秒 | 按原转写规则 | 按既有输入支持/错误契约 | 不推理，直接“平淡” |
 
-未请求能力对应字段仍为`null`。已有功能开关、FP32策略、聚类阈值、失败分层与情绪标签不变；`showRoleIdentify=false`不关闭`showSpk=true`所需的CAM++/聚类。
+未请求能力对应字段仍为`null`。FP32策略、聚类阈值、失败分层与情绪标签不变；能力由设备数组派生；`showRoleIdentify=false`不关闭`showSpk=true`所需的CAM++/聚类。
 
 ### 进程与 HBM 定位
 
@@ -623,3 +620,14 @@ continuous已确认的异常尾部复读现在保留原前文，并把重复单�
 折叠成功仍返回`processing_status=completed_with_warnings`，对应`segment_warnings.action=repetition_collapsed`、`recovered=true`及原段边界；不代表人工核验准确。纯填充词/空正文/无效前缀仍按原异常处理，非复读length_limit恢复策略、正常EOS、在线检测阈值和常规生成后`repetition_guard_enabled`作用不变。源码重启后生效，镜像/保护构建须在下一次构建纳入。本次不覆盖既有课程JSON，也不声称已找回历史2.02秒段。
 
 实现/验证见`docs/qwen-repetition-recovery-20261124/REPORT.md`；当前根配置消费审计见同目录`CONFIG-AUDIT.md`。审计区分当前continuous不使用的legacy参数与仍有效的条件配置，本次配置保持原值。
+
+
+### 增强能力设备数组统一配置（2026-11-24）
+
+CAM++、emotion2vec启用状态现在只来自各自设备数组：非空数组开启，每元素一实例；`[]`关闭。数组缺省为空。`showSpk`/`showRoleIdentify`选择CAM++执行，`showEmotion`选择emo执行，均不能开启空数组能力。模型在HTTP就绪前按非空数组预加载，请求复用健康实例；A请求不执行增强，已加载权重继续驻留。预加载不执行语音forward暖身。
+
+旧 `[features].open_v2_role`、`open_v2_emotion` 已删除，残留无论true/false都会在任何worker/模型创建前报迁移错误。迁移办法：原true删除旧键并保留设备数组；原false删除旧键，并把对应的 `speech_campplus_devices` 或 `emotion2vec_devices` 改为 `[]`。删除空 `[features]` 表。不允许只删原false键却保留非空数组，以免开启原已关闭的模型。
+
+单项关闭请求仍在音频准入前返回4015/4016，双请求且两项均关闭返回4018，优先于容量错误，拒绝计数不变。非空数组全部加载失败是模型故障，不是配置关闭，不返回4018。数组改变需重启源码服务；保护构建和镜像在后续构建纳入。本次不构建上线；三个镜像内置小模型的必需资产预检保持，空数组不表示可以删除权重。
+
+正式continuous根/Docker模板省略两项legacy组批参数和两个固定增强batch配置；legacy显式参数支持、实际batch1及非1校验保持。两个 `prefetch_queue_depth=0`、全部 `online_repetition_*` / `repetition_*`、`retry_count`、队列及VAD参数保持；预取0是在上游反压等待，不是无限预取。早先章节中涉及旧功能开关的已日期标记说明仅代表当时版本，以本节为当前规则。

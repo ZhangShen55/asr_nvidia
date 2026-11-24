@@ -100,7 +100,7 @@ def setup_pool(monkeypatch, count=2, depth=0, factory=None):
         created.append(runner)
         return runner
     monkeypatch.setattr(models,'settings',SimpleNamespace(
-        model_device_speech_campplus_execution_mode='process',open_v2_role=True,open_v2_emotion=True,
+        model_device_speech_campplus_execution_mode='process',speech_campplus_enabled=True,emotion2vec_enabled=True,
         model_device_speech_campplus_process_startup_timeout_s=60,
         model_device_speech_campplus_process_shutdown_grace_s=30))
     monkeypatch.setattr(models,'CamProcessRunner',build)

@@ -21,6 +21,7 @@ class Settings:
 
     def __post_init__(self):
         self._cfg = _load_toml(self.config_path)
+        self._validate_removed_enhancement_features()
 
     @property
     def deployment_profile(self) -> str:
@@ -104,18 +105,31 @@ class Settings:
         speech_rate = self._cfg.get("speech_rate", {})
         return float(speech_rate.get("rate_factor", 1.0))
 
-    # 功能开关 - 从嵌套的 [features] 部分读取
-    @property
-    def open_v2_role(self) -> bool:
-        """v3 链路的 CAM++ 说话人嵌入开关（配置键保持兼容）。"""
+    def _validate_removed_enhancement_features(self) -> None:
         features = self._cfg.get("features", {})
-        return bool(features.get("open_v2_role", True))
+        if not isinstance(features, dict):
+            raise ValueError("[features] 必须是表；增强能力现在由 [model_device_pool] 设备数组决定")
+        removed = {"open_v2_role": "speech_campplus_devices",
+                   "open_v2_emotion": "emotion2vec_devices"}
+        obsolete = [key for key in removed if key in features]
+        if obsolete:
+            # 旧false与非空数组并存时，静默忽略会意外启用模型、增加HBM。
+            # 在任何模型/worker创建前拒绝，避免迁移改变部署者的关闭意图。
+            details = "; ".join(
+                f"features.{key} 已删除，请删除该键：原值true保持 "
+                f"[model_device_pool].{removed[key]}，原值false将该数组设为[]"
+                for key in obsolete)
+            raise ValueError(details)
 
     @property
-    def open_v2_emotion(self) -> bool:
-        """v3 链路的 emotion2vec 情绪开关（配置键保持兼容）。"""
-        features = self._cfg.get("features", {})
-        return bool(features.get("open_v2_emotion", True))
+    def speech_campplus_enabled(self) -> bool:
+        """配置数组非空即启用；运行健康数不能反过来改变配置能力。"""
+        return bool(self.model_device_speech_campplus_devices)
+
+    @property
+    def emotion2vec_enabled(self) -> bool:
+        """先校验设备数组，避免把非法字符串等按真值误当启用。"""
+        return bool(self.model_device_emotion2vec_devices)
 
     # 文本规范化（ITN）配置
     @property
@@ -554,6 +568,7 @@ class Settings:
 
     def validate_model_backends(self) -> None:
         """只校验配置，硬件及文件检查由启动预检处理，懒加载不会被触发。"""
+        self._validate_removed_enhancement_features()
         _ = self.deployment_profile
         _ = self.resource_sample_interval_s
         _ = self.qwen_preload_on_startup

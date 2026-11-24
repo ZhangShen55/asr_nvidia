@@ -69,7 +69,7 @@ async def run_contract(flags=None, error=None, segments=None, raw_texts=None):
     speaker = AsyncMock(return_value=torch.ones(192))
     emotion = AsyncMock(return_value="积极")
     with ExitStack() as stack:
-        stack.enter_context(patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True},
+        stack.enter_context(patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"], "emotion2vec_devices": ["npu:7"]}),
                                                         "itn": {"enabled": False}, "speech_rate": {"rate_factor": 0.4}}))
         stack.enter_context(patch.object(pipeline, "time", SimpleNamespace(perf_counter=ControlledClock())))
         stack.enter_context(patch.object(pipeline, "load_v3_models_if_needed", load))

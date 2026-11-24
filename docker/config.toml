@@ -26,10 +26,6 @@ emotion_model_dir = "/app/model/emotion2vec_plus_large"
 [speech_rate]
 rate_factor = 0.4
 
-# 功能开关配置：v3 链路的说话人与情绪能力互相独立
-[features]
-open_v2_role = true      # CAM++ 说话人嵌入
-open_v2_emotion = true   # emotion2vec 情绪
 
 # WeTextProcessing 1.2.0 ITN 配置。规则只规范化文本，不改变时间轴或 ASR 语义。
 [itn]
@@ -82,8 +78,6 @@ queue_wait_timeout_s = 0                # 0 = 队列满立即拒绝；>0 才排�
 request_timeout_s = 120                 # 单次 Qwen 请求超时
 retry_count = 1                         # Qwen 请求失败重试次数
 # 以下为每owner输入预算及全局PCM预算；与实例数独立。
-batch_wait_timeout_ms = 10           # 0～1000ms；到期处理已有段，不强等凑满
-batch_max_duration_ratio = 4.0       # 1～64；控制同批最长/最短有效特征帧比
 max_batch_audio_frames = 14400 # 每owner预算，不随N放大；非HBM保证
 max_batch_tokens = 10000 # 每owner输入及生成估算预算
 pending_segment_limit = 256 # 全服务共享PCM预算，不按N复制
@@ -127,6 +121,7 @@ before_end = 3
 # 复读段 282~313。取 40 留约 1.5 倍余量且远低于复读量级。
 
 [model_device_pool]
+# 数组非空即开启，空数组关闭；每个元素一实例，修改后重启生效。
 speech_campplus_execution_mode = "process" # 与宿主最终CAM++4执行模式一致；容器仍待构建/验收
 speech_campplus_process_startup_timeout_s = 60 # 每worker READY启动期限；有限正数且不超过300秒
 speech_campplus_process_shutdown_grace_s = 30 # 仅显式关闭；不将普通请求取消改为kill

@@ -438,7 +438,7 @@ class RepetitionGuardPipelineTests(unittest.TestCase):
     """复读修复在 v2 链路上的端到端行为（打桩 Qwen，行为确定）。"""
 
     def setUp(self):
-        features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
+        features = patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"], "emotion2vec_devices": ["npu:7"]})})
         features.start()
         self.addCleanup(features.stop)
 
@@ -744,7 +744,7 @@ class FaultInjectionTests(unittest.TestCase):
     """异常注入：角色/情绪失败必须回退为 null，且不影响转写结果。"""
 
     def setUp(self):
-        features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
+        features = patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"], "emotion2vec_devices": ["npu:7"]})})
         features.start()
         self.addCleanup(features.stop)
 

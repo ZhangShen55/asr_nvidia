@@ -102,7 +102,7 @@ class BackendPoolTests(unittest.IsolatedAsyncioTestCase):
                     patch("core.models.AutoModel", side_effect=lambda **kw: Model()), \
                     patch("core.models.TorchNpuRunner", side_effect=lambda *a: Npu()), \
                     patch("core.models.device_allocated_mb", return_value=0.0), \
-                    patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}}):
+                    patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"], "emotion2vec_devices": ["npu:7"]})}):
                 pools = {name: ModelPool(name, "/model/test", devices_getter=lambda d=device: [d])
                          for name, device in [("speech_campplus", cam_device), ("emotion2vec", emo_device)]}
                 with patch.object(route, "get_model_pool", side_effect=lambda name: pools[name]):

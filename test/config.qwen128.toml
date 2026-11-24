@@ -91,12 +91,9 @@ after_start = -1
 before_end = -1
 
 
-# 功能开关配置：v3 链路的说话人与情绪能力互相独立
-[features]
-open_v2_role = true      # CAM++ 说话人嵌入
-open_v2_emotion = true   # emotion2vec 情绪
 
 [model_device_pool]
+# 数组非空即开启，空数组关闭；每个元素一实例，修改后重启生效。
 speech_campplus_execution_mode = "process"
 speech_campplus_process_startup_timeout_s = 60
 speech_campplus_process_shutdown_grace_s = 30

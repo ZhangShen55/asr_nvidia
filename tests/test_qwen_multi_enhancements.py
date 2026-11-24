@@ -35,8 +35,8 @@ def isolated_pool_status():
     saved_models = models._model_spk_v3, models._model_emotion_v3
     telemetry.reset_for_tests()
     with patch.dict(settings._cfg, {
-        "features": {"open_v2_role": True, "open_v2_emotion": True},
-        "model_device_pool": {"speech_campplus_execution_mode": "thread"},
+        "model_device_pool": {"speech_campplus_execution_mode": "thread",
+                              "speech_campplus_devices": ["cpu"], "emotion2vec_devices": ["cpu"]},
     }):
         yield
     models.local_model_status.clear()

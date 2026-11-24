@@ -12,11 +12,14 @@ from test_qwen_startup_preload import patch_lifespan, until
 def pools(monkeypatch, *, cam=True, emo=True, devices=(4, 1), failures=()):
     made = []
     monkeypatch.setattr(models.settings, '_cfg', dict(models.settings._cfg,
-        model_device_pool={'speech_campplus_execution_mode': 'thread'},
-        features={'open_v2_role': cam, 'open_v2_emotion': emo}))
+        model_device_pool={'speech_campplus_execution_mode': 'thread',
+                           'speech_campplus_devices': ['cpu'] * devices[0] if cam else [],
+                           'emotion2vec_devices': ['cpu'] * devices[1] if emo else []}))
     def make(name, count, enabled):
-        pool = ModelPool(name, '/fake', devices_getter=lambda: ['cpu'] * count,
-                         enabled_getter=lambda: enabled)
+        device_getter = (lambda: models.settings.model_device_speech_campplus_devices) if name == 'speech_campplus' else (lambda: models.settings.model_device_emotion2vec_devices)
+        enabled_getter = (lambda: models.settings.speech_campplus_enabled) if name == 'speech_campplus' else (lambda: models.settings.emotion2vec_enabled)
+        pool = ModelPool(name, '/fake', devices_getter=device_getter,
+                         enabled_getter=enabled_getter)
         def build(device):
             index = sum(n == name for n in made)
             made.append(name)
@@ -37,8 +40,9 @@ def pools(monkeypatch, *, cam=True, emo=True, devices=(4, 1), failures=()):
     (False, True, (4, 1), ['emotion2vec']),
     (True, False, (4, 1), ['speech_campplus'] * 4),
     (True, True, (0, 0), []),
+    (False, False, (4, 1), []),
 ])
-def test_startup_arrays_switches_and_reuse(monkeypatch, cam, emo, devices, expected):
+def test_startup_arrays_and_reuse(monkeypatch, cam, emo, devices, expected):
     async def run():
         ps, made = pools(monkeypatch, cam=cam, emo=emo, devices=devices)
         try:
@@ -112,4 +116,27 @@ def test_lifespan_waits_for_enhancements_and_closes_partial_resources(monkeypatc
                 await task
         assert ('ready' in events) == (finish == 'success')
         assert all(n in events for n in ['vad_closed', 'models_closed', 'qwen_closed', 'sampler_closed'])
+    asyncio.run(run())
+
+
+def test_both_configured_pools_unhealthy_are_not_configuration_disabled(monkeypatch):
+    async def run():
+        failures = [(name, i) for name, count in [("speech_campplus", 4), ("emotion2vec", 1)]
+                    for i in range(count)]
+        ps, made = pools(monkeypatch, failures=failures)
+        try:
+            await models.preload_v3_model_pools()
+            # 配置数组仍非空；健康容量归零不能变成both_disabled/4018。
+            assert models.settings.speech_campplus_enabled
+            assert models.settings.emotion2vec_enabled
+            models.validate_v3_capabilities(True, True)
+            with pytest.raises(ModelUnavailableError) as caught:
+                await models.load_v3_models_if_needed(True, True)
+            assert caught.value.code == 4015
+            assert caught.value.reason != "both_disabled"
+            assert len(made) == 5
+            assert all(pool.configured_instances for pool in ps.values())
+            assert all(not any(pool._is_healthy(m) for m in pool.models) for pool in ps.values())
+        finally:
+            await models.close_v3_model_pools()
     asyncio.run(run())

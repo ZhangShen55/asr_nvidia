@@ -35,7 +35,7 @@ class CapabilityRouteTests(unittest.TestCase):
             slots = SimpleNamespace(acquire=AsyncMock(side_effect=QueueFullError(active=8, capacity=8)),
                                     release=AsyncMock(), snapshot=AudioSlotManager(8).snapshot)
             with self.subTest(role_open=role_open, emotion_open=emotion_open, spk=spk, emo=emo, identify=identify), \
-                    patch.dict(settings._cfg, {"features": {"open_v2_role": role_open, "open_v2_emotion": emotion_open}}), \
+                    patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"] if role_open else [], "emotion2vec_devices": ["npu:7"] if emotion_open else []})}), \
                     patch.object(route, "get_slot_manager", return_value=slots), \
                     patch.object(route, "prepare_asr_context", new_callable=AsyncMock) as prepare, \
                     patch.object(route, "run_qwen_asr", new_callable=AsyncMock) as run, \
@@ -68,8 +68,8 @@ class LeaseRouteTests(unittest.IsolatedAsyncioTestCase):
                 self.assertEqual((manager.active, manager.active_b), (1, expected_b))
                 return {"segments": [{"role": None, "emotion": None, "segment_words": []}]}
 
-            features = {"open_v2_role": bool(expected_b), "open_v2_emotion": bool(expected_b)}
-            with patch.dict(settings._cfg, {"features": features}), \
+            features = {"speech_campplus_devices": ["npu:7"] if bool(expected_b) else [], "emotion2vec_devices": ["npu:7"] if bool(expected_b) else []}
+            with patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **features)}), \
                     patch.object(route, "get_slot_manager", return_value=manager), \
                     patch.object(route, "prepare_asr_context", new=AsyncMock(return_value=(None, context(request)))), \
                     patch.object(route, "run_qwen_asr", side_effect=run):
@@ -112,7 +112,7 @@ class LeaseRouteTests(unittest.IsolatedAsyncioTestCase):
             elif scenario == "cancel":
                 run.side_effect = asyncio.CancelledError
             with self.subTest(scenario=scenario), \
-                    patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}}), \
+                    patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"], "emotion2vec_devices": ["npu:7"]})}), \
                     patch.object(route, "get_slot_manager", return_value=manager), \
                     patch.object(route, "prepare_asr_context", new=prepare), \
                     patch.object(route, "run_qwen_asr", new=run), \
@@ -156,7 +156,7 @@ class AdmissionTraceTests(unittest.IsolatedAsyncioTestCase):
     def setUp(self):
         telemetry.reset_for_tests()
         self.addCleanup(telemetry.reset_for_tests)
-        features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
+        features = patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"], "emotion2vec_devices": ["npu:7"]})})
         features.start()
         self.addCleanup(features.stop)
 
@@ -208,7 +208,7 @@ class AdmissionTraceTests(unittest.IsolatedAsyncioTestCase):
                 patch.object(route, "run_qwen_asr", side_effect=run):
             await route.api_asr_v3(request)
             self.assertEqual(self.latest()["phases"]["qwen_ms"], 123)
-            with patch.dict(settings._cfg, {"features": {"open_v2_role": False, "open_v2_emotion": False}}):
+            with patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": [], "emotion2vec_devices": []})}):
                 response = await route.api_asr_v3(make_request(showSpk=True, showEmotion=True))
             self.assertEqual(response["code"], 4018)
             event = self.latest()
@@ -274,7 +274,7 @@ class MixedAdmissionIntegrationTests(unittest.IsolatedAsyncioTestCase):
             tasks.append(task)
             await asyncio.wait_for(entered.get(), timeout=1)
 
-        with patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}}), \
+        with patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"], "emotion2vec_devices": ["npu:7"]})}), \
                 patch.object(route, "get_slot_manager", return_value=manager), \
                 patch.object(route, "prepare_asr_context", side_effect=prepare), \
                 patch.object(route, "run_qwen_asr", side_effect=run):

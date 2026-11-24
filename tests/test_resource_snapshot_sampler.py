@@ -143,6 +143,10 @@ def test_main_lifespan_has_no_collector_io_without_get_and_closes_owned_sampler(
         with ExitStack() as stack:
             stack.enter_context(patch.object(main.settings, "validate_model_backends"))
             stack.enter_context(patch.object(main, "validate_npu_runtime", return_value={}))
+            # 本测试只检查sampler生命周期，完整隔离Qwen预加载后的owner绑定，
+            # 避免构造真实客户端并读取宿主模型元数据。
+            stack.enter_context(patch.object(main, "get_qwen_client", AsyncMock(return_value=object())))
+            stack.enter_context(patch.object(main, "get_slot_manager"))
             for name in ("_set_process_name", "setup_logging", "cleanup_stale_service_cache", "reset_stats"):
                 stack.enter_context(patch.object(main, name))
             for name in ("start_vad_pool", "stop_vad_pool", "preload_v3_model_pools", "preload_qwen_client", "close_v3_model_pools", "close_qwen_client"):
@@ -264,6 +268,10 @@ def test_shutdown_publishes_sampler_closing_but_models_close_while_collector_is_
                 stack.enter_context(patch.object(Settings, "qwen_execution_mode", new_callable=PropertyMock, return_value=mode))
                 stack.enter_context(patch.object(main.settings, "validate_model_backends"))
                 stack.enter_context(patch.object(main, "validate_npu_runtime", return_value={}))
+                # 本测试只检查sampler生命周期，完整隔离Qwen预加载后的owner绑定，
+                # 避免构造真实客户端并读取宿主模型元数据。
+                stack.enter_context(patch.object(main, "get_qwen_client", AsyncMock(return_value=object())))
+                stack.enter_context(patch.object(main, "get_slot_manager"))
                 for name in ("_set_process_name", "setup_logging", "cleanup_stale_service_cache", "reset_stats"):
                     stack.enter_context(patch.object(main, name))
                 for name in ("start_vad_pool", "stop_vad_pool", "preload_v3_model_pools", "preload_qwen_client", "close_qwen_client"):

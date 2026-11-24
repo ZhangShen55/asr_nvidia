@@ -19,7 +19,7 @@ from entity.data import AsrRequestParams
 
 class AudioLifecycleTests(unittest.IsolatedAsyncioTestCase):
     async def asyncSetUp(self):
-        self.features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
+        self.features = patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"], "emotion2vec_devices": ["npu:7"]})})
         self.features.start()
         self.addCleanup(self.features.stop)
 

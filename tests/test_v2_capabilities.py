@@ -7,12 +7,12 @@ from core import models
 
 
 class CapabilityValidationTests(unittest.TestCase):
-    def test_requested_capabilities_and_feature_switch_matrix(self):
+    def test_requested_capabilities_and_array_enabled_matrix(self):
         for role_open, emotion_open, need_role, need_emotion in product((False, True), repeat=4):
             with self.subTest(role_open=role_open, emotion_open=emotion_open,
                               need_role=need_role, need_emotion=need_emotion), \
                     patch.object(models, "settings", SimpleNamespace(
-                        open_v2_role=role_open, open_v2_emotion=emotion_open)):
+                        speech_campplus_enabled=role_open, emotion2vec_enabled=emotion_open)):
                 role_disabled = need_role and not role_open
                 emotion_disabled = need_emotion and not emotion_open
                 code = 4018 if role_disabled and emotion_disabled else (
@@ -27,9 +27,9 @@ class CapabilityValidationTests(unittest.TestCase):
 
 class DisabledRuntimeTests(unittest.IsolatedAsyncioTestCase):
     async def test_disabled_global_pools_never_load_or_lease_even_existing_models(self):
-        config = SimpleNamespace(open_v2_role=False, open_v2_emotion=False,
-                                 model_device_speech_campplus_devices=["cpu"],
-                                 model_device_emotion2vec_devices=["cpu"])
+        config = SimpleNamespace(speech_campplus_enabled=False, emotion2vec_enabled=False,
+                                 model_device_speech_campplus_devices=[],
+                                 model_device_emotion2vec_devices=[])
         with patch.object(models, "settings", config), patch.object(models, "AutoModel") as constructor:
             for name, code in [("speech_campplus", 4015), ("emotion2vec", 4016)]:
                 pool = models.get_model_pool(name)
@@ -44,18 +44,18 @@ class DisabledRuntimeTests(unittest.IsolatedAsyncioTestCase):
             constructor.assert_not_called()
 
     async def test_full_requirements_rejected_before_loading_any_model(self):
-        with patch.object(models, "settings", SimpleNamespace(open_v2_role=True, open_v2_emotion=False)), \
+        with patch.object(models, "settings", SimpleNamespace(speech_campplus_enabled=True, emotion2vec_enabled=False)), \
                 patch.object(models.ModelPool, "ensure_loaded", new_callable=AsyncMock) as load:
             with self.assertRaises(models.ModelUnavailableError) as caught:
                 await models.load_v3_models_if_needed(True, True)
             self.assertEqual(caught.exception.code, 4016)
             load.assert_not_awaited()
 
-    async def test_direct_pipeline_and_short_emotion_cannot_bypass_disabled_switches(self):
+    async def test_direct_pipeline_and_short_emotion_cannot_bypass_empty_arrays(self):
         from api.routes import asr_qwen_common as pipeline
 
         request = SimpleNamespace(showSpk=True, showEmotion=True, showRoleIdentify=False)
-        with patch.object(models, "settings", SimpleNamespace(open_v2_role=False, open_v2_emotion=False)), \
+        with patch.object(models, "settings", SimpleNamespace(speech_campplus_enabled=False, emotion2vec_enabled=False)), \
                 patch.object(pipeline, "get_model_pool") as get_pool, \
                 patch.object(pipeline, "detect_segments", new_callable=AsyncMock) as vad:
             with self.assertRaises(models.ModelUnavailableError) as caught:

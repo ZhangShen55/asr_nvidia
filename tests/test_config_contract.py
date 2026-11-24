@@ -132,8 +132,8 @@ class ConfigContractTests(unittest.TestCase):
                     cfg.validate_model_backends()
         for devices in ('["cpu"]', '["npu:7", "cpu"]'):
             with self.subTest(devices=devices):
-                # Disabled capabilities do not make an unsupported process combination valid.
-                cfg = self._legacy_settings('[features]\nopen_v2_role=false\n[qwen_asr]\nenabled=false\n'
+                # Disabling Qwen does not make an unsupported CAM process combination valid.
+                cfg = self._legacy_settings('[qwen_asr]\nenabled=false\n'
                                      '[model_device_pool]\nspeech_campplus_execution_mode="process"\n'
                                      f'speech_campplus_devices={devices}\n')
                 with self.assertRaisesRegex(ValueError, 'speech_campplus_execution_mode.*NPU'):

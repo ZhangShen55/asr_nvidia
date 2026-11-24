@@ -59,7 +59,7 @@ class SegmentClipLifecycleTests(unittest.TestCase):
     def setUp(self):
         self.created = []
         self.clip_durations = {}
-        features = patch.dict(settings._cfg, {"features": {"open_v2_role": True, "open_v2_emotion": True}})
+        features = patch.dict(settings._cfg, {"model_device_pool": dict(settings._cfg.get("model_device_pool", {}), **{"speech_campplus_devices": ["npu:7"], "emotion2vec_devices": ["npu:7"]})})
         features.start()
         self.addCleanup(features.stop)
 

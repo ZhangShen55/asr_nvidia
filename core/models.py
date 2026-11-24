@@ -51,8 +51,8 @@ class ModelUnavailableError(RuntimeError):
 
 def validate_v3_capabilities(need_role: bool = False, need_emotion: bool = False) -> None:
     """先检查完整需求，避免一项已加载后才发现另一项被配置关闭。"""
-    role_disabled = need_role and not settings.open_v2_role
-    emotion_disabled = need_emotion and not settings.open_v2_emotion
+    role_disabled = need_role and not settings.speech_campplus_enabled
+    emotion_disabled = need_emotion and not settings.emotion2vec_enabled
     if role_disabled and emotion_disabled:
         raise ModelUnavailableError("spk_emo", reason="both_disabled")
     if role_disabled:
@@ -908,14 +908,14 @@ _MODEL_POOLS = {
     "speech_campplus": ModelPool(
         "speech_campplus", settings.spk_model_dir,
         devices_getter=lambda: settings.model_device_speech_campplus_devices,
-        enabled_getter=lambda: settings.open_v2_role,
+        enabled_getter=lambda: settings.speech_campplus_enabled,
         prefetch_depth_getter=lambda: getattr(settings, "speech_campplus_prefetch_queue_depth", 0),
         fp16=True,
     ),
     "emotion2vec": ModelPool(
         "emotion2vec", settings.emotion_model_dir,
         devices_getter=lambda: settings.model_device_emotion2vec_devices,
-        enabled_getter=lambda: settings.open_v2_emotion,
+        enabled_getter=lambda: settings.emotion2vec_enabled,
         prefetch_depth_getter=lambda: getattr(settings, "emotion2vec_prefetch_queue_depth", 0),
         fp16=True,
     ),
