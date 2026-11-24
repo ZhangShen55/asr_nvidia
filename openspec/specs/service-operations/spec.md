@@ -45,7 +45,7 @@
 - **THEN** 系统按默认一个HTTP实例运行；默认四Qwen owner不改变该值，也不生成四套请求处理服务
 
 ### Requirement: 维护配置项清单
-系统 MUST 只消费实际生效配置，删除下线功能专属字段，保留既有旧VAD和设备结构迁移诊断。正式continuous MUST 以N、S分别派生audio_concurrency=N和request_concurrency=N×S，根与Docker模板不重复维护这两个值；兼容显式相等值须提示迁移，冲突或非法类型/范围须就绪前报错。legacy显式选择时保留原独立容量参数，不能通过忽略冲突配置静默切换语义；修改均重启生效。
+系统 MUST 只消费实际生效配置，删除下线功能专属字段，保留既有旧VAD和设备结构迁移诊断。正式continuous MUST 以N、S分别派生audio_concurrency=N和request_concurrency=N×S，根与Docker模板不重复维护这两个值；兼容显式相等值须提示迁移，冲突或非法类型/范围须就绪前报错。legacy显式选择时保留原独立容量参数，不能通过忽略冲突配置静默切换语义；修改均重启生效。根与Docker的continuous模板 MUST 删除仅legacy生效的batch_wait_timeout_ms、batch_max_duration_ratio显式赋值；显式legacy仍支持原字段及语义。features旧开关不再接受，残留时在任何worker/模型创建前明确拒绝并说明迁移；两个增强batch_size从正式模板移除，保留实际batch1与原非1值拒绝约束。
 
 #### Scenario: 配置文件包含已下线功能的配置项
 - **WHEN** 部署配置中残留vad_pool_size、vad_pool_max、vad_queue_watermark、vad_collapse_timeout_s、vad_queue_timeout_s或vad_call_timeout_s
@@ -66,6 +66,22 @@
 #### Scenario: 旧容量值冲突或类型非法
 - **WHEN** continuous的旧显式容量与N或N×S不一致，或N、S、容量字段包含布尔值、非整数、越界值
 - **THEN** 就绪前报具体字段及期望派生值，不静默取较小值、忽略冲突或将非法值纠正为1
+
+#### Scenario: 当前continuous模板精简
+- **WHEN** 运维读取根或Docker的正式continuous模板
+- **THEN** 不再出现两项legacy组批字段、两个固定增强batch_size或features.open_v2_role/open_v2_emotion；增强能力仅由各自设备数组表达
+
+#### Scenario: 固定增强batch模板省略
+- **WHEN** 正式模板不再提供speech_campplus_batch_size和emotion2vec_batch_size
+- **THEN** 实际推理和状态仍固定batch1，缺省值仍为1，显式非1值继续按原约束拒绝，不开放新批处理能力
+
+#### Scenario: legacy实验参数仍有作用
+- **WHEN** 显式选择legacy模式并提供batch_wait_timeout_ms或batch_max_duration_ratio
+- **THEN** 原组批等待、长度分桶和类型/范围校验保持，不把当前模板精简当成删除legacy执行能力
+
+#### Scenario: 保留有效参数
+- **WHEN** 当前配置保留两个prefetch_queue_depth、online_repetition_*、repetition_*及retry_count
+- **THEN** 仍按各自原契约加载和使用，不改变预取反压、在线检测、异常恢复或生成后修复规则
 
 ### Requirement: 启动时固定预热 VAD 实例
 服务 MUST 仅按vad.vad_device数组在启动阶段以spawn创建固定VAD worker池，每元素一个独立worker，FIFO分派完整音频；旧qwen_asr.vad_device不得回退生效。正式本轮配置 MUST 保留八个CPU VAD实例，不随Qwen N扩缩；通用合法CPU/NPU数组仍按原规则支持。启动完成前记录逐worker设备、预热及失败，无可用worker拒绝就绪；运行期不自动扩缩，NPU失败不静默走CPU。
@@ -90,8 +106,8 @@
 - **THEN** 能区分HTTP1、Qwen N4、每音频S16、总4/全局64、B4、独立CAM4/emo1及PCM预算；根配置设备为宿主npu:7，单卡容器按物理7实际可见映射使用逻辑npu:0，不把音频容量当模型池份数
 
 #### Scenario: 功能关闭时模型池不生效
-- **WHEN** open_v2_role=false或open_v2_emotion=false
-- **THEN** 对应模型数组不触发加载或推理，配置可保留供重启后开启；Qwen默认预加载不绕过增强功能开关
+- **WHEN** 对应增强设备数组为空
+- **THEN** 对应模型不触发加载或推理；重新填写非空设备数组并重启才能开启，Qwen默认预加载不绕过增强数组关闭
 
 ### Requirement: 降低控制台 HTTP 访问日志噪声
 服务 MUST 仅在控制台处理 `httpx`/`httpcore` 成功请求的 `INFO` 访问日志，使其不再逐段打印 HTTP 200 行；`WARNING`、`ERROR` 和业务处理日志 MUST 继续输出。文件日志是否保留完整 HTTP 访问记录 MUST 与控制台过滤解耦，并按现有文件日志策略保留。
@@ -131,7 +147,7 @@
 - **THEN** 这些资源保持原状；无需外部Qwen服务或固定转写端口，本次owned内嵌owner随服务关闭，不继续后台占用，共享服务不能因本次超时被终止
 
 ### Requirement: 增强音频并发配置具有确定默认值
-系统 MUST 从audio_spk_emo_concurrency读取B配置上限，缺省4，正整数且重启生效，根与Docker模板均展示；关闭能力使用功能开关。正式continuous的B新准入有效上限 MUST 不超过min(配置B上限,健康Qwen容量)，不得据此改写配置或复制增强池。健康下降时closing请求仍计原活动，安全终态前不伪释放；各HTTP服务独立维护，不是跨服务全局上限。
+系统 MUST 从audio_spk_emo_concurrency读取B配置上限，缺省4，正整数且重启生效，根与Docker模板均展示；关闭能力使用空设备数组，不以B上限或旧features开关表达。正式continuous的B新准入有效上限 MUST 不超过min(配置B上限,健康Qwen容量)，不得据此改写配置或复制增强池。健康下降时closing请求仍计原活动，安全终态前不伪释放；各HTTP服务独立维护，不是跨服务全局上限。
 
 #### Scenario: 缺少新增配置项
 - **WHEN** 旧配置未声明audio_spk_emo_concurrency
@@ -203,11 +219,11 @@ README和部署说明 MUST 说明最终默认N4/S16、派生总4/global64、B4�
 - **THEN** 文档说明4A、4B或总计4个混合请求使总满，新A/B均4013优先；本配置不能单独触发4017。显式N6下1A+4B新B4017、新A可形成2A+4B的通用契约及原实测保留为历史，不伪装N4可达状态；B双开仍只占一个B槽
 
 #### Scenario: 查阅能力关闭行为
-- **WHEN** 用户查询功能开关为false、增强请求参数为true的处理规则
+- **WHEN** 用户查询对应设备数组为空、增强请求参数为true的处理规则
 - **THEN** 文档说明准入前请求失败及4015/4016/4018单项组合错误，不承诺配置关闭时以null成功；普通A仍按自身容量处理，已开启模型的普通段级失败另列null降级
 
 ### Requirement: 明确实例设备与 TensorRT 配置的优先级
-模型设备数组 MUST 接受 cpu 与 npu:N。NPU MUST 固定走 torch_npu，CPU MUST 使用 PyTorch CPU；功能开关、请求能力与设备数组容量的既有含义 MUST 保留。系统 MUST NOT 保留仅对 NVIDIA 实例生效的加速器开关与引擎精度配置项。
+模型设备数组 MUST 接受 cpu 与 npu:N。NPU MUST 固定走 torch_npu，CPU MUST 使用 PyTorch CPU；增强能力启用 MUST 由设备数组是否非空决定，请求能力与设备数组容量含义保留。系统 MUST NOT 保留仅对 NVIDIA 实例生效的加速器开关与引擎精度配置项。
 
 #### Scenario: NPU 配置同时打开开关
 - **WHEN** `[model_device_pool]` 中某实例为 npu:0
@@ -218,8 +234,8 @@ README和部署说明 MUST 说明最终默认N4/S16、派生总4/global64、B4�
 - **THEN** 配置容量仍为 3 个独立实例，不因共用同一设备或权重文件变成单实例
 
 #### Scenario: 功能关闭时的配置保留
-- **WHEN** 对应 features 功能开关关闭但设备数组非空
-- **THEN** 保留配置供后续开启使用，当前不加载或调用该模型，请求关闭能力时沿用准入前错误
+- **WHEN** 对应模型设备数组为空
+- **THEN** 当前不加载或调用该模型；重新配置非空数组并重启后开启，请求关闭能力时沿用准入前错误
 
 ### Requirement: 运维状态必须区分配置值和实际后端
 `GET /get_status` 或等价输出 MUST 为 CAM++ 和 emotion2vec 按实例展示配置设备、实际后端、实际计算精度和加载/失败原因。新增信息 MUST 保留既有音频准入、模型池及 VAD 状态语义，查询 MUST 不触发模型加载。
@@ -289,7 +305,7 @@ Docker 部署 MUST 在 docker/ 下提供 README.md、Dockerfile 和 docker-compo
 - **THEN** 构建或启动说明明确提示格式错误，不把旧 v2 tag 当作默认镜像
 
 ### Requirement: 启动前校验部署前置条件
-昇腾部署 MUST 在就绪前校验设备可见性、必需资产、torch_npu运行时及CONFIG_PATH可读性，失败明确报告并阻止就绪。三个必需模型资产与Qwen权重策略分开：preload=false时Qwen缺失在转写触发按4011处理，不为预检加载；正式默认preload=true时全部N份权重及processor须顺序加载成功且健康后才就绪，任何部分启动失败统一回收。前置校验本身不得加载模型或绕过功能开关；校验通过后，HTTP就绪前须完成已开启且非空数组的增强池预加载尝试，失败按增强池降级契约处理。
+昇腾部署 MUST 在就绪前校验设备可见性、必需资产、torch_npu运行时及CONFIG_PATH可读性，失败明确报告并阻止就绪。三个必需模型资产与Qwen权重策略分开：preload=false时Qwen缺失在转写触发按4011处理，不为预检加载；正式默认preload=true时全部N份权重及processor须顺序加载成功且健康后才就绪，任何部分启动失败统一回收。旧features开关MUST在任何worker/模型创建前给出迁移错误；前置校验本身不得加载模型或绕过空数组关闭；校验通过后，HTTP就绪前须完成非空设备数组增强池的预加载尝试，失败按增强池降级契约处理。
 
 #### Scenario: GPU 或资产不可用
 - **WHEN** 容器无可用NPU、必需模型目录缺失或配置不可读
