@@ -14,12 +14,6 @@ RUN --mount=type=bind,from=runtime_env,source=.,target=/input \
     && /opt/asr/bin/python -c "from pathlib import Path; Path('/opt/asr/bin/conda-unpack').unlink()"
 
 FROM ${BASE_IMAGE} AS runtime
-ARG SOURCE_REVISION=unknown
-ARG BUILD_DATE=unknown
-LABEL org.opencontainers.image.title="asr_offline_910b" \
-      org.opencontainers.image.revision="${SOURCE_REVISION}" \
-      org.opencontainers.image.created="${BUILD_DATE}" \
-      org.opencontainers.image.description="910B CANN8.2 source runtime; single HTTP; external readonly config"
 ENV DEBIAN_FRONTEND=noninteractive
 # 仅补运行库；本版不安装编译器、Cython、Nginx或保护构建工具。
 RUN apt-get update \
@@ -50,6 +44,13 @@ COPY --from=model_assets /speech_campplus_sv_zh_en_16k-common_advanced/ /app/mod
 COPY --from=model_assets /emotion2vec_plus_large/ /app/model/emotion2vec_plus_large/
 COPY --from=runtime_env /runtime-packages.json /wheel-source.json /opt/asr-metadata/
 RUN mkdir -p /tmp/asr-offline
+# 追溯元数据置于依赖/模型层之后，修改发布信息不会作废昂贵的构建缓存。
+ARG SOURCE_REVISION=unknown
+ARG BUILD_DATE=unknown
+LABEL org.opencontainers.image.title="asr_offline_910b" \
+      org.opencontainers.image.revision="${SOURCE_REVISION}" \
+      org.opencontainers.image.created="${BUILD_DATE}" \
+      org.opencontainers.image.description="910B CANN8.2 source runtime; single HTTP; external readonly config"
 EXPOSE 9000
 HEALTHCHECK --interval=15s --timeout=5s --start-period=360s --retries=6 \
     CMD /opt/asr/bin/python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:9000/get_status',timeout=4).read()" || exit 1

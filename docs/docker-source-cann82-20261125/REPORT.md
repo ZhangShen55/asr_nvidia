@@ -25,3 +25,5 @@
 待执行：依赖解包和镜像构建、内容及实际导入审计、物理映射/NPU矩阵与真实前向、全部owner暖身、完整B4、正常收尾、最终tag及本轮缓存清理。P50/P95、墙钟、HBM峰值和文本/警告差异尚无本轮数据。人工准确率与生产长期运行不在本轮可用性认证范围。
 
 部署/验收工具专项45项通过。真实BuildKit上下文首次审计发现父目录例外会放行缓存及Docker配置，已删除宽泛父目录例外；v2实际导出恰好49个允许文件，精确清单匹配，无配置/README/缓存。首个audit非正式候选，正式候选尚待构建。完整CPU复验v2进行中，失败记录保留。
+
+首个正式构建v1在外部Dockerfile frontend解析时因registry-1.docker.io网络超时失败，尚未进入业务依赖层。通过daemon获取官方固定frontend，并与base相同方式传入本机registry、核对config digest；重试通过BUILDKIT_SYNTAX固定本地frontend，保持原builder及缓存。追溯ARG/LABEL移至昂贵层之后，避免发布元数据使重试依赖缓存失效。

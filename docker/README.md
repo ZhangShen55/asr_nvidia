@@ -42,6 +42,8 @@ export BASE_LOCAL_ID=sha256:634118c33bcc879ee709510a532f3e8f90cb0d6a884922b59963
 export BASE_ALIAS="127.0.0.1:${REGISTRY_PORT}/asr-cann82-base:${TASK_ID}"
 export REGISTRY_IMAGE=registry@sha256:a3d8aaa63ed8681a604f1dea0aa03f100d5895b6a58ace528858a7b332415373
 export BUILDKIT_IMAGE=moby/buildkit@sha256:14aa1b4dd92ea0a4cd03a54d0c6079046ea98cd0c0ae6176bdd7036ba370cbbe
+export FRONTEND_SOURCE=docker/dockerfile@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+export FRONTEND_ALIAS="127.0.0.1:${REGISTRY_PORT}/asr-dockerfile:${TASK_ID}"
 mkdir -p "$DOCKER_CONFIG/cli-plugins" "$WORK_DIR/tools"
 docker image ls --no-trunc --digests > "$WORK_DIR/images-before.txt"
 docker ps -a --no-trunc > "$WORK_DIR/containers-before.txt"
@@ -69,10 +71,21 @@ docker image push "$BASE_ALIAS"
 BASE_IMAGE=$(/home/zhangs/conda-envs/asr/bin/python -c 'import json,os,urllib.request; alias=os.environ["BASE_ALIAS"]; repo,tag=alias.rsplit(":",1); req=urllib.request.Request("http://"+repo.rsplit("/",1)[0]+"/v2/"+repo.rsplit("/",1)[1]+"/manifests/"+tag,headers={"Accept":"application/vnd.docker.distribution.manifest.v2+json"}); r=urllib.request.urlopen(req,timeout=30); m=json.load(r); assert m["config"]["digest"]==os.environ["BASE_LOCAL_ID"]; digest=r.headers["Docker-Content-Digest"]; assert digest.startswith("sha256:"); print(repo+"@"+digest)')
 export BASE_IMAGE
 printf '%s\n' "$BASE_IMAGE" > "$WORK_DIR/base-image-ref.txt"
+# BuildKit未必能直达Docker Hub；frontend也由daemon pull后经私有registry传输。
+docker pull --platform linux/arm64 "$FRONTEND_SOURCE"
+export FRONTEND_LOCAL_ID=$(docker image inspect --format '{{.Id}}' "$FRONTEND_SOURCE")
+docker image tag "$FRONTEND_LOCAL_ID" "$FRONTEND_ALIAS"
+docker image push "$FRONTEND_ALIAS"
+FRONTEND_IMAGE=$(/home/zhangs/conda-envs/asr/bin/python -c 'import json,os,urllib.request; alias=os.environ["FRONTEND_ALIAS"]; repo,tag=alias.rsplit(":",1); req=urllib.request.Request("http://"+repo.rsplit("/",1)[0]+"/v2/"+repo.rsplit("/",1)[1]+"/manifests/"+tag,headers={"Accept":"application/vnd.docker.distribution.manifest.v2+json"}); r=urllib.request.urlopen(req,timeout=30); m=json.load(r); assert m["config"]["digest"]==os.environ["FRONTEND_LOCAL_ID"]; digest=r.headers["Docker-Content-Digest"]; assert digest.startswith("sha256:"); print(repo+"@"+digest)')
+export FRONTEND_IMAGE
+printf '%s\n' "$FRONTEND_IMAGE" > "$WORK_DIR/frontend-image-ref.txt"
 cat > "$WORK_DIR/buildkitd.toml" <<EOF
 [registry."127.0.0.1:${REGISTRY_PORT}"]
   http = true
   insecure = true
+[worker.oci]
+  gc = false
+  max-parallelism = 4
 EOF
 docker buildx create --name "$ASR_BUILDER" --driver docker-container \
   --driver-opt network=host --driver-opt "image=$BUILDKIT_IMAGE" \
@@ -93,12 +106,15 @@ export CANDIDATE_IMAGE="asr_offline_910b:candidate-${TASK_ID}"
 docker buildx build --builder "$ASR_BUILDER" --load --progress plain \
   --provenance=false --sbom=false --platform linux/arm64 \
   --build-arg BASE_IMAGE="$BASE_IMAGE" \
+  --build-arg BUILDKIT_SYNTAX="$FRONTEND_IMAGE" \
   --build-arg SOURCE_REVISION="$(git rev-parse HEAD)" \
   --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   --build-context runtime_env="$WORK_DIR/runtime_env" \
   --build-context model_assets="$WORK_DIR/model_assets" \
   -f docker/Dockerfile -t "$CANDIDATE_IMAGE" .
 ```
+
+构建参数 `BUILDKIT_SYNTAX` 将Dockerfile前端固定到已核验的私有引用，避免独立BuildKit尝试访问不可达的Docker Hub。首次实际构建在解析公网前端时超时的记录必须保留，不计为镜像构建成功。前端覆盖机制见[Docker官方文档](https://docs.docker.com/build/buildkit/frontend/)。`worker.oci.gc=false`用于避免失败重试期间自动GC删除本次cache，成功验收后仍须清理整个本轮私有builder缓存。
 
 使用同一WORK_DIR/builder重试，不加`--no-cache`，失败时保留已完成层和原始日志。长构建应由远端持久后台控制器登记PID/出生、日志和退出文件，SSH断开不等于构建失败；确认旧任务已退出才重试，不并行构建。构建成功后先用候选image ID测试，验收通过后再给同一ID添加 `asr_offline_910b:v3_YYYYMMDD`，不重新构建。
 
@@ -206,4 +222,4 @@ docker image tag "$TESTED_ID" "$FINAL_IMAGE"
 docker image inspect "$FINAL_IMAGE" --format '{{.Id}}'
 ```
 
-清理前按本次资源登记逐项列出镜像/container/volume/builder、核对出生归属及容器引用。移除本次独立builder及其cache、registry/传输alias、候选多余tag、无引用的本次新增helperimage和临时构建材料。保留最终及基础镜像和它们必需的共享层、所有原有镜像/共享服务、日志报告。失败阶段保留缓存用于继续修复；不得执行全局docker system/image/builder prune或按名称批量kill。具体本次清理ID及前后核验写入验收报告，不让通用命令误删其它项目。
+清理前按本次资源登记逐项列出镜像/container/volume/builder、核对出生归属及容器引用。移除本次独立builder及其cache、registry/底座和frontend传输alias、候选多余tag、无引用的本次新增helperimage（含frontend源镜像）和临时构建材料。保留最终及基础镜像和它们必需的共享层、所有原有镜像/共享服务、日志报告。失败阶段保留缓存用于继续修复；不得执行全局docker system/image/builder prune或按名称批量kill。具体本次清理ID及前后核验写入验收报告，不让通用命令误删其它项目。
