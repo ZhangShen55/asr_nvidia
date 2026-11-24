@@ -4,13 +4,16 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 
+# 在Settings读取缺省路径及任何模型模块导入之前拒绝容器配置兜底。
+from core.deployment import validate_npu_runtime, validate_source_container_config
+validate_source_container_config()
+
 from core.config import settings
 from core.logging import setup_logging
 from core.qwen_asr_client import close_qwen_client, preload_qwen_client, get_qwen_client
 from core.models import close_v3_model_pools, preload_v3_model_pools
 from core.qwen_asr_queue import get_slot_manager
 from core.vad_pool import start_vad_pool, stop_vad_pool
-from core.deployment import validate_npu_runtime
 from core.async_utils import await_completion
 from core.resource_diagnostics import ResourceSnapshotSampler
 from api.routes.asr_v3 import router as asr_v3_router

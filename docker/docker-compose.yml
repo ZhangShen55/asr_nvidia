@@ -1,0 +1,70 @@
+services:
+  asr-offline:
+    image: ${ASR_IMAGE:-asr_offline_910b:v3_20261125}
+    restart: "no"
+    labels:
+      asr.build.task: ${ASR_BUILD_TASK_ID:-standalone}
+    init: true
+    runtime: ascend
+    privileged: true
+    ipc: host
+    environment:
+      CONFIG_PATH: /config.toml
+      ASR_DEPLOYMENT_PROFILE: npu-910b
+      ASR_CONTAINER_RUNTIME: cann82-source
+      ASR_RUNTIME_DIR: /tmp/asr-offline
+      ASR_STATS_PATH: /tmp/asr-offline/asr_stats.json
+      TMPDIR: /tmp/asr-offline
+      OMP_NUM_THREADS: "4"
+      MKL_NUM_THREADS: "4"
+      ASCEND_VISIBLE_DEVICES: ${ASCEND_VISIBLE_DEVICES:-7}
+    volumes:
+      - type: bind
+        source: ${ASR_CONFIG:-./config.toml}
+        target: /config.toml
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ${QWEN_MODEL_DIR:?请设置完整本地Qwen HF权重目录}
+        target: /app/qwen-model
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: /usr/local/Ascend/driver
+        target: /usr/local/Ascend/driver
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: /usr/local/dcmi
+        target: /usr/local/dcmi
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: /usr/local/bin/npu-smi
+        target: /usr/local/bin/npu-smi
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: /etc/ascend_install.info
+        target: /etc/ascend_install.info
+        read_only: true
+        bind:
+          create_host_path: false
+    ports:
+      - "${ASR_PORT:-9000}:9000"
+    stop_grace_period: 240s
+    healthcheck:
+      test:
+        - CMD
+        - /opt/asr/bin/python
+        - -c
+        - "import json,urllib.request; r=json.load(urllib.request.urlopen('http://127.0.0.1:9000/get_status',timeout=5)); assert r.get('status') == 'living'"
+      interval: 15s
+      timeout: 10s
+      start_period: 360s
+      retries: 4

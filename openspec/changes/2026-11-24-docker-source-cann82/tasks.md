@@ -4,29 +4,29 @@
 
 ## 1. 冻结输入及资源边界
 
-- [ ] 1.1 同步Git并保存源码revision、用户根config差异/SHA、依赖和既有镜像/容器/volume/进程出生快照；核对仅本change文件可提交，用户VAD修改和共享服务保持。
+- [x] 1.1 同步Git并保存源码revision、用户根config差异/SHA、依赖和既有镜像/容器/volume/进程出生快照；核对仅本change文件可提交，用户VAD修改和共享服务保持。
 - [ ] 1.2 核验指定本地CANN镜像ID/arm64、实际toolkit/910B kernel、驱动/固件、Ascend runtime、Docker/Compose和空间；交付兼容检查记录，不以标签存在代替通过。
 - [ ] 1.3 固定canonical a1～a4完整WAV输入及原文件名编码/时长/SHA、B4参数、物理7/逻辑0映射、私有测试端口和资源路径；核对四条独立完整文件，无截取/重复替代。
 
 ## 2. 源码镜像及独立依赖交付（作者A）
 
 - [ ] 2.1 在Docker目录外新增容器CANN8.2专用依赖锁/来源与重建说明，隔离准备Python3.10/aarch64运行环境，固定torch2.5.1/torch-npu2.5.1.post1及其余现有锁；核对摘要、依赖一致性和宿主环境未改变。
-- [ ] 2.2 实现根忽略白名单及必要模型/依赖命名上下文，生成真实上下文文件清单；静态核验项目tests/test/docs/scripts/openspec/.git、样本、旧业务.so及配置均未进入任一上下文，不采用COPY全仓库。
+- [x] 2.2 实现根忽略白名单及必要模型/依赖命名上下文，生成真实上下文文件清单；静态核验项目tests/test/docs/scripts/openspec/.git、样本、旧业务.so及配置均未进入任一上下文，不采用COPY全仓库。
 - [ ] 2.3 改写Dockerfile为本地指定底座、可重定位独立解释器和必要.py直接运行，三个小模型内置；以导入来源、文件白名单和构建指令确认无Cython编译/工具、无旧扩展遮蔽、无Nginx/项目启动脚本。
-- [ ] 2.4 实现容器专用精确post1门禁、必需配置普通文件检查和HTTP1限制，保留主入口原预检及exec信号链；用有意义的CPU配置/部署契约测试覆盖错误2.5.1、缺失/目录配置、instance_count!=1及宿主2.5.1仍合法，无worker提前创建。
+- [x] 2.4 实现容器专用精确post1门禁、必需配置普通文件检查和HTTP1限制，保留主入口原预检及exec信号链；用有意义的CPU配置/部署契约测试覆盖错误2.5.1、缺失/目录配置、instance_count!=1及宿主2.5.1仍合法，无worker提前创建。
 - [ ] 2.5 整理本组依赖/白名单/入口说明及必要回归，确认Python ABI、ITN和动态导入所需资产未遗漏；输出静态审计，构建/前向未执行项保持待验。
 
 ## 3. Compose和四文件目录（作者B）
 
-- [ ] 3.1 交付docker-compose.yml，配置单HTTP、Ascend runtime/特权/IPC、物理7可见、端口、init、必需只读config及Qwen挂载、健康与240秒正常停止窗口；docker compose config通过并核对无Nginx及旧多HTTP入口。
-- [ ] 3.2 更新docker/config.toml为Qwen4/S16、CAM4 process/emo1、VAD8 CPU、容器逻辑npu0及镜像路径，保留有效阈值/恢复/预算/线程参数；逐项比对冻结运行语义，根用户配置不改，修改配置需重启。
-- [ ] 3.3 将旧验证报告迁至docs保留，移除docker旧build/start/nginx/忽略文件，将compose.yaml替换为.yml；目录清单严格等于Dockerfile、docker-compose.yml、config.toml、README.md，历史证据无丢失。
-- [ ] 3.4 README给出可执行依赖准备、构建/缓存重试、日期镜像命名、Compose启动/配置修改后重建容器、状态/v3/日志/停止及范围内清理命令；同步根README/AGENT的入口与源码版本边界，命令参数和实际文件逐项对应。
-- [ ] 3.5 运行本组配置/Compose相关回归及实际配置解析检查；核验无旧features键、配置未烘焙、缺宿主文件不自动创建目录、未把README或脚本作为运行必需代码。
+- [x] 3.1 交付docker-compose.yml，配置单HTTP、Ascend runtime/特权/IPC、物理7可见、端口、init、必需只读config及Qwen挂载、健康与240秒正常停止窗口；docker compose config通过并核对无Nginx及旧多HTTP入口。
+- [x] 3.2 更新docker/config.toml为Qwen4/S16、CAM4 process/emo1、VAD8 CPU、容器逻辑npu0及镜像路径，保留有效阈值/恢复/预算/线程参数；逐项比对冻结运行语义，根用户配置不改，修改配置需重启。
+- [x] 3.3 将旧验证报告迁至docs保留，移除docker旧build/start/nginx/忽略文件，将compose.yaml替换为.yml；目录清单严格等于Dockerfile、docker-compose.yml、config.toml、README.md，历史证据无丢失。
+- [x] 3.4 README给出可执行依赖准备、构建/缓存重试、日期镜像命名、Compose启动/配置修改后重建容器、状态/v3/日志/停止及范围内清理命令；同步根README/AGENT的入口与源码版本边界，命令参数和实际文件逐项对应。
+- [x] 3.5 运行本组配置/Compose相关回归及实际配置解析检查；核验无旧features键、配置未烘焙、缺宿主文件不自动创建目录、未把README或脚本作为运行必需代码。
 
 ## 4. 可复用构建和内容审计（主agent独占）
 
-- [ ] 4.1 创建任务私有CLI Buildx插件（固定版本及官方摘要）、builder和loopback registry，登记container/image/volume/端口/alias；核对不修改daemon/全局CLI及其它builder，本机底座经私有传输后config digest不变。
+- [x] 4.1 创建任务私有CLI Buildx插件（固定版本及官方摘要）、builder和loopback registry，登记container/image/volume/端口/alias；核对不修改daemon/全局CLI及其它builder，本机底座经私有传输后config digest不变。
 - [ ] 4.2 在私有构建器执行依赖/ABI导入检查并完成持久后台真实构建，记录PID出生、退出码及完整日志；每次失败定位后复用原缓存重试，不因SSH断连重复构建，不更换底座绕过错误。
 - [ ] 4.3 将候选镜像load到daemon并保存不可变ID，审计基础/新增各阶段及最终应用清单、源码导入、包版本和模型资产；确认无项目测试/文档/脚本/样本/配置/旧业务扩展及无关模型，报告必要第三方运行资产边界。
 - [ ] 4.4 从文档命令启动候选镜像，在物理7对应逻辑0验证可见映射、NPU矩阵及Qwen prefill/decode和CAM/emo真实forward；分开保存导入、加载、真实推理结果，失败不得计为镜像可用。

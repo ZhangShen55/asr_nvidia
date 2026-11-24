@@ -1,0 +1,11 @@
+# 默认拒绝所有输入，项目测试、文档、脚本、配置和资产从未进入主上下文。
+**
+!docker/Dockerfile
+!main.py
+!model_status_runtime.py
+!telemetry_runtime.py
+!core/**/*.py
+!api/**/*.py
+!utils/**/*.py
+!entity/**/*.py
+# 即使目录未来混入旧扩展/编译物，也只放行.py。

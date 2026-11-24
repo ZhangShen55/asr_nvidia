@@ -18,7 +18,7 @@
 | 启动      | 先 source CANN set_env.sh，再用 `/home/zhangs/conda-envs/asr/bin/python` |
 | 单测      | `pytest tests/`                                                       |
 | 规格目录    | `openspec/specs/`（当前基线）、`openspec/changes/archive/`（演进历史）             |
-| 镜像构建    | `docker/build.sh`，单昇腾模板；镜像构建/上线后置                           |
+| 镜像构建    | `docker/Dockerfile`源码镜像、`docker/docker-compose.yml`；本版独立构建/B4验收 |
 | Qwen 依赖 | 本地原始权重，`[qwen_asr].local_model_dir` + `local_device`                      |
 
 > 注意 `test/`（单数）是**实验与压测脚本**，`tests/`（复数）才是 pytest 单元测试。两者不要混。
@@ -151,7 +151,7 @@ Qwen完成即还自身名额，增强队列/汇合受段数和PCM字节预算反
 | `scripts/`                           | 压测 / 标定 / 导出 / 校验脚本（`bench_*`、`validate_*`、`export_*`） | 是                            |
 | `tests/`                             | pytest 单元与集成测试                                         | 是                            |
 | `test/`                              | 实验脚本与样本音频                                              | 脚本入库，`test/*/` 产物忽略          |
-| `docker/`                            | 单昇腾 Dockerfile、`build.sh`、compose、部署说明                  | 是                            |
+| `docker/`                            | Dockerfile、docker-compose.yml、config.toml、README.md四文件源码交付 | 是                            |
 | `model/`                             | 三个模型权重                                                 | **否**（`.gitignore`，但会进构建上下文） |
 | `.agents/skills/`                    | openspec 工作流 skill 定义                                  | 是                            |
 | `asr_service.log` / `asr_stats.json` | 运行产物                                                   | **否**                        |
@@ -227,15 +227,15 @@ Qwen完成即还自身名额，增强队列/汇合受段数和PCM字节预算反
 
 ## 6. 构建与部署
 
-交付入口是 `docker/build.sh` 与单份昇腾 Dockerfile，详见 `docker/README.md`。
-基础镜像使用经核对的本地候选，环境通过独立 conda-pack 包或已核验前缀提供；不能依赖候选镜像里未知的 Python 包。运行、NPU、开发、构建依赖分开锁定。
-`build_cython.sh` 只在有 `.asr-build-stage` 标记的 staging 中剥离源码；不要在真实仓库执行源码剥离。
-镜像 tag 仍为 `v3_<YYYYMMDDHHMMSS>`。实际镜像构建与上线后置，不能把静态交付测试当作已部署。
+当前源码容器入口为 `docker/Dockerfile` 与 `docker/docker-compose.yml`，命令见 `docker/README.md`；目录恰好四文件，另两份为config.toml和README.md。本版直接运行必要.py，不使用Nginx/旧start.sh/build.sh，不编译Cython；仓库独立保护工具及历史验证仍保留，保护模式的源码剥离只允许在有标记的staging中执行，禁止真实仓库剥离。
 
-宿主仅使用物理 `npu:7`，不调度其他卡。`ASCEND_VISIBLE_DEVICES` 指定宿主物理卡号，容器内设备编号从 0 重新映射；仅映射物理 7 时模板使用逻辑 `npu:0`。
-NPU runtime/设备/IPC 参数放 Compose/宿主入口，`docker/start.sh` 只管理容器内环境、预检与进程。
-`instance_count=1`；增加完整HTTP服务进程或Qwen实例会复制权重，重新标定后才调整。模型process执行是把每份副本放入独立worker，父进程不重复加载，不能与服务多进程混为一谈。
-测试启动的服务、代理、候选引擎、worker 必须 finally 关闭，核对 PID 树退出和端口释放，保存证据；保留卡 7 既有服务。
+底座固定本机CANN8.2.RC1的实际ID，容器独立Python/torch2.5.1/torch-npu2.5.1.post1，精确post1门禁由ASR_CONTAINER_RUNTIME=cann82-source启用；宿主CANN8.1/asr环境和旧锁不升级。构建工具、环境归档、三个必要小模型分别准备，最小上下文不得含项目测试/文档/脚本/样本/OpenSpec或旧业务扩展；不将整个仓库或工具环境打进镜像。
+
+Compose只读挂载宿主config到/config.toml，缺文件/目录/不可读明确失败，不含镜像配置fallback；修改后重建容器。三个小模型内置，Qwen原始HF独立只读挂载。单HTTP仅支持instance_count=1，模型数使用local_instance_count，默认Qwen4/S16、CAM4 process/emo1；增加Qwen不复制VAD/增强池。宿主只用物理7，单卡容器使用逻辑0，实际映射须验证。
+
+镜像名asr_offline_910b:v3_YYYYMMDD，最终tag引用已通过真实完整B4和正常关闭的同一image ID，不在验收后重建。HTTP就绪、加载、真实forward、暖身覆盖及完整性能分级记录；健康启动窗口360秒、Compose停止240秒。B4使用canonical a1～a4双增强完整WAV，336秒诊断中止及真实故障规则、严格无警告与完成率分开，不能用HTTP200或短片代替。未取得证据不宣称可用/生产上线/人工准确率通过。
+
+用户已明确授权本change成功验收后清理本轮中间镜像、独立builder缓存和辅助资源。此授权不包括其它镜像/共享服务、基础/最终镜像、最终必需共享层或日志报告；失败期间保留缓存。执行前列出精确ID和引用检查，禁止全局prune及按端口/名称批量终止。测试服务finally正常关闭，核对owned身份、端口连续空闲≥5秒、PCM为空及共享资源保持，强制/非零退出不计通过。
 
 ## 7. openspec 工作流
 

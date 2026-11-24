@@ -1,105 +1,209 @@
-# 昇腾 910B v3 交付
+# 昇腾 910B 源码镜像部署
 
-本目录准备 CANN 8.1.RC1、Linux aarch64、Python 3.10 的候选交付文件。文件检查、环境metadata、镜像构建、真实NPU前向与上线是不同证据等级。当前迁移要求先把完整服务跑稳，之后再实际构建与上线；本文的命令不能视为已经执行。
+本版为单 HTTP 服务，内部默认 Qwen4 / CAM++4 process / emotion2vec1，Qwen 每音频窗口16，总音频4 / 全局逻辑段64，VAD8 CPU。无 Nginx，不执行 Cython。增强设备数组非空开启、每元素一实例，`[]`关闭；旧 `[features]` 开关不可继续使用。`instance_count` 只能为1，模型数量配置在 `[qwen_asr].local_instance_count`。
 
-## 环境和依赖
+本目录仅保留 Dockerfile、docker-compose.yml、config.toml、README.md。配置修改需重启；首次加载和真实语音暖身分开，HTTP就绪不等于已经执行前向。实际镜像可用性及B4结果以 `../docs/docker-source-cann82-20261125/` 报告为准，不能用本说明存在代替验收。
 
-宿主开发使用 `/home/zhangs/conda-envs/asr/bin/python`、物理 `npu:7`。不要原地升级现有环境，也不要把其site-packages通过PYTHONPATH叠加到系统Python。
+## 构建前置条件
 
-- `requirements.txt`：唯一运行依赖入口，包含业务、进程/进度、NPU 栈和 ITN；仅支持 Linux aarch64 / Python 3.10 / CANN 8.1.RC1 的 910B 环境。
-- `requirements-dev.txt`：测试客户端和 pytest；`requirements-build.txt`：独立构建环境工具。
-- `environment/910b/requirements-conda-linux-aarch64.txt` 与 `environment/910b/requirements-lock-npu.txt`：完整 Conda/pip 参考锁，内容保持原样；迁移报告中的 `environment-reference.json` 保留原位置。rebuild 脚本使用这两份锁并严格比较 pip list。
+- Linux arm64 / 910B，Docker27及Compose2、Ascend Docker Runtime，驱动与CANN8.2 RC1配套。物理卡默认7，容器只暴露该卡时使用逻辑npu:0。
+- 本机底座 `cann:8.2.rc1-910b-ubuntu22.04-py3.10`；本轮核验ID为 `sha256:634118c33bcc879ee709510a532f3e8f90cb0d6a884922b5996367f9a6a7d864`。先核对实际toolkit/kernel及架构，禁止从公网拉同名镜像冒充本机底座。
+- 容器运行环境为独立Python3.10、torch2.5.1、torch-npu2.5.1.post1；其余业务依赖按容器专用锁。宿主asr的torch-npu2.5.1/CANN8.1环境不升级。精确版本由容器专用入口检查，不只比较主次版本。
+- 三个小模型原资产在仓库 `model/`，构建仅取必要权重/配置；Qwen原始HF权重不入镜像，运行时另行只读挂载。
+- Buildx插件和独立docker-container builder。独立builder看不到daemon已有base，需要任务私有loopback registry传输并核对base config digest；仅该registry允许本地HTTP，不修改全局daemon设置、不对外发布。
 
-av=14.2.0、pynini=2.1.7 及二进制库先由 Conda 提供，pip-owned 锁使用 `--no-deps` 安装，不以直接 pip 解析替代锁定重建。NPU 栈维持 torch/torch-npu/torchaudio 2.5.1 和 transformers 5.13.0。emotion2vec 继续要求 GELU V2 `npu_gelu(..., approximate="none")`，保持 CPU 原始 GELU/erf 语义，不能静默回退 tanh 近似；HF32 与模型数值一致性仍需真实设备验证。
+## 准备最小构建材料
 
-创建不存在的独立前缀（会安装软件）：
+所有材料在本目录外，禁止打入测试、文档、项目脚本、样本、Git/OpenSpec数据和旧业务扩展。主上下文由根 `.dockerignore` 白名单控制，环境及模型走单独命名上下文；第三方运行依赖自带的必要原生扩展不属于旧业务扩展。
 
 ```bash
-ASR_CONDA_EXE=/data/anaconda3/bin/conda ASR_WITH_DEV_TOOLS=1 ASR_WITH_BUILD_TOOLS=1 \
-  ./scripts/rebuild_npu_env.sh /tmp/asr-build-env
+cd /home/zhangs/asr_nvidia
+export WORK_DIR=/home/zhangs/asr-docker-build-$(date +%Y%m%d-%H%M%S)
+mkdir -p "$WORK_DIR"
+/home/zhangs/conda-envs/asr/bin/python scripts/prepare_container_context.py \
+  --workspace "$WORK_DIR" \
+  --tool-python /tmp/asr-rebuild-clean-build-20261117-qr9yhpvu/bin/python
 ```
 
-脚本拒绝覆盖已有前缀，记录pip/conda快照、包差异和import结果；Cython/conda-pack仅安装于独立构建前缀。解析版本并不表示NPU前向通过。源运行前需要CANN共享库和编译器Python模块路径；source后不能用项目路径覆盖PYTHONPATH：
+工具环境提供conda-pack0.8.1，只打包运行前缀，不把Cython/conda-pack工具环境作为运行环境。脚本生成 `runtime_env/`、`model_assets/` 和输入摘要；缺依赖或资产必须先定位，不用全仓库COPY兜底。准备脚本仅在宿主运行，不进入镜像。其它机器请将解释器、原资产位置及工具路径改为已核验的对应位置。
+
+## 构建镜像和保留缓存重试
+
+先登记本次创建资源及原有镜像/容器清单，再准备任务私有插件和构建器。下面只创建独立资源，不修改全局Docker配置；`WORK_DIR`沿用上一步。端口15087必须空闲，任务ID须唯一。所有pull均固定辅助镜像摘要，CANN底座始终来自本机。
 
 ```bash
-set +u
-source /usr/local/Ascend/ascend-toolkit/set_env.sh
-set -u
-/home/zhangs/conda-envs/asr/bin/python scripts/check_npu_environment.py --config config.toml
+export TASK_ID=$(basename "$WORK_DIR")
+export DOCKER_CONFIG="$WORK_DIR/docker-cli"
+export ASR_BUILDER="asr-cann82-${TASK_ID}"
+export REGISTRY_NAME="asr-registry-${TASK_ID}"
+export REGISTRY_VOLUME="asr-registry-${TASK_ID}"
+export REGISTRY_PORT=15087
+export BASE_LOCAL_ID=sha256:634118c33bcc879ee709510a532f3e8f90cb0d6a884922b5996367f9a6a7d864
+export BASE_ALIAS="127.0.0.1:${REGISTRY_PORT}/asr-cann82-base:${TASK_ID}"
+export REGISTRY_IMAGE=registry@sha256:a3d8aaa63ed8681a604f1dea0aa03f100d5895b6a58ace528858a7b332415373
+export BUILDKIT_IMAGE=moby/buildkit@sha256:14aa1b4dd92ea0a4cd03a54d0c6079046ea98cd0c0ae6176bdd7036ba370cbbe
+mkdir -p "$DOCKER_CONFIG/cli-plugins" "$WORK_DIR/tools"
+docker image ls --no-trunc --digests > "$WORK_DIR/images-before.txt"
+docker ps -a --no-trunc > "$WORK_DIR/containers-before.txt"
+docker volume ls > "$WORK_DIR/volumes-before.txt"
+# 下载只放入本任务目录，不覆盖用户全局插件。
+curl --fail --location --retry 3 \
+  https://github.com/docker/buildx/releases/download/v0.20.1/buildx-v0.20.1.linux-arm64 \
+  -o "$WORK_DIR/tools/buildx-v0.20.1.linux-arm64"
+curl --fail --location --retry 3 \
+  https://github.com/docker/buildx/releases/download/v0.20.1/checksums.txt \
+  -o "$WORK_DIR/tools/checksums.txt"
+(cd "$WORK_DIR/tools" && grep ' buildx-v0.20.1.linux-arm64$' checksums.txt | sha256sum -c -)
+install -m 0755 "$WORK_DIR/tools/buildx-v0.20.1.linux-arm64" "$DOCKER_CONFIG/cli-plugins/docker-buildx"
+docker buildx version
+# 先检查空闲端口；不能使用或停止其它任务的同名资源。
+REGISTRY_PORT="$REGISTRY_PORT" /home/zhangs/conda-envs/asr/bin/python -c 'import os,socket; s=socket.socket(); s.bind(("127.0.0.1",int(os.environ["REGISTRY_PORT"]))); s.close()'
+docker volume create --label "asr.task=$TASK_ID" "$REGISTRY_VOLUME"
+docker run -d --name "$REGISTRY_NAME" --label "asr.task=$TASK_ID" \
+  -p "127.0.0.1:${REGISTRY_PORT}:5000" \
+  -v "$REGISTRY_VOLUME:/var/lib/registry" "$REGISTRY_IMAGE"
+docker image inspect "$BASE_LOCAL_ID" --format '{{.Id}} {{.Architecture}}'
+docker image tag "$BASE_LOCAL_ID" "$BASE_ALIAS"
+docker image push "$BASE_ALIAS"
+# 同时验证manifest的config身份及固定传输后的manifest digest。
+BASE_IMAGE=$(/home/zhangs/conda-envs/asr/bin/python -c 'import json,os,urllib.request; alias=os.environ["BASE_ALIAS"]; repo,tag=alias.rsplit(":",1); req=urllib.request.Request("http://"+repo.rsplit("/",1)[0]+"/v2/"+repo.rsplit("/",1)[1]+"/manifests/"+tag,headers={"Accept":"application/vnd.docker.distribution.manifest.v2+json"}); r=urllib.request.urlopen(req,timeout=30); m=json.load(r); assert m["config"]["digest"]==os.environ["BASE_LOCAL_ID"]; digest=r.headers["Docker-Content-Digest"]; assert digest.startswith("sha256:"); print(repo+"@"+digest)')
+export BASE_IMAGE
+printf '%s\n' "$BASE_IMAGE" > "$WORK_DIR/base-image-ref.txt"
+cat > "$WORK_DIR/buildkitd.toml" <<EOF
+[registry."127.0.0.1:${REGISTRY_PORT}"]
+  http = true
+  insecure = true
+EOF
+docker buildx create --name "$ASR_BUILDER" --driver docker-container \
+  --driver-opt network=host --driver-opt "image=$BUILDKIT_IMAGE" \
+  --buildkitd-config "$WORK_DIR/buildkitd.toml" --bootstrap
+docker buildx inspect "$ASR_BUILDER" > "$WORK_DIR/builder.txt"
+docker inspect "$REGISTRY_NAME" > "$WORK_DIR/registry-container.json"
+docker volume inspect "$REGISTRY_VOLUME" > "$WORK_DIR/registry-volume.json"
 ```
 
-`--metadata-only`不初始化NPU，不能作为硬件验收。CANN路径可用`ASR_CANN_ENV`覆盖，但必须存在。未经验证的硬件/运行时不宣称兼容。
-
-## 镜像构建（服务稳定后）
-
-默认底座为构建机已有的 `jy-algorithm-app-asr-ascend_cann8.1.rc1-ub2204py310:v1.1.9_260709`。允许`BASE_IMAGE`指定已验证的等价CANN底座，`--pull=false`不会升级或清除本机镜像。该历史镜像的系统Python可能有旧包，因此运行层仅用独立环境解释器。
+构建器内部使用host网络访问上述loopback registry；registry宿主端口仍只绑定127.0.0.1。记录实际builder容器和cache volume ID，不能按名称猜测删除。原有基础/最终镜像和共享资源列为保护项。上一步验证成功的`BASE_IMAGE`用于下面构建：
 
 ```bash
-ASR_ENV_PREFIX=/tmp/asr-build-env \
-ASR_IMAGE=asr_offline:v3_20261117120000 ./docker/build.sh
+export DOCKER_CONFIG="$WORK_DIR/docker-cli"
+# BASE_IMAGE必须是已核验的私有地址@sha256:manifest_digest，不是示例短标签。
+: "${BASE_IMAGE:?先设置本地底座经私有registry传输后的不可变引用}"
+export CANDIDATE_IMAGE="asr_offline_910b:candidate-${TASK_ID}"
+
+docker buildx build --builder "$ASR_BUILDER" --load --progress plain \
+  --provenance=false --sbom=false --platform linux/arm64 \
+  --build-arg BASE_IMAGE="$BASE_IMAGE" \
+  --build-arg SOURCE_REVISION="$(git rev-parse HEAD)" \
+  --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+  --build-context runtime_env="$WORK_DIR/runtime_env" \
+  --build-context model_assets="$WORK_DIR/model_assets" \
+  -f docker/Dockerfile -t "$CANDIDATE_IMAGE" .
 ```
 
-build.sh使用临时staging，校验并复制VAD、CAM++、emotion2vec原始权重/配置，排除旧engine目录；不修改`model/`，不把样本、报告或Qwen大模型打进镜像。Qwen由运行时只读挂载提供。环境用conda-pack归档，解包至`/opt/asr`并执行conda-unpack；构建/运行Python ABI和目标aarch64必须匹配。也可通过`ASR_ENV_ARCHIVE`传入已制备的归档，归档需含`bin/python`和`bin/conda-unpack`。
+使用同一WORK_DIR/builder重试，不加`--no-cache`，失败时保留已完成层和原始日志。长构建应由远端持久后台控制器登记PID/出生、日志和退出文件，SSH断开不等于构建失败；确认旧任务已退出才重试，不并行构建。构建成功后先用候选image ID测试，验收通过后再给同一ID添加 `asr_offline_910b:v3_YYYYMMDD`，不重新构建。
 
-缺少conda-pack或锁定的Cython会明确失败，不自动pip升级。Cython只在带`.asr-build-stage`标记的临时工作区运行，保留构建metadata，并在不自动初始化设备的构建层做扩展导入检查；这不是NPU验收。不能把macOS或不同Python ABI的环境归档用于此镜像。
+## 启动服务
 
-## 启动入口与设备编号
-
-Compose配置的是宿主绑定：`--privileged --runtime=ascend --ipc=host`的等价设置和`ASCEND_VISIBLE_DEVICES=7`。只映射物理7号卡时，容器内通常为`npu:0`，须按实际可见设备核对；不能直接在容器配置写宿主`npu:7`。
+以下命令从本目录执行，不需要.env或额外启动脚本。选择空闲宿主端口和独立Compose项目名，避免接管已有容器。
 
 ```bash
-cd docker
-export ASR_IMAGE=asr_offline:v3_20261117120000
-export ASR_CONFIG=./config.toml
+cd /home/zhangs/asr_nvidia/docker
+export ASR_IMAGE=asr_offline_910b:v3_20261125
 export QWEN_MODEL_DIR=/home/model/Qwen3-ASR-1.7B-hf
 export ASCEND_VISIBLE_DEVICES=7
 export ASR_PORT=9000
-export ASR_CONTAINER_NAME=asr-npu-v3-test
-export ASR_COMPOSE_PROJECT=asr-npu-v3-test
-docker compose -p "$ASR_COMPOSE_PROJECT" up -d
-curl --fail http://127.0.0.1:9000/get_status
+export ASR_COMPOSE_PROJECT=asr-910b-v3
+export ASR_CONFIG="$PWD/config.toml"
+test -f "$ASR_CONFIG"
+test -d "$QWEN_MODEL_DIR"
+docker compose -p "$ASR_COMPOSE_PROJECT" config
+docker compose -p "$ASR_COMPOSE_PROJECT" up -d --no-build
+docker compose -p "$ASR_COMPOSE_PROJECT" ps
 ```
 
-三个小模型从`/app/model/`加载；Qwen挂载为`/app/qwen-model`，不依赖外部HTTP模型服务。`CONFIG_PATH=/config.toml`区分配置挂载与模型路径。`start.sh`是容器内entrypoint，负责source CANN、使用`/opt/asr/bin/python main.py --host 127.0.0.1 --port <端口> --workers 1`、预检和nginx；不能在其中添加`docker run`参数冒充设备绑定。
+Compose设置环境变量 `CONFIG_PATH=/config.toml`，主服务实际从该路径读取宿主只读挂载的配置。配置内容修改后需使用下文 `--force-recreate` 重新创建容器，确保文件重新绑定。配置和Qwen均为只读bind，缺失源不自动建目录。三个小模型在镜像 `/app/model/`，Qwen在 `/app/qwen-model`；配置只来自挂载的 `/config.toml`，不内置模板兜底。不要把宿主物理npu:7写进仅见单卡的容器配置。父进程OMP/MKL=4、Qwen owner_threads=1分别生效，不因容器化更改调度/精度/复读/过滤策略。
 
-当前默认采用原生运行器、`instance_count=1`、Qwen `local_instance_count=1`，`segment_concurrency=1`、`request_concurrency=1`，容器设备保持`npu:0`。宿主物理7号共享卡以相同12秒片段、每档2轮4B+4A共16个测量请求标定：
-
-| Qwen副本 | segment/request门限 | P50（秒） | P95（秒） |
-|---:|:---:|---:|---:|
-| 1 | 1/1 | 20.0201 | 23.5629 |
-| 1 | 2/2 | 14.1411 | 23.7260 |
-| 2 | 2/2 | 14.4533 | 22.8981 |
-
-完整课堂对照选择单副本与1/1门限，最终数据与原始SHA见主迁移报告；上面的短音频三档保留作历史参考。每增加一个完整服务进程也会复制Qwen及增强模型池。上述是宿主原生FP32/BF16实际路径的重复容量工作负载，不是8份独立质量样本，也不能替代容器实际承载验收；镜像构建和容器NPU实测仍按后置流程执行。容器SNR=18.0及3/3过滤窗口对齐本轮现行宿主业务配置，非新增调参。
-
-## API与检查
-
-仅提供`POST /v3/seacraft_asr`、`GET /get_status`、`DELETE /clear_tasks_list`；旧路由不恢复。保持v3请求默认值、错误码、字段类型与`gpu_time_ms`原计时口径。状态查询不触发Qwen或增强模型懒加载，VAD按启动契约预热。
-
-健康检查只表示服务就绪，不能代替转写、聚类、情绪或错误路径验收。完整测试矩阵和质量证据见本次OpenSpec change中的`test-plan.md`。
-
-## 测试结束必须停止
-
-Compose默认`restart: "no"`、`init: true`。在测试成功、失败或取消后的统一收尾中执行本次项目的关闭，并核验进程和监听端口释放：
+预加载耗时可能超过三分钟，健康检查预留360秒start_period。它验证HTTP生命周期就绪及状态响应，不代表四owner都做过真实语音forward；正式压测前另做有界暖身及身份覆盖。`restart: "no"`避免测试结束后台自动拉起。
 
 ```bash
+curl --fail --silent "http://127.0.0.1:${ASR_PORT}/get_status"
+docker compose -p "$ASR_COMPOSE_PROJECT" logs --tail 100 -f
+```
+
+## 请求与完整B4验收
+
+```bash
+export AUDIO=/absolute/path/to/full-audio.wav
+curl --fail --silent --show-error \
+  -F "audioFile=@${AUDIO}" -F 'language=auto' \
+  -F 'showSpk=true' -F 'showEmotion=true' -F 'showRoleIdentify=false' \
+  "http://127.0.0.1:${ASR_PORT}/v3/seacraft_asr" > /tmp/asr-result.json
+```
+
+正式验收使用 `../docs/qwen-multi-instance-20261124/test-inputs.json` 中canonical a1～a4的四条独立完整WAV，SHA、原文件名编码和全长核对后共同起跑。全部Qwen owner真实暖身覆盖后计时，不能用短片、离线段或缓存结果代替。记录完整JSON、客户端逐请求耗时及P50/P95、整批墙钟、HBM、CAM/emo真实forward/skip和段级警告/丢弃。HTTP200、4/4处理完成、严格无警告和人工质量是不同口径。任一完整请求超过336秒或真实OOM/设备故障则停止该轮、有界诊断；B4无200秒硬门槛。
+
+验收控制器在宿主执行，不进入镜像。先用候选镜像启动独立Compose项目，宿主端口设18083。脚本仅操作传入的本轮容器，并在完成/失败的finally正常停止它；必须提供精确候选image ID及本轮task ID，并核对容器的asr.build.task标签一致；不可核验或不匹配时不得stop。不要把既有生产容器ID传入。本轮实际task ID为`asr-docker-cann82-20261125-pwn3bhmy`，不能使用`standalone`代替验收归属。
+
+```bash
+cd /home/zhangs/asr_nvidia
+export ASR_IMAGE="$CANDIDATE_IMAGE"
+export ASR_PORT=18083
+export ASR_COMPOSE_PROJECT="asr-b4-${TASK_ID}"
+export ASR_BUILD_TASK_ID="$TASK_ID"
+export EXPECTED_IMAGE_ID=$(docker image inspect --format '{{.Id}}' "$CANDIDATE_IMAGE")
+export ASR_CONFIG="$PWD/docker/config.toml"
+export QWEN_MODEL_DIR=/home/model/Qwen3-ASR-1.7B-hf
+docker compose -p "$ASR_COMPOSE_PROJECT" -f docker/docker-compose.yml up -d --no-build
+export TEST_CONTAINER=$(docker compose -p "$ASR_COMPOSE_PROJECT" -f docker/docker-compose.yml ps -q asr-offline)
+export WARMUP_WAV=/tmp/qc-warmup.wav
+# 该clip只用于有界真实暖身；正式B4始终来自完整manifest。
+test -f "$WARMUP_WAV"
+PYTHONDONTWRITEBYTECODE=1 /home/zhangs/conda-envs/asr/bin/python scripts/validate_source_container.py \
+  --container "$TEST_CONTAINER" --expected-image-id "$EXPECTED_IMAGE_ID" --task-id "$TASK_ID" \
+  --base-url http://127.0.0.1:18083 \
+  --manifest docs/qwen-multi-instance-20261124/test-inputs.json \
+  --config docker/config.toml --output "$WORK_DIR/validation-b4" --clip "$WARMUP_WAV"
+```
+
+`--output`每轮使用新目录。检查result.json的整体验收及cleanup，不只看控制器退出或单条HTTP200；失败保留该轮原件及构建缓存。暖身WAV需是事先核验可读的真实语音，不能把暖身短片成绩作为四完整音频性能。
+
+## 修改配置与停止服务
+
+编辑宿主config后重建容器以重新绑定文件，尤其编辑器通过替换inode保存时不能只依赖旧bind。无需重建镜像：
+
+```bash
+docker compose -p "$ASR_COMPOSE_PROJECT" up -d --no-build --force-recreate
+```
+
+日志、统计和上传缓存均在该容器的 `/tmp/asr-offline` 下，删除容器前将需要保留的证据导出到本目录外：
+
+```bash
+cd /home/zhangs/asr_nvidia/docker
+export RUN_DIR=/home/zhangs/asr-runs/$(date +%Y%m%d-%H%M%S)
+mkdir -p "$RUN_DIR"
+docker compose -p "$ASR_COMPOSE_PROJECT" logs --no-color > "$RUN_DIR/container.log"
+docker compose -p "$ASR_COMPOSE_PROJECT" cp asr-offline:/tmp/asr-offline "$RUN_DIR/runtime"
+docker compose -p "$ASR_COMPOSE_PROJECT" stop
+docker compose -p "$ASR_COMPOSE_PROJECT" ps -a
+```
+
+Compose正常停止宽限240秒；主程序处理TERM并关闭本轮Qwen/CAM/VAD及在途设备工作。先核对退出码、全部owned worker、端口连续空闲至少5秒及私有PCM清空，异常退出/强制kill不能当正常收尾。保留停止后的日志和统计，再移除本项目容器：
+
+```bash
+docker compose -p "$ASR_COMPOSE_PROJECT" logs --no-color > "$RUN_DIR/container-after-stop.log"
+docker compose -p "$ASR_COMPOSE_PROJECT" cp asr-offline:/tmp/asr-offline "$RUN_DIR/runtime-after-stop"
 docker compose -p "$ASR_COMPOSE_PROJECT" down
 ```
 
-不要删除模型卷、镜像、缓存或日志；不要按端口或进程名终止服务器已有uvicorn。入口以独立进程组管理自己创建的进程，先向自有`main.py`服务父进程发TERM，让Uvicorn先通过lifespan关闭VAD与模型池；统一入口把随后重放的TERM转为Python SystemExit，从而执行NPU运行时atexit。NPU初始化后INT可能失效，正式入口不能换回`python -m uvicorn main:app`。nginx master接收QUIT。默认150秒宽限后才向未退出的自有组发TERM，再等10秒后KILL；entrypoint以0.2秒有界轮询监督自有子进程，关闭时逐PID收集退出码；非零退出、无法归属的127或超时均记失败。外部TERM且全部正常收尾时返回0，INT保留130且不会被后续TERM覆盖。Compose给予180秒停止时间。重启策略不得在测试后留下后台接口。TIME_WAIT不等于仍在LISTEN，原有服务继续占用HBM也不属于本次泄漏。保留日志、配置、样本哈希、退出与端口检查证据，关闭失败不宣称整批验收完成。
+## 验收后发布和清理
 
+只有完整B4、镜像内容审计及正常关闭全部通过后，给已测候选image ID添加最终日期tag：
 
-### 增强模型启动预加载（2026-11-24）
+```bash
+export TESTED_ID=$(docker image inspect --format '{{.Id}}' "$CANDIDATE_IMAGE")
+export FINAL_IMAGE=asr_offline_910b:v3_$(date +%Y%m%d)
+docker image tag "$TESTED_ID" "$FINAL_IMAGE"
+docker image inspect "$FINAL_IMAGE" --format '{{.Id}}'
+```
 
-功能开启且设备数组非空的 CAM++、emotion2vec 在 HTTP 就绪前，按数组顺序完成全部实例的加载尝试；当前配置为 CAM4/emo1。关闭功能或空数组跳过，部分失败使用健康实例，某池全部失败仍允许其他能力服务，所需能力请求沿用原不可用错误。状态显示实际健康数及失败原因，GET 不触发加载；请求开关仅决定本次推理分支，后续请求复用已加载实例。启动耗时及权重内存占用提前发生，需重启服务生效；此步骤不执行语音 forward 暖身，首个推理仍可能有编译开销。无需新增配置或修改设备/实例数。历史懒加载描述代表此前版本。
-
-
-### 增强能力设备数组统一配置（2026-11-24）
-
-CAM++、emotion2vec启用状态现在只来自各自设备数组：非空数组开启，每元素一实例；`[]`关闭。数组缺省为空。`showSpk`/`showRoleIdentify`选择CAM++执行，`showEmotion`选择emo执行，均不能开启空数组能力。模型在HTTP就绪前按非空数组预加载，请求复用健康实例；A请求不执行增强，已加载权重继续驻留。预加载不执行语音forward暖身。
-
-旧 `[features].open_v2_role`、`open_v2_emotion` 已删除，残留无论true/false都会在任何worker/模型创建前报迁移错误。迁移办法：原true删除旧键并保留设备数组；原false删除旧键，并把对应的 `speech_campplus_devices` 或 `emotion2vec_devices` 改为 `[]`。删除空 `[features]` 表。不允许只删原false键却保留非空数组，以免开启原已关闭的模型。
-
-单项关闭请求仍在音频准入前返回4015/4016，双请求且两项均关闭返回4018，优先于容量错误，拒绝计数不变。非空数组全部加载失败是模型故障，不是配置关闭，不返回4018。数组改变需重启源码服务；保护构建和镜像在后续构建纳入。本次不构建上线；三个镜像内置小模型的必需资产预检保持，空数组不表示可以删除权重。
-
-正式continuous根/Docker模板省略两项legacy组批参数和两个固定增强batch配置；legacy显式参数支持、实际batch1及非1校验保持。两个 `prefetch_queue_depth=0`、全部 `online_repetition_*` / `repetition_*`、`retry_count`、队列及VAD参数保持；预取0是在上游反压等待，不是无限预取。早先章节中涉及旧功能开关的已日期标记说明仅代表当时版本，以本节为当前规则。
+清理前按本次资源登记逐项列出镜像/container/volume/builder、核对出生归属及容器引用。移除本次独立builder及其cache、registry/传输alias、候选多余tag、无引用的本次新增helperimage和临时构建材料。保留最终及基础镜像和它们必需的共享层、所有原有镜像/共享服务、日志报告。失败阶段保留缓存用于继续修复；不得执行全局docker system/image/builder prune或按名称批量kill。具体本次清理ID及前后核验写入验收报告，不让通用命令误删其它项目。

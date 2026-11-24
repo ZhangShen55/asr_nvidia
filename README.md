@@ -451,8 +451,11 @@ VAD按完整音频FIFO调度，每worker同时处理一条；八文件/四worker
 
 ## Docker
 
-昇腾 Dockerfile、Compose、独立 conda-pack 环境和设备/IPC 映射见 [docker/README.md](docker/README.md)。
-本轮验证交付文件和构建闭包，实际镜像构建与上线在服务稳定后进行。候选基础镜像存在不等于已通过容器验收。
+本版源码容器交付与构建、启动命令见 [docker/README.md](docker/README.md)。`docker/`仅保留Dockerfile、docker-compose.yml、config.toml、README.md四个文件；单HTTP直接运行必要Python源码，不做Cython、不使用Nginx。默认Qwen4/CAM4/emo1，宿主物理卡7映射为容器逻辑npu:0。
+
+底座为本机CANN8.2.RC1，容器独立使用torch2.5.1/torch-npu2.5.1.post1；宿主CANN8.1及asr环境不升级。[容器依赖材料](docs/container-cann82-environment.md)记录独立环境及最小上下文。配置必须从宿主只读挂载到/config.toml，修改后重建容器；三个小模型内置，Qwen HF权重独立只读挂载。镜像格式为`asr_offline_910b:v3_YYYYMMDD`。
+
+本change的实际构建、完整B4和正常退出结果记录于[本版证据目录](docs/docker-source-cann82-20261125/)；在相关结果完成前不能宣称镜像可用或生产上线。失败保留独立构建缓存；成功验收后仅清理本轮中间镜像/cache及辅助资源，保留基础/最终镜像、原有服务和日志报告，禁止全局prune。
 
 性能、精度、样本与执行证据见 [NPU 迁移报告](docs/npu-910b-migration-validation-20261117.md)。原 NVIDIA 报告仅作历史标定来源。
 
