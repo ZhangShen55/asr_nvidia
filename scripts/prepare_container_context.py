@@ -13,6 +13,56 @@ import sys
 import tarfile
 import urllib.request
 import zipfile
+from email.parser import Parser
+from packaging.tags import cpython_tags, compatible_tags
+from packaging.utils import canonicalize_name, parse_wheel_filename
+from packaging.specifiers import SpecifierSet
+from packaging.requirements import Requirement
+
+SUPPLEMENTAL = {'absl-py': '2.3.1', 'ml-dtypes': '0.5.1', 'tornado': '6.5.1'}
+TARGET_PLATFORMS = ['manylinux_2_17_aarch64', 'manylinux2014_aarch64']
+TARGET_TAGS = set(cpython_tags((3, 10), abis=['cp310'], platforms=TARGET_PLATFORMS)) | set(compatible_tags((3, 10), interpreter='cp310', platforms=TARGET_PLATFORMS))
+
+
+def select_wheel(info, project, version):
+    """固定目标CPython3.10/aarch64/glibc>=2.17，不接受musl/x86或多义产物。"""
+    if info.get('info', {}).get('requires_python') and '3.10.22' not in SpecifierSet(info['info']['requires_python']):
+        raise RuntimeError(f'{project} Requires-Python不兼容')
+    choices = []
+    for entry in info['urls']:
+        if entry.get('yanked') or not entry['filename'].endswith('.whl'): continue
+        name, actual, _, tags = parse_wheel_filename(entry['filename'])
+        if canonicalize_name(name) == canonicalize_name(project) and str(actual) == version and tags & TARGET_TAGS:
+            choices.append(entry)
+    if len(choices) != 1: raise RuntimeError(f'wheel选择不唯一或不兼容: {project}: {[e["filename"] for e in choices]}')
+    return choices[0]
+
+
+def validate_wheel_metadata(path, project, version, pinned):
+    with zipfile.ZipFile(path) as archive:
+        names = [n for n in archive.namelist() if n.endswith('.dist-info/METADATA')]
+        if len(names) != 1: raise RuntimeError('wheel必须含唯一METADATA')
+        info = Parser().parsestr(archive.read(names[0]).decode())
+    if canonicalize_name(info['Name']) != canonicalize_name(project) or info['Version'] != version:
+        raise RuntimeError('wheel名称或版本不匹配')
+    if info['Requires-Python'] and '3.10.22' not in SpecifierSet(info['Requires-Python']):
+        raise RuntimeError('wheel Python版本不兼容')
+    environment = {'python_version':'3.10','python_full_version':'3.10.22','platform_machine':'aarch64','sys_platform':'linux','platform_system':'Linux','extra':''}
+    pins = {canonicalize_name(k):v for k,v in pinned.items()}
+    requirements = info.get_all('Requires-Dist', [])
+    for text in requirements:
+        requirement = Requirement(text)
+        if requirement.marker and not requirement.marker.evaluate(environment): continue
+        key = canonicalize_name(requirement.name)
+        if key not in pins or pins[key] not in requirement.specifier:
+            raise RuntimeError(f'wheel依赖与容器锁不兼容: {text}')
+    return {'requires_python':info['Requires-Python'],'requires_dist':requirements,'target_python':'3.10.22','target_platform':'manylinux2014_aarch64'}
+
+
+def validate_context_files(root, expected):
+    actual = {p.name for p in root.iterdir()}
+    if actual != set(expected) or any(p.is_symlink() or not p.is_file() for p in root.iterdir()):
+        raise RuntimeError(f'runtime_env文件集合不符或含符号链接: extra={actual-set(expected)}, missing={set(expected)-actual}')
 
 MODELS = {
     'speech_fsmn_vad_zh-cn-16k-common-pytorch': ('model.pt', 'config.yaml', 'configuration.json', 'am.mvn'),
@@ -29,12 +79,12 @@ def sha(path):
 def save(path, obj):
     Path(path).write_text(json.dumps(obj, ensure_ascii=False, indent=2) + '\n')
 
-def wheel(project, version, target, predicate):
+def wheel(project, version, target, predicate=None):
     api = f'https://pypi.org/pypi/{project}/{version}/json'
     with urllib.request.urlopen(api, timeout=60) as response: info = json.load(response)
-    choices = [entry for entry in info['urls'] if predicate(entry['filename'])]
-    if len(choices) != 1: raise RuntimeError(f'wheel选择不唯一: {project} {choices}')
-    entry = choices[0]; dest = target / entry['filename']; expected = entry['digests']['sha256']
+    entry = select_wheel(info, project, version)
+    if predicate is not None and not predicate(entry['filename']): raise RuntimeError('wheel不满足额外锁定条件')
+    dest = target / entry['filename']; expected = entry['digests']['sha256']
     if not dest.is_file() or sha(dest) != expected:
         part = dest.with_suffix(dest.suffix + '.part')
         with urllib.request.urlopen(entry['url'], timeout=120) as response, part.open('wb') as out:
@@ -131,12 +181,16 @@ conda_pack.pack(prefix=sys.argv[1],output=sys.argv[2],filters=filters,ignore_mis
     expected.pop('torch_npu', None)
     for key in list(expected):
         if key.lower().replace('_','-') in ('cython','conda-pack','pytest'): expected.pop(key)
+    supplement_records = []
+    for name, version in SUPPLEMENTAL.items():
+        record = wheel(name, version, runtime)
+        record['compatibility'] = validate_wheel_metadata(runtime / record['filename'], name, version, {'numpy':'1.26.4', **SUPPLEMENTAL})
+        supplement_records.append(record)
+        expected[name] = version
     save(runtime / 'runtime-packages.json', expected)
-    save(runtime / 'wheel-source.json', npu)
-    expected_names = {'asr-env.tar.gz', npu['filename'], 'runtime-packages.json', 'wheel-source.json'}
-    actual_names = {p.name for p in runtime.iterdir()}
-    if actual_names != expected_names or any(not p.is_file() for p in runtime.iterdir()):
-        raise RuntimeError(f'runtime_env含非白名单输入: {actual_names - expected_names}')
+    save(runtime / 'wheel-source.json', {**npu, 'supplemental':supplement_records, 'reason':'CANN8.2 SDK实际Requires-Dist缺项；不更改宿主或原运行归档'})
+    expected_names = {'asr-env.tar.gz', npu['filename'], 'runtime-packages.json', 'wheel-source.json'} | {r['filename'] for r in supplement_records}
+    validate_context_files(runtime, expected_names)
     with tarfile.open(archive) as packed:
         members = [{'path':m.name,'bytes':m.size,'type':m.type.decode('ascii'),'link':m.linkname} for m in packed]
     save(work / 'packed-files.json', members)

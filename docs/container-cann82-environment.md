@@ -28,3 +28,11 @@
 Dockerfile不运行Cython、不复制项目脚本/测试/文档或配置；运行文件由根 `.dockerignore` 白名单控制。运行归档排除已知保护/测试工具及Python缓存；第三方运行依赖自带的必要原生扩展不属于项目旧业务.so。
 
 容器设置 `ASR_CONTAINER_RUNTIME=cann82-source`，精确拒绝torch-npu2.5.1（未带post1）、不可读配置及HTTP实例数不为1的配置；主程序预检仍保留。只有完成NPU映射/矩阵、三个模型实际forward、四owner暖身覆盖和完整B4后才可称镜像可用。构建失败保留任务私有缓存，成功验收后按任务归属清理，具体构建/部署命令见docker/README.md。
+
+## CANN 8.2 SDK 真实缺项补充
+
+实际底座SDK的schedule-search0.0.1声明需要decorator、numpy、absl-py；te0.4.0基础依赖包含attrs、cloudpickle、decorator、ml-dtypes、numpy、psutil、scipy、tornado。现有asr快照缺少absl-py、ml-dtypes、tornado，因此只在容器构建层安装固定absl-py2.3.1、ml-dtypes0.5.1、tornado6.5.1，不修改宿主或原asr归档。PyPI官方JSON与wheel METADATA分别验证Requires-Python、CPython3.10/aarch64/manylinux平台及NumPy1.26.4；ml-dtypes的Python3.10运行约束是NumPy>=1.21.2，不引入其dev额外依赖。tornado使用兼容Python>=3.9的abi3 wheel，拒绝musllinux和x86产物。
+
+runtime_env因此精确包含7文件：原asr归档、torch-npu及上述三个补充wheel、runtime-packages.json和wheel-source.json。补充包来源、摘要及依赖检查记录在wheel-source.json的supplemental列表，实际版本快照同步加入三包；context-preparation.json记录更新后的完整输入摘要。额外文件、目录或符号链接均拒绝进入构建。
+
+底座op-compile-tool把标准库getopt/inspect/multiprocessing错误声明为pip包，te/op_test_frame元数据又带cp311 wheel标签；这些vendor元数据问题单独记录，不下载同名第三方包冒充标准库、不删除SDK文件。独立asr的pip一致性检查仅该子进程清空CANN PYTHONPATH，实际运行和算子编译保持CANN环境，仍须验证真实导入、编译和NPU前向。不能将通过独立pip check称为SDK全部兼容。

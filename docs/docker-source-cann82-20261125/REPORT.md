@@ -31,3 +31,5 @@
 完整CPU复验v2：1401passed、379subtests、2个既有保护专属skip、1个硬件节点deselected，240.28秒；无源码变化、owned残留或全局缓存写入。构建v2已完成底座解包，但Ubuntu HTTP源被网络代理403拒绝，改为同一官方ports.ubuntu.com HTTPS源并保持签名验证，重试复用底座缓存；apt索引仅在本层安装完成后移除，不清理BuildKit缓存。
 
 构建v3的HTTPS同样403。进一步审计确认底座/etc/apt/apt.conf.d/01proxy硬编码旧Squid 10.30.6.2:3128，非软件包缺失；宿主直连同一官方HTTPS源返回200。构建层移除这份遗留配置，APT显式DIRECT，仍校验HTTPS与Ubuntu签名；同时pip使用--no-compile防止post1安装生成不必要.pyc。原底座与宿主APT均未修改。
+
+构建v4进入独立环境后，pip check因继承CANN PYTHONPATH读到SDK供应方元数据而失败：op-compile-tool将标准库getopt/inspect/multiprocessing误列pip依赖，te/op_test_frame的WHEEL带cp311标签；另确有absl-py/ml-dtypes/tornado缺项。已依据实际Requires-Dist补齐三个固定依赖（2.3.1/0.5.1/6.5.1，验证Python3.10/aarch64及NumPy1.26.4兼容），不安装虚假标准库包。ASR环境单独严格pip check，SDK真实导入/编译及模型forward须另验，不能以忽略供应方metadata代替实际运行通过。APT索引和包缓存改用专属BuildKit cache mounts，不进入最终层，保留至最终验收后统一清理。

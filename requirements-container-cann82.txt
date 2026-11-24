@@ -35,3 +35,8 @@ tokenizers==0.22.2
 safetensors==0.8.0
 WeTextProcessing==1.2.0
 importlib_resources==7.1.0
+
+# CANN8.2 SDK编译/调度路径真实运行缺项，仅容器安装，兼容numpy1.26.4。
+absl-py==2.3.1
+ml-dtypes==0.5.1
+tornado==6.5.1
