@@ -1,0 +1,293 @@
+{
+  "rounds": {
+    "A": {
+      "mode": "A",
+      "concurrency": 4,
+      "inputs": 5,
+      "completed": 5,
+      "passed": true,
+      "warning_free": 3,
+      "warnings": 3,
+      "discarded": 2,
+      "p50_s": 162.18679829034954,
+      "p95_s": 171.8055033294484,
+      "wall_s": 295.95212031994015,
+      "records": [
+        {
+          "id": 1,
+          "file": "课堂实录 -  - 2026-10-16 09-22-57.wav",
+          "audio_seconds": 2980.8,
+          "status": "completed",
+          "started": 7661399.30902696,
+          "elapsed_s": 122.6337740495801,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "complete",
+          "segments": 438,
+          "warnings": 0,
+          "discarded": 0,
+          "ended": 7661521.95234096
+        },
+        {
+          "id": 2,
+          "file": "课堂实录 -  - 2026-10-16 09-23-09.wav",
+          "audio_seconds": 3281.856,
+          "status": "completed",
+          "started": 7661399.31008855,
+          "elapsed_s": 162.18679829034954,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "completed_with_warnings",
+          "segments": 620,
+          "warnings": 1,
+          "discarded": 1,
+          "ended": 7661561.5092227
+        },
+        {
+          "id": 3,
+          "file": "课堂实录 -  - 2026-10-16 09-24-18.wav",
+          "audio_seconds": 3306.752,
+          "status": "completed",
+          "started": 7661399.31111575,
+          "elapsed_s": 165.84215780999511,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "complete",
+          "segments": 635,
+          "warnings": 0,
+          "discarded": 0,
+          "ended": 7661565.16571348
+        },
+        {
+          "id": 4,
+          "file": "课堂实录 -  - 2026-10-16 09-25-03.wav",
+          "audio_seconds": 3281.856,
+          "status": "completed",
+          "started": 7661399.31211532,
+          "elapsed_s": 155.94295862037688,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "complete",
+          "segments": 621,
+          "warnings": 0,
+          "discarded": 0,
+          "ended": 7661555.26781728
+        },
+        {
+          "id": 5,
+          "file": "课堂实录.wav",
+          "audio_seconds": 3307.008,
+          "status": "completed",
+          "started": 7661521.95309375,
+          "elapsed_s": 173.29633970931172,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "completed_with_warnings",
+          "segments": 615,
+          "warnings": 2,
+          "discarded": 1,
+          "ended": 7661695.26114728
+        }
+      ],
+      "latency_scope": "send after client admission to full response, client waiting excluded",
+      "controller_note": "initial A reporting used incorrect percentile units; original HTTP results preserved, summary reconstructed without repeating A",
+      "idle_after": true,
+      "first_four": {
+        "p50_s": 159.0648784553632,
+        "p95_s": 165.29385388204827,
+        "wall_s": 165.8566865194589
+      },
+      "NN_deltas": {
+        "speech_campplus": {
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        },
+        "emotion2vec": {
+          "success": 0,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        }
+      }
+    },
+    "B": {
+      "mode": "B",
+      "concurrency": 4,
+      "inputs": 5,
+      "completed": 5,
+      "passed": true,
+      "warning_free": 3,
+      "warnings": 3,
+      "discarded": 2,
+      "latency_scope": "HTTP send after client admission to full response; client waiting excluded",
+      "p50_s": 175.8543488997966,
+      "p95_s": 191.4026525137946,
+      "wall_s": 307.4612659206614,
+      "records": [
+        {
+          "id": 1,
+          "file": "课堂实录 -  - 2026-10-16 09-22-57.wav",
+          "audio_seconds": 2980.8,
+          "status": "completed",
+          "started": 7661697.50883872,
+          "elapsed_s": 134.05341640021652,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "complete",
+          "segments": 437,
+          "warnings": 0,
+          "discarded": 0,
+          "ended": 7661831.57177104
+        },
+        {
+          "id": 2,
+          "file": "课堂实录 -  - 2026-10-16 09-23-09.wav",
+          "audio_seconds": 3281.856,
+          "status": "completed",
+          "started": 7661697.50993025,
+          "elapsed_s": 193.28668691962957,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "completed_with_warnings",
+          "segments": 620,
+          "warnings": 1,
+          "discarded": 1,
+          "ended": 7661890.80878225
+        },
+        {
+          "id": 3,
+          "file": "课堂实录 -  - 2026-10-16 09-24-18.wav",
+          "audio_seconds": 3306.752,
+          "status": "completed",
+          "started": 7661697.51093247,
+          "elapsed_s": 183.8665148904547,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "complete",
+          "segments": 634,
+          "warnings": 0,
+          "discarded": 0,
+          "ended": 7661881.39005773
+        },
+        {
+          "id": 4,
+          "file": "课堂实录 -  - 2026-10-16 09-25-03.wav",
+          "audio_seconds": 3281.856,
+          "status": "completed",
+          "started": 7661697.51194405,
+          "elapsed_s": 175.8543488997966,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "complete",
+          "segments": 622,
+          "warnings": 0,
+          "discarded": 0,
+          "ended": 7661873.37865914
+        },
+        {
+          "id": 5,
+          "file": "课堂实录.wav",
+          "audio_seconds": 3307.008,
+          "status": "completed",
+          "started": 7661831.57247508,
+          "elapsed_s": 173.38457603007555,
+          "http_status": 200,
+          "code": null,
+          "processing_status": "completed_with_warnings",
+          "segments": 615,
+          "warnings": 2,
+          "discarded": 1,
+          "ended": 7662004.97010464
+        }
+      ],
+      "idle_after": true,
+      "first_four": {
+        "p50_s": 179.86043189512566,
+        "p95_s": 191.87366111525336,
+        "wall_s": 193.29994353000075
+      },
+      "NN_deltas": {
+        "speech_campplus": {
+          "success": 3113,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        },
+        "emotion2vec": {
+          "success": 2629,
+          "empty": 0,
+          "failed": 0,
+          "cancelled": 0
+        }
+      }
+    }
+  },
+  "warnings": [
+    {
+      "mode": "A",
+      "file": "课堂实录 -  - 2026-10-16 09-23-09.wav",
+      "segment_index": 20,
+      "bg": "92.75",
+      "ed": "97.41",
+      "reason": "repetition_stop",
+      "action": "discard_unrecoverable",
+      "recovered": false
+    },
+    {
+      "mode": "A",
+      "file": "课堂实录.wav",
+      "segment_index": 437,
+      "bg": "2338.07",
+      "ed": "2343.13",
+      "reason": "invalid_output_prefix",
+      "action": "discard_unrecoverable",
+      "recovered": false
+    },
+    {
+      "mode": "A",
+      "file": "课堂实录.wav",
+      "segment_index": 618,
+      "bg": "3169.06",
+      "ed": "3177.07",
+      "reason": "repetition_stop",
+      "action": "repetition_collapsed",
+      "recovered": true
+    },
+    {
+      "mode": "B",
+      "file": "课堂实录 -  - 2026-10-16 09-23-09.wav",
+      "segment_index": 20,
+      "bg": "92.75",
+      "ed": "97.41",
+      "reason": "repetition_stop",
+      "action": "discard_unrecoverable",
+      "recovered": false
+    },
+    {
+      "mode": "B",
+      "file": "课堂实录.wav",
+      "segment_index": 437,
+      "bg": "2338.07",
+      "ed": "2343.13",
+      "reason": "invalid_output_prefix",
+      "action": "discard_unrecoverable",
+      "recovered": false
+    },
+    {
+      "mode": "B",
+      "file": "课堂实录.wav",
+      "segment_index": 618,
+      "bg": "3169.06",
+      "ed": "3177.07",
+      "reason": "repetition_stop",
+      "action": "repetition_collapsed",
+      "recovered": true
+    }
+  ],
+  "raw": "/home/zhangs/asr_nvidia/logs/multimodal-A4-B4-20261125-102845",
+  "container_id": "c4de51c3f499f9806cdbfc410e5649f2afce65ecf272a32f67ea6c94bd4d75f8",
+  "image_id": "sha256:ef7b8add6a42c0297dc66eaa58718a67df8fba688d1738f1c314fe59b8565c5a",
+  "service_left_running": true
+}
