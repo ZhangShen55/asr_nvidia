@@ -18,7 +18,7 @@
 | 启动      | 先 source CANN set_env.sh，再用 `/home/zhangs/conda-envs/asr/bin/python` |
 | 单测      | `pytest tests/`                                                       |
 | 规格目录    | `openspec/specs/`（当前基线）、`openspec/changes/archive/`（演进历史）             |
-| 镜像构建    | `docker/Dockerfile`源码镜像、`docker/docker-compose.yml`；本版独立构建/B4验收 |
+| 镜像构建    | `docker/Dockerfile` Cython 镜像、`docker/docker-compose.yml`；日期标签与 A4/B4 实机验收 |
 | Qwen 依赖 | 本地原始权重，`[qwen_asr].local_model_dir` + `local_device`                      |
 
 > 注意 `test/`（单数）是**实验与压测脚本**，`tests/`（复数）才是 pytest 单元测试。两者不要混。
