@@ -61,11 +61,11 @@
 - **THEN** 必需资产进入上下文及运行镜像，无关模型和实验资料在发送上下文前排除；保存模型资产清单供核验
 
 ### Requirement: Docker 构建不依赖仓库外 PyArrow wheel
-构建 MUST 使用匹配本轮 CANN 8.2 RC1、Linux aarch64、Python3.10 的容器专用依赖锁及可重定位运行环境，不依赖旧 `docker/build.sh`、Cython 或仓库外 PyArrow wheel。运行依赖与构建工具来源 MUST 分开记录；MUST NOT 从未知系统 site-packages 补齐包或修改宿主 asr 环境。文件准备与实际镜像、推理验收分别记录。
+构建 MUST 使用匹配本轮 CANN 8.2 RC1、Linux aarch64、Python3.10 的容器专用依赖锁及可重定位运行环境，不依赖旧 `docker/build.sh`或仓库外 PyArrow wheel。运行依赖与构建工具来源 MUST 分开记录；MUST NOT 从未知系统 site-packages 补齐包或修改宿主 asr 环境。文件准备与实际镜像、推理验收分别记录。
 
 #### Scenario: 干净构建上下文构建镜像
 - **WHEN** 无 wheel 目录，但具备已核验环境归档或可复现依赖来源及三个必需小模型
-- **THEN** 独立构建环境完成重定位、版本/ABI 和运行导入检查，不执行 Cython；缺少依赖或资产明确失败，不要求外置 PyArrow wheel
+- **THEN** 独立构建环境完成重定位、版本/ABI 和运行导入检查，使用固定版本 Cython 完成保护编译；缺少依赖或资产明确失败，不要求外置 PyArrow wheel
 
 ### Requirement: 默认容器使用容器专用配置
 默认 Compose MUST 使用宿主 `docker/config.toml` 的只读挂载和显式 `CONFIG_PATH`，MUST NOT 使用宿主开发根配置或镜像默认模板兜底。仅暴露物理卡7时配置 MUST 按验证映射使用逻辑 `npu:0`，保留 HTTP1、Qwen4/S16、CAM4/emo1 及现有有效推理参数。
@@ -101,15 +101,15 @@
 - **THEN** 记录兼容检查失败，不加载该模型；通过修正配置或更换匹配的权重来恢复
 
 ### Requirement: 运行镜像只保留 Cython 产物
-显式选择保护交付模式时，构建 MUST 编译 core/、api/、utils/、entity/ 业务模块并删除对应业务.py，保留__init__.py和可读main.py，运行层使用匹配ABI的扩展；必要启动与配置材料按该模式交付。本版明确选择源码模式，MUST 不运行保护编译并遵循必要源码交付契约，不以本版豁免删除仓库的独立保护工具或历史记录。
+当前 Docker 构建 MUST 编译 core/、api/、utils/、entity/ 业务模块并删除对应业务.py，保留__init__.py和可读main.py，运行层使用匹配ABI的扩展；必要启动与配置材料按该模式交付。本次构建 MUST 只交付与运行解释器 ABI 一致的当前扩展；编译器安装、Cython 和中间 C 只留在独立阶段。
 
 #### Scenario: 检查运行镜像源码
 - **WHEN** 显式选择保护交付模式并构建运行镜像
-- **THEN** 四个业务目录包含可导入Cython扩展，不含对应业务.py，保留__init__.py和main.py；本版源码镜像不属于该场景
+- **THEN** 四个业务目录包含可导入Cython扩展，不含对应业务.py，保留__init__.py和main.py及必要轻量运行入口
 
 #### Scenario: 构建阶段失败
 - **WHEN** 保护交付模式中任一指定模块无法编译
-- **THEN** 该保护构建明确失败，不生成缺少业务模块的镜像，不因本版源码模式豁免隐藏保护失败
+- **THEN** 该保护构建明确失败，不生成缺少业务模块的镜像
 
 ### Requirement: 配置通过挂载注入
 运行容器 MUST 从宿主只读挂载配置读取运行参数，默认路径 `/config.toml`，由 `CONFIG_PATH` 明示；MUST NOT 使用镜像内置配置兜底。三个小模型默认保持镜像内 `/app/model/`，Qwen 独立只读挂载；自定义 Qwen 路径必须与挂载一致。配置改变需重启，不要求连带重挂小模型或重建镜像。
@@ -123,7 +123,7 @@
 - **THEN** 容器在模型和 worker 创建前明确失败，不回退到镜像模板或开发配置
 
 ### Requirement: Docker 交付文件集中且构建上下文最小
-`docker/` MUST 最终恰好包含 `Dockerfile`、`docker-compose.yml`、`config.toml`、`README.md` 四个文件。忽略规则、锁文件及报告 MUST 位于目录外。构建 MUST 使用显式运行文件白名单，禁止测试、文档、项目脚本、样本、Git/OpenSpec 数据、缓存、旧业务扩展及构建中间物进入任何阶段或应用目录；不得靠最后一层删除掩盖已带入的资料。
+`docker/` MUST 最终恰好包含 `Dockerfile`、`docker-compose.yml`、`config.toml`、`README.md` 四个文件。忽略规则、锁文件及报告 MUST 位于目录外。构建 MUST 使用显式运行文件白名单，禁止测试、文档、无关项目脚本、样本、Git/OpenSpec 数据、缓存及旧业务扩展进入构建上下文或镜像。现有保护脚本及其生成物仅允许进入编译阶段；不得靠最后一层删除掩盖已带入的资料。
 
 #### Scenario: 查看部署入口
 - **WHEN** 运维查看完成后的 docker 目录
@@ -131,10 +131,10 @@
 
 #### Scenario: 检查运行镜像内容
 - **WHEN** 审核构建上下文、各阶段及最终应用目录
-- **THEN** 只包含必要运行源码、运行依赖、三个模型必要资产和追溯元数据；测试/文档/项目脚本等禁入内容从未被 COPY/ADD 到任何阶段
+- **THEN** 只包含必要启动源码、当前编译扩展、运行依赖、三个模型必要资产和追溯元数据；测试/文档/无关项目脚本等禁入内容从未被 COPY/ADD 到任何阶段
 
 ### Requirement: 提供昇腾 NPU 部署镜像
-本版 MUST 基于已核验的本机 CANN 8.2 RC1 底座交付源码镜像，内置三个小模型，单 HTTP 直接启动、不使用 Nginx 或项目启动脚本。Compose MUST 声明昇腾 runtime、特权模式、host IPC、可见物理卡及必要挂载。默认 Qwen 和非空增强数组 MUST 按现有契约在 HTTP 就绪前预加载；完整构建、真实前向、B4 和正常关闭均通过后方可宣称本版镜像可用。
+本版 MUST 基于已核验的本机 CANN 8.2 RC1 底座交付保护镜像，内置三个小模型，单 HTTP 直接启动、不使用 Nginx 或项目启动脚本。Compose MUST 声明昇腾 runtime、特权模式、host IPC、可见物理卡及必要挂载。默认 Qwen 和非空增强数组 MUST 按现有契约在 HTTP 就绪前预加载；完整构建、真实前向、B4 和正常关闭均通过后方可宣称本版镜像可用。
 
 #### Scenario: 使用镜像内模型启动
 - **WHEN** 通过昇腾 runtime 提供只读配置及 Qwen 权重挂载
@@ -156,9 +156,9 @@
 - **WHEN** 仅确认资产、依赖导入或 HTTP READY
 - **THEN** 分别记录已完成等级，不将其当作模型真实 forward、四并发完整音频或生产上线验收
 
-### Requirement: 本版镜像采用必要源码交付
-运行镜像 MUST 仅包含服务必需的项目 Python 源码及运行资产。MUST NOT 编译、带入或优先加载旧业务 Cython 扩展，不安装本项目的保护构建工具；业务模块实际导入路径 MUST 可验证为本版 `.py` 源码。第三方运行依赖自带的必要原生扩展不属于此禁止范围。
+### Requirement: 保护运行层保留必要入口和本版扩展
+保护运行镜像 MUST 仅保留必要启动和包入口 Python 文件、编译扩展及运行资产。构建 MUST NOT 复制旧业务扩展或将保护编译工具带入运行层；核心模块导入路径 MUST 可验证为本版 ABI 匹配的 `.so`。第三方运行依赖自带的必要原生扩展不属于此禁止范围。
 
-#### Scenario: 核心模块源码运行
+#### Scenario: 核心模块由扩展运行
 - **WHEN** 在候选镜像中检查核心模块导入来源并执行真实请求
-- **THEN** 使用当前源码，未调用保护构建入口，不存在旧同名业务扩展遮蔽；项目 tests、docs、scripts 等不作为运行依赖复制进镜像
+- **THEN** 使用本版编译扩展，无同名明文源码或旧扩展遮蔽；项目 tests、docs、scripts 等不作为运行依赖复制进镜像
