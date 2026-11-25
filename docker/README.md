@@ -128,7 +128,7 @@ docker buildx build --builder "$ASR_BUILDER" --load --progress plain \
 
 构建参数 `BUILDKIT_SYNTAX` 将Dockerfile前端固定到已核验的私有引用，避免独立BuildKit尝试访问不可达的Docker Hub。首次实际构建在解析公网前端时超时的记录必须保留，不计为镜像构建成功。前端覆盖机制见[Docker官方文档](https://docs.docker.com/build/buildkit/frontend/)。`worker.oci.gc=false`用于避免失败重试期间自动GC删除本次cache，成功验收后仍须清理整个本轮私有builder缓存。
 
-使用同一WORK_DIR/builder重试，不加`--no-cache`，失败时保留已完成层和原始日志。长构建应由远端持久后台控制器登记PID/出生、日志和退出文件，SSH断开不等于构建失败；确认旧任务已退出才重试，不并行构建。构建成功后先用候选image ID测试，验收通过后再给同一ID添加 `asr_offline_910b:v3_YYYYMMDD_cython`，不重新构建。
+使用同一WORK_DIR/builder重试，不加`--no-cache`，失败时保留已完成层和原始日志。长构建应由远端持久后台控制器登记PID/出生、日志和退出文件，SSH断开不等于构建失败；确认旧任务已退出才重试，不并行构建。构建成功后先用候选image ID测试，验收通过后再给同一ID添加 `asr_offline_910b:v3_YYYYMMDD`，不重新构建。
 
 ## 启动服务
 
@@ -136,7 +136,7 @@ docker buildx build --builder "$ASR_BUILDER" --load --progress plain \
 
 ```bash
 cd /home/zhangs/asr_nvidia/docker
-export ASR_IMAGE=asr_offline_910b:v3_20261125_cython
+export ASR_IMAGE=asr_offline_910b:v3_20261125
 export QWEN_MODEL_DIR=/home/model/Qwen3-ASR-1.7B-hf
 export ASCEND_VISIBLE_DEVICES=7
 export ASR_RT_VISIBLE_DEVICES=7 # Compose将该覆盖值传为ASCEND_RT_VISIBLE_DEVICES
@@ -232,7 +232,7 @@ docker compose -p "$ASR_COMPOSE_PROJECT" down
 
 ```bash
 export TESTED_ID=$(docker image inspect --format '{{.Id}}' "$CANDIDATE_IMAGE")
-export FINAL_IMAGE=asr_offline_910b:v3_$(date +%Y%m%d)_cython
+export FINAL_IMAGE=asr_offline_910b:v3_$(date +%Y%m%d)
 docker image tag "$TESTED_ID" "$FINAL_IMAGE"
 docker image inspect "$FINAL_IMAGE" --format '{{.Id}}'
 ```
