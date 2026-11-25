@@ -1,0 +1,31 @@
+{
+  "static_passed": true,
+  "runtime_tested": false,
+  "services": [
+    "asr-npu0",
+    "asr-npu1",
+    "asr-npu5",
+    "asr-npu6",
+    "asr-npu7",
+    "nginx"
+  ],
+  "NPU": [
+    0,
+    1,
+    5,
+    6,
+    7
+  ],
+  "image": "nginx:1.31.10-alpine",
+  "tar_size": 69885952,
+  "files": {
+    "config2.toml": "56582fd44169dc5ec180b068cbceab6682832c32e35fa0ac993cd7cf3b687d57",
+    "docker-compose-multi.yml": "bdd4303af994e3d7b54035ce051b52c9494a3e17da3187c07f070ea189bcb347",
+    "nginx.conf": "2008abf44f3295b1b4751938f7073e976d218889e9763f36ea59a6bfe7c84c7e",
+    "nginx.tar": "096c4de10e1a9c9d56b49bf43aeebf9229753c513b1a5022404ef73db399255e"
+  },
+  "archive_layers_sha256_verified": 8,
+  "containers_unchanged": true,
+  "networks_unchanged": true,
+  "source_security": "https://nginx.org/en/security_advisories.html"
+}

@@ -1,0 +1,144 @@
+# 目标宿主为arm64/910B，并已安装Ascend容器runtime；仅准备文件，未在本机启动。
+# 离线部署前：docker load -i nginx.tar；并确保已load asr_offline_910b:v3_20261125。
+# 启动：docker compose -f docker-compose-multi.yml up -d
+# 五后端各自独立总音频5、B子集5；least_conn不替代业务层全局准入计数。
+name: asr-offline-910b-multi
+
+x-asr-env: &asr-env
+  CONFIG_PATH: /config.toml
+  ASR_DEPLOYMENT_PROFILE: npu-910b
+  ASR_CONTAINER_RUNTIME: cann82-source
+  ASR_RUNTIME_DIR: /tmp/asr-offline
+  ASR_STATS_PATH: /tmp/asr-offline/asr_stats.json
+  TMPDIR: /tmp/asr-offline
+  OMP_NUM_THREADS: "4"
+  MKL_NUM_THREADS: "4"
+
+x-asr: &asr
+  image: asr_offline_910b:v3_20261125
+  platform: linux/arm64
+  pull_policy: never
+  restart: unless-stopped
+  init: true
+  runtime: ascend
+  privileged: true
+  ipc: host
+  networks: [asr-net]
+  expose: ["9000"]
+  volumes:
+    - type: bind
+      source: ./config2.toml
+      target: /config.toml
+      read_only: true
+      bind: {create_host_path: false}
+    - type: bind
+      source: /data/asr_offline_910b/Qwen3-ASR-1.7B-hf
+      target: /app/qwen-model
+      read_only: true
+      bind: {create_host_path: false}
+    - type: bind
+      source: /usr/local/Ascend/driver
+      target: /usr/local/Ascend/driver
+      read_only: true
+      bind: {create_host_path: false}
+    - type: bind
+      source: /usr/local/dcmi
+      target: /usr/local/dcmi
+      read_only: true
+      bind: {create_host_path: false}
+    - type: bind
+      source: /usr/local/bin/npu-smi
+      target: /usr/local/bin/npu-smi
+      read_only: true
+      bind: {create_host_path: false}
+    - type: bind
+      source: /etc/ascend_install.info
+      target: /etc/ascend_install.info
+      read_only: true
+      bind: {create_host_path: false}
+  stop_grace_period: 240s
+  healthcheck:
+    test: ["CMD", "/opt/asr/bin/python", "-c", "import json,urllib.request; r=json.load(urllib.request.urlopen('http://127.0.0.1:9000/get_status',timeout=5)); assert r.get('status') == 'living'"]
+    interval: 15s
+    timeout: 10s
+    # 为五容器同时冷加载留出时间；不表示已验证该组合启动耗时。
+    start_period: 1200s
+    retries: 8
+
+services:
+  asr-npu0:
+    <<: *asr
+    environment:
+      <<: *asr-env
+      ASCEND_VISIBLE_DEVICES: "0"
+      ASCEND_RT_VISIBLE_DEVICES: "0"
+
+  asr-npu1:
+    <<: *asr
+    environment:
+      <<: *asr-env
+      ASCEND_VISIBLE_DEVICES: "1"
+      ASCEND_RT_VISIBLE_DEVICES: "1"
+
+  asr-npu5:
+    <<: *asr
+    environment:
+      <<: *asr-env
+      ASCEND_VISIBLE_DEVICES: "5"
+      ASCEND_RT_VISIBLE_DEVICES: "5"
+
+  asr-npu6:
+    <<: *asr
+    environment:
+      <<: *asr-env
+      ASCEND_VISIBLE_DEVICES: "6"
+      ASCEND_RT_VISIBLE_DEVICES: "6"
+
+  asr-npu7:
+    <<: *asr
+    environment:
+      <<: *asr-env
+      ASCEND_VISIBLE_DEVICES: "7"
+      ASCEND_RT_VISIBLE_DEVICES: "7"
+
+  nginx:
+    image: nginx:1.31.10-alpine
+    platform: linux/arm64
+    pull_policy: never
+    restart: unless-stopped
+    # 非root监听容器8080；宿主8081是唯一公开端口。
+    user: nginx
+    entrypoint: ["nginx"]
+    command: ["-g", "daemon off;"]
+    read_only: true
+    security_opt: ["no-new-privileges:true"]
+    cap_drop: [ALL]
+    tmpfs: ["/tmp:rw,noexec,nosuid,size=128m,mode=1777"]
+    networks: [asr-net]
+    ports: ["8081:8080"]
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+        bind: {create_host_path: false}
+    depends_on:
+      asr-npu0: {condition: service_healthy}
+      asr-npu1: {condition: service_healthy}
+      asr-npu5: {condition: service_healthy}
+      asr-npu6: {condition: service_healthy}
+      asr-npu7: {condition: service_healthy}
+    stop_grace_period: 660s
+    healthcheck:
+      # 只检查Nginx自身；五后端状态仍需分别查询。
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/nginx-health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options: {max-size: "20m", max-file: "3"}
+
+networks:
+  asr-net:
+    driver: bridge
