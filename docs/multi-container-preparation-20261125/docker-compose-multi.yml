@@ -32,7 +32,7 @@ x-asr: &asr
       read_only: true
       bind: {create_host_path: false}
     - type: bind
-      source: /data/asr_offline_910b/Qwen3-ASR-1.7B-hf
+      source: ./Qwen3-ASR-1.7B-hf
       target: /app/qwen-model
       read_only: true
       bind: {create_host_path: false}

@@ -31,3 +31,5 @@ docker compose -f docker-compose-multi.yml ps
 未执行：nginx -t、任何容器启动/网络创建、HTTP代理/版本隐藏实测、25 owner共驻的HBM/性能/输出验收。N5/B5/CAM4/emo1在新机器的实际可用性由用户后续验证，不以本次静态准备冒称通过。
 
 初次network前后比较直接比JSON文本，Docker标签顺序变化导致误判；改为解析字段并对标签排序后，实际network身份/内容完全一致。原失败工具输出保留；没有因此操作网络或容器。
+
+部署目录相关挂载统一相对Compose文件目录：./config2.toml、./Qwen3-ASR-1.7B-hf、./nginx.conf。目标目录可整体搬迁；Ascend宿主系统路径和容器内路径仍为必要绝对路径。本次只做静态解析，未启动任何服务。
