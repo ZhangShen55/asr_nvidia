@@ -1,4 +1,4 @@
-"""源码镜像交付契约；真实设备/完整音频验收由独立部署报告记录。"""
+"""Cython保护镜像交付契约；真实设备/完整音频验收由独立部署报告记录。"""
 from pathlib import Path
 import json
 import os
@@ -14,7 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DOCKER = ROOT / "docker"
 
 
-def test_source_delivery_isolated_environment_and_minimal_assets():
+def test_protected_delivery_isolated_environment_and_minimal_assets():
     text = (DOCKER / "Dockerfile").read_text()
     assert "cann:8.2.rc1-910b-ubuntu22.04-py3.10" in text
     assert "conda-unpack" in text and "/opt/asr/bin/python" in text
@@ -26,7 +26,12 @@ def test_source_delivery_isolated_environment_and_minimal_assets():
     assert not any(re.search(r"(?:tests?|docs|scripts|openspec|config\.toml|\.so)(?:/|\s)", line) for line in copied)
     for model in ("speech_fsmn_vad_zh-cn-16k-common-pytorch", "speech_campplus_sv_zh_en_16k-common_advanced", "emotion2vec_plus_large"):
         assert any("--from=model_assets" in line and f"/app/model/{model}" in line for line in copied)
-    assert "build_cython" not in text and "setup_cython" not in text
+    build, runtime = text.split("FROM runtime-deps AS runtime\n", 1)
+    assert "scripts/build_cython.sh" in build
+    assert "build_cython" not in runtime and "setup_cython" not in runtime
+    for root in ("core", "api", "utils", "entity"):
+        assert f"COPY --from=protection /build/{root}/ /app/{root}/" in runtime
+    assert "COPY --from=environment /opt/asr /opt/asr" in runtime
 
 
 def test_compose_requires_readonly_mounts_and_single_service():
@@ -52,7 +57,7 @@ def test_four_file_delivery_and_explicit_white_list():
     significant = [line.strip() for line in ignore if line.strip() and not line.startswith("#")]
     assert significant[0] == "**"
     for line in significant[1:]:
-        if line.startswith("!"):
+        if line.startswith("!") and line != "!scripts/build_cython.sh":
             assert not any(s in line for s in ("tests", "test/", "docs", "scripts", "openspec", "config.toml"))
     readme = (DOCKER / "README.md").read_text()
     for contract in ("CONFIG_PATH", "npu:7", "npu:0", "/v3/seacraft_asr", "asr_offline_910b:v3_"):

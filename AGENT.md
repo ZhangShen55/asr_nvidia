@@ -227,7 +227,7 @@ Qwen完成即还自身名额，增强队列/汇合受段数和PCM字节预算反
 
 ## 6. 构建与部署
 
-当前源码容器入口为 `docker/Dockerfile` 与 `docker/docker-compose.yml`，命令见 `docker/README.md`；目录恰好四文件，另两份为config.toml和README.md。本版直接运行必要.py，不使用Nginx/旧start.sh/build.sh，不编译Cython；仓库独立保护工具及历史验证仍保留，保护模式的源码剥离只允许在有标记的staging中执行，禁止真实仓库剥离。
+当前 910B 容器入口为 `docker/Dockerfile` 与 `docker/docker-compose.yml`，命令见 `docker/README.md`。Dockerfile 默认在独立阶段使用 Cython 编译四个业务目录，保护镜像对核心模块交付 .so。业务源码剥离仅发生在有标记的构建 staging；之前实测的源码镜像继续使用独立标签。
 
 底座固定本机CANN8.2.RC1的实际ID，容器独立Python/torch2.5.1/torch-npu2.5.1.post1，精确post1门禁由ASR_CONTAINER_RUNTIME=cann82-source启用；宿主CANN8.1/asr环境和旧锁不升级。构建工具、环境归档、三个必要小模型分别准备，最小上下文不得含项目测试/文档/脚本/样本/OpenSpec或旧业务扩展；不将整个仓库或工具环境打进镜像。
 

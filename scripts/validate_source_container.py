@@ -166,14 +166,16 @@ def validate_status(status, owner, *, idle=False, resident=False, baseline=None)
                         and status.get('spkEmoConcurrency', {}).get('active') == 0
                         and q.get('batch_scheduler', {}).get('running_members') == 0
                         and pcm.get('active') == 0 and pcm.get('audio_bytes') == 0)
+    image_labels = getattr(owner, 'initial', {}).get('Config', {}).get('Labels') or {}
+    code_suffix = '.so' if image_labels.get('org.seacraftasr.code-format') == 'cython' else '.py'
     for item in instances:
         worker = item.get('model_worker', {}); entry = worker.get('worker_entry_module_file')
         launch = worker.get('launch_config', {})
         pid, birth = worker.get('worker_pid'), worker.get('worker_create_time')
         mapped = owner.map_owner(pid, birth) if type(pid) is int and type(birth) in (int, float) else None
         mappings[str(item.get('index'))] = mapped
-        if not mapped or not isinstance(entry, str) or not PurePosixPath(entry).is_relative_to('/app/core') or not entry.endswith('.py'):
-            errors.append(f'owner {item.get("index")}: source/host PID mapping missing')
+        if not mapped or not isinstance(entry, str) or not PurePosixPath(entry).is_relative_to('/app/core') or not entry.endswith(code_suffix):
+            errors.append(f'owner {item.get("index")}: module origin/host PID mapping missing')
         if launch.get('device') != 'npu:0' or launch.get('continuous_options', {}).get('max_active') != 16:
             errors.append('owner launch device/window mismatch')
         peak = (item.get('continuous') or {}).get('peak_active')

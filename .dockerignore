@@ -1,6 +1,8 @@
-# 默认拒绝所有输入，项目测试、文档、脚本、配置和资产从未进入主上下文。
+# 默认拒绝所有输入，只放行业务模块、必要入口和两项编译入口。
 **
 !docker/Dockerfile
+!setup_cython.py
+!scripts/build_cython.sh
 !main.py
 !model_status_runtime.py
 !telemetry_runtime.py

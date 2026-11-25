@@ -1,6 +1,6 @@
 services:
   asr-offline:
-    image: ${ASR_IMAGE:-asr_offline_910b:v3_20261125}
+    image: ${ASR_IMAGE:-asr_offline_910b:v3_20261125_cython}
     restart: "no"
     labels:
       asr.build.task: ${ASR_BUILD_TASK_ID:-standalone}

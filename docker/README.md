@@ -1,8 +1,8 @@
-# 昇腾 910B 源码镜像部署
+# 昇腾 910B Cython 保护镜像部署
 
-本版为单 HTTP 服务，内部默认 Qwen4 / CAM++4 process / emotion2vec1，Qwen 每音频窗口16，总音频4 / 全局逻辑段64，VAD8 CPU。无 Nginx，不执行 Cython。增强设备数组非空开启、每元素一实例，`[]`关闭；旧 `[features]` 开关不可继续使用。`instance_count` 只能为1，模型数量配置在 `[qwen_asr].local_instance_count`。
+本版为单 HTTP 服务，内部默认 Qwen4 / CAM++4 process / emotion2vec1，Qwen 每音频窗口16，总音频4 / 全局逻辑段64，VAD8 CPU。每个容器直接启动一个 HTTP 服务。Docker 构建在独立阶段编译业务模块，运行镜像交付 `.so`。增强设备数组非空开启、每元素一实例，`[]`关闭；旧 `[features]` 开关不可继续使用。`instance_count` 只能为1，模型数量配置在 `[qwen_asr].local_instance_count`。
 
-本目录仅保留 Dockerfile、docker-compose.yml、config.toml、README.md。配置修改需重启；首次加载和真实语音暖身分开，HTTP就绪不等于已经执行前向。实际镜像可用性及B4结果以 `../docs/docker-source-cann82-20261125/` 报告为准，不能用本说明存在代替验收。
+本目录仅保留 Dockerfile、docker-compose.yml、config.toml、README.md。配置修改需重启；首次加载和真实语音暖身分开，HTTP就绪不等于已经执行前向。旧源码镜像的 B4 结果记录在 `../docs/docker-source-cann82-20261125/`。新保护镜像的验证见 `../docs/docker-cython-cann82-20261125/`。
 
 ## 构建前置条件
 
@@ -14,7 +14,7 @@
 
 ## 准备最小构建材料
 
-所有材料在本目录外，禁止打入测试、文档、项目脚本、样本、Git/OpenSpec数据和旧业务扩展。主上下文由根 `.dockerignore` 白名单控制，环境及模型走单独命名上下文；第三方运行依赖自带的必要原生扩展不属于旧业务扩展。
+所有材料在本目录外，禁止打入测试、文档、项目脚本、样本、Git/OpenSpec数据和旧业务扩展。主上下文由根 `.dockerignore` 白名单控制，其中精确放行两项编译入口。环境、模型和 Cython 分走命名上下文。
 
 ```bash
 cd /home/zhangs/asr_nvidia
@@ -26,6 +26,17 @@ mkdir -p "$WORK_DIR"
 ```
 
 工具环境提供conda-pack0.8.1，只打包运行前缀，不把Cython/conda-pack工具环境作为运行环境。脚本生成 `runtime_env/`、`model_assets/` 和输入摘要；缺依赖或资产必须先定位，不用全仓库COPY兜底。准备脚本仅在宿主运行，不进入镜像。其它机器请将解释器、原资产位置及工具路径改为已核验的对应位置。
+
+保护构建使用 Cython 3.0.12 的官方源码包。在独立构建阶段运行 Cython 前端，用镜像的 Python 3.10 和原生 GCC 编译扩展。
+
+```bash
+mkdir -p "$WORK_DIR/cython_tools"
+curl --fail --location --retry 3 \
+  https://files.pythonhosted.org/packages/5a/25/886e197c97a4b8e254173002cdc141441e878ff29aaa7d9ba560cd6e4866/cython-3.0.12.tar.gz \
+  -o "$WORK_DIR/cython_tools/cython-3.0.12.tar.gz"
+```
+
+Dockerfile 核对源码包 SHA256。Cython、生成的 C 和构建产物只在独立阶段处理，最终复制业务扩展和包入口，保留 `main.py`、`model_status_runtime.py`、`telemetry_runtime.py`。容器运行时标识 `cann82-source` 沿用 CANN 版本和单卡预检契约，镜像标签 `org.seacraftasr.code-format=cython` 标记代码格式。Cython 扩展仍可逆向，保护目标是交付时移除可直接阅读的业务源码。
 
 ## 构建镜像和保留缓存重试
 
@@ -111,12 +122,13 @@ docker buildx build --builder "$ASR_BUILDER" --load --progress plain \
   --build-arg BUILD_DATE="$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
   --build-context runtime_env="$WORK_DIR/runtime_env" \
   --build-context model_assets="$WORK_DIR/model_assets" \
+  --build-context cython_tools="$WORK_DIR/cython_tools" \
   -f docker/Dockerfile -t "$CANDIDATE_IMAGE" .
 ```
 
 构建参数 `BUILDKIT_SYNTAX` 将Dockerfile前端固定到已核验的私有引用，避免独立BuildKit尝试访问不可达的Docker Hub。首次实际构建在解析公网前端时超时的记录必须保留，不计为镜像构建成功。前端覆盖机制见[Docker官方文档](https://docs.docker.com/build/buildkit/frontend/)。`worker.oci.gc=false`用于避免失败重试期间自动GC删除本次cache，成功验收后仍须清理整个本轮私有builder缓存。
 
-使用同一WORK_DIR/builder重试，不加`--no-cache`，失败时保留已完成层和原始日志。长构建应由远端持久后台控制器登记PID/出生、日志和退出文件，SSH断开不等于构建失败；确认旧任务已退出才重试，不并行构建。构建成功后先用候选image ID测试，验收通过后再给同一ID添加 `asr_offline_910b:v3_YYYYMMDD`，不重新构建。
+使用同一WORK_DIR/builder重试，不加`--no-cache`，失败时保留已完成层和原始日志。长构建应由远端持久后台控制器登记PID/出生、日志和退出文件，SSH断开不等于构建失败；确认旧任务已退出才重试，不并行构建。构建成功后先用候选image ID测试，验收通过后再给同一ID添加 `asr_offline_910b:v3_YYYYMMDD_cython`，不重新构建。
 
 ## 启动服务
 
@@ -124,7 +136,7 @@ docker buildx build --builder "$ASR_BUILDER" --load --progress plain \
 
 ```bash
 cd /home/zhangs/asr_nvidia/docker
-export ASR_IMAGE=asr_offline_910b:v3_20261125
+export ASR_IMAGE=asr_offline_910b:v3_20261125_cython
 export QWEN_MODEL_DIR=/home/model/Qwen3-ASR-1.7B-hf
 export ASCEND_VISIBLE_DEVICES=7
 export ASR_RT_VISIBLE_DEVICES=7 # Compose将该覆盖值传为ASCEND_RT_VISIBLE_DEVICES
@@ -220,7 +232,7 @@ docker compose -p "$ASR_COMPOSE_PROJECT" down
 
 ```bash
 export TESTED_ID=$(docker image inspect --format '{{.Id}}' "$CANDIDATE_IMAGE")
-export FINAL_IMAGE=asr_offline_910b:v3_$(date +%Y%m%d)
+export FINAL_IMAGE=asr_offline_910b:v3_$(date +%Y%m%d)_cython
 docker image tag "$TESTED_ID" "$FINAL_IMAGE"
 docker image inspect "$FINAL_IMAGE" --format '{{.Id}}'
 ```
