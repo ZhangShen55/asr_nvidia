@@ -122,7 +122,7 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 > `showSpk`、`showEmotion`、`showRoleIdentify` 的默认值均为 `false`。
 
 响应包含 `language`、`segments`、`text`、`speed_info`、`load_audio_time_ms`、`gpu_time_ms` 与 `language_ratio`。
-分段中的 `role`、`emotion` 和 `segment_words` 根据请求参数返回。`text` 为最终保留分段按空格拼接并经文本规范化（ITN）处理后的结果。纯「啊 / 哦 / 嗯 / 呃」分段会被移除；英文为有效文本占比最高时，边界明确的中文口气词会转换为 `ah / oh / um / uh`。
+分段中的 `role`、`emotion` 和 `segment_words` 根据请求参数返回。`text` 为最终保留分段按空格拼接并按配置选择是否执行文本规范化（ITN）后的结果。纯「啊 / 哦 / 嗯 / 呃」分段会被移除；英文为有效文本占比最高时，边界明确的中文口气词会转换为 `ah / oh / um / uh`。
 
 ### v3 处理流程
 
@@ -153,7 +153,7 @@ curl -X POST "http://localhost:8083/v3/seacraft_asr" \
 上游拿到的文本已经过下列处理，与模型原始输出不完全一致，属于预期行为：
 
 1. **复读修复**：模型偶尔在长片段上产生「同一短语无限重复」的循环，服务检测到后折叠重复部分。
-2. **ITN 文本规范化**（默认开启，由 `[itn] enabled` 控制）：WeTextProcessing 负责数字规范化（如「二零二五」→「2025」）与部分语气词剔除。ITN 之后还有两条与 ITN 开关**无关**、
+2. **ITN 文本规范化**（默认关闭，由 `[itn] enabled` 控制，需规范化时显式设为 `true`）：WeTextProcessing 负责数字规范化（如「二零二五」→「2025」）与部分语气词剔除。ITN 之后还有两条与 ITN 开关**无关**、
    始终执行的标点卫生规则：
    - 整段文本只有标点符号时，该段从 `segments` 中移除；
    - 分段文本以标点开头时，移除开头**连续的所有标点**，直到落到有效字符。

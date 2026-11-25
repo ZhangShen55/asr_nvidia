@@ -16,7 +16,7 @@ emotion_model_dir = "/home/zhangs/asr_nvidia/model/emotion2vec_plus_large"
 rate_factor = 0.4  # 语速修正系数（数值偏高时下调），最终语速 = 原始字/分钟 * rate_factor
 
 [itn]
-enabled = true
+enabled = false
 enable_standalone_number = true
 enable_0_to_9 = false
 remove_interjections = true

@@ -134,7 +134,7 @@ class Settings:
     # 文本规范化（ITN）配置
     @property
     def itn_enabled(self) -> bool:
-        return bool(self._cfg.get("itn", {}).get("enabled", True))
+        return bool(self._cfg.get("itn", {}).get("enabled", False))
 
     @property
     def itn_enable_standalone_number(self) -> bool:

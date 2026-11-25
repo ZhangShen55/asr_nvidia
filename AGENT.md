@@ -542,3 +542,9 @@ CAM++、emotion2vec启用状态现在只来自各自设备数组：非空数组�
 ### 2026-11-25 CANN8.2源码容器交付完成
 
 2026-11-24-docker-source-cann82已完成真实构建、最终CPU1419/379subtests及工具82、ABI/原生/NPU物理7核验、双增强完整B4 4/4（P50/P95/墙钟182.44/196.25/198.65s，严格无警告2/4；16warning=9恢复/7丢弃）。最终asr_offline_910b:v3_20261125，ID ef7b8add6a42c0297dc66eaa58718a67df8fba688d1738f1c314fe59b8565c5a；cold HTTP约416～419s，clip暖身30.20s单列。正常parent0、VAD8正常、出生PID/端口/PCM释放，共享服务保持；本轮中间候选/helper/builder/registry/cache/staging已清，原11镜像/14容器保留。Docker严格四文件、无Nginx/Cython，config必需只读挂载。报告docs/docker-source-cann82-20261125/REPORT.md。该短时可用性不等于零丢段/人工准确率/长期生产认证。按流程同步本change四delta并独立归档；旧open change历史不改。
+
+### 2026-11-25 ITN缺省关闭
+
+源码Settings.itn_enabled及ItnConfig.enabled缺省false，根/Docker模板[itn].enabled=false；显式true仍可开启数字规范化，关闭不影响独立标点卫生及语气词清理。/data/asr_offline_910b部署配置已false并已重建容器确认healthy。本次仅同步源码缺省及模板，现有已构建镜像不因源码提交自动更新。
+
+上述ITN缺省关闭回归：77passed/15subtests，CPU隔离无NPU/共享缓存写入或owned遗留；证据logs/itn-default-off-20261125-110151。

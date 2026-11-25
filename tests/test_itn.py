@@ -35,12 +35,23 @@ class NormalizeSegmentsTests(unittest.TestCase):
         segments = _segments("我有三个苹果和一百块")
 
         normalized, text, stats = normalize_segments(
-            segments, "zh", ItnConfig(enabled=False)
+            segments, "zh", ItnConfig()
         )
 
         self.assertEqual(normalized[0]["segment_text"], "我有三个苹果和一百块")
         self.assertEqual(text, "我有三个苹果和一百块")
         self.assertFalse(stats["enabled"])
+
+    def test_settings_missing_itn_is_disabled_and_explicit_enable_is_supported(self):
+        from core.config import Settings
+
+        for cfg, expected in [({}, False), ({"itn": {}}, False),
+                              ({"itn": {"enabled": False}}, False),
+                              ({"itn": {"enabled": True}}, True)]:
+            with self.subTest(cfg=cfg), patch("core.config._load_toml", return_value=cfg):
+                settings = Settings(config_path="unused.toml")
+                self.assertEqual(settings.itn_enabled, expected)
+                self.assertEqual(settings.itn_config.enabled, expected)
 
     def test_missing_dependency_falls_back_to_raw_text(self):
         segments = _segments("我有三个苹果和一百块")

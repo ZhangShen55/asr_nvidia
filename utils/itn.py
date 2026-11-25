@@ -76,7 +76,7 @@ def sanitize_segments(segments: Iterable[dict]) -> tuple[list[dict], str]:
 
 @dataclass(frozen=True)
 class ItnConfig:
-    enabled: bool = True
+    enabled: bool = False
     enable_standalone_number: bool = True
     enable_0_to_9: bool = False
     remove_interjections: bool = True
