@@ -21,11 +21,12 @@
   "files": {
     "config2.toml": "56582fd44169dc5ec180b068cbceab6682832c32e35fa0ac993cd7cf3b687d57",
     "docker-compose-multi.yml": "7a4aa340a0918cb14cb17dc67a09311c85dcabbaf3d35e842fe247abb8a9a9bf",
-    "nginx.conf": "2008abf44f3295b1b4751938f7073e976d218889e9763f36ea59a6bfe7c84c7e",
+    "nginx.conf": "e219542d9b0332d09b21d29a36075fff865eb7d70cbfdeafd19fad97fce561ba",
     "nginx.tar": "096c4de10e1a9c9d56b49bf43aeebf9229753c513b1a5022404ef73db399255e"
   },
   "archive_layers_sha256_verified": 8,
   "containers_unchanged": true,
   "networks_unchanged": true,
-  "source_security": "https://nginx.org/en/security_advisories.html"
+  "source_security": "https://nginx.org/en/security_advisories.html",
+  "correction": "Set all HTTP module temp paths under /tmp after target nginx read-only fastcgi_temp startup failure"
 }

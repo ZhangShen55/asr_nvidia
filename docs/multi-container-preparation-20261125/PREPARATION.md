@@ -33,3 +33,9 @@ docker compose -f docker-compose-multi.yml ps
 初次network前后比较直接比JSON文本，Docker标签顺序变化导致误判；改为解析字段并对标签排序后，实际network身份/内容完全一致。原失败工具输出保留；没有因此操作网络或容器。
 
 部署目录相关挂载统一相对Compose文件目录：./config2.toml、./Qwen3-ASR-1.7B-hf、./nginx.conf。目标目录可整体搬迁；Ascend宿主系统路径和容器内路径仍为必要绝对路径。本次只做静态解析，未启动任何服务。
+
+## 目标机启动反馈及临时目录修复
+
+用户日志显示5个ASR均healthy，Nginx因只读rootfs下创建/var/cache/nginx/fastcgi_temp失败而反复重启。原配置只指定client_body/proxy临时目录，漏了启动时仍会初始化的fastcgi/uwsgi/scgi目录；现全部显式设到已挂tmpfs的/tmp。该问题属于原静态审查遗漏，不能用“静态评审通过”推断运行通过。无需修改镜像tar或取消只读/非root配置。
+
+目标机更新nginx.conf后，由用户在Compose所在目录执行docker compose -f docker-compose-multi.yml up -d --no-deps --force-recreate nginx，仅重建Nginx，不重启5个ASR。随后看nginx是否healthy并查询8081/nginx-health及8081/get_status；实际转写还需独立请求验证。本次修复仅更新文件，未运行/重启任何容器。
